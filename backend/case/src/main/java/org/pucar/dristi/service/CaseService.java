@@ -104,6 +104,10 @@ public class CaseService {
 
         try {
             // Fetch applications from database according to the given search criteria
+
+            if(!FLOW_JAC.equals(caseSearchRequests.getFlow()))
+                enrichmentUtil.enrichCaseSearchRequest(caseSearchRequests);
+
             List<CaseCriteria> caseCriteriaList = caseSearchRequests.getCriteria();
 
             List<CaseCriteria> caseCriteriaInRedis = new ArrayList<>();

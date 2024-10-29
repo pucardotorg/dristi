@@ -1,95 +1,44 @@
 package org.pucar.dristi.enrichment;
 
 
-import static org.pucar.dristi.config.ServiceConstants.ACCESSCODE_LENGTH;
-import static org.pucar.dristi.config.ServiceConstants.DISTRICT;
-import static org.pucar.dristi.config.ServiceConstants.ENRICHMENT_EXCEPTION;
-import static org.pucar.dristi.config.ServiceConstants.ESTABLISHMENT_CODE;
-import static org.pucar.dristi.config.ServiceConstants.STATE;
+import lombok.extern.slf4j.Slf4j;
+import org.egov.common.contract.models.AuditDetails;
+import org.egov.common.contract.models.Document;
+import org.egov.common.contract.request.RequestInfo;
+import org.egov.common.contract.request.Role;
+import org.egov.common.contract.request.User;
+import org.egov.tracer.model.CustomException;
+import org.pucar.dristi.config.Configuration;
+import org.pucar.dristi.config.ServiceConstants;
+import org.pucar.dristi.service.IndividualService;
+import org.pucar.dristi.util.AdvocateUtil;
+import org.pucar.dristi.util.CaseUtil;
+import org.pucar.dristi.util.IdgenUtil;
+import org.pucar.dristi.web.models.*;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 
 import java.util.List;
 import java.util.UUID;
 
-import org.egov.common.contract.models.AuditDetails;
-import org.egov.common.contract.models.Document;
-import org.egov.tracer.model.CustomException;
-import org.pucar.dristi.config.Configuration;
-import org.pucar.dristi.config.ServiceConstants;
-import org.pucar.dristi.util.CaseUtil;
-import org.pucar.dristi.util.IdgenUtil;
-import org.pucar.dristi.web.models.AdvocateMapping;
-import org.pucar.dristi.web.models.CaseRequest;
-import org.pucar.dristi.web.models.CourtCase;
-import org.pucar.dristi.web.models.LinkedCase;
-import org.pucar.dristi.web.models.Party;
-import org.pucar.dristi.web.models.StatuteSection;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
-
-import lombok.extern.slf4j.Slf4j;
+import static org.pucar.dristi.config.ServiceConstants.*;
 
 @Component
 @Slf4j
 public class CaseRegistrationEnrichment {
 
+    private IndividualService individualService;
+    private AdvocateUtil advocateUtil;
     private IdgenUtil idgenUtil;
     private CaseUtil caseUtil;
     private Configuration config;
 
     @Autowired
-    public CaseRegistrationEnrichment(IdgenUtil idgenUtil, CaseUtil caseUtil, Configuration config) {
+    public CaseRegistrationEnrichment(AdvocateUtil advocateUtil, IdgenUtil idgenUtil, CaseUtil caseUtil, Configuration config) {
+        this.advocateUtil = advocateUtil;
         this.idgenUtil = idgenUtil;
         this.caseUtil = caseUtil;
         this.config = config;
-    }
-
-    public void enrichCaseRegistrationOnCreate(CaseRequest caseRequest) {
-        try {
-            CourtCase courtCase = caseRequest.getCases();
-
-            String tenantId = caseRequest.getCases().getTenantId();
-            String idName = config.getCaseFilingConfig();
-            String idFormat = config.getCaseFilingFormat();
-
-            List<String> courtCaseRegistrationFillingNumberIdList = idgenUtil.getIdList(caseRequest.getRequestInfo(), tenantId, idName, idFormat, 1, true);
-            log.info("Court Case Registration Filling Number cp Id List :: {}", courtCaseRegistrationFillingNumberIdList);
-            AuditDetails auditDetails = AuditDetails.builder().createdBy(caseRequest.getRequestInfo().getUserInfo().getUuid()).createdTime(caseUtil.getCurrentTimeMil()).lastModifiedBy(caseRequest.getRequestInfo().getUserInfo().getUuid()).lastModifiedTime(caseUtil.getCurrentTimeMil()).build();
-            courtCase.setAuditdetails(auditDetails);
-
-            courtCase.setId(UUID.randomUUID());
-            enrichCaseRegistrationUponCreateAndUpdate(courtCase, auditDetails);
-
-            courtCase.setFilingNumber(courtCaseRegistrationFillingNumberIdList.get(0));
-
-
-        } catch (Exception e) {
-            log.error("Error enriching case application :: {}", e.toString());
-            throw new CustomException(ENRICHMENT_EXCEPTION, e.getMessage());
-        }
-    }
-
-    private void enrichCaseRegistrationUponCreateAndUpdate(CourtCase courtCase, AuditDetails auditDetails) {
-        enrichLinkedCaseOnCreateAndUpdate(courtCase, auditDetails);
-
-        enrichStatuteAndSectionsOnCreateAndUpdate(courtCase, auditDetails);
-
-        enrichLitigantsOnCreateAndUpdate(courtCase, auditDetails);
-
-        enrichRepresentativesOnCreateAndUpdate(courtCase, auditDetails);
-
-        enrichCaseRegistrationFillingDate(courtCase);
-
-        if (courtCase.getDocuments() != null) {
-            List<Document> documentsListToCreate = courtCase.getDocuments().stream().filter(document -> document.getId() == null).toList();
-            documentsListToCreate.forEach(CaseRegistrationEnrichment::enrichDocumentsOnCreate);
-        }
-    }
-
-    private void enrichCaseRegistrationFillingDate(CourtCase courtCase) {
-        if (courtCase.getWorkflow() != null && (courtCase.getWorkflow().getAction().equalsIgnoreCase(ServiceConstants.SUBMIT_CASE_WORKFLOW_ACTION)
-        ||courtCase.getWorkflow().getAction().equalsIgnoreCase(ServiceConstants.SUBMIT_CASE_ADVOCATE_WORKFLOW_ACTION) )) {
-            courtCase.setFilingDate(caseUtil.getCurrentTimeMil());
-        }
     }
 
     private static void enrichDocumentsOnCreate(Document document) {
@@ -170,26 +119,6 @@ public class CaseRegistrationEnrichment {
         });
     }
 
-    private void enrichStatuteAndSectionsOnCreateAndUpdate(CourtCase courtCase, AuditDetails auditDetails) {
-        if (courtCase.getStatutesAndSections() == null) {
-            return;
-        }
-        List<StatuteSection> statutesAndSectionsListToCreate = courtCase.getStatutesAndSections().stream().filter(statuteSection -> statuteSection.getId() == null).toList();
-        statutesAndSectionsListToCreate.forEach(statuteSection -> {
-            statuteSection.setId(UUID.randomUUID());
-            statuteSection.setStrSections(listToString(statuteSection.getSections()));
-            statuteSection.setStrSubsections(listToString(statuteSection.getSubsections()));
-            statuteSection.setAuditdetails(auditDetails);
-        });
-        List<StatuteSection> statutesAndSectionsListToUpdate = courtCase.getStatutesAndSections().stream().filter(statuteSection -> statuteSection.getId() != null).toList();
-
-        statutesAndSectionsListToUpdate.forEach(statuteSection -> {
-            statuteSection.setAuditdetails(auditDetails);
-            statuteSection.setStrSections(listToString(statuteSection.getSections()));
-            statuteSection.setStrSubsections(listToString(statuteSection.getSubsections()));
-        });
-    }
-
     private static void enrichLinkedCaseOnCreateAndUpdate(CourtCase courtCase, AuditDetails auditDetails) {
         if (courtCase.getLinkedCases() == null) {
             return;
@@ -208,6 +137,75 @@ public class CaseRegistrationEnrichment {
             if (linkedCase.getDocuments() != null) {
                 linkedCase.getDocuments().forEach(CaseRegistrationEnrichment::enrichDocumentsOnCreate);
             }
+        });
+    }
+
+    public void enrichCaseRegistrationOnCreate(CaseRequest caseRequest) {
+        try {
+            CourtCase courtCase = caseRequest.getCases();
+
+            String tenantId = caseRequest.getCases().getTenantId();
+            String idName = config.getCaseFilingConfig();
+            String idFormat = config.getCaseFilingFormat();
+
+            List<String> courtCaseRegistrationFillingNumberIdList = idgenUtil.getIdList(caseRequest.getRequestInfo(), tenantId, idName, idFormat, 1, true);
+            log.info("Court Case Registration Filling Number cp Id List :: {}", courtCaseRegistrationFillingNumberIdList);
+            AuditDetails auditDetails = AuditDetails.builder().createdBy(caseRequest.getRequestInfo().getUserInfo().getUuid()).createdTime(caseUtil.getCurrentTimeMil()).lastModifiedBy(caseRequest.getRequestInfo().getUserInfo().getUuid()).lastModifiedTime(caseUtil.getCurrentTimeMil()).build();
+            courtCase.setAuditdetails(auditDetails);
+
+            courtCase.setId(UUID.randomUUID());
+            enrichCaseRegistrationUponCreateAndUpdate(courtCase, auditDetails);
+
+            courtCase.setFilingNumber(courtCaseRegistrationFillingNumberIdList.get(0));
+
+
+        } catch (Exception e) {
+            log.error("Error enriching case application :: {}", e.toString());
+            throw new CustomException(ENRICHMENT_EXCEPTION, e.getMessage());
+        }
+    }
+
+    private void enrichCaseRegistrationUponCreateAndUpdate(CourtCase courtCase, AuditDetails auditDetails) {
+        enrichLinkedCaseOnCreateAndUpdate(courtCase, auditDetails);
+
+        enrichStatuteAndSectionsOnCreateAndUpdate(courtCase, auditDetails);
+
+        enrichLitigantsOnCreateAndUpdate(courtCase, auditDetails);
+
+        enrichRepresentativesOnCreateAndUpdate(courtCase, auditDetails);
+
+        enrichCaseRegistrationFillingDate(courtCase);
+
+        if (courtCase.getDocuments() != null) {
+            List<Document> documentsListToCreate = courtCase.getDocuments().stream().filter(document -> document.getId() == null).toList();
+            documentsListToCreate.forEach(CaseRegistrationEnrichment::enrichDocumentsOnCreate);
+        }
+    }
+
+    private void enrichCaseRegistrationFillingDate(CourtCase courtCase) {
+        if (courtCase.getWorkflow() != null && (courtCase.getWorkflow().getAction().equalsIgnoreCase(ServiceConstants.SUBMIT_CASE_WORKFLOW_ACTION)
+                || courtCase.getWorkflow().getAction().equalsIgnoreCase(ServiceConstants.SUBMIT_CASE_ADVOCATE_WORKFLOW_ACTION))) {
+            courtCase.setFilingDate(caseUtil.getCurrentTimeMil());
+        }
+    }
+
+    private void enrichStatuteAndSectionsOnCreateAndUpdate(CourtCase courtCase, AuditDetails auditDetails) {
+        if (courtCase.getStatutesAndSections() == null) {
+            return;
+        }
+        List<StatuteSection> statutesAndSectionsListToCreate = courtCase.getStatutesAndSections().stream().filter(statuteSection -> statuteSection.getId() == null).toList();
+        statutesAndSectionsListToCreate.forEach(statuteSection -> {
+            statuteSection.setId(UUID.randomUUID());
+            statuteSection.setStrSections(listToString(statuteSection.getSections()));
+            statuteSection.setStrSubsections(listToString(statuteSection.getSubsections()));
+            statuteSection.setAuditdetails(auditDetails);
+        });
+        List<StatuteSection> statutesAndSectionsListToUpdate = courtCase.getStatutesAndSections().stream().filter(statuteSection -> statuteSection.getId() != null).toList();
+
+        statutesAndSectionsListToUpdate.forEach(statuteSection -> {
+            statuteSection.setAuditdetails(auditDetails);
+            statuteSection.setStrSections(listToString(statuteSection.getSections()));
+            statuteSection.setStrSubsections(listToString(statuteSection.getSubsections()));
         });
     }
 
@@ -246,7 +244,7 @@ public class CaseRegistrationEnrichment {
             String tenantId = caseRequest.getCases().getCourtId();
             String idName = config.getCourtCaseConfig();
             String idFormat = config.getCourtCaseSTFormat();
-            List<String> courtCaseRegistrationCaseNumberIdList = idgenUtil.getIdList(caseRequest.getRequestInfo(), tenantId, idName, idFormat, 1,false);
+            List<String> courtCaseRegistrationCaseNumberIdList = idgenUtil.getIdList(caseRequest.getRequestInfo(), tenantId, idName, idFormat, 1, false);
             caseRequest.getCases().setCourtCaseNumber(courtCaseRegistrationCaseNumberIdList.get(0));
         } catch (Exception e) {
             log.error("Error enriching case number and court case number: {}", e.toString());
@@ -259,7 +257,7 @@ public class CaseRegistrationEnrichment {
             String tenantId = caseRequest.getCases().getCourtId();
             String idName = config.getCaseCNRConfig();
             String idFormat = config.getCaseCNRFormat();
-            List<String> cnrNumberIdList = idgenUtil.getIdList(caseRequest.getRequestInfo(), tenantId, idName, idFormat, 1,true);
+            List<String> cnrNumberIdList = idgenUtil.getIdList(caseRequest.getRequestInfo(), tenantId, idName, idFormat, 1, true);
             caseRequest.getCases().setCnrNumber(cnrNumberIdList.get(0));
         } catch (Exception e) {
             log.error("Error enriching cnr number: {}", e.toString());
@@ -272,7 +270,7 @@ public class CaseRegistrationEnrichment {
             String tenantId = caseRequest.getCases().getCourtId();
             String idName = config.getCmpConfig();
             String idFormat = config.getCmpFormat();
-            List<String> cmpNumberIdList = idgenUtil.getIdList(caseRequest.getRequestInfo(),tenantId, idName, idFormat, 1,false);
+            List<String> cmpNumberIdList = idgenUtil.getIdList(caseRequest.getRequestInfo(), tenantId, idName, idFormat, 1, false);
             caseRequest.getCases().setCmpNumber(cmpNumberIdList.get(0));
         } catch (Exception e) {
             log.error("Error enriching cnr number: {}", e.toString());
@@ -299,4 +297,69 @@ public class CaseRegistrationEnrichment {
             throw new CustomException(ENRICHMENT_EXCEPTION, "Error in case enrichment service while enriching registration date: " + e.getMessage());
         }
     }
+
+    public void enrichCaseSearchRequest(CaseSearchRequest caseSearchRequests) {
+        RequestInfo requestInfo = caseSearchRequests.getRequestInfo();
+        User userInfo = requestInfo.getUserInfo();
+        String type = userInfo.getType();
+        List<Role> roles = userInfo.getRoles();
+
+        switch (type.toLowerCase()) {
+            case "employee" -> enrichEmployeeUserId(roles, caseSearchRequests);
+            case "citizen" -> enrichCitizenUserId(roles, caseSearchRequests);
+            default -> throw new IllegalArgumentException("Unknown user type: " + type);
+        }
+    }
+
+    private void enrichEmployeeUserId(List<Role> roles, CaseSearchRequest searchRequest) {
+
+        boolean isJudge = false;
+        for (Role role : roles) {
+            if (role.getCode().equals(JUDGE_ROLE)) {
+                isJudge = true;
+                break;
+            }
+        }
+        if (isJudge) {
+            for (CaseCriteria element : searchRequest.getCriteria()) {
+                element.setJudgeId(JUDGE_ID);
+            }
+
+        }
+
+    }
+
+    private void enrichCitizenUserId(List<Role> roles, CaseSearchRequest searchRequest) {
+
+        RequestInfo requestInfo = searchRequest.getRequestInfo();
+
+        String individualId = individualService.getIndividualId(requestInfo);
+
+        boolean isAdvocate = false;
+
+        for (Role role : roles) {
+            if (role.getCode().equals(ADVOCATE_ROLE)) {
+                isAdvocate = true;
+                break;
+            }
+        }
+
+        if (isAdvocate) {
+
+            List<Advocate> advocates = advocateUtil.fetchAdvocatesByIndividualId(requestInfo, individualId);
+
+            if (!advocates.isEmpty()) {
+                String advocateId = advocates.get(0).getId().toString();
+                for (CaseCriteria element : searchRequest.getCriteria()) {
+                    element.setAdvocateId(advocateId);
+                }
+            }
+
+        } else {
+            for (CaseCriteria element : searchRequest.getCriteria()) {
+                element.setLitigantId(individualId);
+            }
+        }
+    }
+
 }
