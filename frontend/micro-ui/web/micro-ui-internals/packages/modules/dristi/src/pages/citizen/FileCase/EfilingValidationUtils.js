@@ -1110,6 +1110,7 @@ export const updateCaseDetails = async ({
   isCaseSignedState = false,
   setErrorCaseDetails = () => {},
   multiUploadList,
+  caseComplaintDocument,
 }) => {
   const data = {};
   setIsDisabled(true);
@@ -2003,6 +2004,10 @@ export const updateCaseDetails = async ({
     };
   }
   if (selected === "reviewCaseFile") {
+    if (caseComplaintDocument) {
+      data.documents = [...(data.documents || []), caseComplaintDocument];
+    }
+
     data.additionalDetails = {
       ...caseDetails.additionalDetails,
       reviewCaseFile: {

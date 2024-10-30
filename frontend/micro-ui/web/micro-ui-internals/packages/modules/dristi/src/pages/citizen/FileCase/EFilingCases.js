@@ -1437,6 +1437,16 @@ function EFilingCases({ path }) {
     };
     return obj;
   };
+  const onDocumentUpload = async (fileData, filename) => {
+    try {
+      const fileUploadRes = await Digit.UploadServices.Filestorage("DRISTI", fileData, Digit.ULBService.getCurrentTenantId());
+      return { file: fileUploadRes?.data, fileType: fileData.type, filename };
+    } catch (error) {
+      console.error("Failed to upload document:", error);
+      throw error; // or handle error appropriately
+    }
+  };
+
   const onSubmit = async (action, isCaseLocked = false) => {
     if (isDisableAllFieldsMode) {
       history.push(homepagePath);
@@ -1603,8 +1613,38 @@ function EFilingCases({ path }) {
     // }
     else {
       let res;
+      let caseComplaintDocument = {};
       if (isCaseLocked) {
         setIsDisabled(true);
+        const caseObject = isCaseReAssigned && errorCaseDetails ? errorCaseDetails : caseDetails;
+        const response = await axios.post(
+          "/dristi-case-pdf/v1/fetchCaseComplaintPdf",
+          {
+            cases: caseObject,
+            RequestInfo: {
+              authToken: Digit.UserService.getUser().access_token,
+              userInfo: Digit.UserService.getUser()?.info,
+              msgId: `${Date.now()}|${Digit.StoreData.getCurrentLanguage()}`,
+              apiId: "Rainmaker",
+            },
+          },
+          { responseType: "blob" } // Important: Set responseType to handle binary data
+        );
+        const contentDisposition = response.headers["content-disposition"];
+        const filename = contentDisposition ? contentDisposition.split("filename=")[1]?.replace(/['"]/g, "") : "caseCompliantDetails.pdf";
+        const pdfFile = new File([response?.data], filename, { type: "application/pdf" });
+        const document = await onDocumentUpload(pdfFile, pdfFile.name);
+        const fileStoreId = document?.file?.files?.[0]?.fileStoreId;
+
+        if (fileStoreId) {
+          caseComplaintDocument = {
+            documentType: document?.fileType,
+            fileStore: fileStoreId,
+            fileName: filename,
+          };
+        } else {
+          throw new Error("FILE_STORE_ID_MISSING");
+        }
         res = await refetchCasePDfGeneration();
         if (res?.status === "error") {
           setIsDisabled(false);
@@ -1630,6 +1670,7 @@ function EFilingCases({ path }) {
           isCaseSignedState: isPendingESign || isPendingReESign,
           isSaveDraftEnabled: isCaseReAssigned || isPendingReESign || isPendingESign,
           ...(res && { fileStoreId: res?.data?.cases?.[0]?.documents?.[0]?.fileStore }),
+          ...(caseComplaintDocument && { caseComplaintDocument: caseComplaintDocument }),
           multiUploadList,
         });
 
