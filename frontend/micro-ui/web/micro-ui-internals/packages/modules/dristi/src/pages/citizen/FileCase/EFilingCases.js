@@ -44,6 +44,7 @@ import {
   signatureValidation,
   updateCaseDetails,
   validateDateForDelayApplication,
+  witnessDetailsValidation,
 } from "./EfilingValidationUtils";
 import isEqual from "lodash/isEqual";
 import isMatch from "lodash/isMatch";
@@ -1274,7 +1275,7 @@ function EFilingCases({ path }) {
       ]);
     }
     checkIfscValidation({ formData, setValue, selected });
-    checkNameValidation({ formData, setValue, selected, formdata, index, reset });
+    checkNameValidation({ formData, setValue, selected, formdata, index, reset, clearErrors, formState });
     checkOnlyCharInCheque({ formData, setValue, selected });
     if (!isEqual(formData, formdata[index].data)) {
       chequeDateValidation({ formData, setError, clearErrors, selected });
@@ -1386,9 +1387,9 @@ function EFilingCases({ path }) {
         }
 
         if ("ifMultipleAddressLocations" in currentPage) {
-          const arrayValue = currentIndexData?.data[currentPage?.ifDataKeyHasValueAsArray?.dataKey] || [];
+          const arrayValue = currentIndexData?.data[currentPage?.ifMultipleAddressLocations?.dataKey] || [];
           for (let i = 0; i < arrayValue.length; i++) {
-            const mandatoryFields = currentPage?.ifDataKeyHasValueAsArray?.mandatoryFields || [];
+            const mandatoryFields = currentPage?.ifMultipleAddressLocations?.mandatoryFields || [];
             for (let j = 0; j < mandatoryFields.length; j++) {
               const value = extractValue(arrayValue[i], mandatoryFields[j]);
               const isValueEmpty = isEmptyValue(value);
@@ -1549,6 +1550,24 @@ function EFilingCases({ path }) {
             setShowErrorToast,
             toast,
             setFormErrors: setFormErrors.current,
+          })
+        )
+    ) {
+      return;
+    }
+    if (
+      formdata
+        .filter((data) => data.isenabled)
+        .some((data) =>
+          witnessDetailsValidation({
+            formData: data?.data,
+            t,
+            caseDetails,
+            selected,
+            setShowErrorToast,
+            toast,
+            setFormErrors: setFormErrors.current,
+            clearFormDataErrors: clearFormDataErrors.current,
           })
         )
     ) {

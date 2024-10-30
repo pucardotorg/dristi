@@ -5,19 +5,8 @@ const witnessFormConfig = [
       {
         type: "text",
         label: "FIRST_NAME",
-        isMandatory: true,
         populators: {
           name: "firstName",
-          error: "FIRST_LAST_NAME_MANDATORY_MESSAGE",
-          validation: {
-            pattern: {
-              message: "CORE_COMMON_APPLICANT_NAME_INVALID",
-              value: /^[^{0-9}^\$\"<>?\\\\~!@#$%^()+={}\[\]*,/_:;“”‘’]{1,100}$/i,
-            },
-            minLength: 1,
-            title: "",
-            patternType: "Name",
-          },
         },
       },
       {
@@ -52,6 +41,13 @@ const witnessFormConfig = [
             title: "",
             patternType: "Name",
           },
+        },
+      },
+      {
+        type: "text",
+        label: "WITNESS_DESIGNATION",
+        populators: {
+          name: "witnessDesignation",
         },
       },
     ],

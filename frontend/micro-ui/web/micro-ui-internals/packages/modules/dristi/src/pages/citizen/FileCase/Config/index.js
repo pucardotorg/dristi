@@ -268,9 +268,7 @@ export const sideMenuConfig = [
             ],
           },
         ],
-        mandatoryFields: [
-          "firstName", // whole witness details form is optional.
-        ],
+        anyOneOfTheseMandatoryFields: [["firstName", "witnessDesignation"]],
         ifMultipleAddressLocations: {
           // using this for counting mandatory fields in case of multiple locations .
           dataKey: "addressDetails",
