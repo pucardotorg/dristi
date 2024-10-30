@@ -265,9 +265,9 @@ function SelectReviewAccordion({ t, config, onSelect, formData = {}, errors, for
     const trimmedError = message ? message : scrutinyError.trim();
 
     const { name, configKey, index, fieldName, inputlist, fileName } = popupInfoData ? popupInfoData : popupInfo;
-    let fieldObj = { [fieldName]: { [type ? type : "FSOError"]: trimmedError } };
+    let fieldObj = { [fieldName]: { [type ? type : "FSOError"]: trimmedError, markError: true } };
     inputlist.forEach((key) => {
-      fieldObj[key] = { [type ? type : "FSOError"]: trimmedError, fileName };
+      fieldObj[key] = { [type ? type : "FSOError"]: trimmedError, fileName, markError: true };
     });
     let currentMessage =
       formData && formData[configKey] && formData[config.key]?.[name]
@@ -279,7 +279,7 @@ function SelectReviewAccordion({ t, config, onSelect, formData = {}, errors, for
 
     if (currentMessage?.form) {
       if (index == null) {
-        currentMessage.scrutinyMessage = { [type ? type : "FSOError"]: trimmedError, fileName };
+        currentMessage.scrutinyMessage = { [type ? type : "FSOError"]: trimmedError, fileName, markError: true };
       } else {
         currentMessage.form[index] = {
           ...(currentMessage?.form?.[index] || {}),

@@ -138,11 +138,12 @@ function ViewCaseFile({ t, inViewCase = false }) {
           } else {
             // If the value is a string (for FSOError and scrutinyMessage)
             if (key === "FSOError" || key === "scrutinyMessage") {
-              if (formDataNode[key] === defaultNode[key]) {
+              if (formDataNode[key] === defaultNode[key] && !formDataNode?.markError) {
                 formDataNode[key] = "";
               } else {
                 formDataNode[key] = formDataNode[key];
               }
+              formDataNode["markError"] = false;
             }
           }
         }
