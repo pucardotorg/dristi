@@ -68,7 +68,6 @@ export const DRISTIService = {
         ...data.cases,
         judgeId: judgeId,
         benchId: benchId,
-        courtId: courtId,
       },
     };
     return Request({
@@ -86,7 +85,6 @@ export const DRISTIService = {
         ...data.cases,
         judgeId: judgeId,
         benchId: benchId,
-        courtId: courtId,
       },
     };
     return Request({
