@@ -36,11 +36,14 @@ public class PdfServiceUtil {
 
     private final CaseUtil caseUtil;
 
+    private final IcopsUtil icopsUtil;
+
     @Autowired
-    public PdfServiceUtil(RestTemplate restTemplate, Configuration config, CaseUtil caseUtil) {
+    public PdfServiceUtil(RestTemplate restTemplate, Configuration config, CaseUtil caseUtil, IcopsUtil icopsUtil) {
         this.restTemplate = restTemplate;
         this.config = config;
         this.caseUtil = caseUtil;
+        this.icopsUtil = icopsUtil;
     }
 
     public ByteArrayResource generatePdfFromPdfService(TaskRequest taskRequest, String tenantId,
@@ -66,8 +69,9 @@ public class PdfServiceUtil {
             }
 
             if (WARRANT.equalsIgnoreCase(taskRequest.getTask().getTaskType())) {
+                String executorName = getExecutorName(taskRequest);
                 var warrantDetails = taskRequest.getTask().getTaskDetails().getWarrantDetails();
-                summonsPdf.setExecutorName(warrantDetails.getExecutorName());
+                summonsPdf.setExecutorName(executorName);
                 String docSubType = warrantDetails.getDocSubType();
 
                 if (BAILABLE.equalsIgnoreCase(docSubType)) {
@@ -120,6 +124,31 @@ public class PdfServiceUtil {
             log.error("Error getting response from Pdf Service", e);
             throw new CustomException("SU_PDF_APP_ERROR", "Error getting response from Pdf Service");
         }
+    }
+
+    private String getExecutorName(TaskRequest taskRequest) {
+        Coordinate coordinate = taskRequest.getTask().getTaskDetails().getRespondentDetails().getAddress().getCoordinate();
+
+        if (coordinate == null) {
+            throw new CustomException(COORDINATE_NOT_FOUND,"coordinate object is missing in address field of respondentDetails");
+        }
+
+        String latitude = coordinate.getLatitude();
+        String longitude = coordinate.getLongitude();
+
+        if (latitude == null || latitude.trim().isEmpty() || longitude == null || longitude.trim().isEmpty()) {
+            throw new CustomException(LOCATION_NOT_FOUND,"latitude or longitude data is missing or empty in coordinate field inside Address of respondentDetails");
+        }
+
+        Location location = Location.builder()
+                .latitude(taskRequest.getTask().getTaskDetails().getRespondentDetails().getAddress().getCoordinate().getLatitude())
+                .longitude(taskRequest.getTask().getTaskDetails().getRespondentDetails().getAddress().getCoordinate().getLongitude()).build();
+
+        LocationRequest locationRequest = LocationRequest.builder()
+                .requestInfo(taskRequest.getRequestInfo())
+                .location(location).build();
+        LocationBasedJurisdiction locationBasedJurisdiction = icopsUtil.getLocationBasedJurisdiction(locationRequest);
+        return locationBasedJurisdiction.getNearestPoliceStation().getStation();
     }
 
     private SummonsPdf createSummonsPdfFromTask(Task task) {

@@ -72,7 +72,10 @@ public class IcopsService {
                 .latitude(taskRequest.getTask().getTaskDetails().getRespondentDetails().getAddress().getCoordinate().getLatitude())
                 .longitude(taskRequest.getTask().getTaskDetails().getRespondentDetails().getAddress().getCoordinate().getLongitude()).build();
 
-        LocationBasedJurisdiction locationBasedJurisdiction = getLocationBasedJurisdiction(location);
+        LocationRequest locationRequest = LocationRequest.builder()
+                .requestInfo(taskRequest.getRequestInfo())
+                .location(location).build();
+        LocationBasedJurisdiction locationBasedJurisdiction = getLocationBasedJurisdiction(locationRequest);
 
         processRequest.setProcessPoliceStationCode(locationBasedJurisdiction.getIncludedJurisdiction().getCode());
         processRequest.setProcessPoliceStationName(locationBasedJurisdiction.getIncludedJurisdiction().getStation());
@@ -147,8 +150,8 @@ public class IcopsService {
         }
     }
 
-    public LocationBasedJurisdiction getLocationBasedJurisdiction(Location location) throws Exception {
+    public LocationBasedJurisdiction getLocationBasedJurisdiction(LocationRequest request) throws Exception {
         AuthResponse authResponse = authUtil.authenticateAndGetToken();
-        return policeJurisdictionUtil.getLocationBasedJurisdiction(authResponse,location);
+        return policeJurisdictionUtil.getLocationBasedJurisdiction(authResponse,request.getLocation());
     }
 }

@@ -122,6 +122,8 @@ public class CaseQueryBuilder {
 
                 firstCriteria = addCriteria(criteria.getSubstage(), query, firstCriteria, "cases.substage = ?",preparedStmtList, preparedStmtArgList, Types.VARCHAR);
 
+                firstCriteria = addCaseSearchTextCriteria(criteria, query, firstCriteria, preparedStmtList, preparedStmtArgList);
+
                 firstCriteria = addLitigantCriteria(criteria,preparedStmtList, preparedStmtArgList, requestInfo, query, firstCriteria);
 
                 firstCriteria = addAdvocateCriteria(criteria,preparedStmtList, preparedStmtArgList, requestInfo, query, firstCriteria);
@@ -455,5 +457,18 @@ public class CaseQueryBuilder {
 
     private boolean isEmptyPagination(Pagination pagination) {
         return pagination == null || pagination.getSortBy()==null || pagination.getOrder() == null;
+    }
+
+    private boolean addCaseSearchTextCriteria(CaseCriteria criteria, StringBuilder query, boolean firstCriteria, List<Object> preparedStmtList, List<Integer> preparedStmtArgList) {
+        if (criteria.getCaseSearchText() != null && !criteria.getCaseSearchText().isEmpty()) {
+            addClauseIfRequired(query, firstCriteria);
+            query.append(" (LOWER(cases.courtcasenumber) LIKE LOWER(?) OR LOWER(cases.filingnumber) LIKE LOWER(?) OR LOWER(cases.cmpnumber) LIKE LOWER(?))");
+            for (int i = 0; i < 3; i++) {
+                preparedStmtList.add("%" + criteria.getCaseSearchText() + "%");
+                preparedStmtArgList.add(Types.VARCHAR);
+            }
+            firstCriteria = false;
+        }
+        return firstCriteria;
     }
 }

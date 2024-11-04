@@ -763,4 +763,19 @@ class CaseQueryBuilderTest {
         // Assert
         assertTrue(resultQuery.contains(" ORDER BY cases.casenumber ASC "));
     }
+
+    @Test
+    void addCaseSearchTextCriteria_ShouldReturnCorrectQuery_WhenSearchTextIsNotNull() {
+        CaseCriteria criteria = new CaseCriteria();
+        criteria.setCaseSearchText("123");
+
+        List<Object> preparedStmtList = new ArrayList<>();
+        List<Integer> preparedStmtArgList = new ArrayList<>();
+
+        String expectedQuery = " SELECT cases.id as id, cases.tenantid as tenantid, cases.casenumber as casenumber, cases.resolutionmechanism as resolutionmechanism, cases.casetitle as casetitle, cases.casedescription as casedescription, cases.filingnumber as filingnumber, cases.casenumber as casenumber, cases.accesscode as accesscode, cases.courtcasenumber as courtcasenumber, cases.cnrNumber as cnrNumber,  cases.outcome as outcome, cases.cmpnumber, cases.courtid as courtid, cases.benchid as benchid, cases.casetype, cases.judgeid as judgeid, cases.stage as stage, cases.substage as substage, cases.filingdate as filingdate, cases.judgementdate as judgementdate, cases.registrationdate as registrationdate, cases.natureofpleading as natureofpleading, cases.status as status, cases.remarks as remarks, cases.isactive as isactive, cases.casedetails as casedetails, cases.additionaldetails as additionaldetails, cases.casecategory as casecategory, cases.createdby as createdby, cases.lastmodifiedby as lastmodifiedby, cases.createdtime as createdtime, cases.lastmodifiedtime as lastmodifiedtime  FROM dristi_cases cases WHERE  (LOWER(cases.courtcasenumber) LIKE LOWER(?) OR LOWER(cases.filingnumber) LIKE LOWER(?) OR LOWER(cases.cmpnumber) LIKE LOWER(?))";
+        String actualQuery = queryBuilder.getCasesSearchQuery(criteria, preparedStmtList, preparedStmtArgList,null);
+
+        assertEquals(expectedQuery, actualQuery);
+        assertEquals(3, preparedStmtList.size());
+    }
 }

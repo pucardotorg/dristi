@@ -50,4 +50,16 @@ public class IcopsController {
         log.info("api = /getProcessReport , Status = SUCCESS");
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
+
+    @PostMapping("/v1/integrations/iCops/_getLocationBasedJurisdiction")
+    public ResponseEntity<LocationBasedJurisdictionResponse> getLocationBasedJurisdiction(@RequestBody LocationRequest locationRequest) throws Exception {
+        log.info("api = /_getLocationBasedJurisdiction , Status = IN-PROGRESS");
+        LocationBasedJurisdiction locationBasedJurisdiction = icopsService.getLocationBasedJurisdiction(locationRequest);
+        ResponseInfo responseInfo = ResponseInfo.builder().build();
+        LocationBasedJurisdictionResponse response = LocationBasedJurisdictionResponse.builder()
+                .responseInfo(responseInfo)
+                .locationBasedJurisdiction(locationBasedJurisdiction).build();
+        log.info("api = /_getLocationBasedJurisdiction , Status = SUCCESS");
+        return new ResponseEntity<>(response, HttpStatus.OK);
+    }
 }

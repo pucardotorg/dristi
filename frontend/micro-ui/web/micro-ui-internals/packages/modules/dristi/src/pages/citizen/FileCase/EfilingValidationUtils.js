@@ -322,6 +322,25 @@ export const checkNameValidation = ({ formData, setValue, selected, reset, index
             }, 0);
           }
         }
+        if (["complainantAge", "witnessAge"].includes(key) && Object.hasOwnProperty.call(formDataCopy, key)) {
+          const oldValue = formDataCopy[key];
+          let value = oldValue;
+
+          let updatedValue = value?.replace(/\D/g, "");
+          // Convert to number and restrict value to 150
+          if (updatedValue && parseInt(updatedValue, 10) > 150) {
+            updatedValue = updatedValue.substring(0, updatedValue.length - 1); // Disallow the extra digit
+          }
+          if (updatedValue !== oldValue) {
+            const element = document?.querySelector(`[name="${key}"]`);
+            const start = element?.selectionStart;
+            const end = element?.selectionEnd;
+            setValue(key, updatedValue);
+            setTimeout(() => {
+              element?.setSelectionRange(start, end);
+            }, 0);
+          }
+        }
       }
     }
   }

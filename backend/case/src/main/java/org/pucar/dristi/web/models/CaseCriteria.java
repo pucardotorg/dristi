@@ -40,6 +40,9 @@ public class CaseCriteria {
     @JsonProperty("courtCaseNumber")
     private String courtCaseNumber = null;
 
+    @JsonProperty("caseSearchText")
+    private String caseSearchText = null;
+
     @JsonProperty("filingFromDate")
     @Valid
     private Long filingFromDate = null;

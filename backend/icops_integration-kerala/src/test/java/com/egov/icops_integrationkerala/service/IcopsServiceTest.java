@@ -63,6 +63,8 @@ class IcopsServiceTest {
 
     private Coordinate coordinate;
 
+    private LocationRequest locationRequest;
+
     @BeforeEach
     void setUp() {
         taskRequest = mock(TaskRequest.class);
@@ -76,6 +78,8 @@ class IcopsServiceTest {
         icopsProcessReport = mock(IcopsProcessReport.class);
         address = mock(Address.class);
         coordinate = mock(Coordinate.class);
+        locationRequest = new LocationRequest();
+        locationRequest.setLocation(location);
     }
 
     @Test
@@ -183,9 +187,10 @@ class IcopsServiceTest {
     @Test
     void testGetLocationBasedJurisdiction_Success() throws Exception {
         when(authUtil.authenticateAndGetToken()).thenReturn(authResponse);
-        when(policeJurisdictionUtil.getLocationBasedJurisdiction(any(AuthResponse.class), any(Location.class))).thenReturn(locationBasedJurisdiction);
+        when(policeJurisdictionUtil.getLocationBasedJurisdiction(any(AuthResponse.class), any(Location.class)))
+                .thenReturn(locationBasedJurisdiction);
 
-        LocationBasedJurisdiction result = icopsService.getLocationBasedJurisdiction(location);
+        LocationBasedJurisdiction result = icopsService.getLocationBasedJurisdiction(locationRequest);
 
         assertNotNull(result);
     }

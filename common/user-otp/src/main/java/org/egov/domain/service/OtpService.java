@@ -12,6 +12,7 @@ import org.egov.persistence.repository.OtpRepository;
 import org.egov.persistence.repository.OtpSMSRepository;
 import org.egov.persistence.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -22,6 +23,9 @@ public class OtpService {
     private OtpSMSRepository otpSMSSender;
     private OtpEmailRepository otpEmailRepository;
     private UserRepository userRepository;
+
+    @Value("${config.isTest}")
+    private boolean isTest;
 
     @Autowired
     public OtpService(OtpRepository otpRepository, OtpSMSRepository otpSMSSender, OtpEmailRepository otpEmailRepository,
@@ -51,7 +55,9 @@ public class OtpService {
             throw new UserNotExistingInSystemException();
 
         final String otpNumber = otpRepository.fetchOtp(otpRequest);
-        otpSMSSender.send(otpRequest, otpNumber);
+        if(!isTest) {
+            otpSMSSender.send(otpRequest, otpNumber);
+        }
         if(!otpRequest.isRegistrationRequestType()) // Because new user doesn't have any email configured
             try{
                 otpEmailRepository.send(matchingUser.getEmail(), otpNumber, otpRequest);
