@@ -1,0 +1,37 @@
+@startuml
+autonumber
+skinparam responseMessageBelowArrow true
+
+title "Case Bundle - Bulk Create API"
+
+control CronJob as CJ
+
+box DRISIT Services
+participant CaseManagementService as CMS #gold
+participant ProducerSvc as P #gold
+end box
+
+box DIGIT Services #lightgray
+participant Kafka as K #lightgreen
+Database ESIndexer as ES #gray
+Database PostgreSQL as DB #gray
+end box
+
+note right of CJ: CronJob runs at midnight daily
+CJ->CMS++:Bulk create case bundle
+CMS->CMS: record BulkCaseBundleTracker.startDate
+CMS->ES++: query for index 'case-bundle-pdf' where index.contentLastModified > index.pdfCreatedDate
+note right of CMS: only query those index items where the case bundle content has any updates since the last time the case bundle PDF was generated
+return caseBundleList
+
+CMS->P++: process caseBundleList
+loop for each case in caseBundleList
+  P->P: create eventStructure
+  P->K++: log create.bundle.create topic (eventStructure)
+end
+
+CMS->CMS: set CaseBundleTracker.caseCount = caseBundleList.Count
+CMS->CMS: record CaseBundleTracker.endDate
+CMS->DB++: insert CaseBundleTracker
+
+@enduml
