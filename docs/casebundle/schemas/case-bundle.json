@@ -4,11 +4,7 @@
   "$comment": "definition of the schema for Case Bundle",
   "$version": "1.0",
   "name": "case-bundle-pdf",
-  "ID" : {
-    "type": "string",
-    "format": "uuid",
-    "description": "index UUID for this instance. useful to query and update"
-  },
+
   "tenantId": "KL",
   "caseID": {
     "type": "string",
@@ -26,7 +22,7 @@
   },
   "contentLastModified" : {
     "type": "double",
-    "description": "Date the last time the case bundle was updated. Stored in EPOCH date time. If updatedDate is greater than pdfCreatedDate, then new PDF needs to be generated, use the bundle section below to create the PDF"
+    "description": "Date the last time the case bundle index was updated. Stored in EPOCH date time. If updatedDate is greater than pdfCreatedDate, then new PDF needs to be generated, use the bundle section below to create the PDF"
   },
   "bundle" : {
     "description": "bundle consists of sections, within each section it can multiple entries with (all entries created by litigant or advocate) or without cover note, chronologically arranged with earliest entry first. PRD - https://docs.google.com/document/d/1YQlB5ubGhSye3XktGU4INLLByGLkcRaW_JlLChLFlLM/edit",

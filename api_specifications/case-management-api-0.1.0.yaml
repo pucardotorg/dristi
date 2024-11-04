@@ -349,11 +349,6 @@ components:
           format: uuid
           minLength: 36
           maxLength: 36
-        indexId:
-          type: string
-          format: uuid
-          minLength: 36
-          maxLength: 36
 
     CaseBundleResponse:
       type: object
@@ -381,3 +376,40 @@ components:
           $ref: https://raw.githubusercontent.com/egovernments/DIGIT-Specs/common-contract-update/Common%20Services/common-contract.yaml#/components/schemas/ResponseInfo
         status:
           type: boolean
+
+    CaseBundleTracker:
+      type: object
+      properties:
+        startTime:
+          type: integer
+          format: int64
+          description: The date time of start of case bundle creation in epoch time (milliseconds)
+        endTime:
+          type: integer
+          format: int64
+          description: The date time of end of case bundle creation in epoch time (milliseconds)
+        pageCount:
+          type: integer
+          format: int32
+          description: the count of the page in the final PDF generated
+        errorLog:
+          type: string
+          description: error details, if any
+        auditDetails:
+          $ref: 'https://raw.githubusercontent.com/egovernments/DIGIT-Specs/common-contract-update/Common%20Services/common-contract.yaml#/components/schemas/AuditDetails'
+
+    BulkCaseBundleTracker:
+      type: object
+      properties:
+        startTime:
+          type: integer
+          format: int64
+          description: The date time of start of case bundle creation in epoch time (milliseconds)
+        endTime:
+          type: integer
+          format: int64
+          description: The date time of end of case bundle creation in epoch time (milliseconds)
+        caseCount:
+          type: integer
+          format: int32
+          description: the count of the cases retrieved from the index, whose bundle needs to be created

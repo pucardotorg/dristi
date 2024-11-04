@@ -73,7 +73,7 @@ end
         CBS->PS++: create PDF (item.sourceId)
         return streamPDF
 
-        alt sectionRow.coverPageRequired = true
+        alt sectionRow.docketPageRequired = true
           CBS->PS++: create cover PDF (item.sourceId)
           return coverPDF
           CBS->CBS: streamPDF = merge (append) streamPDF into coverPDF
