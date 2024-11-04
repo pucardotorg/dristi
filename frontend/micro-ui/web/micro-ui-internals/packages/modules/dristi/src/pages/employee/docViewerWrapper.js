@@ -41,14 +41,19 @@ const DocViewerWrapper = ({
   const Digit = window?.Digit || {};
   const { t } = useTranslation();
   const { fileUrl, fileName } = Digit.Hooks.useQueryParams();
+  const token = localStorage.getItem("token");
   // const [selectedDocs, setSelectedDocs] = useState([]);
   const uri = `${window.location.origin}${Urls.FileFetchById}?tenantId=${tenantId}&fileStoreId=${fileStoreId}`;
+  const headers = {
+    "auth-token": `${token}`,
+  };
   const documents = fileStoreId
     ? [{ uri: uri || "", fileName: "fileName" }]
     : selectedDocs.map((file) => ({
         uri: window.URL.createObjectURL(file),
         fileName: file?.name || fileName,
       }));
+
   return (
     <div className="docviewer-wrapper" id="docviewer-id">
       <Card className={docViewerCardClassName} style={docViewerStyle}>
@@ -58,6 +63,8 @@ const DocViewerWrapper = ({
               className="docViewer-image"
               documents={documents}
               pluginRenderers={DocViewerRenderers}
+              prefetchMethod="GET"
+              requestHeaders={headers}
               style={{ width: docWidth, height: docHeight, ...style }}
               theme={{
                 primary: "#F47738",
