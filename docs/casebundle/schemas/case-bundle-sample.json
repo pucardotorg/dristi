@@ -1,0 +1,78 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "http://dristi.pucar.org/schemas/case-bundle.json",
+  "$comment": "definition of the schema for Case Bundle",
+  "$version": "1.0",
+  "name": "case-bundle-pdf",
+  "caseID": "b1287d33-ab7f-490b-b6f3-85751890aef4",
+  "tenantId": "KL",
+  "pdfCreatedDate" : "1721807920140",
+  "fileStoreId" : "3059806b-3059-4724-8ae1-d3f4e12686ff",
+  "entriesUpdatedDate" : "1721807920100",
+  "bundle" : {
+    "section1": {
+      "name": "titlepage",
+      "items": {
+        "item": {
+          "createPDF": "true",
+          "sourceId": null,
+          "fileStoreId": null,
+          "sortParam": null
+        }
+      }
+    },
+    "section2" : {
+      "name": "adiary",
+      "items": null
+    },
+    "section3": {
+      "name": "pendingapplications",
+      "items": {
+        "item": {
+          "description": "delay condonation application. first time create cover page",
+          "createPDF": "true",
+          "sourceId": "3059806b-3059-4724-8ae1-d3f4e12686ff",
+          "fileStoreId": "7759806b-3059-4724-8ae1-d3f4e12686ff",
+          "sortParam": "applicationNumber"
+        },
+        "item": {
+          "description": "objection to above application, if any",
+          "type": {
+            "enum": [
+              "create",
+              "pdf"
+            ],
+            "description": "'create' means need to create the PDF and use it. 'pdf' mean it is available and just need to use it. use fileStoreId for it. "
+          },
+          "sourceId": {
+            "type": "boolean",
+            "description": "true means need to create cover page, false means not required. This field is to be used only if type=create. cover page once created can be saved along with pdf to be reused"
+          },
+          "fileStoreId": {
+            "type": "string",
+            "format": "uuid",
+            "description": "file store ID of the PDF created. Use this to directly include in the bundle"
+          },
+          "sortParam": null
+        }
+      }
+    },
+    "section21": {
+      "name": "orders",
+      "items": {
+        "item": {
+          "createPDF": "false",
+          "sourceId": "3059806b-5643-4724-8ae1-d3f4e12686ff" ,
+          "fileStoreId": "3059806b-3059-4724-8ae1-d3f4e1268f55",
+          "createdDate": 1721807920100
+        },
+        "item": {
+          "createPDF": "false",
+          "sourceId": "3059806b-3059-8544-8ae1-d3f4e12686ff" ,
+          "fileStoreId": "6543806b-3059-4724-8ae1-d3f4e1268f55",
+          "createdDate": 1721807950676
+        }
+      }
+    }
+  }
+}

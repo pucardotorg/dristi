@@ -1,0 +1,109 @@
+@startuml
+autonumber
+skinparam responseMessageBelowArrow true
+
+title "Case Bundle - Create API"
+
+actor person as P
+participant HomeScreenUI as HU
+participant ViewCaseUI as VU
+participant ViewCasePDFUI as VCPDFU
+
+
+box DRISIT Services
+participant CaseManagementService as CMS #gold
+participant CaseSvc as CS #gold
+participant CaseBundleSvc as CBS #gold
+participant CaseUtilSvc as CUS #gold
+end box
+
+box DIGIT Services #lightgray
+Database ESIndexer as ES #gray
+participant FilestoreSvc as FS #lightgreen
+participant PDFSvc as PS #lightgreen
+participant MasterDataSvc as MDS #lightgreen
+end box
+
+P->HU: login
+P->HU: select a case to view
+HU->VU: redirects to View Case screen
+P->VU: Click "Case PDF"
+VU->VCPDFU: view case bundle PDF
+VCPDFU->CMS++: create case bundle (caseId)
+
+CMS->ES++: query 'case-bundle-pdf' index for caseId
+return indexJson
+
+alt indexJson.contentLastModified <= indexJson.pdfCreatedDate
+   note over CMS: no content update. So reuse the PDF bundle already created
+   CMS->VCPDFU: return indexJson.fileStoreId
+end
+
+CMS->CS++: get case details (caseId)
+return case details
+
+alt case.courtCaseNumber != null
+note right of CMS: Case has an ST number. Has been admitted
+  CMS->CMS: set caseNumber = case.courtCaseNumber
+else case.cmpNumber != null
+note right of CMS: Case has a CMP number. Has been registered
+  CMS->CMS: set caseNumber = case.cmpNumber
+else
+note right of CMS: Case not yet registered
+  CMS->CMS: set caseNumber = case.filingNumber
+end
+
+CMS->CBS++: Build CasePDF (caseNumber, indexJson)
+
+loop for each section in index.bundle.sections
+
+CBS->MDS++: get sectionRow from case_bundle_master where name = section.name
+return sectionRow
+alt sectionRow.isActive = false
+  note right of CBS: section not to be processed. continue to next item in loop
+end
+
+  alt section.name = "titlepage"
+    CBS->PS++: create Cover Page PDF (caseNumber)
+    return streamPDF
+    CBS->CBS: set CasePDF = streamPDF
+  else
+  loop for each item in section.items
+     alt item.createPDF = true
+        CBS->PS++: create PDF (item.sourceId)
+        return streamPDF
+
+        alt sectionRow.coverPageRequired = true
+          CBS->PS++: create cover PDF (item.sourceId)
+          return coverPDF
+          CBS->CBS: streamPDF = merge (append) streamPDF into coverPDF
+        end
+
+        CBS->CBS: merge streamPDF into CasePDF and update header with caseNumber
+        alt can save PDF?
+           CBS->FS++: store streamPDF
+           return fileStoreID
+           CBS->CBS: update item.fileStoreId = fileStoreID
+           CBS->CBS: update indexJson (case-bundle-pdf, caseId)
+        end
+     else
+        CBS->CBS: merge item.fileStoreId into CasePDF and update header with caseNumber
+     end
+  end
+  end
+end
+
+CBS->FS++: store CasePDF
+return fileStoreId
+
+CBS->CBS: update indexJson.filestoreId = fileStoreId
+
+CBS->ES: update index (indexJson.ID, caseId, indexJson)
+return success
+return index.fileStoreId
+return index.fileStoreId
+
+VCPDFU->FS++: get case bundle PDF (index.fileStoreId)
+return case bundle PDF
+VCPDFU->VCPDFU: view case bundle PDF
+@enduml

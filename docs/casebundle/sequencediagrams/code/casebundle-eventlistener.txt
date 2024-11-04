@@ -1,0 +1,109 @@
+@startuml
+autonumber
+skinparam responseMessageBelowArrow true
+
+title "Case Bundle - Event Listener"
+
+actor VariousEntities as A
+participant HomeScreenUI as HU
+participant ViewCaseUI as VU
+participant ViewCasePDFUI as VCPDFU
+
+
+box DRISIT Services
+participant CaseBundleListenerSvc as CBLS #gold
+participant CaseManagementService as CMS #gold
+participant CaseSvc as CS #gold
+participant CaseBundleSvc as CBS #gold
+participant CaseUtilSvc as CUS #gold
+end box
+
+box DIGIT Services #lightgray
+Database ESIndexer as ES #gray
+participant FilestoreSvc as FS #lightgreen
+participant PDFSvc as PS #lightgreen
+participant MasterDataSvc as MDS #lightgreen
+queue Kafka as K #lightgreen
+participant PersisterSvc as PS #lightgreen
+Database PostgreSQL as DB #gray
+end box
+
+
+A->K: post event
+CBLS->K: listen to various events
+
+CBLS->CUS++: is valid event (eventName)
+CUS->MDS++: query case_bundle_event_master for eventName
+return masterRecord
+alt eventName not in masterRecord
+  CUS->CBLS: return FALSE
+  note over CBLS: This event is not related to case bundle PDF. Hence exit
+else
+  return return TRUE
+  note over CBLS: This is an event related to case bundle PDF. Go to "Event Processing"
+end
+
+== UNDER_SCRUTINY ==
+note across: Case is under scrutiny, hence complaint has been signed and all documents to be filed are finalized. But we don't know what document might have changed, so we will regenerate all
+CBLS->CS++: get case details (caseId)
+return caseDetails
+CBLS->ES++: query 'case-bundle-pdf' index for caseId
+return indexJson
+
+
+
+CBLS->CUS++: process complaint(caseDetails, sectionRow)
+CUS->MDS++: get sectionRow from case_bundle_master where "complaint" = section.name
+return sectionRow
+alt sectionRow.isActive = false
+  note right of CUS: section not to be processed. exit method
+else
+  CUS->CUS: get complaintPDF from caseDetails as streamPDF 
+  alt sectionRow.coverPageRequired = true
+    CUS->PS++: create cover PDF (item.sourceId, sectionRow.coverpagestatement)
+    return coverPDF
+    CUS->CUS: streamPDF = merge (append) streamPDF into coverPDF
+    return streamPDF
+  end
+
+  CUS->FS++: store streamPDF
+  return streamPDF fileStoreId
+  CUS->CUS: update indexJson with fileStoreId, 
+  note right of CUS
+     update section.name = complaint, in indexJson
+     set items.item.createPDF = false
+     set items.item.sourceId = complaintPDF.fileStoreId
+     set items.item.fileStoreId = streamPDF fileStroreId
+     set items.item.sortParam = null
+  end note 
+
+end
+
+
+
+CBLS->CUS++: process affidavit(caseDetails)
+
+CBLS->CUS++: process vakalat(caseDetails)
+
+CBLS->CUS++: process witnessschedule(caseDetails)
+
+CBLS->CUS++: process documents(caseDetails)
+
+
+
+
+
+== PENDING_ADMISSION_HEARING ==
+== CASE_ADMITTED ==
+== PENDING_APPROVAL ==
+== COMPLETED ==
+
+
+
+
+
+
+== Event Processing == 
+
+
+@enduml
