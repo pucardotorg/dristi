@@ -88,6 +88,27 @@ function AdvocateNameDetails({ t, config, onSelect, formData = {}, errors, regis
     setIsApproved(!isPending);
   }, []);
 
+  const selectedAdvindividualId = useMemo(() => formData?.advocateBarRegNumberWithName?.[0]?.individualId || null, [
+    formData?.advocateBarRegNumberWithName,
+  ]);
+
+  const { data: selectedIndividual, isLoading: isInidividualLoading } = window?.Digit.Hooks.dristi.useGetIndividualUser(
+    {
+      Individual: {
+        individualId: selectedAdvindividualId,
+      },
+    },
+    { tenantId, limit: 1000, offset: 0 },
+    moduleCode,
+    `getindividual-${selectedAdvindividualId}`,
+    selectedAdvindividualId
+  );
+
+  const idType = selectedIndividual?.Individual?.[0]?.identifiers[0]?.identifierType || "";
+  const identifierIdDetails = JSON.parse(
+    selectedIndividual?.Individual?.[0]?.additionalFields?.fields?.find((obj) => obj.key === "identifierIdDetails")?.value || "{}"
+  );
+
   useEffect(() => {
     if (formData.advocateBarRegNumberWithName) {
       const fullName = formData?.advocateBarRegNumberWithName?.[0]?.advocateName;
@@ -107,6 +128,7 @@ function AdvocateNameDetails({ t, config, onSelect, formData = {}, errors, regis
       const userName = searchResult[0]?.additionalDetails?.username;
       const advocateId = searchResult[0]?.id;
       const advocateUuid = searchResult[0]?.auditDetails?.createdBy;
+      const individualId = searchResult[0]?.individualId;
       onSelect("advocateBarRegNumberWithName", [
         {
           barRegistrationNumber: `${barRegNum} (${userName})`,
@@ -115,15 +137,41 @@ function AdvocateNameDetails({ t, config, onSelect, formData = {}, errors, regis
           barRegistrationNumberOriginal: barRegNum,
           advocateId,
           advocateUuid,
+          individualId,
         },
       ]);
       onSelect("AdvocateNameDetails", {
         firstName: splitNamesPartiallyFromFullName(userName)?.firstName,
         middleName: splitNamesPartiallyFromFullName(userName)?.middleName,
         lastName: splitNamesPartiallyFromFullName(userName)?.lastName,
+        advocateIdProof: identifierIdDetails?.fileStoreId
+          ? [
+              {
+                name: idType,
+                fileStore: identifierIdDetails?.fileStoreId,
+                documentName: identifierIdDetails?.filename,
+                fileName: "ID Proof",
+              },
+            ]
+          : null,
       });
     }
-  }, [isApproved, onSelect, searchResult]);
+    if (isApproved && !searchResult && selectedIndividual) {
+      onSelect("AdvocateNameDetails", {
+        ...formData?.AdvocateNameDetails,
+        advocateIdProof: identifierIdDetails?.fileStoreId
+          ? [
+              {
+                name: idType,
+                fileStore: identifierIdDetails?.fileStoreId,
+                documentName: identifierIdDetails?.filename,
+                fileName: "ID Proof",
+              },
+            ]
+          : null,
+      });
+    }
+  }, [isApproved, onSelect, searchResult, selectedIndividual]);
 
   const inputs = useMemo(
     () =>

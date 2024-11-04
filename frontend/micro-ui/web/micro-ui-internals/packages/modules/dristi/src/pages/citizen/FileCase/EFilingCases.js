@@ -1099,6 +1099,9 @@ function EFilingCases({ path }) {
                 if (selected === "complainantDetails" && formComponent.component === "CustomRadioInfoComponent") {
                   key = formComponent.key + "." + formComponent?.populators?.optionsKey;
                 }
+                if (selected === "complainantDetails" && formComponent.component === "VerificationComponent") {
+                  key = "complainantVerification.individualDetails.document";
+                }
                 const modifiedFormComponent = cloneDeep(formComponent);
                 if (modifiedFormComponent?.labelChildren === "optional") {
                   modifiedFormComponent.labelChildren = <span style={{ color: "#77787B" }}>&nbsp;{`${t("CS_IS_OPTIONAL")}`}</span>;
@@ -1140,6 +1143,9 @@ function EFilingCases({ path }) {
                     modifiedFormComponent.disable = false;
                   }
                   if (key in scrutiny?.[selected]?.form?.[index] && scrutiny?.[selected]?.form?.[index]?.[key]?.FSOError) {
+                    if (key === "complainantVerification.individualDetails.document") {
+                      modifiedFormComponent.isScrutiny = true;
+                    }
                     modifiedFormComponent.disable = false;
                     modifiedFormComponent.withoutLabel = true;
                     modifiedFormComponent.disableScrutinyHeader = true;
@@ -1691,6 +1697,7 @@ function EFilingCases({ path }) {
           ...(res && { fileStoreId: res?.data?.cases?.[0]?.documents?.[0]?.fileStore }),
           ...(caseComplaintDocument && { caseComplaintDocument: caseComplaintDocument }),
           multiUploadList,
+          scrutinyObj,
         });
 
         // After successful update, reset form and refetch case data
@@ -1740,6 +1747,7 @@ function EFilingCases({ path }) {
       tenantId,
       setErrorCaseDetails,
       multiUploadList,
+      scrutinyObj,
     })
       .then(() => {
         refetchCaseData().then(() => {
@@ -1810,6 +1818,7 @@ function EFilingCases({ path }) {
       setErrorCaseDetails,
       isSaveDraftEnabled: isCaseReAssigned || isPendingReESign || isPendingESign,
       multiUploadList,
+      scrutinyObj,
     })
       .then(() => {
         if (!isCaseReAssigned) {

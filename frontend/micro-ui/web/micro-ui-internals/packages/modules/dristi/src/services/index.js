@@ -27,6 +27,14 @@ export const DRISTIService = {
       data,
       params,
     }),
+  updateIndividualUser: (data, params) =>
+    Request({
+      url: Urls.dristi.updateIndividual,
+      useCache: false,
+      userService: false,
+      data,
+      params,
+    }),
   searchIndividualUser: (data, params) =>
     Request({
       url: Urls.dristi.searchIndividual,

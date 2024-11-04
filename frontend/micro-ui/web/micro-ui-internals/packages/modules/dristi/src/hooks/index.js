@@ -34,6 +34,7 @@ export const Urls = {
   Authenticate: "/user/oauth/token",
   dristi: {
     individual: "/individual/v1/_create",
+    updateIndividual: "/individual/v1/_update",
     searchIndividual: "/individual/v1/_search",
     searchIndividualAdvocate: "/advocate/v1/_search",
     searchIndividualClerk: "/advocate/clerk/v1/_search",

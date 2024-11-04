@@ -74,6 +74,7 @@ const CustomReviewCardRow = ({
     textDependentOn = null,
     textDependentValue = null,
     notAvailable = null,
+    enableScrutinyField = false,
   } = config;
   const tenantId = window?.Digit.ULBService.getCurrentTenantId();
 
@@ -95,7 +96,7 @@ const CustomReviewCardRow = ({
   const handleImageClick = useCallback(
     (configKey, name, dataIndex, fieldName, data, inputlist, dataError) => {
       if (isScrutiny && data) {
-        handleClickImage(null, configKey, name, dataIndex, fieldName, data, inputlist, dataError, disableScrutiny);
+        handleClickImage(null, configKey, name, dataIndex, fieldName, data, inputlist, dataError, disableScrutiny, enableScrutinyField);
       }
       return null;
     },
@@ -103,8 +104,8 @@ const CustomReviewCardRow = ({
   );
   const renderCard = useMemo(() => {
     let bgclassname = "";
-    let showFlagIcon = isScrutiny && !disableScrutiny ? true : false;
-    if (isPrevScrutiny && !disableScrutiny) {
+    let showFlagIcon = isScrutiny && (!disableScrutiny || enableScrutinyField) ? true : false;
+    if (isPrevScrutiny && (!disableScrutiny || enableScrutinyField)) {
       showFlagIcon = prevDataError ? true : false;
     }
     if (isScrutiny) {
@@ -441,7 +442,7 @@ const CustomReviewCardRow = ({
           isScrutiny && FSOErrors?.length > 0 ? (JSON.stringify(dataError) === JSON.stringify(prevDataError) ? "preverror" : "error") : "";
         bgclassname =
           FSOErrors?.length > 0 && isCaseReAssigned ? "preverrorside" : isScrutiny && systemErrors?.length > 0 ? "system-error-class" : bgclassname;
-        if (isPrevScrutiny && !disableScrutiny) {
+        if (isPrevScrutiny && (!disableScrutiny || enableScrutinyField)) {
           showFlagIcon = prevDataError?.[type]?.FSOError;
         }
         value?.forEach((val) => {
@@ -779,6 +780,7 @@ const CustomReviewCardRow = ({
     label,
     textDependentValue,
     notAvailable,
+    enableScrutinyField,
     isJudge,
     handleOpenPopup,
     configKey,

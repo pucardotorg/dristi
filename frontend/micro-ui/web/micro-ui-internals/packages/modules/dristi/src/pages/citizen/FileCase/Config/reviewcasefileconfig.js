@@ -44,6 +44,7 @@ export const reviewCaseFileFormConfig = [
                   type: "image",
                   label: "CS_ID_PROOF",
                   value: ["complainantVerification.individualDetails.document", "companyDetailsUpload.document"],
+                  enableScrutinyField: true,
                 },
                 {
                   type: "address",
@@ -471,8 +472,9 @@ export const reviewCaseFileFormConfig = [
                 },
                 {
                   type: "image",
-                  label: "CS_VAKALAT_NAMA",
-                  value: ["vakalatnamaFileUpload.document"],
+                  label: "CS_DOCUMENT",
+                  value: ["vakalatnamaFileUpload.document", "AdvocateNameDetails.advocateIdProof"],
+                  enableScrutinyField: true,
                 },
               ],
               data: {},

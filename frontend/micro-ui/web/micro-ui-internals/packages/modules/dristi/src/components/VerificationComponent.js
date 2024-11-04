@@ -140,7 +140,7 @@ function VerificationComponent({ t, config, onSelect, formData = {}, errors, set
           [currentValue?.["ID_Proof"]?.[0]?.[1]?.["file"]].map((file) =>
             fileValidator(file, idProofVerificationConfig?.[0].body[0]?.populators?.inputs?.[1])
           );
-        const isUserVerified = isAadharVerified || formData?.[config.key]?.[config.key];
+        const isUserVerified = isAadharVerified || (!config?.isScrutiny && formData?.[config.key]?.[config.key]);
         return (
           <React.Fragment key={index}>
             <CardLabel className="card-label-smaller">{t(input.label)}</CardLabel>

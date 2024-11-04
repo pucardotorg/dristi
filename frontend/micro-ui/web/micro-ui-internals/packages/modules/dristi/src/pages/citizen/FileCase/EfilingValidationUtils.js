@@ -967,6 +967,47 @@ export const createIndividualUser = async ({ data, documentData, tenantId }) => 
   return response;
 };
 
+export const updateIndividualUser = async ({ data, documentData, tenantId, individualData }) => {
+  const identifierId = documentData
+    ? documentData?.fileStore
+      ? documentData?.fileStore
+      : documentData?.file?.files?.[0]?.fileStoreId
+    : data?.complainantId?.complainantId;
+  const identifierIdDetails = documentData
+    ? {
+        fileStoreId: identifierId,
+        filename: documentData?.filename,
+        documentType: documentData?.fileType,
+      }
+    : {};
+  const identifierType = documentData ? data?.complainantId?.complainantId?.selectIdTypeType?.type : "AADHAR";
+  let Individual = {
+    Individual: {
+      ...individualData,
+      identifiers: [
+        {
+          ...individualData?.identifiers?.[0],
+          identifierType: identifierType,
+          identifierId: identifierId,
+        },
+      ],
+      additionalFields: {
+        ...individualData.additionalFields,
+        fields: individualData.additionalFields.fields.map((field) =>
+          field.key === "identifierIdDetails" ? { ...field, value: JSON.stringify(identifierIdDetails) } : field
+        ),
+      },
+    },
+  };
+  const response = await window?.Digit.DRISTIService.updateIndividualUser(Individual, { tenantId });
+  const refreshToken = window.localStorage.getItem(`temp-refresh-token-${data?.complainantVerification?.userDetails?.mobileNumber}`);
+  window.localStorage.removeItem(`temp-refresh-token-${data?.complainantVerification?.userDetails?.mobileNumber}`);
+  if (refreshToken) {
+    await getUserDetails(refreshToken, data?.complainantVerification?.userDetails?.mobileNumber);
+  }
+  return response;
+};
+
 const onDocumentUpload = async (fileData, filename, tenantId) => {
   if (fileData?.fileStore) return fileData;
   const fileUploadRes = await window?.Digit.UploadServices.Filestorage("DRISTI", fileData, tenantId);
@@ -1140,6 +1181,7 @@ export const updateCaseDetails = async ({
   isCaseSignedState = false,
   setErrorCaseDetails = () => {},
   multiUploadList,
+  scrutinyObj,
   caseComplaintDocument,
 }) => {
   const data = {};
@@ -1199,6 +1241,48 @@ export const updateCaseDetails = async ({
                 { tenantId, limit: 1, offset: 0 }
               );
               const userUuid = Individual?.Individual?.[0]?.userUuid || "";
+              if (
+                scrutinyObj?.litigentDetails?.complainantDetails?.form?.some((item) =>
+                  item.hasOwnProperty("complainantVerification.individualDetails.document")
+                )
+              ) {
+                const documentData = await onDocumentUpload(
+                  data?.data?.complainantId?.complainantId?.ID_Proof?.[0]?.[1]?.file,
+                  data?.data?.complainantId?.complainantId?.ID_Proof?.[0]?.[0],
+                  tenantId
+                );
+                !!setFormDataValue &&
+                  setFormDataValue("complainantVerification", {
+                    ...data?.data?.complainantVerification,
+                    individualDetails: {
+                      ...data?.data?.complainantVerification?.individualDetails,
+                      document: [
+                        {
+                          ...data?.data?.complainantVerification?.individualDetails?.document?.[0],
+                          documentType: documentData.fileType || documentData?.documentType,
+                          fileStore: documentData.file?.files?.[0]?.fileStoreId || documentData?.fileStore,
+                          documentName: documentData.filename || documentData?.documentName,
+                          fileName: "ID Proof",
+                        },
+                      ],
+                    },
+                  });
+                complainantVerification[index] = {
+                  individualDetails: {
+                    ...data?.data?.complainantVerification?.individualDetails,
+                    document: [
+                      {
+                        ...data?.data?.complainantVerification?.individualDetails?.document?.[0],
+                        documentType: documentData.fileType || documentData?.documentType,
+                        fileStore: documentData.file?.files?.[0]?.fileStoreId || documentData?.fileStore,
+                        documentName: documentData.filename || documentData?.documentName,
+                        fileName: "ID Proof",
+                      },
+                    ],
+                  },
+                };
+                await updateIndividualUser({ data: data?.data, documentData, tenantId, individualData: Individual?.Individual?.[0] });
+              }
               return {
                 tenantId,
                 caseId: caseDetails?.id,
