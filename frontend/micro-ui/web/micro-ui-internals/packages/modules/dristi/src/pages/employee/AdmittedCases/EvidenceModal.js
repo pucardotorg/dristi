@@ -41,6 +41,7 @@ const EvidenceModal = ({ caseData, documentSubmission = [], setShow, userRoles, 
   const userInfo = Digit.UserService.getUser()?.info;
   const user = Digit.UserService.getUser()?.info?.name;
   const isLitigent = useMemo(() => !userInfo?.roles?.some((role) => ["ADVOCATE_ROLE", "ADVOCATE_CLERK"].includes(role?.code)), [userInfo?.roles]);
+  const isCourtRoomManager = useMemo(() => userInfo?.roles?.some((role) => ["COURT_ROOM_MANAGER"].includes(role?.code)), [userInfo?.roles]);
   const userType = useMemo(() => (userInfo?.type === "CITIZEN" ? "citizen" : "employee"), [userInfo?.type]);
   const todayDate = new Date().getTime();
   const [formData, setFormData] = useState({});
@@ -762,8 +763,8 @@ const EvidenceModal = ({ caseData, documentSubmission = [], setShow, userRoles, 
           headerBarEnd={<CloseBtn onClick={handleBack} />}
           actionSaveLabel={actionSaveLabel}
           actionSaveOnSubmit={actionSaveOnSubmit}
-          hideSubmit={!showSubmit}
-          actionCancelLabel={actionCancelLabel}
+          hideSubmit={!showSubmit || isCourtRoomManager} // Not allowing submit action for court room manager
+          actionCancelLabel={isCourtRoomManager ? false : actionCancelLabel} // Not allowing cancel action for court room manager
           actionCancelOnSubmit={actionCancelOnSubmit}
           formId="modal-action"
           headerBarMain={
@@ -824,7 +825,7 @@ const EvidenceModal = ({ caseData, documentSubmission = [], setShow, userRoles, 
               </div>
             </div>
             {(userRoles.includes("SUBMISSION_RESPONDER") || userRoles.includes("JUDGE_ROLE")) && (
-              <div className="application-comment">
+              <div className={`application-comment ${isCourtRoomManager && "disabled"}`}>
                 <div className="comment-section">
                   <h1 className="comment-xyzoo">{t("DOC_COMMENTS")}</h1>
                   <div className="comment-main">

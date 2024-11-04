@@ -19,6 +19,8 @@ const NextHearingCard = ({ caseData, width }) => {
   const history = useHistory();
   const { t } = useTranslation();
   const userRoles = Digit.UserService.getUser()?.info?.roles.map((role) => role.code);
+  const isCourtRoomManager = userRoles.includes("COURT_ROOM_MANAGER");
+
   const { data: hearingRes, isLoading: isHearingsLoading } = Digit.Hooks.hearings.useGetHearings(
     {
       criteria: {
@@ -138,7 +140,7 @@ const NextHearingCard = ({ caseData, width }) => {
         <Button
           variation={"outlined"}
           onButtonClick={handleButtonClick}
-          isDisabled={userRoles.includes("CITIZEN") && scheduledHearing?.status === "SCHEDULED"}
+          isDisabled={isCourtRoomManager || (userRoles.includes("CITIZEN") && scheduledHearing?.status === "SCHEDULED")}
           label={
             userRoles.includes("CITIZEN")
               ? scheduledHearing?.status === "SCHEDULED"

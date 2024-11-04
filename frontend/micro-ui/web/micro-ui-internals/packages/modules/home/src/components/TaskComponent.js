@@ -42,6 +42,7 @@ const TasksComponent = ({
   const history = useHistory();
   const { t } = useTranslation();
   const roles = useMemo(() => Digit.UserService.getUser()?.info?.roles?.map((role) => role?.code) || [], []);
+  const isCourtRoomManager = roles.includes("COURT_ROOM_MANAGER");
   const taskTypeCode = useMemo(() => taskType?.code, [taskType]);
   const [searchCaseLoading, setSearchCaseLoading] = useState(false);
   const userInfo = Digit.UserService.getUser()?.info;
@@ -335,7 +336,13 @@ const TasksComponent = ({
           };
         })
       );
-      setPendingTasks(tasks);
+      const filteredTasks = tasks.filter((task) => {
+        if (isCourtRoomManager) {
+          // TODO: For court room manager,show only summons pending task, have to confirm which are those and include here.
+          return false;
+        } else return true;
+      });
+      setPendingTasks(filteredTasks);
     },
     [
       getCaseDetailByFilingNumber,

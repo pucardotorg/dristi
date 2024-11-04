@@ -139,6 +139,7 @@ const AdmittedCases = () => {
   const caseId = urlParams.get("caseId");
   const roles = Digit.UserService.getUser()?.info?.roles;
   const isFSO = roles.some((role) => role.code === "FSO_ROLE");
+  const isCourtRoomManager = roles.some((role) => role.code === "COURT_ROOM_MANAGER");
   const activeTab = isFSO ? "Complaints" : urlParams.get("tab") || "Overview";
   const filingNumber = urlParams.get("filingNumber");
   const [show, setShow] = useState(false);
@@ -1594,13 +1595,14 @@ const AdmittedCases = () => {
 
   const showActionBar = useMemo(
     () =>
-      primaryAction.action ||
-      secondaryAction.action ||
-      tertiaryAction.action ||
-      ([CaseWorkflowState.ADMISSION_HEARING_SCHEDULED, CaseWorkflowState.PENDING_NOTICE, CaseWorkflowState.PENDING_RESPONSE].includes(
-        caseDetails?.status
-      ) &&
-        !isCitizen),
+      (primaryAction.action ||
+        secondaryAction.action ||
+        tertiaryAction.action ||
+        ([CaseWorkflowState.ADMISSION_HEARING_SCHEDULED, CaseWorkflowState.PENDING_NOTICE, CaseWorkflowState.PENDING_RESPONSE].includes(
+          caseDetails?.status
+        ) &&
+          !isCitizen)) &&
+      !isCourtRoomManager,
     [caseDetails, primaryAction.action, secondaryAction.action, tertiaryAction.action, isCitizen]
   );
 
@@ -1661,21 +1663,24 @@ const AdmittedCases = () => {
           </div>
           {showTakeAction && (
             <div className="judge-action-block" style={{ display: "flex" }}>
-              <div className="evidence-header-wrapper">
-                <div className="evidence-hearing-header" style={{ background: "transparent" }}>
-                  <div className="evidence-actions" style={{ ...(isTabDisabled ? { pointerEvents: "none" } : {}) }}>
-                    <ActionButton
-                      variation={"primary"}
-                      label={t("TAKE_ACTION_LABEL")}
-                      icon={showMenu ? "ExpandLess" : "ExpandMore"}
-                      isSuffix={true}
-                      onClick={handleTakeAction}
-                      className={"take-action-btn-class"}
-                    ></ActionButton>
-                    {showMenu && <Menu options={takeActionOptions} onSelect={(option) => handleSelect(option)}></Menu>}
+              {!isCourtRoomManager && (
+                <div className="evidence-header-wrapper">
+                  <div className="evidence-hearing-header" style={{ background: "transparent" }}>
+                    <div className="evidence-actions" style={{ ...(isTabDisabled ? { pointerEvents: "none" } : {}) }}>
+                      <ActionButton
+                        variation={"primary"}
+                        label={t("TAKE_ACTION_LABEL")}
+                        icon={showMenu ? "ExpandLess" : "ExpandMore"}
+                        isSuffix={true}
+                        onClick={handleTakeAction}
+                        className={"take-action-btn-class"}
+                      ></ActionButton>
+                      {showMenu && <Menu options={takeActionOptions} onSelect={(option) => handleSelect(option)}></Menu>}
+                    </div>
                   </div>
                 </div>
-              </div>
+              )}
+
               <div className="evidence-header-wrapper">
                 <div className="evidence-hearing-header" style={{ background: "transparent" }}>
                   <div className="evidence-actions">

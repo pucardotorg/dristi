@@ -68,7 +68,7 @@ export const UICustomizations = {
               {row.hearing.status === "SCHEDULED" && !userInfo.roles.map((role) => role.code).includes("HEARING_START") && (
                 <span style={{ color: "#007E7E" }}>{t("HEARING_AWAITING_START")}</span>
               )}
-              {row.hearing.status === HearingWorkflowState?.INPROGRESS && (
+              {row.hearing.status === HearingWorkflowState?.INPROGRESS && userInfo.roles.map((role) => role.code).includes("HEARING_START") && (
                 <Button
                   variation={"secondary"}
                   label={t("JOIN_HEARING")}

@@ -9,6 +9,8 @@ import { formatDate } from "../utils";
 
 function PreHearingModal({ onCancel, hearingData, courtData, individualId, userType }) {
   const { t } = useTranslation();
+  const roles = Digit.UserService.getUser()?.info?.roles;
+  const isCourtRoomManager = roles?.some((role) => role.code === "COURT_ROOM_MANAGER");
   const tenantId = useMemo(() => window?.Digit.ULBService.getCurrentTenantId(), []);
   const [totalCount, setTotalCount] = useState(null);
   const [purposeModalOpen, setPurposeModalOpen] = useState(false);
@@ -132,7 +134,7 @@ function PreHearingModal({ onCancel, hearingData, courtData, individualId, userT
         <div>
           <strong>{formatDate(new Date(hearingData.fromDate))}</strong>, {hearingData.slot}
         </div>
-        {Digit.UserService.getType() === "employee" && (
+        {Digit.UserService.getType() === "employee" && !isCourtRoomManager && (
           <Button
             className="border-none dristi-font-bold"
             onButtonClick={onRescheduleAllClick}
