@@ -1,1 +1,0 @@
-CREATE INDEX IF NOT EXISTS idx_dristi_application_owner ON dristi_application(createdBy);
