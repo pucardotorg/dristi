@@ -3,6 +3,8 @@ import { Loader } from "@egovernments/digit-ui-react-components";
 import Accordian from "./Accordian";
 import { Urls } from "../hooks/services/Urls";
 import { hearingService } from "../hooks/services";
+import SelectCustomNote from "@egovernments/digit-ui-module-dristi/src/components/SelectCustomNote";
+import { useTranslation } from "react-i18next";
 
 const DownloadIcon = () => {
   return (
@@ -47,7 +49,7 @@ const TaskComponentCalander = ({ isLitigant, uuid, filingNumber, inCase = false 
   const [groupedData, setGroupedData] = useState([]);
   const [searchCaseLoading, setSearchCaseLoading] = useState(false);
   const [caseDataDetails, setCaseDataDetails] = useState([]);
-
+  const { t } = useTranslation();
   const { data: pendingTaskDetails = [], isLoading, refetch } = Digit.Hooks.home.useGetPendingTask({
     data: {
       SearchCriteria: {
@@ -165,6 +167,23 @@ const TaskComponentCalander = ({ isLitigant, uuid, filingNumber, inCase = false 
     <React.Fragment>
       <div style={{ width: "100%", borderBottom: "1px solid #E8E8E8", padding: "24px" }}>
         <div style={{ fontWeight: 700, fontSize: "24px", color: "#231F20" }}>{todayDate}</div>
+        <div style={{marginTop: "10px"}}>
+          <SelectCustomNote
+            t={t}
+            config={{
+              populators: {
+                inputs: [
+                  {
+                    infoHeader: "CS_COMMON_NOTE",
+                    infoText: "CAUSE_LIST_NOTE",
+                    type: "InfoComponent",
+                  },
+                ],
+              },
+            }}
+          />
+        </div>
+
         <button
           style={{
             width: "330px",
