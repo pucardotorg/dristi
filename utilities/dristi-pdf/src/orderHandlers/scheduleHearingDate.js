@@ -176,6 +176,7 @@ async function scheduleHearingDate(req, res, qrCode) {
           ).toLocaleDateString("en-IN"),
           partyNames: order.orderDetails.partyName.join(", "),
           additionalComments: order.comments,
+          purposeOfHearing: order.orderDetails.purposeOfHearing,
           judgeSignature: judgeDetails.judgeSignature,
           judgeName: judgeDetails.name,
           courtSeal: judgeDetails.courtSeal,
