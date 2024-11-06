@@ -26,7 +26,7 @@ import { DRISTIService } from "@egovernments/digit-ui-module-dristi/src/services
 import { Urls as PendingsUrls } from "@egovernments/digit-ui-module-dristi/src/hooks";
 
 const defaultSearchValues = {
-  filingNumber: "",
+  caseSearchText: "",
   caseType: "NIA S138",
 };
 

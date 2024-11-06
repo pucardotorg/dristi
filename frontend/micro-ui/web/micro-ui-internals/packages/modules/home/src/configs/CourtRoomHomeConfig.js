@@ -1,5 +1,5 @@
 const defaultSearchValues = {
-  filingNumber: "",
+  caseSearchText: "",
   caseType: "NIA S138",
   substage: "",
 };
@@ -190,7 +190,7 @@ export const TabCourtRoomSearchConfig = {
                 isMandatory: false,
                 disable: false,
                 populators: {
-                  name: "filingNumber",
+                  name: "caseSearchText",
                   error: "BR_PATTERN_ERR_MSG",
                   validation: {
                     pattern: {},
@@ -323,7 +323,7 @@ export const TabCourtRoomSearchConfig = {
                 isMandatory: false,
                 disable: false,
                 populators: {
-                  name: "filingNumber",
+                  name: "caseSearchText",
                   error: "BR_PATTERN_ERR_MSG",
                   validation: {
                     pattern: {},
@@ -470,7 +470,7 @@ export const TabCourtRoomSearchConfig = {
                 isMandatory: false,
                 disable: false,
                 populators: {
-                  name: "filingNumber",
+                  name: "caseSearchText",
                   error: "BR_PATTERN_ERR_MSG",
                   validation: {
                     pattern: {},
@@ -614,7 +614,7 @@ export const TabCourtRoomSearchConfig = {
                 isMandatory: false,
                 disable: false,
                 populators: {
-                  name: "filingNumber",
+                  name: "caseSearchText",
                   error: "BR_PATTERN_ERR_MSG",
                   validation: {
                     pattern: {},
