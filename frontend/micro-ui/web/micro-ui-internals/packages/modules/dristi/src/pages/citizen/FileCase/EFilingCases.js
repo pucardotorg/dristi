@@ -2049,7 +2049,7 @@ function EFilingCases({ path }) {
     act: "Negotiable Instruments Act",
     section: "138",
     courtName: "Kollam S-138 Special Court",
-    href: "https://districts.ecourts.gov.in/sites/default/files/study%20circles.pdf",
+    href: "https://www.indiacode.nic.in/bitstream/123456789/2189/1/a1881-26.pdf",
   };
 
   const takeUserToRemainingMandatoryFieldsPage = () => {
