@@ -232,7 +232,7 @@ const ApplicationDetails = ({ location, match }) => {
   }, [identifierIdDetails?.fileStoreId, identifierIdDetails?.filename, individualData?.Individual, tenantId]);
 
   const header = useMemo(() => {
-    return applicationNo || applicationNumber ? t(`Application Number ${applicationNo || applicationNumber}`) : "My Application";
+    return applicationNo || applicationNumber ?` ${t("APPLICATION_NUMBER")} ${applicationNo || applicationNumber}` : "My Application";
   }, [applicationNo, applicationNumber, t]);
 
   if (isSearchLoading || isGetUserLoading || isWorkFlowLoading) {

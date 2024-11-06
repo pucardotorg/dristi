@@ -314,7 +314,7 @@ export const UICustomizations = {
             </Link>
           );
         case "USER_TYPE":
-          return usertype === "clerk" ? "Advocate Clerk" : "Advocate";
+          return usertype === "clerk" ? t("ADVOCATE CLERK") : t("ADVOCATE");
         case "DATE_CREATED":
           const date = new Date(value);
           const day = date.getDate().toString().padStart(2, "0");
