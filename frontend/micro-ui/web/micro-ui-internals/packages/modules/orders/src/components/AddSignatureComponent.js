@@ -29,7 +29,7 @@ const AddSignatureComponent = ({ t, isSigned, setIsSigned, handleSigned, rowData
             uploadGuidelines: "Ensure the image is not blurry and under 5MB.",
             maxFileSize: 5,
             maxFileErrorMessage: "CS_FILE_LIMIT_5_MB",
-            fileTypes: ["PDF"],
+            fileTypes: ["PDF", "PNG", "JPEG", "JPG"],
             isMultipleUpload: false,
           },
         ],

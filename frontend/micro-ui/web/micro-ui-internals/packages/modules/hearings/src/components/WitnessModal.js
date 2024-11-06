@@ -62,7 +62,7 @@ const WitnessModal = ({ handleClose, hearingId, setSignedDocumentUploadID, handl
             uploadGuidelines: "Ensure the image is not blurry and under 5MB.",
             maxFileSize: 5,
             maxFileErrorMessage: "CS_FILE_LIMIT_5_MB",
-            fileTypes: ["PDF"],
+            fileTypes: ["PDF", "JPG", "JPEG", "PNG"],
             isMultipleUpload: false,
           },
         ],
