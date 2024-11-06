@@ -495,8 +495,13 @@ const GenerateOrders = () => {
   const hearingDetails = useMemo(() => hearingsData?.HearingList?.[0], [hearingsData]);
   const hearingsList = useMemo(() => hearingsData?.HearingList?.sort((a, b) => b.startTime - a.startTime), [hearingsData]);
 
-  const isHearingAlreadyScheduled = useMemo(() => {
-    const isPresent = (hearingsData?.HearingList || []).some((hearing) => hearing?.status === HearingWorkflowState?.SCHEDULED);
+  const isHearingScheduled = useMemo(() => {
+    const isPresent = (hearingsData?.HearingList || []).some((hearing) => hearing?.status === HearingWorkflowState.SCHEDULED);
+    return isPresent;
+  }, [hearingsData]);
+
+  const isHearingOptout = useMemo(() => {
+    const isPresent = (hearingsData?.HearingList || []).some((hearing) => hearing?.status === HearingWorkflowState.OPTOUT);
     return isPresent;
   }, [hearingsData]);
 
@@ -2258,16 +2263,23 @@ const GenerateOrders = () => {
   };
 
   const handleReviewOrderClick = () => {
-    if (["SCHEDULE_OF_HEARING_DATE", "SCHEDULING_NEXT_HEARING"].includes(orderType) && isHearingAlreadyScheduled) {
+    if (["SCHEDULE_OF_HEARING_DATE", "SCHEDULING_NEXT_HEARING"].includes(orderType) && (isHearingScheduled || isHearingOptout)) {
       setShowErrorToast({
-        label: t("HEARING_IS_ALREADY_SCHEDULED_FOR_THIS_CASE"),
+        label: isHearingScheduled ? t("HEARING_IS_ALREADY_SCHEDULED_FOR_THIS_CASE") : t("CURRENTLY_A_HEARING_IS_IN_OPTOUT_STATE"),
         error: true,
       });
       return;
     }
-    if (["INITIATING_RESCHEDULING_OF_HEARING_DATE", "ASSIGNING_DATE_RESCHEDULED_HEARING"].includes(orderType) && !isHearingAlreadyScheduled) {
+    if (["INITIATING_RESCHEDULING_OF_HEARING_DATE"].includes(orderType) && !isHearingScheduled) {
       setShowErrorToast({
-        label: t("CURRENTLY_A_HEARING_IS_IN_OPTOUT_STATE"),
+        label: t("CURRENTLY_NO_HEARING_IS_IN_SCHEDULED_STATE"),
+        error: true,
+      });
+      return;
+    }
+    if (["ASSIGNING_DATE_RESCHEDULED_HEARING"].includes(orderType) && !isHearingOptout) {
+      setShowErrorToast({
+        label: t("CURRENTLY_NO_HEARING_IS_IN_OPTOUT_STATE"),
         error: true,
       });
       return;
