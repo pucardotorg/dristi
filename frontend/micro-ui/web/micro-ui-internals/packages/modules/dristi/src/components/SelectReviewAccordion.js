@@ -1,6 +1,11 @@
 import { Button, CardText, EditPencilIcon, TextArea } from "@egovernments/digit-ui-react-components";
+import get from "lodash/get";
+import isEqual from "lodash/isEqual";
+import set from "lodash/set";
 import React, { Fragment, useEffect, useMemo, useRef, useState } from "react";
 import { useHistory } from "react-router-dom";
+import ReactTooltip from "react-tooltip";
+import useSearchCaseService from "../hooks/dristi/useSearchCaseService";
 import {
   ChequeDetailsIcon,
   CustomArrowDownIcon,
@@ -10,14 +15,10 @@ import {
   PrayerSwornIcon,
   RespondentDetailsIcon,
 } from "../icons/svgIndex";
+import { CaseWorkflowState } from "../Utils/caseWorkflow";
 import CustomPopUp from "./CustomPopUp";
 import CustomReviewCard from "./CustomReviewCard";
 import ImageModal from "./ImageModal";
-import useSearchCaseService from "../hooks/dristi/useSearchCaseService";
-import { CaseWorkflowState } from "../Utils/caseWorkflow";
-import ReactTooltip from "react-tooltip";
-import { efilingDocumentTypeAndKeyMapping, ocrErrorLocations } from "../pages/citizen/FileCase/Config/efilingDocumentKeyAndTypeMapping";
-import { isEqual } from "lodash";
 
 const extractValue = (data, key) => {
   if (!key.includes(".")) {
@@ -277,9 +278,9 @@ function SelectReviewAccordion({ t, config, onSelect, formData = {}, errors, for
     const trimmedError = message ? message : scrutinyError.trim();
 
     const { name, configKey, index, fieldName, inputlist, fileName } = popupInfoData ? popupInfoData : popupInfo;
-    let fieldObj = { [fieldName]: { [type ? type : "FSOError"]: trimmedError, markError: true } };
+    let fieldObj = { [fieldName]: { [type ? type : "FSOError"]: trimmedError, ...(isPrevScrutiny && { markError: true }) } };
     inputlist.forEach((key) => {
-      fieldObj[key] = { [type ? type : "FSOError"]: trimmedError, fileName, markError: true };
+      fieldObj[key] = { [type ? type : "FSOError"]: trimmedError, fileName, ...(isPrevScrutiny && { markError: true }) };
     });
     let currentMessage =
       formData && formData[configKey] && formData[config.key]?.[name]
@@ -291,7 +292,7 @@ function SelectReviewAccordion({ t, config, onSelect, formData = {}, errors, for
 
     if (currentMessage?.form) {
       if (index == null) {
-        currentMessage.scrutinyMessage = { [type ? type : "FSOError"]: trimmedError, fileName, markError: true };
+        currentMessage.scrutinyMessage = { [type ? type : "FSOError"]: trimmedError, fileName, ...(isPrevScrutiny && { markError: true }) };
       } else {
         currentMessage.form[index] = {
           ...(currentMessage?.form?.[index] || {}),
@@ -299,6 +300,28 @@ function SelectReviewAccordion({ t, config, onSelect, formData = {}, errors, for
         };
       }
       setValue(config.key, currentMessage, name);
+
+      const dependentFields = inputs?.find((item) => item.name === name)?.config?.find((f) => f.value === fieldName)?.dependentFields || [];
+      for (const { configKey, page, field } of dependentFields) {
+        const scrutinyMessage = {
+          ...(get(formData, [configKey, page]) || {
+            scrutinyMessage: "",
+            form: inputs.find((item) => item.name === name)?.data?.map(() => ({})),
+          }),
+        };
+        const fieldInputData = config.populators.inputs.find((input) => input.name === page)?.data?.[0]?.data?.[field];
+        if (fieldInputData) {
+          set(
+            scrutinyMessage,
+            ["form", index, field].filter((x) => x != null),
+            {
+              [type ? type : "FSOError"]: trimmedError,
+            }
+          );
+          setValue(configKey, scrutinyMessage, page);
+        }
+      }
+
       setValue("scrutinyMessage", { popupInfo: null, imagePopupInfo: null }, ["popupInfo", "imagePopupInfo"]);
       setScrutinyError("");
       setSystemError("");
@@ -323,62 +346,50 @@ function SelectReviewAccordion({ t, config, onSelect, formData = {}, errors, for
       groupedByDocumentType
     ) {
       setFormDataLoad(false);
-      if (groupedByDocumentType?.LEGAL_NOTICE || groupedByDocumentType?.CHEQUE_RETURN_MEMO)
-        onSelect("caseSpecificDetails", {
-          ...formData["caseSpecificDetails"],
-          ...(groupedByDocumentType?.LEGAL_NOTICE && {
-            demandNoticeDetails: {
-              form: [
-                {
-                  image: {
-                    systemError: groupedByDocumentType?.LEGAL_NOTICE?.[0]?.message,
-                    fileName: "LEGAL_DEMAND_NOTICE",
-                  },
-                  "legalDemandNoticeFileUpload.document": {
-                    systemError: groupedByDocumentType?.LEGAL_NOTICE?.[0]?.message,
-                    fileName: "LEGAL_DEMAND_NOTICE",
-                  },
-                },
-              ],
-            },
-          }),
-          ...(groupedByDocumentType?.CHEQUE_RETURN_MEMO && {
-            chequeDetails: {
-              form: [
-                {
-                  image: {
-                    systemError: groupedByDocumentType?.CHEQUE_RETURN_MEMO?.[0]?.message,
-                    fileName: "CS_CHEQUE_RETURN_MEMO",
-                  },
-                  "returnMemoFileUpload.document": {
-                    systemError: groupedByDocumentType?.CHEQUE_RETURN_MEMO?.[0]?.message,
-                    fileName: "CS_CHEQUE_RETURN_MEMO",
-                  },
-                },
-              ],
-            },
-          }),
+      let clonedFormData = structuredClone(formData);
+      if (groupedByDocumentType?.LEGAL_NOTICE || groupedByDocumentType?.CHEQUE_RETURN_MEMO) {
+        if (groupedByDocumentType?.LEGAL_NOTICE) {
+          const demandNoticeForm = { ...clonedFormData?.caseSpecificDetails?.demandNoticeDetails?.form?.[0] } || {};
+          set(demandNoticeForm, "image", {
+            systemError: groupedByDocumentType?.LEGAL_NOTICE?.[0]?.message,
+            fileName: "LEGAL_DEMAND_NOTICE",
+          });
+          set(demandNoticeForm, "legalDemandNoticeFileUpload.document", {
+            systemError: groupedByDocumentType?.LEGAL_NOTICE?.[0]?.message,
+            fileName: "LEGAL_DEMAND_NOTICE",
+          });
+          set(clonedFormData, "caseSpecificDetails.demandNoticeDetails.form[0]", demandNoticeForm);
+        }
+        if (groupedByDocumentType?.CHEQUE_RETURN_MEMO) {
+          const chequeReturnForm = { ...clonedFormData?.caseSpecificDetails?.chequeDetails?.form?.[0] } || {};
+          set(chequeReturnForm, "image", {
+            systemError: groupedByDocumentType?.CHEQUE_RETURN_MEMO?.[0]?.message,
+            fileName: "CS_CHEQUE_RETURN_MEMO",
+          });
+          set(chequeReturnForm, "returnMemoFileUpload.document", {
+            systemError: groupedByDocumentType?.CHEQUE_RETURN_MEMO?.[0]?.message,
+            fileName: "CS_CHEQUE_RETURN_MEMO",
+          });
+          set(clonedFormData, "caseSpecificDetails.chequeDetails.form[0]", chequeReturnForm);
+        }
+      }
+      if (groupedByDocumentType?.AFFIDAVIT) {
+        const affidavitForm = { ...clonedFormData.litigentDetails?.respondentDetails?.form?.[0] } || {};
+        set(affidavitForm, "image", {
+          systemError: groupedByDocumentType?.AFFIDAVIT?.[0]?.message,
+          fileName: "Affidavit documents",
         });
-      if (groupedByDocumentType?.AFFIDAVIT)
-        onSelect("litigentDetails", {
-          ...formData["litigentDetails"],
-          respondentDetails: {
-            form: [
-              {
-                image: {
-                  systemError: groupedByDocumentType?.AFFIDAVIT?.[0]?.message,
-                  fileName: "Affidavit documents",
-                },
-                "inquiryAffidavitFileUpload.document": {
-                  systemError: groupedByDocumentType?.AFFIDAVIT?.[0]?.message,
-                  fileName: "Affidavit documents",
-                },
-              },
-            ],
-          },
+        set(affidavitForm, "inquiryAffidavitFileUpload.document", {
+          systemError: groupedByDocumentType?.AFFIDAVIT?.[0]?.message,
+          fileName: "Affidavit documents",
         });
+        set(clonedFormData, "litigentDetails.respondentDetails.form[0]", affidavitForm);
+      }
+
+      onSelect("caseSpecificDetails", clonedFormData["caseSpecificDetails"]);
+      onSelect("litigentDetails", clonedFormData["litigentDetails"]);
     }
-  }, [ocrDataList, formData, formDataLoad, groupedByDocumentType]);
+  }, [ocrDataList, formData, formDataLoad, groupedByDocumentType, onSelect]);
 
   let showFlagIcon = isScrutiny ? true : false;
   return (
