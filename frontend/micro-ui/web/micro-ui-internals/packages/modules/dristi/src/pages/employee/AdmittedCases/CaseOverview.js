@@ -147,7 +147,9 @@ const CaseOverview = ({
                   gap: "16px",
                 }}
               >
-                <Button variation={"outlined"} label={t("SCHEDULE_HEARING")} onButtonClick={openHearingModule} />
+                {userRoles.includes("HEARING_SCHEDULER") && (
+                  <Button variation={"outlined"} label={t("SCHEDULE_HEARING")} onButtonClick={openHearingModule} />
+                )}
                 {userRoles.includes("ORDER_CREATOR") && (
                   <Button variation={"outlined"} label={t("GENERATE_ORDERS_LINK")} onButtonClick={() => navigateOrdersGenerate()} />
                 )}
