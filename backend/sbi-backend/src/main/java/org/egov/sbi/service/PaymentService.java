@@ -84,7 +84,7 @@ public class PaymentService {
         String decryptedPayloadString = aes256Util.decrypt(encryptedPayload, secretKeySpec);
         BrowserDetails browserDetails = BrowserDetails.fromString(decryptedPayloadString);
 
-//        doubleVerificationPayment(browserDetails);
+        doubleVerificationPayment(browserDetails);
 
         TransactionSearchCriteria searchCriteria = TransactionSearchCriteria.builder()
                 .merchantOrderNumber(browserDetails.getMerchantOrderNumber()).build();

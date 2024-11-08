@@ -257,4 +257,7 @@ public class Configuration {
     @Value("${egov.case.search.path}")
     private String caseSearchPath;
 
+    @Value("${role.system.admin}")
+    private String systemAdmin;
+
 }

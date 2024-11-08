@@ -10,6 +10,8 @@ import digit.util.PdfServiceUtil;
 import digit.util.TaskUtil;
 import digit.web.models.*;
 import org.egov.common.contract.request.RequestInfo;
+import org.egov.common.contract.request.Role;
+import org.egov.common.contract.request.User;
 import org.egov.tracer.model.CustomException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -216,21 +218,37 @@ class SummonsServiceTest {
 
     @Test
     void updateTaskStatus_Summon() {
+
         SummonsRequest request = new SummonsRequest();
-        request.setRequestInfo(new RequestInfo());
+
+        RequestInfo requestInfo = new RequestInfo();
+        User userInfo = new User();
+        userInfo.setRoles(new ArrayList<>());
+
+        requestInfo.setUserInfo(userInfo);
+        request.setRequestInfo(requestInfo);
+
         SummonsDelivery summonsDelivery = new SummonsDelivery();
         summonsDelivery.setTaskNumber("123");
         request.setSummonsDelivery(summonsDelivery);
 
         Task task = new Task();
-        task.setTaskType("summon");
+        task.setTaskType("SUMMON");
         TaskListResponse taskListResponse = new TaskListResponse();
         taskListResponse.setList(Collections.singletonList(task));
 
         when(taskUtil.callSearchTask(any())).thenReturn(taskListResponse);
 
+        // Act
         summonsService.updateTaskStatus(request);
+
+        // Assert
+        // Here you can add assertions to check if the workflow was set correctly
+        // and that the role was added to the requestInfo.userInfo.roles
+        assertEquals(1, request.getRequestInfo().getUserInfo().getRoles().size());
+        assertEquals(config.getSystemAdmin(), request.getRequestInfo().getUserInfo().getRoles().get(0).getCode());
     }
+
 
 //    @Test
 //    void updateTaskStatus_Warrant() {
