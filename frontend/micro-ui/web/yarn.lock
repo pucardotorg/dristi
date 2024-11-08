@@ -1176,16 +1176,6 @@
     react-table "7.7.0"
     react-webcam "7.2.0"
 
-"@egovernments/digit-ui-css@0.0.1-dristi-kerala.1":
-  version "0.0.1-dristi-kerala.1"
-  resolved "https://registry.yarnpkg.com/@egovernments/digit-ui-css/-/digit-ui-css-0.0.1-dristi-kerala.1.tgz#345af5ea97e075782a430f91021536b45c82352a"
-  integrity sha512-3cv4S97yNPcOLMitLxAxq7DHSbTEjHq8dhzSFxtp51ZT4bx8yC7Zy1Ecd6Rz80iyi3U+Nn0mrasiU0seB7S1yw==
-  dependencies:
-    node-sass "4.14.1"
-    normalize.css "8.0.1"
-    postcss-scss "3.0.5"
-    tailwindcss "1.9.6"
-
 "@egovernments/digit-ui-css@1.8.2-coreui.19":
   version "1.8.2-coreui.19"
   resolved "https://registry.yarnpkg.com/@egovernments/digit-ui-css/-/digit-ui-css-1.8.2-coreui.19.tgz#91d8b4ff18899e1d964248f28604e60a5bf8cce5"
@@ -1287,6 +1277,16 @@
   version "1.0.4"
   resolved "https://registry.yarnpkg.com/@egovernments/digit-ui-svg-components/-/digit-ui-svg-components-1.0.4.tgz#a40c9565afadb92101435806ce2659bd77549161"
   integrity sha512-1rF7xnAI6DSP7t//nNsRvztkzmoMUNeED0pPOpKAEEeBmYWaolWO6Xv00k2Ub+dMCT2AlY7sWuvJrklW+HCbHA==
+
+"@egovernments/dristi-ui-css@0.0.1-dristi-kerala.2":
+  version "0.0.1-dristi-kerala.2"
+  resolved "https://registry.yarnpkg.com/@egovernments/dristi-ui-css/-/dristi-ui-css-0.0.1-dristi-kerala.2.tgz#4782631d6ffd9e7f16ca24c446d0f665ea21a404"
+  integrity sha512-NeipD3PWUrSd5HIlGYp03b36VMlz6zoNjg2GiWkslwmqqWe6Q17UV2VjcQuiMFjKv69XdRCxHvx1NUt8mnJgnw==
+  dependencies:
+    node-sass "4.14.1"
+    normalize.css "8.0.1"
+    postcss-scss "3.0.5"
+    tailwindcss "1.9.6"
 
 "@emotion/is-prop-valid@^1.1.0":
   version "1.3.0"

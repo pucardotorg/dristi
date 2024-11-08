@@ -9,7 +9,7 @@ import { initCasesComponents } from "@egovernments/digit-ui-module-cases";
 import { initDRISTIComponents } from "@egovernments/digit-ui-module-dristi";
 import { initHomeComponents } from "@egovernments/digit-ui-module-home";
 
-import "@egovernments/digit-ui-css";
+import "@egovernments/dristi-ui-css";
 
 import { UICustomizations } from "./UICustomizations";
 
