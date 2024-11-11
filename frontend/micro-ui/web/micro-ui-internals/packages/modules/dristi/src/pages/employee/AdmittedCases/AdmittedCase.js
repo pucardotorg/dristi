@@ -61,6 +61,7 @@ const HearingWorkflowState = {
   INPROGRESS: "IN_PROGRESS",
   COMPLETED: "COMPLETED",
   ABATED: "ABATED",
+  SCHEDULED: "SCHEDULED",
 };
 
 const Heading = (props) => {
@@ -1895,7 +1896,7 @@ const AdmittedCases = () => {
       {showActionBar && !isWorkFlowFetching && (
         <ActionBar className={"e-filing-action-bar"} style={{ justifyContent: "space-between" }}>
           <div style={{ width: "fit-content", display: "flex", gap: 20 }}>
-            {currentHearingStatus !== HearingWorkflowState.OPTOUT &&
+            {currentHearingStatus === HearingWorkflowState.SCHEDULED &&
               (tertiaryAction.action ||
                 [CaseWorkflowState.ADMISSION_HEARING_SCHEDULED, CaseWorkflowState.PENDING_NOTICE, CaseWorkflowState.PENDING_RESPONSE].includes(
                   caseDetails?.status
