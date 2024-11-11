@@ -76,7 +76,9 @@ async function newHearingDateAfterReschedule(req, res, qrCode) {
       "Failed to query hearing service"
     );
     const hearing = resHearing?.data?.HearingList?.find(
-      (item) => item.status === config.workFlowState.hearing.OPTOUT
+      (item) =>
+        item.status === config.workFlowState.hearing.OPTOUT ||
+        item.status === config.workFlowState.hearing.SCHEDULED
     );
     const originalHearingDate = formatDate(hearing?.startTime);
 
