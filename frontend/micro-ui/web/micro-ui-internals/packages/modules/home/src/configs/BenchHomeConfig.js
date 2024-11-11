@@ -48,6 +48,7 @@ export const userTypeOptions = [
       "SUBMISSION_RESPONDER",
       "SUBMISSION_DELETE",
       "TASK_VIEWER",
+      "ADVOCATE_VIEWER",
     ],
     apiDetails: {
       serviceName: "/advocate/v1/_create",

@@ -83,6 +83,8 @@ const ApplicationDetails = ({ location, match }) => {
     individualData?.Individual,
   ]);
 
+  const isAdvocateViewer = useMemo(() => userRoles?.includes("ADVOCATE_VIEWER"), [userRoles]);
+
   const identifierIdDetails = useMemo(
     () => JSON.parse(individualData?.Individual?.[0]?.additionalFields?.fields?.find((obj) => obj.key === "identifierIdDetails")?.value || "{}"),
     [individualData?.Individual]
@@ -232,8 +234,12 @@ const ApplicationDetails = ({ location, match }) => {
   }, [identifierIdDetails?.fileStoreId, identifierIdDetails?.filename, individualData?.Individual, tenantId]);
 
   const header = useMemo(() => {
-    return applicationNo || applicationNumber ?` ${t("APPLICATION_NUMBER")} ${applicationNo || applicationNumber}` : "My Application";
+    return applicationNo || applicationNumber ? ` ${t("APPLICATION_NUMBER")} ${applicationNo || applicationNumber}` : "My Application";
   }, [applicationNo, applicationNumber, t]);
+
+  if (!isAdvocateViewer) {
+    history.push(`/${window?.contextPath}/citizen/dristi/home`);
+  }
 
   if (isSearchLoading || isGetUserLoading || isWorkFlowLoading) {
     return <Loader />;
