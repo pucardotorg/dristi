@@ -78,7 +78,7 @@ function ApplicationAwaitingPage({ individualId }) {
       <div>
         <Button
           onButtonClick={() => {
-            history.push(`/digit-ui/citizen/dristi/home/application-details?individualId=${individualId}`);
+            history.push(`/digit-ui/citizen/dristi/home/application-details?individualId=${individualId}&applicationNo=${applicationNumber}`);
           }}
           label={t("VIEW_MY_APPLICATION")}
           style={{

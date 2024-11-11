@@ -657,11 +657,7 @@ export const UICustomizations = {
     },
     additionalCustomizations: (row, key, column, value, t) => {
       const showDocument =
-        userRoles?.includes("APPLICATION_APPROVER") ||
-        userRoles?.includes("DEPOSITION_CREATOR") ||
-        userRoles?.includes("DEPOSITION_ESIGN") ||
-        userRoles?.includes("DEPOSITION_PUBLISHER") ||
-        row.workflow?.action !== "PENDINGREVIEW";
+        userRoles?.includes("APPLICATION_APPROVER") || userRoles?.includes("DEPOSITION_ESIGN") || row.workflow?.action !== "PENDINGREVIEW";
       switch (key) {
         case "Document":
           return showDocument ? <OwnerColumn rowData={row} colData={column} t={t} /> : "";

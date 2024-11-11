@@ -91,14 +91,11 @@ const ApplicationDetails = ({ location, match }) => {
   );
 
   const { data: searchData, isLoading: isSearchLoading } = window?.Digit.Hooks.dristi.useGetAdvocateClerk(
-    {
-      criteria: [applicationNo ? { applicationNumber: applicationNo } : { individualId }],
-      tenantId,
-    },
     {},
+    { tenantId: tenantId, applicationNumber: applicationNo },
     applicationNo + individualId,
     userType,
-    userType === "ADVOCATE" ? "/advocate/v1/_search" : "/advocate/clerk/v1/_search"
+    userType === "ADVOCATE" ? `/advocate/v1/applicationnumber/_search` : `/advocate/clerk/v1/applicationnumber/_search`
   );
 
   const userTypeDetail = useMemo(() => {
@@ -123,7 +120,7 @@ const ApplicationDetails = ({ location, match }) => {
   );
 
   const searchResult = useMemo(() => {
-    return searchData?.[`${userTypeDetail?.apiDetails?.requestKey}s`]?.[0]?.responseList;
+    return searchData?.[`${userTypeDetail?.apiDetails?.requestKey}s`];
   }, [searchData, userTypeDetail?.apiDetails?.requestKey]);
   const fileStoreId = useMemo(() => {
     return searchResult?.[0]?.documents?.[0]?.fileStore;

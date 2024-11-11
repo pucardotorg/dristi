@@ -15,7 +15,7 @@ const DRISTICard = () => {
   const isCourtOfficer = useMemo(() => roles.some((role) => role.code === "HEARING_CREATOR"), [roles]);
   const isBenchClerk = useMemo(() => roles.some((role) => role.code === "BENCHCLERK_ROLE"), [roles]);
   const isCitizen = useMemo(() => Boolean(Digit?.UserService?.getUser()?.info?.type === "CITIZEN"), [Digit]);
-  const isNyayMitra = ["CASE_CREATOR", "CASE_EDITOR", "CASE_VIEWER", "ADVOCATE_APPROVER", "ADVOCATE_CLERK_APPROVER"].reduce((res, curr) => {
+  const isNyayMitra = ["CASE_VIEWER", "ADVOCATE_APPROVER", "ADVOCATE_CLERK_APPROVER"].reduce((res, curr) => {
     if (!res) return res;
     res = roles.some((role) => role.code === curr);
     return res;
