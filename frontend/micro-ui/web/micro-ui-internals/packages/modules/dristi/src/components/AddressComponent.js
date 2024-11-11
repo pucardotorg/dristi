@@ -30,8 +30,8 @@ const AddressComponent = ({ t, config, onSelect, formData = {}, errors }) => {
     const response = await Axios.get(`https://maps.googleapis.com/maps/api/geocode/json?address=${pincode}&key=${key}`);
     return response;
   };
-  function setValue(value, input) {
-    if (input === "pincode" && value?.length === 6) {
+  function setValue(value, input, autoFill) {
+    if (input === "pincode" && value?.length === 6 && autoFill === true) {
       getLatLngByPincode(value)
         .then((res) => {
           if (
@@ -88,7 +88,7 @@ const AddressComponent = ({ t, config, onSelect, formData = {}, errors }) => {
           });
         });
       return;
-    } else if (input === "pincode") {
+    } else if (input === "pincode" && autoFill === true) {
       onSelect(config.key, {
         ...formData[config.key],
         ...["state", "district", "city", "locality", "coordinates", "pincode"].reduce((res, curr) => {
@@ -174,13 +174,14 @@ const AddressComponent = ({ t, config, onSelect, formData = {}, errors }) => {
                   isFirstRender = false;
                 }}
               />
+              <div className="user-address-map-info">
+                <SmallInfoIcon></SmallInfoIcon>
+                <span>{t("MOVE_PIN_ON_MAP_MESSAGE")}</span>
+              </div>
             </div>
           );
         })}
-      <div className="user-address-map-info">
-        <SmallInfoIcon></SmallInfoIcon>
-        <span>{t("MOVE_PIN_ON_MAP_MESSAGE")}</span>
-      </div>
+
       <div className="address-card-input">
         {inputs
           .filter((input) => input.type !== "LocationSearch")
@@ -196,7 +197,7 @@ const AddressComponent = ({ t, config, onSelect, formData = {}, errors }) => {
                     key={input.name}
                     value={formData && formData[config.key] ? formData[config.key][input.name] : undefined}
                     onChange={(e) => {
-                      setValue(e.target.value, input.name);
+                      setValue(e.target.value, input.name, input?.autoFill);
                     }}
                     disable={input.isDisabled}
                     defaultValue={undefined}

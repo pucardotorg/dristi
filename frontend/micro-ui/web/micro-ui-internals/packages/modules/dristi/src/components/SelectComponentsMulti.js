@@ -19,7 +19,6 @@ const selectCompMultiConfig = {
         name: "typeOfAddress",
         options: [],
       },
-      { label: "CS_LOCATION", type: "LocationSearch", name: ["pincode", "state", "district", "city", "coordinates", "locality"] },
       {
         label: "PINCODE",
         type: "text",

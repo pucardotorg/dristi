@@ -99,8 +99,8 @@ const LocationComponent = ({
     return response;
   };
 
-  function setValue(value, input) {
-    if (input === "pincode" && value?.length === 6) {
+  function setValue(value, input, autoFill) {
+    if (input === "pincode" && value?.length === 6 && autoFill === true) {
       getLatLngByPincode(value)
         .then((res) => {
           if (
@@ -146,7 +146,7 @@ const LocationComponent = ({
           });
         });
       return;
-    } else if (input === "pincode") {
+    } else if (input === "pincode" && autoFill === true) {
       onLocationSelect(config.key, {
         ...locationFormData[config.key],
         ...["state", "district", "city", "locality", "coordinates", "pincode"].reduce((res, curr) => {
@@ -225,7 +225,7 @@ const LocationComponent = ({
                     className="field desktop-w-full"
                     value={locationFormData && locationFormData[config.key] ? locationFormData[config.key][input.name] : undefined}
                     onChange={(e) => {
-                      setValue(e.target.value, input.name);
+                      setValue(e.target.value, input.name, input?.autoFill);
                     }}
                     disable={input.isDisabled || disable}
                     defaultValue={undefined}

@@ -55,8 +55,8 @@ const SelectComponents = ({ t, config, onSelect, formData = {}, errors, formStat
     return response;
   };
 
-  function setValue(value, input) {
-    if (input === "pincode" && value?.length === 6) {
+  function setValue(value, input, autoFill) {
+    if (input === "pincode" && value?.length === 6 && autoFill === true) {
       getLatLngByPincode(value)
         .then((res) => {
           if (
@@ -134,7 +134,7 @@ const SelectComponents = ({ t, config, onSelect, formData = {}, errors, formStat
           );
         });
       return;
-    } else if (input === "pincode") {
+    } else if (input === "pincode" && autoFill === true) {
       ["state", "district", "city", "locality", "coordinates"].forEach((key) => {
         onSelect(`${configKey}.${key}`, "");
       });
@@ -260,7 +260,7 @@ const SelectComponents = ({ t, config, onSelect, formData = {}, errors, formStat
                         ...input.validation,
                       })}
                       onChange={(e) => {
-                        setValue(e.target.value, input.name);
+                        setValue(e.target.value, input.name, input?.autoFill);
                       }}
                       disable={input.isDisabled || config?.disable}
                     />
