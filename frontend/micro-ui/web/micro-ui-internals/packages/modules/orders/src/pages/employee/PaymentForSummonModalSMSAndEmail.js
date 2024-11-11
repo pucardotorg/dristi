@@ -13,6 +13,7 @@ import { useEffect } from "react";
 import { paymentType } from "../../utils/paymentType";
 import { extractFeeMedium, getTaskType } from "@egovernments/digit-ui-module-dristi/src/Utils";
 import { getSuffixByDeliveryChannel } from "../../utils";
+import { getAdvocates } from "../../utils/caseUtils";
 
 const submitModalInfo = {
   header: "CS_HEADER_FOR_SUMMON_POST",
@@ -33,7 +34,7 @@ const orderTypeEnum = {
   WARRANT: "Warrant",
 };
 
-const PaymentForSummonComponent = ({ infos, links, feeOptions, orderDate, paymentLoader, channelId, formattedChannelId, orderType }) => {
+const PaymentForSummonComponent = ({ infos, links, feeOptions, orderDate, paymentLoader, channelId, formattedChannelId, orderType, isUserAdv }) => {
   const { t } = useTranslation();
   const CustomErrorTooltip = window?.Digit?.ComponentRegistryService?.getComponent("CustomErrorTooltip");
   const [selectedOption, setSelectedOption] = useState({});
@@ -67,19 +68,21 @@ const PaymentForSummonComponent = ({ infos, links, feeOptions, orderDate, paymen
             <div className={`${index === 0 ? "header-row" : "action-row"}`} key={index}>
               <div className="payment-label">{t(action?.label)}</div>
               <div className="payment-amount">{action?.action !== "offline-process" && action?.amount ? `Rs. ${action?.amount}/-` : "-"}</div>
-              <div className="payment-action">
-                {!action?.isCompleted &&
-                  (index === 0 ? (
-                    t(action?.action)
-                  ) : action?.action !== "offline-process" ? (
-                    <Button label={t(action.action)} onButtonClick={action.onClick} isDisabled={paymentLoader} />
-                  ) : (
-                    <p className="offline-process-text">
-                      This is an offline process. <span className="learn-more-text">Learn More</span>
-                    </p>
-                  ))}
-                {action?.isCompleted && <p>{t("PAYMEND_ALREADY_COMPLETED")}</p>}
-              </div>
+              {isUserAdv && (
+                <div className="payment-action">
+                  {!action?.isCompleted &&
+                    (index === 0 ? (
+                      t(action?.action)
+                    ) : action?.action !== "offline-process" ? (
+                      <Button label={t(action.action)} onButtonClick={action.onClick} isDisabled={paymentLoader} />
+                    ) : (
+                      <p className="offline-process-text">
+                        This is an offline process. <span className="learn-more-text">Learn More</span>
+                      </p>
+                    ))}
+                  {action?.isCompleted && <p>{t("PAYMEND_ALREADY_COMPLETED")}</p>}
+                </div>
+              )}
             </div>
           ))}
         </div>
@@ -90,6 +93,7 @@ const PaymentForSummonComponent = ({ infos, links, feeOptions, orderDate, paymen
 
 const PaymentForSummonModalSMSAndEmail = ({ path }) => {
   const history = useHistory();
+  const userInfo = Digit.UserService.getUser()?.info;
   const { filingNumber, taskNumber } = Digit.Hooks.useQueryParams();
   const tenantId = Digit.ULBService.getCurrentTenantId();
   const [caseId, setCaseId] = useState();
@@ -124,6 +128,15 @@ const PaymentForSummonModalSMSAndEmail = ({ path }) => {
   const caseDetails = useMemo(() => {
     return caseData?.criteria?.[0]?.responseList?.[0];
   }, [caseData]);
+
+  const allAdvocates = useMemo(() => getAdvocates(caseDetails), [caseDetails]);
+  const advocatesUuids = useMemo(() => {
+    if (allAdvocates && typeof allAdvocates === "object") {
+      return Object.values(allAdvocates).flat();
+    }
+    return [];
+  }, [allAdvocates]);
+  const isUserAdv = useMemo(() => advocatesUuids.includes(userInfo.uuid), [advocatesUuids, userInfo.uuid]);
 
   const isCaseAdmitted = useMemo(() => caseDetails?.status === "CASE_ADMITTED", [caseDetails]);
 
@@ -457,10 +470,11 @@ const PaymentForSummonModalSMSAndEmail = ({ path }) => {
           formattedChannelId={formattedChannelId}
           isCaseAdmitted={isCaseAdmitted}
           orderType={orderType}
+          isUserAdv={isUserAdv}
         />
       ),
     };
-  }, [channelId, feeOptions, history, infos, isCaseAdmitted, links, orderDate, orderType, paymentLoader]);
+  }, [channelId, feeOptions, history, infos, isCaseAdmitted, links, orderDate, orderType, paymentLoader, isUserAdv]);
   if (isOrdersLoading || isPaymentTypeLoading || isSummonsBreakUpLoading || isBillLoading) {
     return <Loader />;
   }

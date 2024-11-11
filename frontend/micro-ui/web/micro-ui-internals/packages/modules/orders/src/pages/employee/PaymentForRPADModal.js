@@ -13,6 +13,7 @@ import { useEffect } from "react";
 import { paymentType } from "../../utils/paymentType";
 import { extractFeeMedium, getTaskType } from "@egovernments/digit-ui-module-dristi/src/Utils";
 import { DRISTIService } from "@egovernments/digit-ui-module-dristi/src/services";
+import { getAdvocates } from "../../utils/caseUtils";
 
 const modeOptions = [{ label: "Registered Post (10-15 days)", value: "registered-post" }];
 
@@ -29,7 +30,7 @@ const submitModalInfo = {
   showTable: true,
 };
 
-const PaymentForSummonComponent = ({ infos, links, feeOptions, orderDate, paymentLoader, orderType }) => {
+const PaymentForSummonComponent = ({ infos, links, feeOptions, orderDate, paymentLoader, orderType, isUserAdv }) => {
   const { t } = useTranslation();
   const CustomErrorTooltip = window?.Digit?.ComponentRegistryService?.getComponent("CustomErrorTooltip");
 
@@ -82,17 +83,19 @@ const PaymentForSummonComponent = ({ infos, links, feeOptions, orderDate, paymen
             <div className={`${index === 0 ? "header-row" : "action-row"}`}>
               <div className="payment-label">{t(action?.label)}</div>
               <div className="payment-amount">{action?.action !== "offline-process" && action?.amount ? `Rs. ${action?.amount}/-` : "-"}</div>
-              <div className="payment-action">
-                {index === 0 ? (
-                  t(action?.action)
-                ) : action?.action !== "offline-process" ? (
-                  <Button label={t(action.action)} onButtonClick={action.onClick} isDisabled={paymentLoader} />
-                ) : (
-                  <p className="offline-process-text">
-                    {t("THIS_OFFLINE_TEXT")} <span className="learn-more-text">{t("LEARN_MORE")}</span>
-                  </p>
-                )}
-              </div>
+              {isUserAdv && (
+                <div className="payment-action">
+                  {index === 0 ? (
+                    t(action?.action)
+                  ) : action?.action !== "offline-process" ? (
+                    <Button label={t(action.action)} onButtonClick={action.onClick} isDisabled={paymentLoader} />
+                  ) : (
+                    <p className="offline-process-text">
+                      {t("THIS_OFFLINE_TEXT")} <span className="learn-more-text">{t("LEARN_MORE")}</span>
+                    </p>
+                  )}
+                </div>
+              )}
             </div>
           ))}
         </div>
@@ -103,6 +106,7 @@ const PaymentForSummonComponent = ({ infos, links, feeOptions, orderDate, paymen
 
 const PaymentForRPADModal = ({ path }) => {
   const history = useHistory();
+  const userInfo = Digit.UserService.getUser()?.info;
   const { filingNumber, taskNumber } = Digit.Hooks.useQueryParams();
   const tenantId = Digit.ULBService.getCurrentTenantId();
   const [caseId, setCaseId] = useState();
@@ -138,6 +142,15 @@ const PaymentForRPADModal = ({ path }) => {
   const caseDetails = useMemo(() => {
     return caseData?.criteria?.[0]?.responseList?.[0];
   }, [caseData]);
+
+  const allAdvocates = useMemo(() => getAdvocates(caseDetails), [caseDetails]);
+  const advocatesUuids = useMemo(() => {
+    if (allAdvocates && typeof allAdvocates === "object") {
+      return Object.values(allAdvocates).flat();
+    }
+    return [];
+  }, [allAdvocates]);
+  const isUserAdv = useMemo(() => advocatesUuids.includes(userInfo.uuid), [advocatesUuids, userInfo.uuid]);
 
   const onViewOrderClick = () => {
     history.push(
@@ -374,12 +387,6 @@ const PaymentForRPADModal = ({ path }) => {
     todayDate,
   ]);
 
-  const handleClose = () => {
-    if (paymentLoader === false) {
-      history.goBack();
-    }
-  };
-
   const infos = useMemo(() => {
     const name = [
       orderDetails?.additionalDetails?.formdata?.[orderType === "SUMMONS" ? "SummonsOrder" : "noticeOrder"]?.party?.data?.firstName,
@@ -416,6 +423,12 @@ const PaymentForRPADModal = ({ path }) => {
   }, [caseData]);
 
   const paymentForSummonModalConfig = useMemo(() => {
+    const handleClose = () => {
+      if (paymentLoader === false) {
+        history.goBack();
+      }
+    };
+
     return {
       handleClose: handleClose,
       heading: { label: `Payment for ${orderType === "SUMMONS" ? "Summons" : "Notice"} via RPAD` },
@@ -429,10 +442,11 @@ const PaymentForRPADModal = ({ path }) => {
           paymentLoader={paymentLoader}
           isCaseAdmitted={isCaseAdmitted}
           orderType={orderType}
+          isUserAdv={isUserAdv}
         />
       ),
     };
-  }, [feeOptions, infos, links]);
+  }, [orderType, infos, links, feeOptions, orderDate, paymentLoader, isCaseAdmitted, isUserAdv, history]);
 
   if (isOrdersLoading || isSummonsBreakUpLoading || isCourtBillLoading) {
     return <Loader />;
