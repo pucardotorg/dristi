@@ -286,7 +286,7 @@ function ScheduleHearing({
       const date = new Date(dateArr.join(" "));
       const reqBody = {
         order: {
-          createdDate: new Date().getTime(),
+          createdDate: null,
           tenantId,
           cnrNumber,
           filingNumber: filingNumber,

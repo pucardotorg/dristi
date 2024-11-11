@@ -727,7 +727,7 @@ export const UICustomizations = {
             action: (history) => {
               const requestBody = {
                 order: {
-                  createdDate: new Date().getTime(),
+                  createdDate: null,
                   tenantId: row.tenantId,
                   hearingNumber: row?.hearingId,
                   filingNumber: row.filingNumber[0],

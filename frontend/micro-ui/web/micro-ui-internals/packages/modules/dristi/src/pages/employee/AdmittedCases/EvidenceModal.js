@@ -580,7 +580,7 @@ const EvidenceModal = ({ caseData, documentSubmission = [], setShow, userRoles, 
       if (generateOrder) {
         const reqbody = {
           order: {
-            createdDate: new Date().getTime(),
+            createdDate: null,
             tenantId,
             cnrNumber,
             filingNumber,

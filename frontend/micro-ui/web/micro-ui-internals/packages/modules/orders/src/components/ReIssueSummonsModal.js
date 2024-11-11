@@ -56,7 +56,7 @@ function ReIssueSummonsModal() {
   const hadleCreateOrder = async (orderType, taskOrderType) => {
     const reqbody = {
       order: {
-        createdDate: new Date().getTime(),
+        createdDate: null,
         tenantId,
         cnrNumber,
         filingNumber,

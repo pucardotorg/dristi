@@ -765,7 +765,7 @@ const AdmittedCases = () => {
   const handleIssueNotice = async (hearingDate, hearingNumber) => {
     try {
       const orderBody = {
-        createdDate: new Date().getTime(),
+        createdDate: null,
         tenantId,
         cnrNumber: caseDetails?.cnrNumber,
         filingNumber,
@@ -1035,7 +1035,7 @@ const AdmittedCases = () => {
   const handleScheduleNextHearing = () => {
     const reqBody = {
       order: {
-        createdDate: new Date().getTime(),
+        createdDate: null,
         tenantId,
         cnrNumber: updatedCaseDetails?.cnrNumber || caseDetails?.cnrNumber,
         filingNumber: caseDetails?.filingNumber,
@@ -1294,7 +1294,7 @@ const AdmittedCases = () => {
         const date = new Date(hearingDate);
         const requestBody = {
           order: {
-            createdDate: new Date().getTime(),
+            createdDate: null,
             tenantId: tenantId,
             hearingNumber: hearingNumber,
             filingNumber: filingNumber,
@@ -1377,7 +1377,7 @@ const AdmittedCases = () => {
     } else if (option === t("REFER_TO_ADR")) {
       const reqBody = {
         order: {
-          createdDate: new Date().getTime(),
+          createdDate: null,
           tenantId,
           cnrNumber,
           filingNumber: filingNumber,
@@ -1421,7 +1421,7 @@ const AdmittedCases = () => {
     } else if (option === t("MANDATORY_SUBMISSIONS_RESPONSES")) {
       const reqBody = {
         order: {
-          createdDate: new Date().getTime(),
+          createdDate: null,
           tenantId,
           cnrNumber,
           filingNumber: filingNumber,
@@ -1513,7 +1513,7 @@ const AdmittedCases = () => {
     const date = new Date(dateArr.join(" "));
     const reqBody = {
       order: {
-        createdDate: new Date().getTime(),
+        createdDate: null,
         tenantId,
         cnrNumber,
         filingNumber: filingNumber,

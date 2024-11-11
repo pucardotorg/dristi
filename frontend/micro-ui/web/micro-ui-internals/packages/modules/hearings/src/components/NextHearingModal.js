@@ -116,7 +116,7 @@ const NextHearingModal = ({ hearingId, hearing, stepper, setStepper, transcript,
   const onGenerateOrder = () => {
     const requestBody = {
       order: {
-        createdDate: new Date().getTime(),
+        createdDate: null,
         tenantId: Digit.ULBService.getCurrentTenantId(),
         filingNumber: caseDetails?.filingNumber,
         cnrNumber: caseDetails?.cnrNumber,

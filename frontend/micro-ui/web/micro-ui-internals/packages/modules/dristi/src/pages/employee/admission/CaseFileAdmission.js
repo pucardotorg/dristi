@@ -157,7 +157,7 @@ function CaseFileAdmission({ t, path }) {
   const handleIssueNotice = async (hearingDate, hearingNumber) => {
     try {
       const orderBody = {
-        createdDate: new Date().getTime(),
+        createdDate: null,
         tenantId,
         cnrNumber: caseDetails?.cnrNumber,
         filingNumber: caseDetails?.filingNumber,
@@ -702,7 +702,7 @@ function CaseFileAdmission({ t, path }) {
   const handleScheduleNextHearing = () => {
     const reqBody = {
       order: {
-        createdDate: new Date().getTime(),
+        createdDate: null,
         tenantId,
         cnrNumber: updatedCaseDetails?.cnrNumber || caseDetails?.cnrNumber,
         filingNumber: caseDetails?.filingNumber,
@@ -786,7 +786,7 @@ function CaseFileAdmission({ t, path }) {
     const date = new Date(dateArr.join(" "));
     const reqBody = {
       order: {
-        createdDate: new Date().getTime(),
+        createdDate: null,
         tenantId,
         cnrNumber: updatedCaseDetails?.cnrNumber,
         filingNumber: caseDetails?.filingNumber,

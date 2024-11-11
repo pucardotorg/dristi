@@ -346,7 +346,7 @@ const GenerateOrders = () => {
 
   const defaultOrderData = useMemo(
     () => ({
-      createdDate: new Date().getTime(),
+      createdDate: null,
       tenantId,
       cnrNumber,
       filingNumber,
@@ -1874,7 +1874,7 @@ const GenerateOrders = () => {
   const handleIssueSummons = async (hearingDate, hearingNumber) => {
     try {
       const orderbody = {
-        createdDate: new Date().getTime(),
+        createdDate: null,
         tenantId,
         cnrNumber,
         filingNumber,
@@ -1967,7 +1967,7 @@ const GenerateOrders = () => {
   const handleIssueNotice = async (hearingDate, hearingNumber) => {
     try {
       const orderbody = {
-        createdDate: new Date().getTime(),
+        createdDate: null,
         tenantId,
         cnrNumber,
         filingNumber,

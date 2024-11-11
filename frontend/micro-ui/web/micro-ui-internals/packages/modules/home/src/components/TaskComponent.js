@@ -204,7 +204,7 @@ const TasksComponent = ({
     async ({ cnrNumber, filingNumber, orderType, referenceId }) => {
       let reqBody = {
         order: {
-          createdDate: new Date().getTime(),
+          createdDate: null,
           tenantId,
           cnrNumber,
           filingNumber: filingNumber,

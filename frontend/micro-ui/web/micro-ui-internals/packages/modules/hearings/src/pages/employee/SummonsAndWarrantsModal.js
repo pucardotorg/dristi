@@ -121,7 +121,7 @@ const SummonsAndWarrantsModal = ({ handleClose }) => {
   const handleIssueWarrant = async ({ cnrNumber, filingNumber, orderType, hearingId }) => {
     let reqBody = {
       order: {
-        createdDate: new Date().getTime(),
+        createdDate: null,
         tenantId,
         cnrNumber,
         filingNumber: filingNumber,

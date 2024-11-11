@@ -114,7 +114,7 @@ export const ReschedulingPurpose = ({ courtData, caseDetails, closeFunc, resched
     const date = new Date(caseDetails.hearing.startTime);
     const requestBody = {
       order: {
-        createdDate: new Date().getTime(),
+        createdDate: null,
         tenantId: Digit.ULBService.getCurrentTenantId(),
         filingNumber: caseDetails.filingNumber,
         cnrNumber: caseDetails.cnrNumber,

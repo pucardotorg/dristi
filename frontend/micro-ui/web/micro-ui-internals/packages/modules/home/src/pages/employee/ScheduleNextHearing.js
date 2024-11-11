@@ -229,7 +229,7 @@ function ScheduleNextHearing({
       const date = new Date(dateArr.join(" "));
       const reqBody = {
         order: {
-          createdDate: new Date().getTime(),
+          createdDate: null,
           tenantId,
           cnrNumber,
           hearingNumber: applicationData.applicationList[0]?.hearingId,
