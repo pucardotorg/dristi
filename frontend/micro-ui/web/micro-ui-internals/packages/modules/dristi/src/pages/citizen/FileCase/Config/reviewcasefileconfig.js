@@ -514,9 +514,14 @@ export const reviewCaseFileFormConfig = [
                 },
                 {
                   type: "image",
-                  label: "CS_DOCUMENT",
-                  value: ["vakalatnamaFileUpload.document", "AdvocateNameDetails.advocateIdProof"],
+                  label: "VAKALATNAMA",
+                  value: ["vakalatnamaFileUpload.document"],
                   enableScrutinyField: true,
+                },
+                {
+                  type: "image",
+                  label: "CS_ID_PROOF",
+                  value: ["AdvocateNameDetails.advocateIdProof"],
                 },
               ],
               data: {},
