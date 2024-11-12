@@ -23,6 +23,7 @@ import AdmissionActionModal from "./AdmissionActionModal";
 import { generateUUID } from "../../../Utils";
 import { documentTypeMapping } from "../../citizen/FileCase/Config";
 import ScheduleHearing from "../AdmittedCases/ScheduleHearing";
+import { SubmissionWorkflowAction } from "../../../Utils/submissionWorkflow";
 
 const stateSla = {
   SCHEDULE_HEARING: 3 * 24 * 3600 * 1000,
@@ -63,7 +64,7 @@ function CaseFileAdmission({ t, path }) {
   const isCourtRoomManager = roles.some((role) => role.code === "COURT_ROOM_MANAGER");
   const moduleCode = "case-default";
   const ordersService = Digit.ComponentRegistryService.getComponent("OrdersService") || {};
-
+  const [isLoader, setLoader] = useState(false);
   const { data: caseFetchResponse, isLoading, refetch } = useSearchCaseService(
     {
       criteria: [
@@ -350,6 +351,17 @@ function CaseFileAdmission({ t, path }) {
   const onSubmit = async () => {
     switch (primaryAction.action) {
       case "REGISTER":
+        if (isDelayCondonation) {
+          try {
+            setLoader(true);
+            await handleCreateDelayCondonation();
+            setLoader(false);
+          } catch (error) {
+            setShowErrorToast("INTERNAL_ERROR_OCCURRED");
+            setLoader(false);
+            break;
+          }
+        }
         handleRegisterCase();
         setCreateAdmissionOrder(true);
         break;
@@ -679,6 +691,46 @@ function CaseFileAdmission({ t, path }) {
     );
   };
 
+  const isDelayCondonation = useMemo(() => caseDetails?.caseDetails?.delayApplications?.formdata[0]?.data?.delayCondonationType?.code === "NO", [
+    caseDetails,
+  ]);
+  const delayCondonationDocument = useMemo(() => caseDetails?.caseDetails?.delayApplications?.formdata[0]?.data?.condonationFileUpload?.document, [
+    caseDetails,
+  ]);
+
+  const handleCreateDelayCondonation = async () => {
+    const applicationReqBody = {
+      tenantId,
+      application: {
+        tenantId,
+        filingNumber,
+        cnrNumber: caseDetails?.cnrNumber,
+        cmpNumber: caseDetails?.cmpNumber,
+        caseId: caseDetails?.id,
+        createdDate: new Date().getTime(),
+        applicationType: "DELAY_CONDONATION",
+        status: caseDetails?.status,
+        isActive: true,
+        statuteSection: { tenantId },
+        documents: delayCondonationDocument?.map((item) => ({
+          documentType: item?.documentType,
+          fileStore: item?.fileStore,
+          additionalDetails: { name: item?.fileName },
+        })),
+        onBehalfOf: [],
+        comment: [],
+        workflow: {
+          id: "workflow123",
+          action: SubmissionWorkflowAction.CREATE,
+          status: "in_progress",
+          comments: "Workflow comments",
+          documents: [{}],
+        },
+      },
+    };
+    return await DRISTIService.createApplication(applicationReqBody, { tenantId });
+  };
+
   const handleScheduleCase = async (props) => {
     const hearingData = await scheduleHearing({ purpose: "ADMISSION", date: props.date, participant: props.participant });
     setSubmitModalInfo({
@@ -860,7 +912,7 @@ function CaseFileAdmission({ t, path }) {
     return <Redirect to="/" />;
   }
 
-  if (isLoading || isWorkFlowLoading) {
+  if (isLoading || isWorkFlowLoading || isLoader) {
     return <Loader />;
   }
   const scrollToHeading = (heading) => {
@@ -921,9 +973,7 @@ function CaseFileAdmission({ t, path }) {
                 noBreakLine
                 skipStyle={{ position: "fixed", left: "20px", bottom: "18px", color: "#007E7E", fontWeight: "700" }}
               />
-              {showErrorToast && (
-                <Toast error={true} label={t("ES_COMMON_PLEASE_ENTER_ALL_MANDATORY_FIELDS")} isDleteBtn={true} onClose={closeToast} />
-              )}
+              {showErrorToast && <Toast error={true} label={t(showErrorToast)} isDleteBtn={true} onClose={closeToast} />}
               {showScheduleHearingModal && (
                 <ScheduleHearing
                   setUpdateCounter={setUpdateCounter}

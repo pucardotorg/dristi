@@ -165,6 +165,7 @@ const AdmittedCases = () => {
   const [createAdmissionOrder, setCreateAdmissionOrder] = useState(false);
   const [updatedCaseDetails, setUpdatedCaseDetails] = useState({});
   const [showDismissCaseConfirmation, setShowDismissCaseConfirmation] = useState(false);
+  const [showPendingDelayApplication, setShowPendingDelayApplication] = useState(false);
   const [toastStatus, setToastStatus] = useState({ alreadyShown: false });
   const history = useHistory();
   const isCitizen = userRoles.includes("CITIZEN");
@@ -307,6 +308,16 @@ const AdmittedCases = () => {
           ![SubmissionWorkflowState.DELETED, SubmissionWorkflowState.ABATED].includes(item?.status)
       ) || [],
     [applicationData, onBehalfOfuuid]
+  );
+
+  const isDelayApplicationPending = useMemo(
+    () =>
+      Boolean(
+        applicationData?.applicationList?.some(
+          (item) => item?.applicationType === "DELAY_CONDONATION" && item?.status === SubmissionWorkflowState.PENDINGAPPROVAL
+        )
+      ),
+    [applicationData]
   );
 
   const caseRelatedData = useMemo(
@@ -1217,6 +1228,10 @@ const AdmittedCases = () => {
       case "REGISTER":
         break;
       case "ADMIT":
+        if (isDelayApplicationPending) {
+          setShowPendingDelayApplication(true);
+          break;
+        }
         if (caseDetails?.status === "ADMISSION_HEARING_SCHEDULED") {
           const { hearingDate, hearingNumber } = await getHearingData();
           if (hearingNumber) {
@@ -1986,6 +2001,23 @@ const AdmittedCases = () => {
           children={<div style={{ margin: "16px 0px" }}>{t("DISMISS_CASE_CONFIRMATION_TEXT")}</div>}
           actionSaveOnSubmit={() => {
             handleActionModal();
+          }}
+        ></Modal>
+      )}
+      {showPendingDelayApplication && (
+        <Modal
+          headerBarMain={<Heading label={t("PENDING_DELAY_CONDONATION_HEADER")} />}
+          headerBarEnd={
+            <CloseBtn
+              onClick={() => {
+                setShowPendingDelayApplication(false);
+              }}
+            />
+          }
+          actionSaveLabel={t("CS_CLOSE")}
+          children={<div style={{ margin: "16px 0px" }}>{t("PENDING_DELAY_CONDONATION_APPLICATION_TEXT")}</div>}
+          actionSaveOnSubmit={() => {
+            setShowPendingDelayApplication(false);
           }}
         ></Modal>
       )}
