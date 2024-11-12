@@ -63,7 +63,9 @@ const EvidenceHearingHeader = ({ hearing, caseData, filingNumber, setActiveTab, 
       <div className="admitted-case-details" style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
         <div className="case-details-title" style={{ display: "flex", alignItems: "center", gap: "12px" }}>
           {/* <Header>{t(`HEARING_TYPE_${hearing.hearingType}`)}</Header> */}
-          <Header>{t(hearing.hearingType)} Hearing</Header>
+          <Header>
+            {t(hearing.hearingType)} {t("HEARING")}
+          </Header>
           <div className="sub-details-text">{caseData?.caseTitle || " "}</div>
           <div className="vertical-line"></div>
           <div className="sub-details-text">{caseData?.caseType || "Section 138 of Negotiable Instruments Act"}</div>
@@ -175,13 +177,13 @@ const EvidenceHearingHeader = ({ hearing, caseData, filingNumber, setActiveTab, 
             className={activeTab === "Transcript/Summary" ? "search-tab-head-selected" : "search-tab-head"}
             onClick={() => setActiveTab("Transcript/Summary")}
           >
-            {t("Transcript/Summary")}
+            {t("TRANSCRIPT_SUMMARY")}
           </button>
           <button
             className={activeTab === "Witness Deposition" ? "search-tab-head-selected" : "search-tab-head"}
             onClick={() => setActiveTab("Witness Deposition")}
           >
-            {t("Witness Deposition")}
+            {t("WITNESS_DEPOSITION")}
           </button>
         </div>
       </div>

@@ -17,42 +17,39 @@ const RenderDeliveryChannels = ({ partyDetails, deliveryChannels, handleCheckbox
         </p>
       </div>
       <form>
-        {deliveryChannels.map((channel) => {
-          console.log(channel);
-          return (
-            <div key={channel?.type}>
-              {Array.isArray(channel?.values) && channel?.values?.length > 0 && channel?.values[0] != null && (
-                <div>
-                  <h2>
-                    <strong>{t(channel.label)} to </strong>
-                  </h2>
+        {deliveryChannels.map((channel) => (
+          <div key={channel?.type}>
+            {Array.isArray(channel?.values) && channel?.values?.length > 0 && channel?.values[0] != null && (
+              <div>
+                <h2>
+                  <strong>{t(channel.label)} to </strong>
+                </h2>
 
-                  {Array.isArray(channel?.values) &&
-                    channel?.values?.map((value, index) => (
-                      <div key={`${channel.type}-${index}`}>
-                        <input
-                          type="checkbox"
-                          id={`${channel.type}-${index}`}
-                          checked={
-                            Array.isArray(partyDetails) &&
-                            partyDetails.some((data) => data.type === channel.type && JSON.stringify(value) === JSON.stringify(data.value))
-                          }
-                          onChange={() => handleCheckboxChange(channel.type, channel.code, value)}
-                        />
-                        <label htmlFor={`${channel.type}-${index}`}>
-                          {channel.type === "e-Post" || channel.type === "Via Police" || channel.type === "Registered Post"
-                            ? typeof value.address === "string"
-                              ? value.address
-                              : `${value.locality}, ${value.city}, ${value.district}, ${value.pincode}`
-                            : value}
-                        </label>
-                      </div>
-                    ))}
-                </div>
-              )}
-            </div>
-          );
-        })}
+                {Array.isArray(channel?.values) &&
+                  channel?.values?.map((value, index) => (
+                    <div key={`${channel.type}-${index}`}>
+                      <input
+                        type="checkbox"
+                        id={`${channel.type}-${index}`}
+                        checked={
+                          Array.isArray(partyDetails) &&
+                          partyDetails.some((data) => data.type === channel.type && JSON.stringify(value) === JSON.stringify(data.value))
+                        }
+                        onChange={() => handleCheckboxChange(channel.type, channel.code, value)}
+                      />
+                      <label htmlFor={`${channel.type}-${index}`}>
+                        {channel.type === "e-Post" || channel.type === "Via Police" || channel.type === "Registered Post"
+                          ? typeof value.address === "string"
+                            ? value.address
+                            : `${value.locality}, ${value.city}, ${value.district}, ${value.pincode}`
+                          : value}
+                      </label>
+                    </div>
+                  ))}
+              </div>
+            )}
+          </div>
+        ))}
       </form>
     </div>
   );

@@ -1,7 +1,9 @@
 import { Button } from "@egovernments/digit-ui-components";
 import React from "react";
+import { useTranslation } from "react-i18next";
 
 const HearingSideCard = ({ hearingId, caseId, filingNumber }) => {
+  const { t } = useTranslation();
   const handleNavigate = (path, extraSearchParams) => {
     const userInfo = JSON.parse(window.localStorage.getItem("user-info"));
     const userType = userInfo?.type === "CITIZEN" ? "citizen" : "employee";
@@ -12,10 +14,10 @@ const HearingSideCard = ({ hearingId, caseId, filingNumber }) => {
   return (
     <div className="hearing-side-card" style={{ width: "auto" }}>
       <div className="hearing-details">
-        <div className="hearing-title">Case Details</div>
+        <div className="hearing-title">{t("CASE_DETAILS")}</div>
         <div className="hearing-buttons">
           <Button
-            label={"Orders"}
+            label={t("ORDERS")}
             variation={"default"}
             style={{
               border: "1px solid",
@@ -38,7 +40,7 @@ const HearingSideCard = ({ hearingId, caseId, filingNumber }) => {
             onClick={() => handleNavigate("dristi/home/view-case", { tab: "Orders" })}
           />
           <Button
-            label={"Submissions"}
+            label={t("SUBMISSIONS")}
             variation={"default"}
             style={{
               border: "1px solid",
@@ -84,7 +86,7 @@ const HearingSideCard = ({ hearingId, caseId, filingNumber }) => {
             onClick={() => handleNavigate("dristi/home/view-case", { tab: "History" })}
           /> */}
           <Button
-            label={"Parties"}
+            label={t("PARTIES")}
             variation={"default"}
             style={{
               border: "1px solid",

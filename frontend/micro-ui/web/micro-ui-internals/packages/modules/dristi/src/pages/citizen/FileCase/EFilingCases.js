@@ -2233,7 +2233,12 @@ function EFilingCases({ path }) {
                 {`${t(pageConfig.header)}`}
                 {pageConfig?.showOptionalInHeader && <span style={{ color: "#77787B", fontWeight: 100 }}>&nbsp;(optional)</span>}
                 {selected === "reviewCaseFile" && (
-                  <Button className="border-none dristi-font-bold" onButtonClick={handleViewCasePdf} label={t("View PDF")} variation={"secondary"} />
+                  <Button
+                    className="border-none dristi-font-bold"
+                    onButtonClick={handleViewCasePdf}
+                    label={t("CS_VIEW_PDF")}
+                    variation={"secondary"}
+                  />
                 )}
               </Header>
               <div

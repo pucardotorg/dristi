@@ -308,64 +308,60 @@ function CaseType({ t }) {
 
   const detailsCardList = useMemo(() => {
     const caseTypeDetails = [
-      { header: "Case Category", subtext: "Criminal" },
+      { header: "CASE_CATEGORY", subtext: "CS_CRIMINAL" },
       {
-        header: "Status / Act",
-        subtext: "Negotiable Instruments Act",
+        header: "CS_STATUS_ACT",
+        subtext: "CS_NIA",
       },
-      { header: "Section", subtext: "138" },
+      { header: "CS_SECTION", subtext: "138" },
     ];
     const listDocumentDetails = [
       {
-        header: "Proof of Identity",
-        subtext: "PAN Card, Aadhar card, Passport, Driving license, Voter ID, Ration card or Bank passbook",
-        subnote: "Upload .pdf or .jpg. Maximum upload size of 50MB",
+        header: "CS_PROOF_OF_IDENTITY",
+        subtext: "TAX_RECORDS_DESCRIPTION",
+        subnote: "UPLOAD_DOC_50",
         serialNumber: "01.",
       },
       {
-        header: "Dishonored Cheque",
-        subtext: "A copy of the dishonored cheque on the basis which this case is being filed",
-        subnote: "Upload .pdf or .jpg. Maximum upload size of 50MB",
+        header: "CS_BOUNCED_CHEQUE",
+        subtext: "CS_BOUNCE_DESCRIPTION",
+        subnote: "UPLOAD_DOC_50",
         serialNumber: "02.",
       },
       {
-        header: "Cheque Return Memo",
-        subtext: "The document received from the bank that has the information that the cheque has bounced",
-        subnote: "Upload .pdf or .jpg. Maximum upload size of 50MB",
+        header: "CHEQUE_RETURN_MEMO",
+        subtext: "CS_RETURN_MEMO_DESC",
+        subnote: "UPLOAD_DOC_50",
         serialNumber: "03.",
       },
       {
-        header: "Legal Demand Notice",
-        subtext:
-          "Any intimation you provided to the respondent to informing them that their cheque had bounced and they still owed you the cheque amount",
-        subnote: "Upload .pdf or .jpg. Maximum upload size of 50MB",
+        header: "CS_DEMAND_NOTICE",
+        subtext: "CS_DEMAND_DESC",
+        subnote: "UPLOAD_DOC_50",
         serialNumber: "04",
       },
       {
-        header: "Postal acknowledgement (Issue of legal demand notice)",
-        subtext:
-          "The acknowledgement provided by the postal department when sending the letter/RPAD/anything else containing legal demand notice (see number 4 in the list) to the accused.",
-        subnote: "Upload .pdf or .jpg. Maximum upload size of 50MB",
+        header: "CS_POSTAL_ISSUE_NOTICE",
+        subtext: "CS_POSTAL_ISSUE_DESC",
+        subnote: "UPLOAD_DOC_50",
         serialNumber: "05",
       },
       {
-        header: "Postal acknowledgement (Delivery of legal demand notice)",
-        subtext:
-          "The acknowledgement provided by the postal department when the letter/RPAD/anything else containing legal demand notice (see number 4 in the list) is received by the accused",
-        subnote: "Upload .pdf or .jpg. Maximum upload size of 50MB",
+        header: "CS_POSTAL_DELIVERY_NOTICE",
+        subtext: "CS_POSTAL_DELIVERY_DESC",
+        subnote: "UPLOAD_DOC_50",
         serialNumber: "06",
       },
       {
-        header: "Affidavit under section 223 of BNSS",
-        subtext: "Affidavit under section 223 of BNSS must be there in the infobox at the start of filing.",
-        subnote: "Upload .pdf or .jpg. Maximum upload size of 50MB",
+        header: "CS_SWORN_STATEMENT",
+        subtext: "CS_AFFADAVIT_DESC",
+        subnote: "UPLOAD_DOC_50",
         serialNumber: "07",
       },
       {
-        header: "Any other document you deem necessary",
-        subtext:
-          "Please include any additional documents you believe will strengthen your case and that will be crucial in substantiating your claims when filing the complaint.",
-        subnote: "Upload .pdf or .jpg. Maximum upload size of 50MB",
+        header: "CS_ANY_OTHER_DOC",
+        subtext: "CS_ADDTIONAL_DOC_DESC",
+        subnote: "UPLOAD_DOC_50",
         serialNumber: "08",
       },
     ];

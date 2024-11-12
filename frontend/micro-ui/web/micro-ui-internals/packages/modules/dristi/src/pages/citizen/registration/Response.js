@@ -40,7 +40,7 @@ const Response = ({ refetch, setHideBack }) => {
                   refetch();
                   history.push(`/${window?.contextPath}/citizen/dristi/home/file-case`);
                 }}
-                label={t("File a case")}
+                label={t("FILE_CASE")}
                 className={"file-a-case"}
               />
               <Button
@@ -48,7 +48,7 @@ const Response = ({ refetch, setHideBack }) => {
                   refetch();
                   history.push(`/${window?.contextPath}/citizen/dristi/home`);
                 }}
-                label={t("Join a case")}
+                label={t("JOIN_CASE")}
                 className={"join-a-case"}
               />
             </React.Fragment>
