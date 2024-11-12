@@ -1,8 +1,10 @@
 package digit.service;
 
+import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import digit.config.Configuration;
 import digit.repository.ServiceRequestRepository;
+import digit.util.CaseUtil;
 import digit.util.MdmsUtil;
 import digit.util.TaskUtil;
 import digit.web.models.*;
@@ -38,13 +40,16 @@ public class DemandService {
 
     private final TaskUtil taskUtil;
 
+    private final CaseUtil caseUtil;
+
     @Autowired
-    public DemandService(Configuration config, ObjectMapper mapper, ServiceRequestRepository repository, MdmsUtil mdmsUtil, TaskUtil taskUtil) {
+    public DemandService(Configuration config, ObjectMapper mapper, ServiceRequestRepository repository, MdmsUtil mdmsUtil, TaskUtil taskUtil, CaseUtil caseUtil) {
         this.config = config;
         this.mapper = mapper;
         this.repository = repository;
         this.mdmsUtil = mdmsUtil;
         this.taskUtil = taskUtil;
+        this.caseUtil = caseUtil;
     }
      Map<String, String> masterCodePayemntTypeMap= new HashMap<String,String>();
 
@@ -89,7 +94,8 @@ public class DemandService {
         );
         for (Calculation calculation : calculations) {
             List<DemandDetail> demandDetailList = createDemandDetails(calculation, task, mdmsData, businessService);
-            demands.addAll(createDemandList(task, demandDetailList, calculation.getTenantId(), mdmsData, businessService));
+            demands.addAll(createDemandList(requestInfo,
+                    task, demandDetailList, calculation.getTenantId(), mdmsData, businessService));
         }
         return callBillServiceAndCreateDemand(requestInfo, demands, task);
     }
@@ -190,24 +196,35 @@ public class DemandService {
         return consumerCode;
     }
 
-    private List<Demand> createDemandList(Task task, List<DemandDetail> demandDetailList, String tenantId, Map<String,
+    private List<Demand> createDemandList(RequestInfo requestInfo, Task task, List<DemandDetail> demandDetailList, String tenantId, Map<String,
             Map<String, JSONArray>> mdmsData, String businessService) {
         List<Demand> demandList = new ArrayList<>();
         String channelName = ChannelName.fromString(task.getTaskDetails().getDeliveryChannel().getChannelName()).name();
         String taskNumber = task.getTaskNumber();
         Map<String, String> paymentTypeData = getPaymentType(mdmsData, channelName, businessService);
+        CaseSearchRequest caseSearchRequest = createCaseSearchRequest(requestInfo, task);
+        JsonNode caseDetails = caseUtil.searchCaseDetails(caseSearchRequest);
+        String fillingNumber = caseDetails.path("filingNumber").asText();
+        String cnrNumber = caseDetails.path("cnrNumber").asText();
+        String payerName = caseDetails.path("litigants").get(0).path("additionalDetails").path("fullName").asText();
+        String payerMobileNo = caseDetails.path("additionalDetails").path("payerMobileNo").asText();
+        DemandAdditionalDetails additionalDetails = DemandAdditionalDetails.builder()
+                .filingNumber(fillingNumber)
+                .cnrNumber(cnrNumber)
+                .payerName(payerName)
+                .payerMobileNo(payerMobileNo).build();
         for (DemandDetail detail : demandDetailList) {
             String taxHeadMasterCode = detail.getTaxHeadMasterCode();
             String paymentType = masterCodePayemntTypeMap.get(taxHeadMasterCode);
             String paymentTypeSuffix = paymentTypeData.get(paymentType);
             String consumerCode = taskNumber + "_" + paymentTypeSuffix;
-            demandList.add(createDemandObject(Collections.singletonList(detail), tenantId, consumerCode, businessService));
+            demandList.add(createDemandObject(Collections.singletonList(detail), tenantId, consumerCode, businessService, additionalDetails));
         }
 
         return demandList;
     }
 
-    private Demand createDemandObject(List<DemandDetail> demandDetailList, String tenantId, String consumerCode, String businessService) {
+    private Demand createDemandObject(List<DemandDetail> demandDetailList, String tenantId, String consumerCode, String businessService, Object additionalDetails) {
         Demand demand = Demand.builder()
                 .tenantId(tenantId)
                 .consumerCode(consumerCode)
@@ -215,6 +232,7 @@ public class DemandService {
                 .businessService(businessService)
                 .taxPeriodFrom(config.getTaxPeriodFrom()).taxPeriodTo(config.getTaxPeriodTo())
                 .demandDetails(demandDetailList)
+                .additionalDetails(additionalDetails)
                 .build();
         return demand;
     }
@@ -316,6 +334,14 @@ public class DemandService {
             log.error("Error occurred when creating bill URI with search params", e);
             throw new CustomException("GENERATE_BILL_ERROR", "Error occurred when generating bill");
         }
+    }
+
+    public CaseSearchRequest createCaseSearchRequest(RequestInfo requestInfo, Task task) {
+        CaseSearchRequest caseSearchRequest = new CaseSearchRequest();
+        caseSearchRequest.setRequestInfo(requestInfo);
+        CaseCriteria caseCriteria = CaseCriteria.builder().filingNumber(task.getFilingNumber()).defaultFields(false).build();
+        caseSearchRequest.addCriteriaItem(caseCriteria);
+        return caseSearchRequest;
     }
 
     private String getBusinessService(String taskType) {
