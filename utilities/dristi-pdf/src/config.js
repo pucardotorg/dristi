@@ -269,6 +269,8 @@ module.exports = {
     sunbirdrc_credential_service_search:
       "/sunbirdrc-credential-service/qrcode/_get",
     message_search: "/localization/messages/v1/_search",
+    filestore_create: "/filestore/v1/files",
+    filestore_search: "/filestore/v1/files/url"
   },
 
   constraints: {

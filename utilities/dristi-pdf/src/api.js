@@ -3,6 +3,8 @@ var axios = require("axios").default;
 var url = require("url");
 const { logger } = require("./logger");
 const { Pool } = require("pg");
+const fs = require("fs");
+const FormData = require("form-data");
 
 const pool = new Pool({
   user: config.DB_USER,
@@ -282,6 +284,65 @@ async function create_pdf(tenantId, key, data, requestinfo) {
   }
 }
 
+async function search_pdf(tenantId, fileStoreId) {
+  try {
+    const apiUrl = url.resolve(config.host.filestore, config.paths.filestore_create + "/url");
+    const response = await axios.get(apiUrl, {
+      headers: {
+        'Content-Type': 'application/json',
+        'auth-token': auth_token,
+        'tenantId': tenantId // including tenantId as a header
+      },
+      params: {
+        tenantId: tenantId,
+        fileStoreIds: fileStoreId
+      }
+    });
+    
+    return response;
+  } catch (error) {
+    logger.error(`Error in ${config.paths.filestore_create + "/url"}: ${error.message}`);
+    throw error;
+  }
+}
+
+
+async function create_file(filePath, tenantId, module, tag) {
+  try {
+    // Check if file exists
+    if (!fs.existsSync(filePath)) {
+      console.error(`Error: File does not exist at path: ${filePath}`);
+      return;
+    }
+
+    const form = new FormData();
+    form.append("file", fs.createReadStream(filePath));
+    form.append("tenantId", tenantId);
+    form.append("module", module);
+    form.append("tag", tag);
+
+    // Prepare URL for the request
+    const url = `${config.host.filestore}${config.paths.filestore_create}`;
+    const response = await axios.post(url, form, {
+      headers: {
+        ...form.getHeaders(), // Adds the required Content-Type header for multipart/form-data
+        "auth-token": auth_token,
+        tenantId,
+      },
+      maxContentLength: Infinity, // Optional, in case the file size is large
+      maxBodyLength: Infinity,    // Optional, in case the file size is large
+    });
+    return response;
+  } catch (error) {
+    throw error;
+  }
+}
+
+module.exports = create_file;
+
+
+
+
 async function search_message(tenantId, module, locale, requestinfo) {
   try {
     return await axios({
@@ -315,4 +376,6 @@ module.exports = {
   search_application,
   search_advocate,
   search_message,
+  create_file,
+  search_pdf,
 };

@@ -5,9 +5,53 @@ const upload = multer({ dest: "uploads/" });
 const { PDFDocument } = require("pdf-lib");
 const fs = require("fs");
 const asyncMiddleware = require("../utils/asyncMiddleware");
+const buildCasePdf = require("../caseBundle/buildCasePdf");
 
 const A4_WIDTH = 595.28; // A4 width in points
 const A4_HEIGHT = 841.89; // A4 height in points
+
+
+router.post(
+  "/case-bundle",
+  asyncMiddleware(async (req, res) => {
+    const { index, caseNumber, RequestInfo, caseDetails} = req.body;
+
+    // Validate required parameters
+    if (!index || !caseNumber || !RequestInfo) {
+      return renderError(
+        res,
+        "Missing required fields: 'index', 'caseNumber', or 'RequestInfo'.",
+        400
+      );
+    }
+
+    try {
+      // Call buildCasePdf and get updated index with pageCount
+      const result = await buildCasePdf(caseNumber, index, RequestInfo);
+
+      // Extract pageCount and remove it from updatedIndex
+      const { pageCount, ...updatedIndex } = result;
+
+      // Send success response with pageCount included but removed from updatedIndex
+      res.status(200).json({
+        ResponseInfo: RequestInfo,
+        index: updatedIndex, // Updated index without pageCount
+        pageCount: pageCount, // Page count sent separately
+      });
+    } catch (error) {
+      renderError(
+        res,
+        "An error occurred while creating the case bundle PDF.",
+        500,
+        error
+      );
+    }
+  })
+);
+
+
+
+
 
 router.post(
   "/combine-documents",
