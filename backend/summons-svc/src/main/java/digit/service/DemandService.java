@@ -211,7 +211,7 @@ public class DemandService {
         DemandAdditionalDetails additionalDetails = DemandAdditionalDetails.builder()
                 .filingNumber(fillingNumber)
                 .cnrNumber(cnrNumber)
-                .payerName(payerName)
+                .payer(payerName)
                 .payerMobileNo(payerMobileNo).build();
         for (DemandDetail detail : demandDetailList) {
             String taxHeadMasterCode = detail.getTaxHeadMasterCode();

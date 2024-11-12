@@ -19,8 +19,8 @@ public class DemandAdditionalDetails {
     @JsonProperty("cnrNumber")
     private String cnrNumber;
 
-    @JsonProperty("payerName")
-    private String payerName;
+    @JsonProperty("payer")
+    private String payer;
 
     @JsonProperty("payerMobileNo")
     private String payerMobileNo;
