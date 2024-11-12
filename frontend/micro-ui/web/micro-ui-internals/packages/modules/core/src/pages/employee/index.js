@@ -72,9 +72,9 @@ const EmployeeApp = ({
               <Route path={`${path}/user/login`}>
                 <EmployeeLogin />
               </Route>
-              <Route path={`${path}/user/forgot-password`}>
+              {/* <Route path={`${path}/user/forgot-password`}>
                 <ForgotPassword />
-              </Route>
+              </Route> */}
               <Route path={`${path}/user/change-password`}>
                 <ChangePassword />
               </Route>
