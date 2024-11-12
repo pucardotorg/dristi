@@ -4,50 +4,55 @@ import { Button, Dropdown } from "@egovernments/digit-ui-react-components";
 import _ from "lodash";
 import AddParty from "../../../hearings/src/pages/employee/AddParty";
 import { DRISTIService } from "@egovernments/digit-ui-module-dristi/src/services";
+import { useTranslation } from "react-i18next";
 
 const RenderDeliveryChannels = ({ partyDetails, deliveryChannels, handleCheckboxChange }) => {
+  const { t } = useTranslation();
   return (
     <div>
       <div style={{ display: "flex", flexDirection: "row", justifyContent: "space-between", alignItems: "center", height: 32 }}>
-        <h1>Select Delivery Channels</h1>
+        <h1>{t("SELECT_DELIVERY_CHANNELS")}</h1>
         <p>
-          {partyDetails?.length || 0} of {deliveryChannels.reduce((acc, channel) => acc + (channel.values?.length || 0), 0)} selected
+          {partyDetails?.length || 0} of {deliveryChannels.reduce((acc, channel) => acc + (channel.values?.length || 0), 0)} {t("SELECTED")}
         </p>
       </div>
       <form>
-        {deliveryChannels.map((channel) => (
-          <div key={channel?.type}>
-            {Array.isArray(channel?.values) && channel?.values?.length > 0 && channel?.values[0] != null && (
-              <div>
-                <h2>
-                  <strong>{channel.type} to </strong>
-                </h2>
+        {deliveryChannels.map((channel) => {
+          console.log(channel);
+          return (
+            <div key={channel?.type}>
+              {Array.isArray(channel?.values) && channel?.values?.length > 0 && channel?.values[0] != null && (
+                <div>
+                  <h2>
+                    <strong>{t(channel.label)} to </strong>
+                  </h2>
 
-                {Array.isArray(channel?.values) &&
-                  channel?.values?.map((value, index) => (
-                    <div key={`${channel.type}-${index}`}>
-                      <input
-                        type="checkbox"
-                        id={`${channel.type}-${index}`}
-                        checked={
-                          Array.isArray(partyDetails) &&
-                          partyDetails.some((data) => data.type === channel.type && JSON.stringify(value) === JSON.stringify(data.value))
-                        }
-                        onChange={() => handleCheckboxChange(channel.type, channel.code, value)}
-                      />
-                      <label htmlFor={`${channel.type}-${index}`}>
-                        {channel.type === "e-Post" || channel.type === "Via Police" || channel.type === "Registered Post"
-                          ? typeof value.address === "string"
-                            ? value.address
-                            : `${value.locality}, ${value.city}, ${value.district}, ${value.pincode}`
-                          : value}
-                      </label>
-                    </div>
-                  ))}
-              </div>
-            )}
-          </div>
-        ))}
+                  {Array.isArray(channel?.values) &&
+                    channel?.values?.map((value, index) => (
+                      <div key={`${channel.type}-${index}`}>
+                        <input
+                          type="checkbox"
+                          id={`${channel.type}-${index}`}
+                          checked={
+                            Array.isArray(partyDetails) &&
+                            partyDetails.some((data) => data.type === channel.type && JSON.stringify(value) === JSON.stringify(data.value))
+                          }
+                          onChange={() => handleCheckboxChange(channel.type, channel.code, value)}
+                        />
+                        <label htmlFor={`${channel.type}-${index}`}>
+                          {channel.type === "e-Post" || channel.type === "Via Police" || channel.type === "Registered Post"
+                            ? typeof value.address === "string"
+                              ? value.address
+                              : `${value.locality}, ${value.city}, ${value.district}, ${value.pincode}`
+                            : value}
+                        </label>
+                      </div>
+                    ))}
+                </div>
+              )}
+            </div>
+          );
+        })}
       </form>
     </div>
   );
@@ -62,19 +67,21 @@ const SummonsOrderComponent = ({ t, config, formData, onSelect, clearErrors }) =
   const orderType = useMemo(() => formData?.orderType?.code, [formData?.orderType?.code]);
   const [userList, setUserList] = useState([]);
   const [deliveryChannels, setDeliveryChannels] = useState([
-    { type: "SMS", code: "SMS", values: [] },
-    { type: "E-mail", code: "EMAIL", values: [] },
+    { label: "SMS", type: "SMS", code: "SMS", values: [] },
+    { label: "EMAIL", type: "E-mail", code: "EMAIL", values: [] },
     {
+      label: "EPOST",
       type: "e-Post",
       code: "EPOST",
       values: [],
     },
     {
+      label: "REGISTERED_POST",
       type: "Registered Post",
       code: "RPAD",
       values: [],
     },
-    { type: "Via Police", code: "POLICE", values: [] },
+    { label: "VIA_POLICE", type: "Via Police", code: "POLICE", values: [] },
   ]);
 
   const { data: caseData, refetch } = useSearchCaseService(
@@ -269,19 +276,21 @@ const SummonsOrderComponent = ({ t, config, formData, onSelect, clearErrors }) =
       const ePostAddresses = addressList?.filter((item) => Boolean(item));
       setDeliveryChannels(
         [
-          { type: "SMS", code: "SMS", values: phone_numbers || [] },
-          { type: "E-mail", code: "EMAIL", values: email || [] },
+          { label: "SMS", type: "SMS", code: "SMS", values: phone_numbers || [] },
+          { label: "EMAIL", type: "E-mail", code: "EMAIL", values: email || [] },
           {
+            label: "EPOST",
             type: "e-Post",
             code: "EPOST",
             values: ePostAddresses,
           },
           {
+            label: "REGISTERED_POST",
             type: "Registered Post",
             code: "RPAD",
             values: address || [],
           },
-          orderType === "SUMMONS" && { type: "Via Police", code: "POLICE", values: address || [] },
+          orderType === "SUMMONS" && { label: "VIA_POLICE", type: "Via Police", code: "POLICE", values: address || [] },
         ]
           .filter((item) => Boolean(item))
           .map((item) => item)

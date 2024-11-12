@@ -95,7 +95,7 @@ export const TabFSOSearchConfig = {
   showTab: true,
   TabSearchConfig: [
     {
-      label: "All",
+      label: "CS_ALL",
       type: "search",
       apiDetails: {
         serviceName: "/case/v1/_search",
@@ -146,7 +146,7 @@ export const TabFSOSearchConfig = {
                 populators: {},
               },
               {
-                label: "Case Type",
+                label: "CASE_TYPE",
                 isMandatory: false,
                 key: "caseType",
                 type: "dropdown",
@@ -164,7 +164,7 @@ export const TabFSOSearchConfig = {
                 },
               },
               {
-                label: "Stage",
+                label: "CS_STAGE",
                 isMandatory: false,
                 key: "stage",
                 type: "dropdown",
@@ -186,7 +186,7 @@ export const TabFSOSearchConfig = {
                 },
               },
               {
-                label: "Case ID",
+                label: "CS_CASE_ID",
                 type: "text",
                 isMandatory: false,
                 disable: false,
@@ -208,24 +208,24 @@ export const TabFSOSearchConfig = {
           uiConfig: {
             columns: [
               {
-                label: "Case Name",
+                label: "CS_CASE_NAME",
                 jsonPath: "caseTitle",
               },
               {
-                label: "Stage",
+                label: "CS_STAGE",
                 jsonPath: "substage",
               },
               {
-                label: "Case ID",
+                label: "CS_CASE_ID",
                 jsonPath: "filingNumber",
               },
               {
-                label: "Case Type",
+                label: "CASE_TYPE",
                 jsonPath: "",
                 additionalCustomization: true,
               },
               {
-                label: "Days Since Filing",
+                label: "CS_DAYS_FILING",
                 jsonPath: "auditDetails.createdTime",
                 additionalCustomization: true,
               },
@@ -242,7 +242,7 @@ export const TabFSOSearchConfig = {
       },
     },
     {
-      label: "Scrutiny Due",
+      label: "CS_SCRUTINY_DUE",
       type: "search",
       apiDetails: {
         serviceName: "/case/v1/_search",
@@ -293,7 +293,7 @@ export const TabFSOSearchConfig = {
                 populators: {},
               },
               {
-                label: "Case Type",
+                label: "CASE_TYPE",
                 isMandatory: false,
                 key: "caseType",
                 type: "dropdown",
@@ -311,7 +311,7 @@ export const TabFSOSearchConfig = {
                 },
               },
               {
-                label: "Stage",
+                label: "CS_STAGE",
                 isMandatory: false,
                 key: "stage",
                 type: "dropdown",
@@ -333,7 +333,7 @@ export const TabFSOSearchConfig = {
                 },
               },
               {
-                label: "Case ID",
+                label: "CS_CASE_ID",
                 type: "text",
                 isMandatory: false,
                 disable: false,
@@ -356,25 +356,25 @@ export const TabFSOSearchConfig = {
           uiConfig: {
             columns: [
               {
-                label: "Case Name",
+                label: "CS_CASE_NAME",
                 jsonPath: "caseTitle",
               },
               {
-                label: "Scrutiny Status",
+                label: "CS_SCRUTINY_STATUS",
                 jsonPath: "status",
                 additionalCustomization: true,
               },
               {
-                label: "Case ID",
+                label: "CS_CASE_ID",
                 jsonPath: "filingNumber",
               },
               {
-                label: "Case Type",
+                label: "CASE_TYPE",
                 jsonPath: "",
                 additionalCustomization: true,
               },
               {
-                label: "Days Since Filing",
+                label: "CS_DAYS_FILING",
                 jsonPath: "auditDetails.createdTime",
                 additionalCustomization: true,
               },
