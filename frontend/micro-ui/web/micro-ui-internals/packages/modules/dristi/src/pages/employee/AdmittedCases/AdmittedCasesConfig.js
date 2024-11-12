@@ -271,7 +271,7 @@ export const TabSearchconfig = {
               },
               {
                 label: "Date Added",
-                jsonPath: "auditDetails.createdTime",
+                jsonPath: "createdDate",
                 additionalCustomization: true,
               },
             ],

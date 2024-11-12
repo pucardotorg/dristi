@@ -670,7 +670,7 @@ export const UICustomizations = {
           const month = (date.getMonth() + 1).toString().padStart(2, "0"); // Month is zero-based
           const year = date.getFullYear();
           const formattedDate = `${day}-${month}-${year}`;
-          return <span>{formattedDate}</span>;
+          return <span>{value && value !== "0" ? formattedDate : ""}</span>;
         case "Parties":
           if (value === null || value === undefined || value === "undefined" || value === "null") {
             return null;
