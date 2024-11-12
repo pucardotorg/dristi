@@ -30,7 +30,7 @@ CU->CU: enter case filing details
 
 CU->CS++: Create case
 note right of CU
-    submit case payload with delay condonation application 
+    submit case payload with delay condonation application
     delay condonation application is added as is being done today
 end note
 return case
@@ -39,15 +39,26 @@ note right of CU
     follow the normal process of case submission, e-sign, payment
 end note
 
-== Case Scrutiny == 
+== Case Scrutiny ==
 FSO->HU: login
 HU->VU: Review case details
 VU->VU: Approve and Forward to Judge
 
-== Case Registration by Judge == 
+== Case Registration by Judge ==
 J->HU: login
 HU->VU: Review case details
 J->VU: Click 'Register Case'
+
+VU->AS++: Create Application
+note right of VU
+     create a new application using the 'delay condonation' document
+     submitted as part of case earlier
+     fill application details using values from the case like
+     caseId, filingNumber, CNRNumber
+     applicationNumber = cmpNumber, workflow = 'CREATE', status = 'PENDING_APPROVAL'
+end note
+return success
+
 VU->CS++: Update Case (filingNumber)
 note right of VU
     regular update case flow that includes updating registration date
@@ -56,15 +67,7 @@ note right of VU
 end note
 return success
 
-VU->AS++: Create Application
-note right of VU
-     create a new application using the 'delay condonation' document 
-     submitted as part of case earlier 
-     fill application details using values from the case like 
-     caseId, filingNumber, CNRNumber 
-     applicationNumber = cmpNumber, workflow = 'CREATE', status = 'PENDING_APPROVAL'
-end note
-return success
+
 
 
 
