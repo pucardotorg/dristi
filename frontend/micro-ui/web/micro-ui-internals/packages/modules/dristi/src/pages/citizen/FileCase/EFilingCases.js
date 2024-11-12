@@ -1923,6 +1923,14 @@ function EFilingCases({ path }) {
               delayCondonation: delayCondonation,
             },
           ],
+          additionalDetails: {
+            filingNumber: caseDetails?.filingNumber,
+            chequeDetails: chequeDetails,
+            cnrNumber: caseDetails?.cnrNumber,
+            payer: caseDetails?.litigants?.[0]?.additionalDetails?.fullName,
+            payerMobileNo: caseDetails?.additionalDetails?.payerMobileNo,
+            delayCondonation: delayCondonation,
+          },
         },
       ],
     });

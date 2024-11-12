@@ -809,6 +809,12 @@ const SubmissionsCreate = ({ path }) => {
                 collectionAmount: 0,
               },
             ],
+            additionalDetails: {
+              filingNumber: caseDetails?.filingNumber,
+              cnrNumber: caseDetails?.cnrNumber,
+              payer: caseDetails?.litigants?.[0]?.additionalDetails?.fullName,
+              payerMobileNo: caseDetails?.additionalDetails?.payerMobileNo,
+            },
           },
         ],
       });
