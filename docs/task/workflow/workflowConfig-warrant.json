@@ -2,9 +2,9 @@
   "BusinessServices": [
     {
       "tenantId": "kl",
+      "business": "task",
       "businessService": "task-warrant",
-      "business": "task-warrant-services",
-      "businessServiceSla": 30,
+      "businessServiceSla": 4320000000,
       "states": [
         {
           "sla": null,
@@ -17,7 +17,7 @@
           "actions": [
             {
               "action": "CREATE",
-              "nextState": "ISSUEWARRANT",
+              "nextState": "ISSUE_WARRANT",
               "roles": [
                 "TASK_CREATOR"
               ]
@@ -25,11 +25,39 @@
           ]
         },
         {
-          "sla": null,
-          "state": "ISSUEWARRANT",
+          "sla": 388000000,
+          "state": "ISSUE_WARRANT",
           "applicationStatus": "INWORKFLOW",
-          "docUploadRequired": true,
-          "isStartState": true,
+          "docUploadRequired": false,
+          "isStartState": false,
+          "isTerminateState": false,
+          "isStateUpdatable": true,
+          "actions": [
+            {
+              "action": "SEND",
+              "nextState": "WARRANT_SENT",
+              "roles": [
+                "TASK_EDITOR",
+                "SYSTEM",
+                "SYSTEM_ADMIN"
+              ]
+            },
+            {
+              "action": "ABANDON",
+              "nextState": "ABATED",
+              "roles": [
+                "SYSTEM",
+                "SYSTEM_ADMIN"
+              ]
+            }
+          ]
+        },
+        {
+          "sla": 3888000000,
+          "state": "WARRANT_SENT",
+          "applicationStatus": "INWORKFLOW",
+          "docUploadRequired": false,
+          "isStartState": false,
           "isTerminateState": false,
           "isStateUpdatable": true,
           "actions": [
@@ -37,14 +65,18 @@
               "action": "DELIVERED",
               "nextState": "EXECUTED",
               "roles": [
-                "TASK_UPDATOR"
+                "TASK_EDITOR",
+                "SYSTEM",
+                "SYSTEM_ADMIN"
               ]
             },
             {
-              "action": "NOT DELIVERED",
-              "nextState": "NOTEXECUTED",
+              "action": "NOT_DELIVERED",
+              "nextState": "NOT_EXECUTED",
               "roles": [
-                "TASK_UPDATOR",
+                "TASK_EDITOR",
+                "SYSTEM",
+                "SYSTEM_ADMIN",
                 "AUTO_ESCALATE"
               ]
             },
@@ -52,13 +84,14 @@
               "action": "ABANDON",
               "nextState": "ABATED",
               "roles": [
-                "WORKFLOW_ABANDON"
+                "SYSTEM",
+                "SYSTEM_ADMIN"
               ]
             }
           ]
         },
         {
-          "sla": 1,
+          "sla": null,
           "state": "EXECUTED",
           "applicationStatus": "ACTIVE",
           "isStateUpdatable": false,
@@ -67,8 +100,8 @@
           "isTerminateState": true
         },
         {
-          "sla": 5,
-          "state": "NOTEXECUTED",
+          "sla": null,
+          "state": "NOT_EXECUTED",
           "applicationStatus": "ACTIVE",
           "isStateUpdatable": false,
           "docUploadRequired": false,
@@ -76,7 +109,7 @@
           "isTerminateState": true
         },
         {
-          "sla": 5,
+          "sla": null,
           "state": "ABATED",
           "applicationStatus": "INACTIVE",
           "isStateUpdatable": false,

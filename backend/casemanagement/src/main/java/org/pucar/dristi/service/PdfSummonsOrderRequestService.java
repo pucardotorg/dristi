@@ -73,7 +73,7 @@ public class PdfSummonsOrderRequestService {
         }
     }
 
-    public Object createPdf(PdfSummonsRequest requestObject, PdfRequest pdfRequestobject) {
+    public Object createPdf(Object requestObject, PdfRequest pdfRequestobject) {
         String referenceId=pdfRequestobject.getReferenceId();
         String refCode=pdfRequestobject.getReferenceCode();
         String tenantId= pdfRequestobject.getTenantId();
@@ -113,7 +113,7 @@ public class PdfSummonsOrderRequestService {
         headers.set(HttpHeaders.ACCEPT, MediaType.APPLICATION_JSON_VALUE);
         headers.set(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE);
 
-        HttpEntity<PdfSummonsRequest> requestEntity = new HttpEntity<>(requestObject, headers);
+        HttpEntity<Object> requestEntity = new HttpEntity<>(requestObject, headers);
         Object pdfResponse = serviceRequestRepository.fetchResult(requestUrl, requestEntity);
         // Convert pdfResponse to JSON
         String jsonResponse=null;

@@ -3,12 +3,12 @@ package org.pucar.dristi.util;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.pucar.dristi.repository.ServiceRequestRepository;
 import org.pucar.dristi.config.Configuration;
-import org.egov.common.contract.idgen.IdGenerationRequest;
-import org.egov.common.contract.idgen.IdGenerationResponse;
-import org.egov.common.contract.idgen.IdRequest;
-import org.egov.common.contract.idgen.IdResponse;
 import org.egov.common.contract.request.RequestInfo;
 import org.egov.tracer.model.CustomException;
+import org.pucar.dristi.web.models.IdGenerationRequest;
+import org.pucar.dristi.web.models.IdGenerationResponse;
+import org.pucar.dristi.web.models.IdRequest;
+import org.pucar.dristi.web.models.IdResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.util.CollectionUtils;
@@ -34,10 +34,10 @@ public class IdgenUtil {
         this.restRepo = restRepo;
     }
 
-    public List<String> getIdList(RequestInfo requestInfo, String tenantId, String idName, String idformat, Integer count) {
+    public List<String> getIdList(RequestInfo requestInfo, String tenantId, String idName, String idformat, Integer count, Boolean isSequencePadded) {
         List<IdRequest> reqList = new ArrayList<>();
         for (int i = 0; i < count; i++) {
-            reqList.add(IdRequest.builder().idName(idName).format(idformat).tenantId(tenantId).build());
+            reqList.add(IdRequest.builder().idName(idName).format(idformat).tenantId(tenantId).isSequencePadded(isSequencePadded).build());
         }
 
         IdGenerationRequest request = IdGenerationRequest.builder().idRequests(reqList).requestInfo(requestInfo).build();

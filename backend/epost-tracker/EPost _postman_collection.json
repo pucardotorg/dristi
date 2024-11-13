@@ -1,0 +1,136 @@
+{
+	"info": {
+		"_postman_id": "94f78c3e-d219-426b-be61-621166604909",
+		"name": "Epost Copy",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "29401163"
+	},
+	"item": [
+		{
+			"name": "update",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"RequestInfo\": {\n        \"apiId\": \"Rainmaker\",\n        \"authToken\": \"30b4edc0-298f-4f1e-a518-c2189a119ac6\",\n        \"userInfo\": {\n            \"id\": 805,\n            \"userName\": \"devorder22\",\n            \"salutation\": \"Ms\",\n            \"name\": \"mustak\",\n            \"gender\": \"MALE\",\n            \"mobileNumber\": \"1234567890\",\n            \"alternatemobilenumber\": null,\n            \"emailId\": \"xyz@egovernments.org\",\n            \"altContactNumber\": \"\",\n            \"pan\": \"VFGGC5624P\",\n            \"aadhaarNumber\": \"96a70\",\n            \"permanentAddress\": \"Dawakhana\",\n            \"permanentCity\": \"Kaikoo\",\n            \"permanentPinCode\": \"111111\",\n            \"correspondenceAddress\": \"correAddress\",\n            \"correspondenceCity\": \"banglore\",\n            \"correspondencePinCode\": \"123456\",\n            \"active\": true,\n            \"locale\": \"string\",\n            \"type\": \"EMPLOYEE\",\n            \"accountLocked\": false,\n            \"accountLockedDate\": null,\n            \"fatherOrHusbandName\": \"Palash\",\n            \"relationship\": null,\n            \"signature\": \"\",\n            \"bloodGroup\": \"O+\",\n            \"photo\": \"a8a6cf1e-c84d-4a0c-b2d5-57ec8711ba25\",\n            \"identificationMark\": \"Wears spects\",\n            \"createdBy\": 32,\n            \"password\": null,\n            \"otpReference\": null,\n            \"lastModifiedBy\": 32,\n            \"tenantId\": \"kl\",\n            \"roles\": [\n                {\n                    \"code\": \"ORDER_APPROVER\",\n                    \"name\": \"ORDER_APPROVER\",\n                    \"tenantId\": \"kl\"\n                },\n                {\n                    \"code\": \"ORDER_CREATOR\",\n                    \"name\": \"ORDER_CREATOR\",\n                    \"tenantId\": \"kl\"\n                }\n            ],\n            \"uuid\": \"8fc6afa4-fb6e-402d-8bd9-f3ac69c12d6e\",\n            \"createdDate\": \"22-05-2024 16:10:18\",\n            \"lastModifiedDate\": \"22-05-2024 16:10:18\",\n            \"dob\": \"08/08/1999\",\n            \"pwdExpiryDate\": \"20-08-2024 16:10:18\"\n        },\n        \"msgId\": \"1714385569773|en_IN\",\n        \"plainAccessRequest\": {}\n    },\n    \"EPostTracker\": {\n        \"processNumber\": \"ENOTICE-2024-08-03-000645\",\n        \"tenantId\": \"kl\",\n        \"taskNumber\": \"TASK-NO-2024-07-09-000082\",\n        \"fileStoreId\": \"349a95a7-d4ef-48d6-889c-4faef7b8289e\",\n        \"trackingNumber\": null,\n        \"address\": \"123 Respondent St, City, State, 12345\",\n        \"pinCode\": \"50084\",\n        \"deliveryStatus\": \"NOT_UPDATED\",\n        \"remarks\": null,\n        \"additionalDetails\": {\n            \"schema\": null,\n            \"version\": null,\n            \"fields\": null\n        },\n        \"rowVersion\": 0,\n        \"bookingDate\": \"2024-08-03\",\n        \"receivedDate\": null,\n        \"auditDetails\": {\n            \"createdBy\": \"8fc6afa4-fb6e-402d-8bd9-f3ac69c12d6e\",\n            \"lastModifiedBy\": \"8fc6afa4-fb6e-402d-8bd9-f3ac69c12d6e\",\n            \"createdTime\": 1722679964263,\n            \"lastModifiedTime\": 1722679964263\n        }\n    }\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{dev}}/epost-tracker/epost/v1/_updateEPost",
+					"host": [
+						"{{dev}}"
+					],
+					"path": [
+						"epost-tracker",
+						"epost",
+						"v1",
+						"_updateEPost"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "create",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"RequestInfo\": {\n        \"apiId\": \"Rainmaker\",\n        \"authToken\": \"30b4edc0-298f-4f1e-a518-c2189a119ac6\",\n        \"userInfo\": {\n            \"id\": 805,\n            \"userName\": \"devorder22\",\n            \"salutation\": \"Ms\",\n            \"name\": \"mustak\",\n            \"gender\": \"MALE\",\n            \"mobileNumber\": \"1234567890\",\n            \"alternatemobilenumber\": null,\n            \"emailId\": \"xyz@egovernments.org\",\n            \"altContactNumber\": \"\",\n            \"pan\": \"VFGGC5624P\",\n            \"aadhaarNumber\": \"96a70\",\n            \"permanentAddress\": \"Dawakhana\",\n            \"permanentCity\": \"Kaikoo\",\n            \"permanentPinCode\": \"111111\",\n            \"correspondenceAddress\": \"correAddress\",\n            \"correspondenceCity\": \"banglore\",\n            \"correspondencePinCode\": \"123456\",\n            \"active\": true,\n            \"locale\": \"string\",\n            \"type\": \"EMPLOYEE\",\n            \"accountLocked\": false,\n            \"accountLockedDate\": null,\n            \"fatherOrHusbandName\": \"Palash\",\n            \"relationship\": null,\n            \"signature\": \"\",\n            \"bloodGroup\": \"O+\",\n            \"photo\": \"a8a6cf1e-c84d-4a0c-b2d5-57ec8711ba25\",\n            \"identificationMark\": \"Wears spects\",\n            \"createdBy\": 32,\n            \"password\": null,\n            \"otpReference\": null,\n            \"lastModifiedBy\": 32,\n            \"tenantId\": \"pg\",\n            \"roles\": [\n                {\n                    \"code\": \"ORDER_APPROVER\",\n                    \"name\": \"ORDER_APPROVER\",\n                    \"tenantId\": \"pg\"\n                },\n                {\n                    \"code\": \"ORDER_CREATOR\",\n                    \"name\": \"ORDER_CREATOR\",\n                    \"tenantId\": \"pg\"\n                }\n            ],\n            \"uuid\": \"8fc6afa4-fb6e-402d-8bd9-f3ac69c12d6e\",\n            \"createdDate\": \"22-05-2024 16:10:18\",\n            \"lastModifiedDate\": \"22-05-2024 16:10:18\",\n            \"dob\": \"08/08/1999\",\n            \"pwdExpiryDate\": \"20-08-2024 16:10:18\"\n        },\n        \"msgId\": \"1714385569773|en_IN\",\n        \"plainAccessRequest\": {}\n    },\n    \"task\": {\n        \"id\": \"32d92be4-bd5c-42f3-ac8f-b3f1ae27427d\",\n        \"tenantId\": \"kl\",\n        \"orderId\": \"d2c98f29-5e92-4433-830c-004b31ab20b7\",\n        \"filingNumber\": \"Surt-546\",\n        \"taskNumber\": \"TASK-NO-2024-07-09-000082\",\n        \"cnrNumber\": \"Surt-546\",\n        \"createdDate\": \"02-07-2024\",\n        \"dateCloseBy\": null,\n        \"dateClosed\": null,\n        \"taskDescription\": null,\n        \"taskType\": \"summon\",\n        \"taskDetails\": {\n            \"summonDetails\": {\n                \"issueDate\": \"2024-06-10\",\n                \"docSubType\": \"Commission to examine absent witness.\",\n                \"partyType\": \"Accused\"\n            },\n            \"caseDetails\": {\n                \"caseId\": \"caseId123\",\n                \"caseTitle\": \"Case Title Example\",\n                \"caseYear\": \"2024\",\n                \"caseCharge\": \"Money Laundering Case\",\n                \"hearingDate\": \"2024-07-01\",\n                \"judgeName\": \"Judge Name\",\n                \"courtName\": \"Court Name\",\n                \"courtAddress\": null\n            },\n            \"respondentDetails\": {\n                \"name\": \"Respondent Name\",\n                \"age\": 30,\n                \"gender\": \"Male\",\n                \"email\": \"respondent@example.com\",\n                \"phone\": \"123-456-7890\",\n                \"address\": \"123 Respondent St, City, State, 12345\",\n                \"relativeName\": \"Relative Name\",\n                \"relationWithRelative\": \"Brother\",\n                \"pinCode\": \"50084\"\n            },\n            \"deliveryChannel\": {\n                \"channelName\": \"POLICE\",\n                \"paymentFees\": \"10.00\",\n                \"paymentTransactionId\": \"txn12345\",\n                \"paymentStatus\": \"NOT_COMPLETED\"\n            }\n        },\n        \"amount\": {\n            \"id\": \"2119d40f-2aac-4581-8e84-80cce70f5f0e\",\n            \"amount\": \"100\",\n            \"type\": \"FINE\",\n            \"paymentRefNumber\": null,\n            \"additionalDetails\": null,\n            \"status\": \"DONE\"\n        },\n        \"status\": \"ABATED\",\n        \"assignedTo\": null,\n        \"isActive\": false,\n        \"documents\": [\n            {\n                \"id\": \"8ccd28a1-af04-49d5-bc10-c72ee8ac0d3a\",\n                \"documentType\": \"application/pdf\",\n                \"fileStore\": \"349a95a7-d4ef-48d6-889c-4faef7b8289e\",\n                \"documentUid\": \"8ccd28a1-af04-49d5-bc10-c72ee8ac0d3a\",\n                \"additionalDetails\": {}\n            }\n        ],\n        \"additionalDetails\": {\n            \"username\": \"nil\"\n        },\n        \"auditDetails\": {\n            \"createdBy\": \"e70dbdb3-7b7e-4bfc-a44e-331aff57600c\",\n            \"lastModifiedBy\": \"e70dbdb3-7b7e-4bfc-a44e-331aff57600c\",\n            \"createdTime\": 1720520760879,\n            \"lastModifiedTime\": 1720520877254\n        },\n        \"workflow\": null\n    }\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{dev}}/epost-tracker/epost/v1/_sendEPost",
+					"host": [
+						"{{dev}}"
+					],
+					"path": [
+						"epost-tracker",
+						"epost",
+						"v1",
+						"_sendEPost"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "search",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"RequestInfo\": {\n        \"apiId\": \"Rainmaker\",\n        \"authToken\": \"30b4edc0-298f-4f1e-a518-c2189a119ac6\",\n        \"userInfo\": {\n            \"id\": 805,\n            \"userName\": \"devorder22\",\n            \"salutation\": \"Ms\",\n            \"name\": \"mustak\",\n            \"gender\": \"MALE\",\n            \"mobileNumber\": \"1234567890\",\n            \"alternatemobilenumber\": null,\n            \"emailId\": \"xyz@egovernments.org\",\n            \"altContactNumber\": \"\",\n            \"pan\": \"VFGGC5624P\",\n            \"aadhaarNumber\": \"96a70\",\n            \"permanentAddress\": \"Dawakhana\",\n            \"permanentCity\": \"Kaikoo\",\n            \"permanentPinCode\": \"111111\",\n            \"correspondenceAddress\": \"correAddress\",\n            \"correspondenceCity\": \"banglore\",\n            \"correspondencePinCode\": \"123456\",\n            \"active\": true,\n            \"locale\": \"string\",\n            \"type\": \"EMPLOYEE\",\n            \"accountLocked\": false,\n            \"accountLockedDate\": null,\n            \"fatherOrHusbandName\": \"Palash\",\n            \"relationship\": null,\n            \"signature\": \"\",\n            \"bloodGroup\": \"O+\",\n            \"photo\": \"a8a6cf1e-c84d-4a0c-b2d5-57ec8711ba25\",\n            \"identificationMark\": \"Wears spects\",\n            \"createdBy\": 32,\n            \"password\": null,\n            \"otpReference\": null,\n            \"lastModifiedBy\": 32,\n            \"tenantId\": \"pg\",\n            \"roles\": [\n                {\n                    \"code\": \"ORDER_APPROVER\",\n                    \"name\": \"ORDER_APPROVER\",\n                    \"tenantId\": \"pg\"\n                },\n                {\n                    \"code\": \"ORDER_CREATOR\",\n                    \"name\": \"ORDER_CREATOR\",\n                    \"tenantId\": \"pg\"\n                }\n            ],\n            \"uuid\": \"8fc6afa4-fb6e-402d-8bd9-f3ac69c12d6e\",\n            \"createdDate\": \"22-05-2024 16:10:18\",\n            \"lastModifiedDate\": \"22-05-2024 16:10:18\",\n            \"dob\": \"08/08/1999\",\n            \"pwdExpiryDate\": \"20-08-2024 16:10:18\"\n        },\n        \"msgId\": \"1714385569773|en_IN\",\n        \"plainAccessRequest\": {}\n    },\n    \"ePostTrackerSearchCriteria\": {\n        \"processNumber\": \"\",\n        \"pagination\": {}\n    }\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{dev}}/epost-tracker/epost/v1/_getEPost?limit=5&offset=0",
+					"host": [
+						"{{dev}}"
+					],
+					"path": [
+						"epost-tracker",
+						"epost",
+						"v1",
+						"_getEPost"
+					],
+					"query": [
+						{
+							"key": "limit",
+							"value": "5"
+						},
+						{
+							"key": "offset",
+							"value": "0"
+						}
+					]
+				}
+			},
+			"response": []
+		}
+	],
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"type": "text/javascript",
+				"packages": {},
+				"exec": [
+					""
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"type": "text/javascript",
+				"packages": {},
+				"exec": [
+					""
+				]
+			}
+		}
+	],
+	"variable": [
+		{
+			"key": "dev",
+			"value": "dristi-kerala-dev.pucar.org",
+			"type": "string"
+		}
+	]
+}

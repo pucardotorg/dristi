@@ -3,6 +3,7 @@ package org.pucar.dristi.enrichment;
 import lombok.extern.slf4j.Slf4j;
 import org.egov.common.contract.models.AuditDetails;
 import org.egov.tracer.model.CustomException;
+import org.pucar.dristi.config.Configuration;
 import org.pucar.dristi.util.IdgenUtil;
 import org.pucar.dristi.web.models.Hearing;
 import org.pucar.dristi.web.models.HearingRequest;
@@ -19,10 +20,12 @@ import static org.pucar.dristi.config.ServiceConstants.ENRICHMENT_EXCEPTION;
 public class HearingRegistrationEnrichment {
 
     private IdgenUtil idgenUtil;
+    private Configuration configuration;
 
     @Autowired
-    public HearingRegistrationEnrichment(IdgenUtil idgenUtil) {
+    public HearingRegistrationEnrichment(IdgenUtil idgenUtil, Configuration configuration) {
         this.idgenUtil = idgenUtil;
+        this.configuration = configuration;
     }
 
     /**
@@ -44,8 +47,18 @@ public class HearingRegistrationEnrichment {
                     document.setDocumentUid(document.getId());
                 });
             }
-            List<String> hearingIdList = idgenUtil.getIdList(hearingRequest.getRequestInfo(), hearingRequest.getRequestInfo().getUserInfo().getTenantId(), "hearing.id", null, 1);
-            hearing.setHearingId(hearingIdList.get(0));
+            String tenantId = hearing.getFilingNumber().get(0).replace("-","");
+
+            String idName = configuration.getHearingConfig();
+            String idFormat = configuration.getHearingFormat();
+
+            List<String> hearingIdList = idgenUtil.getIdList(hearingRequest.getRequestInfo(), tenantId, idName, idFormat, 1, false);
+            hearing.setHearingId(hearing.getFilingNumber().get(0) +"-"+hearingIdList.get(0));
+
+            if(null != hearing.getCourtCaseNumber())
+                hearing.setCaseReferenceNumber(hearing.getCourtCaseNumber());
+            else
+                hearing.setCaseReferenceNumber(hearing.getCmpNumber());
         } catch (CustomException e) {
             log.error("Custom Exception occurred while Enriching hearing");
             throw e;

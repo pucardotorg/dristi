@@ -1,7 +1,8 @@
 import React, { useEffect } from "react";
 
+import { HeaderBar, Toast } from "@egovernments/digit-ui-react-components";
 import ButtonSelector from "./ButtonSelector";
-import { HeaderBar, PopUp, Toast } from "@egovernments/digit-ui-react-components";
+import PopUp from "./PopUp";
 
 const Modal = ({
   headerBarMain,
@@ -18,12 +19,15 @@ const Modal = ({
   isDisabled,
   hideSubmit,
   style = {},
+  textStyle = { margin: "0px" },
   popupModuleMianStyles,
   headerBarMainStyle,
   isOBPSFlow = false,
   popupModuleActionBarStyles = {},
   submitTextClassName = "",
-  className
+  className,
+  cancelButtonBody,
+  popUpStyleMain = {},
 }) => {
   /**
    * TODO: It needs to be done from the desgin changes
@@ -36,7 +40,7 @@ const Modal = ({
     };
   }, []);
   return (
-    <PopUp>
+    <PopUp popUpStyleMain={popUpStyleMain}>
       <div className={`popup-module ${className}`} style={popupStyles}>
         {headerBarMain && <HeaderBar main={headerBarMain} end={headerBarEnd} style={headerBarMainStyle ? headerBarMainStyle : {}} />}
         <div className="popup-module-main" style={popupModuleMianStyles ? popupModuleMianStyles : {}}>
@@ -52,21 +56,31 @@ const Modal = ({
             }
           >
             {actionCancelLabel ? (
-              <ButtonSelector textStyles={{ margin: "0px" }} theme="border" label={actionCancelLabel} onSubmit={actionCancelOnSubmit} style={style} />
+              <ButtonSelector
+                textStyles={{ margin: "0px", color: "#007E7E" }}
+                theme="border"
+                label={actionCancelLabel}
+                onSubmit={actionCancelOnSubmit}
+                style={{ border: "1px solid #007E7E", backgroundColor: "white" }}
+                ButtonBody={cancelButtonBody}
+              />
             ) : (
               <div></div>
             )}
-            {!hideSubmit ? (
-              <ButtonSelector
-                textStyles={{ margin: "0px" }}
-                label={actionSaveLabel}
-                onSubmit={actionSaveOnSubmit}
-                formId={formId}
-                isDisabled={isDisabled}
-                style={style}
-                textClassName={submitTextClassName}
-              />
-            ) : null}
+            {actionSaveLabel && !hideSubmit
+              ? (console.log(style),
+                (
+                  <ButtonSelector
+                    textStyles={textStyle}
+                    label={actionSaveLabel}
+                    onSubmit={actionSaveOnSubmit}
+                    formId={formId}
+                    isDisabled={isDisabled}
+                    style={style}
+                    textClassName={submitTextClassName}
+                  />
+                ))
+              : null}
           </div>
         </div>
       </div>

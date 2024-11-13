@@ -1,0 +1,73 @@
+{
+  "BusinessServices": [
+    {
+      "tenantId": "kl",
+      "business": "user-registration",
+      "businessService": "user-registration-advocate-clerk",
+      "businessServiceSla": 172800000,
+      "states": [
+        {
+          "sla": null,
+          "state": null,
+          "applicationStatus": null,
+          "docUploadRequired": true,
+          "isStartState": true,
+          "isTerminateState": false,
+          "isStateUpdatable": true,
+          "actions": [
+            {
+              "action": "REGISTER",
+              "nextState": "VERIFICATION_REQUESTED",
+              "roles": [
+                "USER_REGISTER"
+              ]
+            }
+          ]
+        },
+        {
+          "sla": null,
+          "state": "VERIFICATION_REQUESTED",
+          "applicationStatus": "INWORKFLOW",
+          "docUploadRequired": false,
+          "isStartState": false,
+          "isTerminateState": false,
+          "isStateUpdatable": true,
+          "actions": [
+            {
+              "action": "APPROVE",
+              "nextState": "REGISTERED",
+              "roles": [
+                "ADVOCATE_CLERK_APPROVER"
+              ]
+            },
+            {
+              "action": "REJECT",
+              "nextState": "REJECTED",
+              "roles": [
+                "ADVOCATE_CLERK_APPROVER"
+              ]
+            }
+          ]
+        },
+        {
+          "sla": 5,
+          "state": "REGISTERED",
+          "applicationStatus": "ACTIVE",
+          "isStateUpdatable": false,
+          "docUploadRequired": false,
+          "isStartState": false,
+          "isTerminateState": true
+        },
+        {
+          "sla": 5,
+          "state": "REJECTED",
+          "applicationStatus": "INACTIVE",
+          "isStateUpdatable": false,
+          "docUploadRequired": false,
+          "isStartState": false,
+          "isTerminateState": true
+        }
+      ]
+    }
+  ]
+}

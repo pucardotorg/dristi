@@ -1,0 +1,290 @@
+.payment-due-wrapper,
+.enter-validation-code,
+.view-document-vak,
+.general-details-vek,
+.select-user-join-case,
+.noc-court-order-upload,
+.update-delivery-status,
+.case-number-input {
+  margin: 24px 0px 24px 24px;
+  padding-right: 24px;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  max-height: 445px;
+  overflow-y: auto;
+  .case-label-field-pair {
+    .text-input {
+      width: 100%;
+      max-width: 100%;
+      input {
+        margin-bottom: 0px;
+      }
+    }
+    .radio-wrap {
+      margin: 0px;
+      padding-top: 4px;
+      display: flex;
+      gap: 24px;
+      flex-wrap: wrap;
+    }
+    .employee-select-wrap,
+    .select-wrap {
+      margin-bottom: 0px;
+      max-width: 100%;
+    }
+  }
+  h3.sure-text {
+    margin: 0px;
+    font-family: Roboto;
+    font-size: 16px;
+    font-weight: 700;
+    line-height: 18.75px;
+    text-align: left;
+    color: #0b0c0c;
+  }
+}
+
+.horizontal-line {
+  border-bottom: 1px #0000001a solid;
+  width: 100%;
+  margin: 0px;
+}
+
+.case-number-input {
+  .case-label-field-pair {
+    .text-input {
+      width: calc(100% - 40px);
+      input {
+        border-right: none;
+      }
+    }
+    .icon-div {
+      cursor: pointer;
+      height: 40px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      width: 40px;
+      border: 1px #505a5f solid;
+      border-left: none;
+    }
+  }
+}
+
+.case-input-label {
+  margin: 0px;
+  font-family: Roboto;
+  font-size: 16px;
+  font-weight: 400;
+  line-height: 18.75px;
+  text-align: left;
+  margin-bottom: 8px;
+}
+
+.popup-module.join-a-case-modal {
+  width: 50%;
+  .popup-module-main {
+    position: relative !important;
+  }
+  .skip-button {
+    position: absolute;
+    bottom: 16px;
+    left: 16px;
+    border: none;
+    background-color: #ffffff;
+    box-shadow: none;
+    h2 {
+      color: #007e7e;
+      margin: 0px;
+      font-family: Roboto;
+      font-size: 16px;
+      font-weight: 700;
+      line-height: 18.75px;
+      text-align: center;
+    }
+  }
+  .selector-button-primary-disabled,
+  .selector-button-border,
+  .selector-button-primary {
+    height: 40px;
+  }
+
+  &.case-join-success {
+    .header-wrap {
+      display: none;
+    }
+    button {
+      width: 50%;
+    }
+    .selector-button-primary {
+      display: flex;
+      justify-content: center;
+      gap: 8px;
+      h2 {
+        width: fit-content !important;
+      }
+      svg {
+        margin: 0px;
+      }
+    }
+    .popup-module-main {
+      .join-a-case-success {
+        padding: 40px;
+        .joining-message {
+          padding: 16px 24px;
+          display: flex;
+          flex-direction: column;
+          align-items: center;
+          gap: 16px;
+
+          &.join-success {
+            background-color: #00703c;
+            margin-bottom: 16px;
+          }
+          .message-header {
+            margin: 0px;
+            font-family: Roboto;
+            font-size: 32px;
+            font-weight: 700;
+            line-height: 37.5px;
+            text-align: center;
+            color: #ffffff;
+          }
+          svg {
+            fill: #00703c;
+            border-radius: 50%;
+            background-color: white;
+            height: 48px;
+            width: 48px;
+          }
+        }
+      }
+      .popup-module-action-bar {
+        display: none;
+      }
+    }
+  }
+}
+
+.action-button-success {
+  margin-top: 40px;
+  display: flex;
+  gap: 16px;
+}
+
+.complainants-respondents {
+  display: flex;
+  padding-bottom: 24px;
+  gap: 24px;
+}
+
+.general-details-vek,
+.select-user-join-case {
+  gap: 24px !important;
+}
+
+.general-details-vek {
+  .primary-advocate-details {
+    .contact-text {
+      margin: 0px;
+      margin-bottom: 8px;
+      font-family: Roboto;
+      font-size: 16px;
+      font-weight: 400;
+      line-height: 24px;
+      text-align: left;
+      color: #3d3c3c;
+    }
+  }
+}
+
+.view-document-vak {
+  height: 422px;
+  overflow-y: auto;
+  margin-right: 0px;
+  padding-bottom: 12px;
+  padding-right: 16px;
+  .docviewer-wrapper {
+    margin-top: 0px !important;
+    .employeeCard {
+      padding: 0px !important;
+      margin-bottom: 0px !important;
+      box-shadow: none;
+      border: 1px #bbbbbd solid;
+      border-radius: 4px;
+      #pdf-page-info {
+        display: none;
+      }
+    }
+  }
+}
+
+.e-sign-page {
+  padding: 24px;
+  display: flex;
+  flex-direction: column;
+  gap: 40px;
+}
+
+.view-document-vak::-webkit-scrollbar {
+  width: 8px;
+}
+.view-document-vak::-webkit-scrollbar-thumb {
+  background-color: #e5e5e5;
+  border-radius: 8px;
+}
+
+.join-a-case-advocate-search {
+  min-width: 100%;
+  margin: 0px;
+  padding: 0px;
+  border: none;
+  box-shadow: none;
+}
+
+.join-case-tooltip-wrapper {
+  display: flex;
+  gap: 4px;
+  align-items: center;
+  .custom-error-tooltip {
+    height: 16px;
+    width: 16px;
+    margin-bottom: 8px;
+  }
+}
+
+.view-document-vak,
+.noc-court-order-upload {
+  .noc-court-order-upload-form {
+    .card {
+      min-width: 100%;
+      margin: 0px;
+      padding: 0px;
+      border: none;
+      box-shadow: none;
+      .label-field-pair {
+        margin-bottom: 24px;
+        .field {
+          .drag-drop-visible-main {
+            .drag-drop-heading-main {
+              .drag-drop-heading {
+                margin-left: 0px;
+                .card-label.custom-document-header {
+                  margin: 0px;
+                }
+                .custom-error-tooltip {
+                  flex-direction: column;
+                }
+                .custom-error-tooltip-message {
+                  bottom: unset;
+                  left: unset;
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}

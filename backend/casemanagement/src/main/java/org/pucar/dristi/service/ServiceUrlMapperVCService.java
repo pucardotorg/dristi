@@ -43,12 +43,11 @@ public class ServiceUrlMapperVCService {
     public VcCredentialRequest generateVc(VcCredentialRequest vcCredentialRequest) {
         Set<String> uniqueIdentifiers = new HashSet<>();
         uniqueIdentifiers.add(vcCredentialRequest.getModuleName());
-        List<Mdms> mdmsList = mdmsV2Util.fetchMdmsV2Data(vcCredentialRequest.getRequestInfo(), vcCredentialRequest.getTenantId(), null, uniqueIdentifiers, null, null);
+        JsonNode data = mdmsV2Util.fetchMdmsV2Schema(vcCredentialRequest.getRequestInfo(), vcCredentialRequest.getTenantId(), null, uniqueIdentifiers, null, null);
 
-        if (!mdmsList.isEmpty()) {
-            Mdms mdms = mdmsList.get(0);
-            JsonNode data = mdms.getData();
-            if (data.has("code") && Objects.equals(data.get("code").asText(), configuration.getVcCode())) {
+        if (data != null && !data.isEmpty()) {
+            JsonNode firstElement = data.get(0);
+            if (firstElement.has("code") && Objects.equals(firstElement.get("code").asText(), configuration.getVcCode())) {
                 String signedHashValue = fileDownloadService.downloadAndExtractSignature(vcCredentialRequest);
                 CredentialRequest credentialRequest = serviceUrlEntityRequestService.getEntityDetails(signedHashValue, vcCredentialRequest);
                 producer.push(configuration.getCreateVc(), credentialRequest);

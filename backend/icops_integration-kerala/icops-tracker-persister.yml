@@ -1,0 +1,47 @@
+serviceMaps:
+  serviceName: IcopsTrackerService
+  mappings:
+    - version: 1.0
+      description: Persists icops tracker data
+      fromTopic: save-icops-tracker
+      isTransaction: true
+      isAuditEnabled: true
+      queryMaps:
+        - query: INSERT INTO dristi_kerala_icops (process_number, tenant_id, task_number, task_type, file_store_id, task_details, delivery_status, remarks, additional_details, row_version, acknowledgement_id, booking_date, received_date) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);
+          basePath: IcopsTracker
+          jsonMaps:
+            - jsonPath: $.IcopsTracker.processNumber
+            - jsonPath: $.IcopsTracker.tenantId
+            - jsonPath: $.IcopsTracker.taskNumber
+            - jsonPath: $.IcopsTracker.taskType
+            - jsonPath: $.IcopsTracker.fileStoreId
+            - jsonPath: $.IcopsTracker.taskDetails
+              type: JSON
+              dbType: JSONB
+            - jsonPath: $.IcopsTracker.deliveryStatus
+            - jsonPath: $.IcopsTracker.remarks
+            - jsonPath: $.IcopsTracker.additionalDetails
+              type: JSON
+              dbType: JSONB
+            - jsonPath: $.IcopsTracker.rowVersion
+            - jsonPath: $.IcopsTracker.acknowledgementId
+            - jsonPath: $.IcopsTracker.bookingDate
+            - jsonPath: $.IcopsTracker.receivedDate
+
+    - version: 1.0
+      description: Persists icops tracker data
+      fromTopic: update-icops-tracker
+      isTransaction: true
+      isAuditEnabled: true
+      queryMaps:
+        - query: UPDATE dristi_kerala_icops SET delivery_status = ?, remarks = ? , received_date = ?, additional_details = ?, row_version = ?  WHERE process_number = ?;
+          basePath: IcopsTracker
+          jsonMaps:
+            - jsonPath: $.IcopsTracker.deliveryStatus
+            - jsonPath: $.IcopsTracker.remarks
+            - jsonPath: $.IcopsTracker.receivedDate
+            - jsonPath: $.IcopsTracker.additionalDetails
+              type: JSON
+              dbType: JSONB
+            - jsonPath: $.IcopsTracker.rowVersion
+            - jsonPath: $.IcopsTracker.processNumber

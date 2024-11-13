@@ -4,34 +4,18 @@ title Create Task
 
 UI->Task: Create Task
 
-Task->Order: orderId Exists
-Order-->Task: return true/false
-Task->UI: Return 400 : if orderId invalid
+Task->Case: caseId Exists
+Case-->Task: return true/false
+Task->UI: Return 400 : if caseId invalid
 
-alt if ordertype = summons/warrant/bail
-    loop for each address and delivery channel
-        UI->Task: Create Task for Summon
-        Task->Task: enrich taskId, orderId, caseId
-        Task->UI: Return 201 : new Task created
-        UI->Task: Update Task with Summons/Warrant/Bail details
-        Task->UI: Task updated
-    end
-else
-    loop for each Party
-        loop for each document type
-        UI->Task: Create Task for Document
-        Task->Task: enrich taskId, orderId, caseId
-        Task->UI: Return 201 : new Task created
-        UI->Task: Update Task with document, person details
-        Task->UI: Task updated
-        end
-    end
-end
+Task->Application: applicationId Exists
+Application-->Task: return true/false
+Task->UI: Return 400 : if applicationId invalid
 
 Task->Workflow: get Workflow status
-Workflow-->Task: return Workflow status 'Created"
+Task-->Hearing: return Workflow status 'Created"
 
-Task->Task: enrich taskId
+Task->Hearing: enrich taskId
 Task->UI: Return 201 : Task created
 
 Task -> Kafka: Push Task payload to topic

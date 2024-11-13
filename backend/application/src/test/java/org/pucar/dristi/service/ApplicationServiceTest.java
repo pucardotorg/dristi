@@ -5,6 +5,7 @@ import static org.junit.jupiter.api.Assertions.*;
 import static org.pucar.dristi.config.ServiceConstants.*;
 
 import org.egov.common.contract.models.AuditDetails;
+import org.egov.common.contract.models.Workflow;
 import org.egov.common.contract.request.RequestInfo;
 import org.egov.common.contract.request.User;
 import org.egov.tracer.model.CustomException;
@@ -69,7 +70,13 @@ class ApplicationServiceTest {
     @Test
     void testCreateApplication_success() {
         // Arrange
-        when(applicationRequest.getApplication()).thenReturn(application);
+        Application application = new Application();
+        ApplicationRequest applicationRequest = new ApplicationRequest();
+        applicationRequest.setApplication(application);
+
+        Workflow workflow = new Workflow();
+        workflow.setAction("CREATE");
+        application.setWorkflow(workflow);
         when(config.getApplicationCreateTopic()).thenReturn("save-application");
 
         // Act
@@ -118,6 +125,40 @@ class ApplicationServiceTest {
         verify(enrichmentUtil).enrichApplicationUponUpdate(applicationRequest);
         verify(producer).push("update-application", applicationRequest);
         assertEquals(application, result);
+    }
+
+    @Test
+    public void testUpdateApplication_WhenRejected_ShouldEnrichAndPushToProducer() {
+        // Arrange
+        ApplicationRequest mockRequest = mock(ApplicationRequest.class);
+        Application mockApplication = mock(Application.class);
+        RequestInfo mockRequestInfo = mock(RequestInfo.class);
+
+        when(mockRequest.getApplication()).thenReturn(mockApplication);
+        when(mockRequest.getRequestInfo()).thenReturn(mockRequestInfo);
+
+        // Mock validator behavior
+        when(validator.validateApplicationExistence(mockRequestInfo, mockApplication)).thenReturn(true);
+
+        // Mock enrichment and workflow services
+        doNothing().when(enrichmentUtil).enrichApplicationUponUpdate(mockRequest);
+        doNothing().when(enrichmentUtil).enrichApplicationNumberByCMPNumber(mockRequest);
+        doNothing().when(workflowService).updateWorkflowStatus(mockRequest);
+
+        // Mock producer push behavior
+        doNothing().when(producer).push(anyString(), eq(mockRequest));
+
+        // Mock config topic
+        when(config.getApplicationUpdateTopic()).thenReturn("application-update-topic");
+
+        // Act
+        Application result = applicationService.updateApplication(mockRequest);
+
+        // Assert
+        verify(producer).push("application-update-topic", mockRequest); // Should push the update
+        assertEquals(mockApplication, result); // Returned application should be the same
+
+        // No exceptions should be thrown
     }
 
     @Test

@@ -1,0 +1,52 @@
+serviceMaps:
+  serviceName: EPostTrackerService
+  mappings:
+    - version: 1.0
+      description: Persists EPost tracker data
+      fromTopic: save-epost-tracker
+      isTransaction: true
+      isAuditEnabled: true
+      queryMaps:
+        - query: INSERT INTO dristi_epost_tracker (process_number, tenant_id, file_store_id, task_number, tracking_number, pincode, address, delivery_status, remarks, additional_details, row_version, booking_date, received_date, createdBy, lastModifiedBy, createdTime, lastModifiedTime) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);
+          basePath: EPostTracker
+          jsonMaps:
+            - jsonPath: $.EPostTracker.processNumber
+            - jsonPath: $.EPostTracker.tenantId
+            - jsonPath: $.EPostTracker.fileStoreId
+            - jsonPath: $.EPostTracker.taskNumber
+            - jsonPath: $.EPostTracker.trackingNumber
+            - jsonPath: $.EPostTracker.pinCode
+            - jsonPath: $.EPostTracker.address
+            - jsonPath: $.EPostTracker.deliveryStatus
+            - jsonPath: $.EPostTracker.remarks
+            - jsonPath: $.EPostTracker.additionalDetails
+              type: JSON
+              dbType: JSONB
+            - jsonPath: $.EPostTracker.rowVersion
+            - jsonPath: $.EPostTracker.bookingDate
+            - jsonPath: $.EPostTracker.receivedDate
+            - jsonPath: $.EPostTracker.auditDetails.createdBy
+            - jsonPath: $.EPostTracker.auditDetails.lastModifiedBy
+            - jsonPath: $.EPostTracker.auditDetails.createdTime
+            - jsonPath: $.EPostTracker.auditDetails.lastModifiedTime
+
+    - version: 1.0
+      description: Persists EPost tracker data
+      fromTopic: update-epost-tracker
+      isTransaction: true
+      isAuditEnabled: true
+      queryMaps:
+        - query: UPDATE dristi_epost_tracker SET delivery_status = ?, tracking_number = ?, remarks = ? , received_date = ?, additional_details = ?, row_version = ?,  lastModifiedBy = ?, lastModifiedTime = ?  WHERE process_number = ?;
+          basePath: EPostTracker
+          jsonMaps:
+            - jsonPath: $.EPostTracker.deliveryStatus
+            - jsonPath: $.EPostTracker.trackingNumber
+            - jsonPath: $.EPostTracker.remarks
+            - jsonPath: $.EPostTracker.receivedDate
+            - jsonPath: $.EPostTracker.additionalDetails
+              type: JSON
+              dbType: JSONB
+            - jsonPath: $.EPostTracker.rowVersion
+            - jsonPath: $.EPostTracker.auditDetails.lastModifiedBy
+            - jsonPath: $.EPostTracker.auditDetails.lastModifiedTime
+            - jsonPath: $.EPostTracker.processNumber

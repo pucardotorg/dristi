@@ -3,7 +3,7 @@ import { CardLabel, TextInput, CardLabelError } from "@egovernments/digit-ui-rea
 import MultiUploadWrapper from "./MultiUploadWrapper";
 import DocViewerWrapper from "../pages/employee/docViewerWrapper";
 
-const AdvocateDetailComponent = ({ t, config, onSelect, formData = {}, errors }) => {
+const AdvocateDetailComponent = ({ t, config, onSelect, formData = {}, errors, clearErrors }) => {
   const [removeFile, setRemoveFile] = useState();
   const [showDoc, setShowDoc] = useState(false);
   const tenantId = window?.Digit.ULBService.getCurrentTenantId();
@@ -26,6 +26,9 @@ const AdvocateDetailComponent = ({ t, config, onSelect, formData = {}, errors })
     return { file: fileUploadRes?.data, fileType: fileData.type, filename };
   };
   function setValue(value, name, input) {
+    if (errors?.[name]) {
+      clearErrors();
+    }
     if (input && input?.clearFields && value) {
       if (input?.clearFieldsType && formData[config.key]) {
         Object.keys(input?.clearFields).forEach((ele) => {
@@ -35,8 +38,8 @@ const AdvocateDetailComponent = ({ t, config, onSelect, formData = {}, errors })
           }
         });
       }
-      onSelect(config.key, { ...formData[config.key], [name]: value, ...input.clearFields });
-    } else onSelect(config.key, { ...formData[config.key], [name]: value });
+      onSelect(config.key, { ...formData[config.key], [name]: value, ...input.clearFields }, { shouldValidate: true });
+    } else onSelect(config.key, { ...formData[config.key], [name]: value }, { shouldValidate: true });
   }
   function getFileStoreData(filesData, input) {
     const numberOfFiles = filesData.length;
@@ -91,7 +94,6 @@ const AdvocateDetailComponent = ({ t, config, onSelect, formData = {}, errors })
             : true;
         return (
           <React.Fragment key={index}>
-            {errors[input.name] && <CardLabelError>{t(input.error)}</CardLabelError>}
             <div className={`${input?.type}`} style={{ width: "100%" }}>
               {input?.type !== "infoBox" && (
                 <CardLabel className="card-label-smaller" style={{ width: "100%", fontSize: "16px" }}>
@@ -131,6 +133,7 @@ const AdvocateDetailComponent = ({ t, config, onSelect, formData = {}, errors })
                     pattern={input.validation.pattern}
                     errMsg={input.validation.errMsg}
                     maxlength={input.validation.maxlength}
+                    minlength={input.validation.minlength}
                     style={{ minWidth: "500px" }}
                   />
                 )}
@@ -146,6 +149,12 @@ const AdvocateDetailComponent = ({ t, config, onSelect, formData = {}, errors })
                   )}
               </div>
             </div>
+            {errors[input.name] && (
+              <CardLabelError style={{ color: "#FF0000", marginTop: "5px", fontSize: "14px" }}>
+                {errors[input.name]?.message ? errors[input.name]?.message : t(errors[input.name]) || t(input.error)}
+                {t(input.error)}
+              </CardLabelError>
+            )}
             {/* )} */}
           </React.Fragment>
         );

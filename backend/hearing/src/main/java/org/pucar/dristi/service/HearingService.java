@@ -15,6 +15,7 @@ import org.springframework.stereotype.Service;
 import java.util.List;
 
 import static org.pucar.dristi.config.ServiceConstants.*;
+import static org.pucar.dristi.config.ServiceConstants.WITNESS_DEPOSITION_UPDATE_EXCEPTION;
 
 @Service
 @Slf4j
@@ -168,7 +169,10 @@ public class HearingService {
                 existingHearing.getAuditDetails().setLastModifiedTime(System.currentTimeMillis());
                 existingHearing.getAuditDetails().setLastModifiedBy(body.getRequestInfo().getUserInfo().getUuid());
                 hearing.setAuditDetails(existingHearing.getAuditDetails());
-                producer.push(config.getStartEndTimeUpdateTopic(), hearing);
+
+                HearingRequest hearingRequest = HearingRequest.builder().requestInfo(body.getRequestInfo())
+                        .hearing(hearing).build();
+                producer.push(config.getStartEndTimeUpdateTopic(), hearingRequest);
             }
 
         } catch (CustomException e) {
@@ -177,5 +181,34 @@ public class HearingService {
         } catch (Exception e) {
             throw new CustomException(HEARING_UPDATE_TIME_EXCEPTION, "Error occurred while updating hearing start and end time: " + e.getMessage());
         }
+    }
+
+    public Hearing uploadWitnessDeposition(HearingRequest hearingRequest) {
+
+        try {
+
+            // Validate whether the application that is being requested for update indeed exists
+            Hearing hearing = validator.validateHearingExistence(hearingRequest.getRequestInfo(), hearingRequest.getHearing());
+
+            // Updating Hearing request
+
+            hearing.setDocuments(hearingRequest.getHearing().getDocuments());
+            hearingRequest.setHearing(hearing);
+
+            // Enrich application upon update
+            enrichmentUtil.enrichHearingApplicationUponUpdate(hearingRequest);
+
+            producer.push(config.getHearingUpdateTopic(), hearingRequest);
+
+            return hearingRequest.getHearing();
+
+        } catch (CustomException e) {
+            log.error("Custom Exception occurred while uploading witness deposition pdf");
+            throw e;
+        } catch (Exception e) {
+            log.error("Error occurred while uploading witness deposition pdf");
+            throw new CustomException(WITNESS_DEPOSITION_UPDATE_EXCEPTION, "Error occurred while uploading witness deposition pdf: " + e.getMessage());
+        }
+
     }
 }

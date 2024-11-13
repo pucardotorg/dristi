@@ -1,0 +1,253 @@
+.schedule-admission-main {
+  .select-custom-dates-main {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-weight: 500;
+    .select-custom-dates-child {
+      font-weight: 500;
+      cursor: pointer;
+      text-decoration: underline;
+      color: #007e7e;
+    }
+  }
+  .action-button-schedule-admission {
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    gap: 30px;
+    margin: 0px !important;
+    .back-from-schedule {
+      width: 84px;
+      padding: 8px 24px 8px 24px;
+      color: #007e7e;
+      h2 {
+        font-family: Roboto;
+        font-size: 16px;
+        font-weight: 700;
+        line-height: 18.75px;
+        text-align: center;
+      }
+    }
+    .select-participant-submit {
+      align-items: center !important;
+      padding: 8px 24px 8px 24px;
+      box-shadow: none !important;
+      header {
+        font-family: Roboto;
+        font-size: 16px;
+        font-weight: 700;
+        line-height: 18.75px;
+        text-align: center;
+      }
+    }
+  }
+}
+
+.custom-date-selector-modal {
+  width: 390px;
+  border: 0px 0px 1px 0px;
+  border-radius: 5px;
+
+  .calendar-bottom-div {
+    .card-header {
+      font-family: Roboto;
+      font-size: 16px;
+      font-weight: 700;
+      line-height: 18.75px;
+      text-align: center;
+    }
+    .jk-digit-primary-btn {
+      height: 40px;
+      padding: 8px 24px 8px 24px !important;
+      background-color: #007e7e;
+      box-shadow: none !important;
+      h2 {
+        font-family: Roboto;
+        font-size: 16px;
+        font-weight: 700;
+        line-height: 18.75px;
+        text-align: center;
+      }
+    }
+  }
+}
+
+.schedule-admission-select-participants-modal {
+  width: 670px;
+  border-radius: 5px;
+  .select-participants-main-div {
+    .choose-participants-heading {
+      font-family: Roboto;
+      font-size: 16px;
+      font-weight: 700;
+      line-height: 18.75px;
+      text-align: left;
+    }
+    .participants-present {
+      display: flex;
+      flex-direction: row;
+      gap: 5px;
+      align-items: center;
+      font-family: Roboto;
+      font-size: 16px;
+      font-weight: 400;
+      line-height: 24px;
+      text-align: left;
+      span {
+        font-weight: 700;
+      }
+    }
+    .select-checkbox-dependent-child {
+      display: flex;
+      flex-direction: column;
+      justify-content: flex-start;
+      gap: 10px;
+      border-bottom: solid 1px #bbbbbd;
+      margin-bottom: 10px;
+
+      .label {
+        margin-left: 40px !important;
+      }
+      .compl-resp-combined-div {
+        display: flex;
+        flex-direction: column;
+        border-top: solid 1px #bbbbbd;
+        margin-top: 15px;
+      }
+      .checkbox-wrap {
+        .custom-checkbox-emp {
+          svg {
+            path:nth-child(2) {
+              fill: #007e7e;
+            }
+          }
+        }
+      }
+    }
+    .select-participants-submit-bar {
+      display: flex !important;
+      flex-direction: row !important;
+      justify-content: flex-end !important;
+      gap: 20px !important;
+      .select-back-button {
+        width: 84px;
+        height: 40px;
+        padding: 8px 24px 8px 24px;
+        color: #007e7e;
+        h2 {
+          font-family: Roboto;
+          font-size: 16px;
+          font-weight: 700;
+          line-height: 18.75px;
+          text-align: center;
+        }
+      }
+      .select-schedule-button {
+        align-items: center !important;
+        width: 115px !important;
+        height: 40px !important;
+        padding: 8px 24px 8px 24px !important;
+        background-color: #007e7e;
+        color: white;
+        box-shadow: none !important;
+        header {
+          font-family: Roboto;
+          font-size: 16px;
+          font-weight: 700;
+          line-height: 18.75px;
+          text-align: center;
+        }
+      }
+    }
+  }
+}
+
+.case-file-admission-action-bar {
+  display: flex;
+  flex-direction: row-reverse;
+  gap: 20px;
+  .jk-digit-secondary-btn {
+    width: 262px !important;
+    height: 40px !important;
+    padding: 8px 24px 8px 24px !important;
+    color: #007e7e;
+    h2 {
+      font-family: Roboto;
+      font-size: 16px;
+      font-weight: 700;
+      line-height: 18.75px;
+      text-align: center;
+    }
+  }
+  .submit-bar {
+    display: flex !important;
+    align-items: center !important;
+    width: 162px !important;
+    height: 40px !important;
+    padding: 8px 24px 8px 24px !important;
+    box-shadow: none !important;
+    svg {
+      margin-left: 10px !important;
+    }
+  }
+}
+
+.send-case-back-modal {
+  width: 536px;
+  border-radius: 5px;
+  .popup-module-main {
+    .employeeCard {
+      max-height: 300px;
+      .label-field-pair {
+        display: flex !important;
+        flex-direction: column !important;
+        min-width: 500px;
+        h2 {
+          min-width: 100%;
+        }
+        .field {
+          min-width: 100%;
+        }
+      }
+      .submit-bar {
+        position: relative;
+        left: 207px;
+        display: flex;
+        align-items: center;
+        width: 85px;
+        min-width: 85px !important;
+        height: 40px;
+        padding: 6px 24px 6px 24px;
+        box-shadow: none !important;
+        header {
+          font-family: Roboto;
+          font-size: 16px;
+          font-weight: 700;
+          line-height: 18.75px;
+          text-align: center;
+        }
+      }
+      .primary-label-btn {
+        position: relative;
+        left: 100px;
+        bottom: 50px;
+        display: flex;
+        align-items: center;
+        width: 98px;
+        min-width: 98px !important;
+        height: 40px;
+        padding: 5px 24px 5px 24px;
+        box-shadow: none !important;
+        border: solid 1px #007e7e;
+        header {
+          font-family: Roboto;
+          font-size: 16px;
+          font-weight: 700;
+          line-height: 18.75px;
+          text-align: center;
+        }
+      }
+    }
+  }
+}

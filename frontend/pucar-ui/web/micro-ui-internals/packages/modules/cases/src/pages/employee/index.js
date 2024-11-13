@@ -52,8 +52,8 @@ const App = ({ path, stateCode, userType, tenants }) => {
         <PrivateRoute path={`${path}/advocate-join-success`} component={() => <AdvocateJoinSucess />} />
         <PrivateRoute path={`${path}/case-filing-search`} component={() => <CaseAndFilingSearch></CaseAndFilingSearch>} />
         <PrivateRoute path={`${path}/litigant-success`} component={() => <LitigantSucess></LitigantSucess>} />
-      </AppContainer >
-    </Switch >
+      </AppContainer>
+    </Switch>
   );
 };
 

@@ -5,18 +5,34 @@ const { CleanWebpackPlugin } = require("clean-webpack-plugin");
 
 module.exports = {
   // mode: 'development',
-  entry: "./src/index.js",
-  devtool: "none",
+  entry: {
+    main: "./src/index.js",
+//    telemetry: "./public/scripts/telemetry/index.js",
+  },
+  devtool: "cheap-module-source-map",
   module: {
     rules: [
       {
         test: /\.(js)$/,
-        use: ["babel-loader"],
+        exclude: /node_modules/,
+        use: {
+          loader: "babel-loader",
+          options: {
+            presets: [
+              "@babel/preset-env",  
+              "@babel/preset-react" 
+            ],
+            plugins: [
+              "@babel/plugin-proposal-optional-chaining",  
+              "@babel/plugin-proposal-nullish-coalescing-operator" 
+            ]
+          },
+        },
       },
       {
         test: /\.css$/i,
         use: ["style-loader", "css-loader"],
-      }
+      },
     ],
   },
   output: {
@@ -26,13 +42,13 @@ module.exports = {
   },
   optimization: {
     splitChunks: {
-      chunks: 'all',
-      minSize:20000,
-      maxSize:50000,
-      enforceSizeThreshold:50000,
-      minChunks:1,
-      maxAsyncRequests:30,
-      maxInitialRequests:30
+      chunks: "all",
+      minSize: 20000,
+      maxSize: 50000,
+      enforceSizeThreshold: 50000,
+      minChunks: 1,
+      maxAsyncRequests: 30,
+      maxInitialRequests: 30,
     },
   },
   plugins: [
@@ -41,3 +57,4 @@ module.exports = {
     new HtmlWebpackPlugin({ inject: true, template: "public/index.html" }),
   ],
 };
+

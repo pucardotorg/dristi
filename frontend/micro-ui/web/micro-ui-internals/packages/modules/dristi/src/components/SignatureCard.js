@@ -4,7 +4,7 @@ import EsignAdharModal from "./EsignAdharModal";
 import UploadSignatureModal from "./UploadSignatureModal";
 import Button from "./Button";
 
-function SignatureCard({ input, data, t, index, onSelect, formData, configKey }) {
+function SignatureCard({ input, data, t, index, onSelect, formData, configKey, handleAadharClick }) {
   const [openUploadSignatureModal, setOpenUploadSignatureModal] = useState(false);
   const [openAadharModal, setOpenAadharModal] = useState(false);
   const name = `${data?.[input?.config?.title]} ${index}`;
@@ -20,7 +20,7 @@ function SignatureCard({ input, data, t, index, onSelect, formData, configKey })
             uploadGuidelines: "Ensure the image is not blurry and under 5MB.",
             maxFileSize: 5,
             maxFileErrorMessage: "CS_FILE_LIMIT_5_MB",
-            fileTypes: ["JPG", "PNG", "JPEG"],
+            fileTypes: ["JPG", "PNG", "JPEG", "PDF"],
             isMultipleUpload: false,
           },
         ],
@@ -47,7 +47,7 @@ function SignatureCard({ input, data, t, index, onSelect, formData, configKey })
         {input?.icon && <Icon icon={input?.icon} />}
         <h3 className="signature-title">{data?.[input?.config?.title]}</h3>
       </div>
-      {isSigned && <div style={{ width: "inherit", borderRadius: "30px", background: "#E4F2E4", color: "#00703C", padding: "10px", width: "fit-content" }}>Signed</div>}
+      {isSigned && <span className="signed">{t("SIGNED")}</span>}
       {!isSigned && (
         <div className="signed-button-group">
           <Button
@@ -62,7 +62,7 @@ function SignatureCard({ input, data, t, index, onSelect, formData, configKey })
           <Button
             label={t("CS_ESIGN_AADHAR")}
             onButtonClick={() => {
-              setOpenAadharModal(true);
+              handleAadharClick(data, name);
             }}
             className={"aadhar-sign-in"}
             labelClassName={"aadhar-sign-in"}

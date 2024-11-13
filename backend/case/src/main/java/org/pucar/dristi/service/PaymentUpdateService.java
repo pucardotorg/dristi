@@ -10,12 +10,7 @@ import org.egov.tracer.model.CustomException;
 import org.pucar.dristi.config.Configuration;
 import org.pucar.dristi.kafka.Producer;
 import org.pucar.dristi.repository.CaseRepository;
-import org.pucar.dristi.web.models.Bill;
-import org.pucar.dristi.web.models.CaseCriteria;
-import org.pucar.dristi.web.models.CaseSearchRequest;
-import org.pucar.dristi.web.models.CourtCase;
-import org.pucar.dristi.web.models.PaymentDetail;
-import org.pucar.dristi.web.models.PaymentRequest;
+import org.pucar.dristi.web.models.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
@@ -43,13 +38,17 @@ public class PaymentUpdateService {
 
     private Configuration configuration;
 
+    private CacheService cacheService;
+
     @Autowired
-    public PaymentUpdateService(WorkflowService workflowService, ObjectMapper mapper, CaseRepository repository, Producer producer, Configuration configuration) {
+    public PaymentUpdateService(WorkflowService workflowService, ObjectMapper mapper, CaseRepository repository,
+                                Producer producer, Configuration configuration, CacheService cacheService) {
         this.workflowService = workflowService;
         this.mapper = mapper;
         this.repository = repository;
         this.producer = producer;
         this.configuration = configuration;
+        this.cacheService = cacheService;
     }
 
     public void process(Map<String, Object> record) {
@@ -75,13 +74,17 @@ public class PaymentUpdateService {
 
         Bill bill  = paymentDetail.getBill();
 
+        String consumerCode = bill.getConsumerCode();
+        String[] consumerCodeSplitArray = consumerCode.split("_", 2);
+        String fillingNumber=consumerCodeSplitArray[0];
+
         CaseCriteria criteria = CaseCriteria.builder()
-                .filingNumber(bill.getConsumerCode())
+                .filingNumber(fillingNumber)
 //                .tenantId(tenantId)
                 .build();
         List<CaseCriteria> criterias = new ArrayList<>();
         criterias.add(criteria);
-        List<CaseCriteria> caseCriterias = repository.getApplications(criterias, requestInfo);
+        List<CaseCriteria> caseCriterias = repository.getCases(criterias, requestInfo);
 
         if (CollectionUtils.isEmpty(caseCriterias.get(0).getResponseList()))
             throw new CustomException("INVALID RECEIPT",
@@ -105,7 +108,14 @@ public class PaymentUpdateService {
             auditDetails.setLastModifiedBy(paymentDetail.getAuditDetails().getLastModifiedBy());
             auditDetails.setLastModifiedTime(paymentDetail.getAuditDetails().getLastModifiedTime());
             courtCase.setAuditdetails(auditDetails);
-            producer.push(configuration.getCaseUpdateStatusTopic(),courtCase);
+
+            CaseRequest caseRequest = new CaseRequest();
+            caseRequest.setRequestInfo(requestInfo);
+            caseRequest.setCases(courtCase);
+
+            producer.push(configuration.getCaseUpdateStatusTopic(),caseRequest);
+            cacheService.save(requestInfo.getUserInfo().getTenantId() + ":" + courtCase.getId().toString(), courtCase);
+
         });
     }
 

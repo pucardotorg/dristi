@@ -13,7 +13,7 @@ const sectionsParentStyle = {
 
 function Home() {
   const history = useHistory();
-
+  history.push(`/${window?.contextPath}/employee/home/home-pending-task`);
   return (
     <React.Fragment>
       <div className="scrutiny-inbox-table">

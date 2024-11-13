@@ -4,12 +4,14 @@ import { useTranslation } from "react-i18next";
 import { Switch, useRouteMatch } from "react-router-dom";
 import { Route, useHistory, useLocation } from "react-router-dom/cjs/react-router-dom.min";
 import { useToast } from "../../components/Toast/useToast";
+import AdmittedCases from "../employee/AdmittedCases/AdmittedCase";
 import ApplicationDetails from "../employee/ApplicationDetails";
 import CitizenHome from "./Home";
 import LandingPage from "./Home/LandingPage";
 import { userTypeOptions } from "./registration/config";
+import Breadcrumb from "../../components/BreadCrumb";
 
-const App = ({ stateCode, tenantId }) => {
+const App = ({ stateCode, tenantId, result, fileStoreId }) => {
   const [hideBack, setHideBack] = useState(false);
   const { toastMessage, toastType, closeToast } = useToast();
   const Digit = window?.Digit || {};
@@ -46,6 +48,9 @@ const App = ({ stateCode, tenantId }) => {
   );
 
   const individualId = useMemo(() => data?.Individual?.[0]?.individualId, [data?.Individual]);
+  if (individualId && !localStorage.getItem(individualId)) {
+    localStorage.setItem("individualId", individualId);
+  }
 
   const userType = useMemo(() => data?.Individual?.[0]?.additionalFields?.fields?.find((obj) => obj.key === "userType")?.value, [data?.Individual]);
   const { data: searchData, isLoading: isSearchLoading } = Digit.Hooks.dristi.useGetAdvocateClerk(
@@ -56,7 +61,7 @@ const App = ({ stateCode, tenantId }) => {
     { tenantId },
     moduleCode,
     Boolean(isUserLoggedIn && individualId && userType !== "LITIGANT"),
-    userType === "ADVOCATE" ? "/advocate/advocate/v1/_search" : "/advocate/clerk/v1/_search"
+    userType === "ADVOCATE" ? "/advocate/v1/_search" : "/advocate/clerk/v1/_search"
   );
 
   const userTypeDetail = useMemo(() => {
@@ -76,8 +81,23 @@ const App = ({ stateCode, tenantId }) => {
       searchResult?.[0]?.status === "INACTIVE"
     );
   }, [searchResult, userType]);
-
   const hideHomeCrumb = [`${path}/home`];
+
+  const citizenCrumb = [
+    {
+      path: `/digit-ui/citizen/home/home-pending-task`,
+      content: t("ES_COMMON_HOME"),
+      show: !hideHomeCrumb.includes(location.pathname),
+      isLast: false,
+    },
+    {
+      path: `${path}/view-case`,
+      content: t("VIEW_CASE"),
+      show: location.pathname.includes("/view-case"),
+      isLast: true,
+    },
+  ];
+
   const whiteListedRoutes = [
     `${path}/home/register`,
     `${path}/home/register/otp`,
@@ -94,10 +114,11 @@ const App = ({ stateCode, tenantId }) => {
     `${path}/home/registration/aadhar-otp`,
     `${path}/home/registration/additional-details`,
     `${path}/home/registration/upload-id`,
-    `${path}/home/application-details`,
+    `${path}/home/registration/terms-condition`,
   ];
   const registerScreenRoute = [`${path}/home/login`, `${path}/home/registration/mobile-number`, `${path}/home/registration/otp`];
-
+  const eSignWindowObject = localStorage.getItem("eSignWindowObject");
+  const retrievedObject = JSON.parse(eSignWindowObject);
   if (!isUserLoggedIn && !whiteListedRoutes.includes(location.pathname)) {
     history.push(`${path}/home/login`);
   }
@@ -111,6 +132,17 @@ const App = ({ stateCode, tenantId }) => {
   if (isUserLoggedIn && registerScreenRoute.includes(location.pathname)) {
     history.push(`${path}/home/registration/user-name`);
   }
+  if (result) {
+    localStorage.setItem("isSignSuccess", result);
+  }
+  if (fileStoreId) {
+    console.log(fileStoreId, "fileStoreId");
+    localStorage.setItem("fileStoreId", fileStoreId);
+  }
+  if (isUserLoggedIn && retrievedObject) {
+    history.push(`${retrievedObject?.path}${retrievedObject?.param}`);
+    localStorage.removeItem("eSignWindowObject");
+  }
   if (isLoading) {
     return <Loader />;
   }
@@ -119,11 +151,12 @@ const App = ({ stateCode, tenantId }) => {
     <div className={"pt-citizen"}>
       <Switch>
         <React.Fragment>
-          {!hideBack && !(location.pathname.includes("/login") || individualId) && (
+          {!hideBack && !(location.pathname.includes("/login") || location.pathname.includes("/registration/user-name") || individualId) && (
             <div className="back-button-home">
               <BackButton />
             </div>
           )}
+          {location.pathname.includes("/view-case") && <Breadcrumb crumbs={citizenCrumb} breadcrumbStyle={{ paddingLeft: 20 }}></Breadcrumb>}
 
           {userType !== "LITIGANT" && (
             <PrivateRoute exact path={`${path}/home/application-details`} component={(props) => <ApplicationDetails {...props} />} />
@@ -142,12 +175,14 @@ const App = ({ stateCode, tenantId }) => {
               <FileCase t={t}></FileCase>
             </PrivateRoute>
           </div>
+
+          <PrivateRoute exact path={`${path}/home/view-case`} component={(props) => <AdmittedCases isJudge={false} />} />
           <div
             className={
               location.pathname.includes("/response") ||
-                location.pathname.includes("/login") ||
-                location.pathname.includes("/registration") ||
-                location.pathname.endsWith("/home")
+              location.pathname.includes("/login") ||
+              location.pathname.includes("/registration") ||
+              location.pathname.endsWith("/home")
                 ? `user-registration`
                 : ""
             }

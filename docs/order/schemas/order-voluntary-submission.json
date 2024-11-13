@@ -1,0 +1,26 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "http://dristi.pucar.org/schemas/order-voluntary-submission.json",
+  "$comment": "definition of the schema for issuing voluntary submission order",
+  "$version": "0.1.0",
+  "orderDetails":
+  {
+    "applicantName": {
+      "type": "string",
+      "description": "applicant name"
+    },
+    "submissionDate": {
+      "type": "integer",
+      "format": "int64",
+      "description": "submission date"
+    },
+    "submissionId": {
+      "type": "string",
+      "description": "submission id"
+    },
+    "submissionType": {
+      "type": "string",
+      "description": "submission type"
+    }
+  }
+}

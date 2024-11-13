@@ -1,6 +1,6 @@
 import { CardLabelError, CardText } from "@egovernments/digit-ui-components";
 import { CardLabel, CloseSvg, LabelFieldPair, TextInput } from "@egovernments/digit-ui-react-components";
-import React, { useMemo, useState } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import { verifyMobileNoConfig } from "../configs/component";
 import useInterval from "../hooks/useInterval";
 import { InfoIconRed } from "../icons/svgIndex";
@@ -51,6 +51,35 @@ function VerifyPhoneNumber({ t, config, onSelect, formData = {}, errors, setErro
     timeLeft > 0 ? 1000 : null
   );
 
+  const input = useMemo(() => verifyMobileNoConfig?.[0]?.body?.[0]?.populators?.inputs?.[0], []);
+
+  const otp = useMemo(() => formData[config.key]?.[input?.name], [formData[config.key]?.[input?.name]]);
+
+  const modalOnSubmit = () => {
+    if (!otp)
+      setState((prev) => ({
+        ...prev,
+        isUserVerified: false,
+        showModal: true,
+        errorMsg: "CS_INVALID_OTP",
+      }));
+    else selectOtp(input);
+  };
+
+  const handleKeyDown = (e) => {
+    e.stopPropagation();
+    if (e.key === "Enter" && otp?.length === 6 && showModal) {
+      modalOnSubmit();
+    }
+  };
+
+  useEffect(() => {
+    window.addEventListener("keydown", handleKeyDown);
+    return () => {
+      window.removeEventListener("keydown", handleKeyDown);
+    };
+  }, [otp]);
+
   const sendOtp = async (data) => {
     try {
       const res = await window?.Digit.UserService.sendOtp(data, stateCode);
@@ -80,6 +109,7 @@ function VerifyPhoneNumber({ t, config, onSelect, formData = {}, errors, setErro
     setState((prev) => ({
       ...prev,
       showModal: false,
+      errorMsg: "",
     }));
     onSelect(config?.key, { ...formData?.[config.key], otpNumber: "" });
   };
@@ -90,6 +120,10 @@ function VerifyPhoneNumber({ t, config, onSelect, formData = {}, errors, setErro
       tenantId: stateCode,
       userType: getUserType(),
     };
+    setState((prev) => ({
+      ...prev,
+      errorMsg: "",
+    }));
     const [res, err] = await sendOtp({ otp: { ...data, ...TYPE_LOGIN } });
     setTimeLeft(10);
     if (!err) {
@@ -139,8 +173,8 @@ function VerifyPhoneNumber({ t, config, onSelect, formData = {}, errors, setErro
               city: city,
               state: addressLine1,
               coordinates: {
-                longitude: latitude,
-                latitude: longitude,
+                longitude: longitude,
+                latitude: latitude,
               },
               locality: address,
             },
@@ -153,28 +187,41 @@ function VerifyPhoneNumber({ t, config, onSelect, formData = {}, errors, setErro
           ["addressDetails-select", "complainantId", "firstName", "lastName", "middleName"].forEach((key) => {
             onSelect(
               `${key}`,
-              typeof formData?.[key] === "object" && typeof key?.[key] === "object" ? { ...formData?.[key], ...data[key] } : data[key]
+              typeof formData?.[key] === "object" && typeof key?.[key] === "object" ? { ...formData?.[key], ...data[key] } : data[key],
+              { shouldValidate: true }
             );
           });
-          onSelect(config?.key, {
-            ...formData?.[config.key],
-            individualDetails: {
-              individualId: individualData?.Individual?.[0]?.individualId,
-              document: identifierIdDetails?.fileStoreId
-                ? [{ fileName: `${idType} Card`, fileStore: identifierIdDetails?.fileStoreId, documentName: identifierIdDetails?.filename }]
-                : null,
-              "addressDetails-select": data["addressDetails-select"],
-              addressDetails: data["addressDetails-select"],
+          onSelect(
+            config?.key,
+            {
+              ...formData?.[config.key],
+              individualDetails: {
+                individualId: individualData?.Individual?.[0]?.individualId,
+                document: identifierIdDetails?.fileStoreId
+                  ? [{ fileName: `${idType} Card`, fileStore: identifierIdDetails?.fileStoreId, documentName: identifierIdDetails?.filename }]
+                  : null,
+                "addressDetails-select": data["addressDetails-select"],
+                addressDetails: data["addressDetails-select"],
+              },
+              isUserVerified: true,
             },
-            [config?.disableConfigKey]: true,
-          });
+            { shouldValidate: true }
+          );
         } else {
-          onSelect(config?.key, { ...formData?.[config.key], individualDetails: null, userDetails: info });
+          onSelect(
+            config?.key,
+            { ...formData?.[config.key], individualDetails: null, userDetails: info, isUserVerified: true },
+            { shouldValidate: true }
+          );
         }
       })
       .catch(() => {
         setUser({ info, ...tokens });
-        onSelect(config?.key, { ...formData?.[config.key], individualDetails: null, userDetails: info });
+        onSelect(
+          config?.key,
+          { ...formData?.[config.key], individualDetails: null, userDetails: info, isUserVerified: true },
+          { shouldValidate: true }
+        );
       });
   };
 
@@ -192,6 +239,7 @@ function VerifyPhoneNumber({ t, config, onSelect, formData = {}, errors, setErro
           info.tenantId = window?.Digit.ULBService.getStateId();
         }
         searchIndividualUser(info, tokens);
+        localStorage.setItem(`temp-refresh-token-${formData[config.key]?.[input?.mobileNoKey]}`, tokens?.refresh_token);
         setState((prev) => ({
           ...prev,
           isUserVerified: true,
@@ -211,10 +259,12 @@ function VerifyPhoneNumber({ t, config, onSelect, formData = {}, errors, setErro
           info.tenantId = window?.Digit.ULBService.getStateId();
         }
         searchIndividualUser(info, tokens);
+        localStorage.setItem(`temp-refresh-token-${formData[config.key]?.[input?.mobileNoKey]}`, tokens?.refresh_token);
         setState((prev) => ({
           ...prev,
           isUserVerified: true,
           showModal: false,
+          errorMsg: "",
         }));
       }
     } catch (err) {
@@ -222,43 +272,47 @@ function VerifyPhoneNumber({ t, config, onSelect, formData = {}, errors, setErro
         ...prev,
         isUserVerified: false,
         showModal: true,
-        errorMsg: "CS_INVALID_OTP",
+        errorMsg: err?.response?.data?.error_description === "Account locked" ? t("MAX_RETRIES_EXCEEDED") : t("CS_INVALID_OTP"),
       }));
     }
   };
 
-  const input = useMemo(() => verifyMobileNoConfig?.[0]?.body?.[0]?.populators?.inputs?.[0], []);
-
   return (
     <div className="phone-number-verification">
       <LabelFieldPair>
-        <CardLabel className="card-label-smaller">{t(config.label)}</CardLabel>
+        <CardLabel className="card-label-smaller" style={{ fontWeight: "700" }}>
+          {t(config.label)}
+        </CardLabel>
       </LabelFieldPair>
       <div style={{ display: "flex", justifyContent: "space-between", gap: 24 }}>
         <div className="field user-details-form-style" style={{ display: "flex", width: "100%" }}>
-          {config?.componentInFront ? <span className="citizen-card-input citizen-card-input--front">{config?.componentInFront}</span> : null}
+          {config?.componentInFront ? (
+            <span className={`citizen-card-input citizen-card-input--front${errors[config.key] ? " alert-error-border" : ""}`}>
+              {config?.componentInFront}
+            </span>
+          ) : null}
           <TextInput
+            errorStyle={errors[config.key]}
             value={formData?.[config.key]?.[config.name]}
             name={config.name}
             minlength={config?.validation?.minLength}
             maxlength={config?.validation?.maxLength}
-            validation={config?.validation}
-            ValidationRequired={config?.validation}
             title={config?.validation?.title}
-            disable={isUserVerified || formData?.[config.key]?.[config?.disableConfigKey] || config.disable}
+            disable={isUserVerified || formData?.[config.key]?.isUserVerified || config.disable}
             isMandatory={errors[config?.name]}
             onChange={(e) => {
               const { value } = e.target;
-              if (value?.length >= config?.validation?.minLength && !value.match(config?.validation?.pattern)) {
-                setError(config.key, { [config?.name]: config?.error });
+              let updatedValue = value;
+              if (value.length === 1) {
+                updatedValue = value?.replace(/[^6-9]/g, "");
               } else {
-                setError(config.key, { [config?.name]: "" });
+                updatedValue = value?.replace(/[^0-9]/g, "");
               }
-              onSelect(config?.key, { ...formData?.[config.key], [config?.name]: value });
+              onSelect(config?.key, { ...formData?.[config.key], [config?.name]: updatedValue });
             }}
           />
         </div>
-        {isUserVerified || formData?.[config.key]?.[config?.disableConfigKey] ? (
+        {isUserVerified || formData?.[config.key]?.isUserVerified ? (
           <div
             style={{
               display: "flex",
@@ -272,13 +326,13 @@ function VerifyPhoneNumber({ t, config, onSelect, formData = {}, errors, setErro
           </div>
         ) : (
           <Button
-            label={t("VERIFY_OTP")}
-            style={{ alignItems: "center" }}
+            label={t("VERIFY_MOBILE_NUMBER")}
+            style={{ alignItems: "center", minWidth: "210px" }}
             className={"secondary-button-selector"}
             labelClassName={"secondary-label-selector"}
             isDisabled={
               !formData?.[config.key]?.[config.name] ||
-              errors?.[config?.key]?.[config.name] ||
+              errors?.[config?.key]?.[config?.isVerifiedOtpDisabledKey] ||
               formData?.[config.key]?.[config.name]?.length < config?.validation?.minLength ||
               formData?.[config.key]?.[config.name]?.length > config?.validation?.maxLength
             }
@@ -295,28 +349,21 @@ function VerifyPhoneNumber({ t, config, onSelect, formData = {}, errors, setErro
           />
         )}
       </div>
-      {errors?.[config?.key]?.[config.name] && (
+      {errors[config.key]?.type === "required" && <CardLabelError className="error-text">{t("CORE_REQUIRED_FIELD_ERROR")}</CardLabelError>}
+      {errors?.[config?.key]?.[config.name] && !formData?.complainantVerification?.isUserVerified && (
         <CardLabelError className={errors?.[config?.key]?.[config.name] ? "error-text" : "default-text"}>
-          {t(errors?.[config?.key]?.[config.name] ? "VERIFY_PHONE_ERROR_TEXT" : "VERIFY_PHONE_DEFAULT_TEXT")}
+          {t(errors?.[config?.key]?.[config.name] ? errors?.[config?.key]?.[config.name] || "VERIFY_PHONE_ERROR_TEXT" : "VERIFY_PHONE_DEFAULT_TEXT")}
         </CardLabelError>
       )}
       {showModal && (
         <Modal
           headerBarEnd={<CloseBtn onClick={handleCloseModal} isMobileView={true} />}
-          actionCancelOnSubmit={() => { }}
+          actionCancelOnSubmit={() => {}}
           actionSaveLabel={t("VERIFY")}
-          actionSaveOnSubmit={() => {
-            if (!formData[config.key]?.[input?.name])
-              setState((prev) => ({
-                ...prev,
-                isUserVerified: false,
-                showModal: true,
-                errorMsg: "CS_INVALID_OTP",
-              }));
-            else selectOtp(input);
-          }}
+          actionSaveOnSubmit={() => modalOnSubmit()}
           formId="modal-action"
-          headerBarMain={<Heading label={t("VERIFY_PHONE_NUMBER")} />}
+          isDisabled={formData?.[config.key]?.[input.name]?.length !== 6 || errorMsg}
+          headerBarMain={<Heading label={t("VERIFY_MOBILE_NUMBER")} />}
           submitTextClassName={"verification-button-text-modal"}
           className={"verify-mobile-modal"}
         >
@@ -324,15 +371,16 @@ function VerifyPhoneNumber({ t, config, onSelect, formData = {}, errors, setErro
             <LabelFieldPair>
               <CardLabel className="card-label-smaller" style={{ display: "flex" }}>
                 {t(input.label) +
-                  `${input?.hasMobileNo
-                    ? formData[config.key]?.[input?.mobileNoKey]
-                      ? input?.isMobileSecret
-                        ? input?.mobileCode
-                          ? ` ${input?.mobileCode}-******${formData[config.key]?.[input?.mobileNoKey]?.substring(6)}`
-                          : ` ${formData[config.key]?.[input?.mobileNoKey]?.substring(6)}`
-                        : ` ${formData[config.key]?.[input?.mobileNoKey]}`
+                  `${
+                    input?.hasMobileNo
+                      ? formData[config.key]?.[input?.mobileNoKey]
+                        ? input?.isMobileSecret
+                          ? input?.mobileCode
+                            ? ` ${input?.mobileCode}-******${formData[config.key]?.[input?.mobileNoKey]?.substring(6)}`
+                            : ` ${formData[config.key]?.[input?.mobileNoKey]?.substring(6)}`
+                          : ` ${formData[config.key]?.[input?.mobileNoKey]}`
+                        : ""
                       : ""
-                    : ""
                   }`}
               </CardLabel>
               <div className="field">
@@ -351,11 +399,21 @@ function VerifyPhoneNumber({ t, config, onSelect, formData = {}, errors, setErro
                     key={input.name}
                     value={formData && formData[config.key] ? formData[config.key][input.name] : undefined}
                     onChange={(e) => {
-                      onSelect(config?.key, { ...formData?.[config.key], [input?.name]: e.target.value });
+                      const { value } = e.target;
+                      let updatedValue = value;
+                      updatedValue = value?.replace(/[^0-9]/g, "");
+                      if (errorMsg) {
+                        setState((prev) => {
+                          return {
+                            ...prev,
+                            errorMsg: "",
+                          };
+                        });
+                      }
+                      onSelect(config?.key, { ...formData?.[config.key], [input?.name]: updatedValue });
                     }}
                     disable={input.isDisabled}
                     defaultValue={undefined}
-                    clas
                     {...input.validation}
                   />
                 )}

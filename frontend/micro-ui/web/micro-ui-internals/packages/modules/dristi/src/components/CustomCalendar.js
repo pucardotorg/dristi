@@ -2,12 +2,12 @@ import React, { useState, useEffect, useMemo } from "react";
 import { Calendar } from "react-date-range";
 import { CalendarLeftArrow, CalendarRightArrow } from "../icons/svgIndex";
 import { Button, CardHeader } from "@egovernments/digit-ui-react-components";
-import useGetHearings from "../hooks/dristi/useGetHearings";
 
-function CustomCalendar({ config, t, handleSelect, onCalendarConfirm, selectedCustomDate, tenantId }) {
+function CustomCalendar({ config, t, handleSelect, onCalendarConfirm, selectedCustomDate, tenantId, minDate, maxDate }) {
   const [currentMonth, setCurrentMonth] = useState(new Date()); // State to track the current month
-  const { data: hearingResponse, refetch: refetch } = useGetHearings(
-    { hearing: { tenantId }, tenantId },
+  const [selectedDate, setSelectedDate] = useState(new Date()); // State to track the current month
+  const { data: hearingResponse, refetch: refetch } = Digit.Hooks.hearings.useGetHearings(
+    { criteria: { tenantId }, tenantId },
     { applicationNumber: "", cnrNumber: "", tenantId },
     "dristi",
     true
@@ -28,6 +28,7 @@ function CustomCalendar({ config, t, handleSelect, onCalendarConfirm, selectedCu
 
   const hearingCounts = useMemo(() => {
     const counts = {};
+    if (!hearingDetails) return counts;
     const filteredHearings = hearingDetails.filter((hearing) => {
       const hearingDate = new Date(hearing.startTime);
       return hearingDate.getMonth() === currentMonth.getMonth() && hearingDate.getFullYear() === currentMonth.getFullYear();
@@ -45,6 +46,12 @@ function CustomCalendar({ config, t, handleSelect, onCalendarConfirm, selectedCu
     return Object.values(hearingCounts).reduce((sum, value) => sum + value, 0);
   }, [hearingCounts]);
 
+  const selectedDateHearingCount = useMemo(() => {
+    const dateStr = selectedDate.toLocaleDateString("en-CA");
+    const hearingCount = hearingCounts[dateStr] || 0;
+    return hearingCount;
+  }, [hearingCounts, selectedDate]);
+
   const renderCustomDay = (date) => {
     const dateStr = date.toLocaleDateString("en-CA");
     const hearingCount = hearingCounts[dateStr] || 0;
@@ -52,7 +59,20 @@ function CustomCalendar({ config, t, handleSelect, onCalendarConfirm, selectedCu
       <div>
         <span className="rdrDayNumber">{date.getDate()}</span>
         {hearingCount > 0 && (
-          <div style={{ fontSize: "8px", color: "#931847", marginTop: "2px" }}>
+          <div
+            style={{
+              fontSize: "8px",
+              color: "#931847",
+              marginTop: "2px",
+              top: 18,
+              right: 2,
+              position: "absolute",
+              width: "100%",
+              whiteSpace: "nowrap",
+              overflow: "hidden",
+              textOverflow: "ellipsis",
+            }}
+          >
             {hearingCount} {t("HEARINGS")}
           </div>
         )}
@@ -76,26 +96,29 @@ function CustomCalendar({ config, t, handleSelect, onCalendarConfirm, selectedCu
     );
   };
 
-  const minDate = new Date();
-  const maxDate = new Date(2025, 11, 31);
-
   return (
     <div>
-      <Calendar
-        date={selectedCustomDate}
-        onChange={handleSelect}
-        // minDate={minDate}
-        maxDate={maxDate}
-        dayContentRenderer={renderCustomDay}
-        navigatorRenderer={navigatorRenderer}
-        onShownDateChange={(date) => {
-          setCurrentMonth(date);
-        }}
-      />
+      <div>
+        <Calendar
+          date={selectedCustomDate}
+          minDate={minDate && minDate}
+          maxDate={maxDate ? maxDate : new Date(2080, 11, 31)}
+          onChange={(date) => {
+            handleSelect(date);
+            setSelectedDate(date);
+          }}
+          // minDate={minDate}
+          dayContentRenderer={renderCustomDay}
+          navigatorRenderer={navigatorRenderer}
+          onShownDateChange={(date) => {
+            setCurrentMonth(date);
+          }}
+        />
+      </div>
       {config?.showBottomBar && (
         <div className="calendar-bottom-div">
           <CardHeader>
-            {monthlyCount} {t(config?.label)}
+            {selectedDateHearingCount} {t(config?.label)}
           </CardHeader>
           <Button variation="primary" onButtonClick={() => onCalendarConfirm()} label={t(config?.buttonText)}></Button>
         </div>

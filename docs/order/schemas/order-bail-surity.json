@@ -1,0 +1,19 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "http://dristi.pucar.org/schemas/order-bail-surity.json",
+  "$comment": "definition of the schema for issuing bail surity order",
+  "$version": "0.1.0",
+  "orderDetails":
+  {
+    "bailType":
+    {
+      "type" : "string",
+      "description": "bail type"
+    },
+    "summary":
+    {
+      "type" : "string",
+      "description": "summary of order"
+    }
+  }
+}

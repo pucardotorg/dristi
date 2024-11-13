@@ -37,6 +37,9 @@ public class ServiceConstants {
 	public static final String CITIZEN_LOWER = "Citizen";
 	public static final String USER = "user";
 	public static final String COMMENT_ADD_ERR = "COMMENT_ADD_ERR";
+	public static final String COMPLAINANT = "COMPLAINANT";
+	public static final String ACCUSED = "ACCUSED";
+	public static final String COURT = "COURT";
 
 	public static final String PARSING_ERROR = "PARSING ERROR";
 	public static final String FAILED_TO_PARSE_BUSINESS_SERVICE_SEARCH = "Failed to parse response of workflow business service search";
@@ -56,11 +59,8 @@ public class ServiceConstants {
 	public static final String ABATED_STATE = "ABATED";
 	public static final String ARTIFACT_ID_NAME = "artifact.artifact_number";
 	public static final String AFFIDAVIT = "AFFIDAVIT";
-	public static final String COMPLAINANT = "COMPLAINANT";
 	public static final String DOCUMENTARY = "DOCUMENTARY";
 	public static final String DEPOSITION = "DEPOSITION";
-	public static final String ACCUSED = "ACCUSED";
-	public static final String COURT = "COURT";
 	public static final String CASE_EXCEPTION = "CASE_EXCEPTION";
 	public static final String ORDER_EXCEPTION = "ORDER_EXCEPTION";
 	public static final String APPLICATION_EXCEPTION = "APPLICATION_EXCEPTION";

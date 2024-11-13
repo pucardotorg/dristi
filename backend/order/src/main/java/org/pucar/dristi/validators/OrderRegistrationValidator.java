@@ -1,11 +1,15 @@
 package org.pucar.dristi.validators;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.jayway.jsonpath.JsonPath;
 import lombok.extern.slf4j.Slf4j;
 import org.egov.common.contract.request.RequestInfo;
 import org.egov.tracer.model.CustomException;
+import org.pucar.dristi.config.Configuration;
 import org.pucar.dristi.repository.OrderRepository;
 import org.pucar.dristi.util.CaseUtil;
 import org.pucar.dristi.util.FileStoreUtil;
+import org.pucar.dristi.util.MdmsUtil;
 import org.pucar.dristi.web.models.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -13,6 +17,7 @@ import org.springframework.util.ObjectUtils;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 import static org.pucar.dristi.config.ServiceConstants.*;
 
@@ -24,13 +29,21 @@ public class OrderRegistrationValidator {
     private CaseUtil caseUtil;
     private FileStoreUtil fileStoreUtil;
 
+    private Configuration configuration;
+    private MdmsUtil mdmsUtil;
+
+    public ObjectMapper objectMapper;
+
 
     @Autowired
-    public OrderRegistrationValidator(OrderRepository repository, CaseUtil caseUtil, FileStoreUtil fileStoreUtil) {
-        this.repository = repository;
-        this.caseUtil = caseUtil;
-        this.fileStoreUtil = fileStoreUtil;
-    }
+    public OrderRegistrationValidator(OrderRepository repository, CaseUtil caseUtil, FileStoreUtil fileStoreUtil, Configuration configuration,MdmsUtil mdmsUtil,ObjectMapper objectMapper) {
+            this.repository = repository;
+            this.caseUtil = caseUtil;
+            this.fileStoreUtil = fileStoreUtil;
+            this.configuration = configuration;
+            this.mdmsUtil = mdmsUtil;
+            this.objectMapper = objectMapper;
+        }
 
     public void validateOrderRegistration(OrderRequest orderRequest) throws CustomException {
         RequestInfo requestInfo = orderRequest.getRequestInfo();
@@ -44,6 +57,8 @@ public class OrderRegistrationValidator {
 
         //validate documents
         validateDocuments(orderRequest.getOrder());
+
+        validateMDMSDocumentTypes(orderRequest);
     }
 
     public boolean validateApplicationExistence(OrderRequest orderRequest) {
@@ -74,5 +89,38 @@ public class OrderRegistrationValidator {
 
             });
         }
+    }
+
+    private void validateMDMSDocumentTypes(OrderRequest orderRequest){
+        String mdmsData = mdmsUtil.fetchMdmsData(orderRequest.getRequestInfo(), orderRequest.getOrder().getTenantId(), configuration.getOrderModule(), createMasterDetails());
+
+        Object orderDetails = orderRequest.getOrder().getOrderDetails();
+
+        if (orderDetails != null) {
+            // Extract 'documentType' object from 'orderDetails'
+            Map<String, Object> orderDetailsMap = objectMapper.convertValue(orderDetails, Map.class);
+
+            if (orderDetailsMap != null) {
+
+                // Extract 'documentType' from 'orderDetails'
+                Map<String, Object> documentType = (Map<String, Object>) orderDetailsMap.get("documentType");
+
+                if (documentType != null) {
+                    // Extract 'value' from 'documentType'
+                    String documentTypeValue = (String) documentType.get("value");
+
+                    List<Map<String, Object>> orderTypeResults = JsonPath.read(mdmsData, configuration.getDocumentTypePath().replace("{}",documentTypeValue));
+                    if (orderTypeResults.isEmpty()) {
+                        throw new CustomException(MDMS_DATA_NOT_FOUND, "Invalid DocumentType");
+                    }
+                }
+            }
+        }
+    }
+
+    private List<String> createMasterDetails() {
+        List<String> masterList = new ArrayList<>();
+        masterList.add("DocumentType");
+        return masterList;
     }
 }

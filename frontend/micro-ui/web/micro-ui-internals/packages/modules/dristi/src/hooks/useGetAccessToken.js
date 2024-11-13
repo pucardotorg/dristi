@@ -33,8 +33,8 @@ const authenticate = async (details) => {
   }
   return authResponse;
 };
-export const getUserDetails = async (refreshToken) => {
-  const mobileNumber = window?.Digit.UserService.getUser()?.info?.mobileNumber;
+export const getUserDetails = async (refreshToken, mobNumber = null) => {
+  const mobileNumber = mobNumber ? mobNumber : window?.Digit.UserService.getUser()?.info?.mobileNumber;
   const response = await authenticate({
     username: mobileNumber,
     grant_type: "refresh_token",
@@ -43,14 +43,14 @@ export const getUserDetails = async (refreshToken) => {
   });
   return response;
 };
-export function useGetAccessToken(key) {
+export function useGetAccessToken(key, shouldRefreshToken) {
   useEffect(() => {
     const refreshToken = window.localStorage.getItem(key);
-    if (refreshToken) {
+    if (refreshToken && shouldRefreshToken) {
       getUserDetails(refreshToken).then((res) => {
         const { ResponseInfo, UserRequest: info, ...tokens } = res;
         const user = { info, ...tokens };
-        window?.Digit.SessionStorage.set("citizen.userRequestObject", user);
+        localStorage.setItem("citizen.userRequestObject", user);
         window?.Digit.UserService.setUser(user);
         setCitizenDetail(user?.info, user?.access_token, window?.Digit.ULBService.getStateId());
       });

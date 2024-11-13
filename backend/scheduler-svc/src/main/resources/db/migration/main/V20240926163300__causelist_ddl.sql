@@ -1,0 +1,1 @@
+ALTER TABLE cause_list ADD COLUMN case_id VARCHAR(255);

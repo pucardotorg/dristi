@@ -106,13 +106,13 @@ import static org.pucar.dristi.config.ServiceConstants.ADVOCATE_CREATE_EXCEPTION
         criteria.add(searchCriteria);
 
         // Mock the repository call to return a specific value
-        when(advocateRepository.getApplications(criteria, "tenantId", 10, 0)).thenReturn(new ArrayList<>());
+        when(advocateRepository.getAdvocates(criteria, "tenantId", 10, 0)).thenReturn(new ArrayList<>());
 
         // Call the method under test
         advocateService.searchAdvocate(requestInfo, criteria, "tenantId", null, null);
 
         // Verify the repository interaction
-        verify(advocateRepository).getApplications(criteria, "tenantId", 10, 0);
+        verify(advocateRepository).getAdvocates(criteria, "tenantId", 10, 0);
 
         // Additional assertions can be added here if needed
     }
@@ -125,7 +125,7 @@ import static org.pucar.dristi.config.ServiceConstants.ADVOCATE_CREATE_EXCEPTION
         criteria.add(mock(AdvocateSearchCriteria.class));
         CustomException customException = new CustomException("Error", "Error message");
 
-        doThrow(customException).when(advocateRepository).getApplications(criteria, "tenantId", 10, 0);
+        doThrow(customException).when(advocateRepository).getAdvocates(criteria, "tenantId", 10, 0);
 
         CustomException exception = assertThrows(CustomException.class, () -> advocateService.searchAdvocate(requestInfo, criteria, "tenantId", null, null));
 

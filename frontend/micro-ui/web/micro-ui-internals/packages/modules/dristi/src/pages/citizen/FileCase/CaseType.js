@@ -1,6 +1,6 @@
 import { Loader } from "@egovernments/digit-ui-components";
 import { CitizenInfoLabel, CloseSvg } from "@egovernments/digit-ui-react-components";
-import React, { useMemo, useState } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import { useHistory, useRouteMatch } from "react-router-dom/cjs/react-router-dom.min";
 import Button from "../../../components/Button";
 import CustomDetailsCard from "../../../components/CustomDetailsCard";
@@ -8,6 +8,21 @@ import Modal from "../../../components/Modal";
 import { FileDownloadIcon } from "../../../icons/svgIndex";
 import { DRISTIService } from "../../../services";
 import { userTypeOptions } from "../registration/config";
+import SelectCustomNote from "../../../components/SelectCustomNote";
+import _ from "lodash";
+import useGetStatuteSection from "../../../hooks/dristi/useGetStatuteSection";
+import useDownloadCasePdf from "../../../hooks/dristi/useDownloadCasePdf";
+const customNoteConfig = {
+  populators: {
+    inputs: [
+      {
+        infoHeader: "CS_COMMON_NOTE",
+        infoText: "ES_BANNER_LABEL",
+        infoTooltipMessage: "CS_NOTE_TOOLTIP_CASE_TYPE",
+      },
+    ],
+  },
+};
 
 export const formatDate = (date) => {
   const day = String(date.getDate()).padStart(2, "0");
@@ -22,8 +37,9 @@ function CaseType({ t }) {
   const tenantId = window?.Digit.ULBService.getCurrentTenantId();
   const [page, setPage] = useState(0);
   const [isDisabled, setIsDisabled] = useState(false);
+  const { downloadPdf } = useDownloadCasePdf();
   const onCancel = () => {
-    history.push("/digit-ui/citizen/dristi/home");
+    history.push("/digit-ui/citizen/home/home-pending-task");
   };
   const onSelect = () => {
     setPage(1);
@@ -38,6 +54,16 @@ function CaseType({ t }) {
       </div>
     );
   };
+  const { data: complainantRespondentTypeData, isLoading: isComplainantRespondentTypeLoading } = Digit.Hooks.useCustomMDMS(
+    Digit.ULBService.getStateId(),
+    "case",
+    [{ name: "ComplainantRespondentType" }],
+    {
+      select: (data) => {
+        return data?.case?.ComplainantRespondentType || [];
+      },
+    }
+  );
   const Submitbar = () => {
     const token = window.localStorage.getItem("token");
     const isUserLoggedIn = Boolean(token);
@@ -79,7 +105,6 @@ function CaseType({ t }) {
     const userType = useMemo(() => individualData?.Individual?.[0]?.additionalFields?.fields?.find((obj) => obj.key === "userType")?.value, [
       individualData?.Individual,
     ]);
-
     const { data: searchData, isLoading: isSearchLoading } = window?.Digit.Hooks.dristi.useGetAdvocateClerk(
       {
         criteria: [{ individualId }],
@@ -88,7 +113,7 @@ function CaseType({ t }) {
       {},
       individualId,
       userType,
-      "/advocate/advocate/v1/_search"
+      "/advocate/v1/_search"
     );
 
     if (userType === "ADVOCATE" && searchData) {
@@ -112,12 +137,22 @@ function CaseType({ t }) {
       return searchResult?.[0]?.responseList?.[0]?.id;
     }, [searchResult]);
 
-    if (isLoading || isFetching || isSearchLoading) {
+    const { isLoading: mdmsLoading, data: statuteData } = useGetStatuteSection();
+    const { data: requiredDocumentsData, isLoading: isLoadingRequiredDocumentsData } = useGetStatuteSection("case", [{ name: "RequiredDocuments" }]);
+    const RequiredDocuments = requiredDocumentsData?.RequiredDocuments;
+    const requiredDocumentsPdfNIA = RequiredDocuments?.filter((item) => item?.caseType == "NIA-138")?.[0];
+    if (isLoading || isFetching || isSearchLoading || mdmsLoading || isComplainantRespondentTypeLoading || isLoadingRequiredDocumentsData) {
       return <Loader />;
     }
     return (
       <div className="submit-bar-div">
-        <Button icon={<FileDownloadIcon />} className="download-button" label={t("CS_COMMON_DOWNLOAD")} />
+        <Button
+          icon={<FileDownloadIcon />}
+          className="download-button"
+          label={t("CS_COMMON_DOWNLOAD")}
+          isDisabled={!requiredDocumentsPdfNIA?.fileStoreId}
+          onButtonClick={() => downloadPdf(tenantId, requiredDocumentsPdfNIA?.fileStoreId)}
+        />
         <div className="right-div">
           <Button
             className="cancel-button"
@@ -137,13 +172,12 @@ function CaseType({ t }) {
                 resolutionMechanism: "COURT",
                 caseDescription: "Case description",
                 linkedCases: [],
-                filingDate: formatDate(new Date()),
                 caseDetails: {},
                 caseCategory: "CRIMINAL",
                 statutesAndSections: [
                   {
                     tenantId,
-                    statute: "Statute",
+                    statute: statuteData?.name,
                     sections: ["Negotiable Instrument Act", "02."],
                     subsections: ["138", "03."],
                   },
@@ -173,7 +207,8 @@ function CaseType({ t }) {
                   ],
                 },
                 additionalDetails: {
-                  payerMobileNo: individualData?.mobileNumber,
+                  payerMobileNo: individualData?.Individual?.[0]?.mobileNumber,
+                  payerName: `${givenName} ${familyName}`,
                   ...(advocateId
                     ? {
                         advocateDetails: {
@@ -194,20 +229,12 @@ function CaseType({ t }) {
                         },
                       }
                     : {
-                        complaintDetails: {
+                        complainantDetails: {
                           formdata: [
                             {
                               isenabled: true,
                               data: {
-                                complainantType: {
-                                  code: "INDIVIDUAL",
-                                  name: "Individual",
-                                  showCompanyDetails: false,
-                                  complainantLocation: true,
-                                  commonFields: true,
-                                  isEnabled: true,
-                                  isIndividual: true,
-                                },
+                                complainantType: complainantRespondentTypeData.find((item) => item.id === 1),
                                 "addressDetails-select": {
                                   pincode: pincode,
                                   district: addressLine2,
@@ -240,8 +267,8 @@ function CaseType({ t }) {
                                       city: city,
                                       state: addressLine1,
                                       coordinates: {
-                                        longitude: latitude,
-                                        latitude: longitude,
+                                        longitude: longitude,
+                                        latitude: latitude,
                                       },
                                       locality: address,
                                     },
@@ -254,8 +281,8 @@ function CaseType({ t }) {
                                   city: city,
                                   state: addressLine1,
                                   coordinates: {
-                                    longitude: latitude,
-                                    latitude: longitude,
+                                    longitude: longitude,
+                                    latitude: latitude,
                                   },
                                   locality: address,
                                 },
@@ -284,7 +311,7 @@ function CaseType({ t }) {
       { header: "Case Category", subtext: "Criminal" },
       {
         header: "Status / Act",
-        subtext: "Negotiable Instrument Act",
+        subtext: "Negotiable Instruments Act",
       },
       { header: "Section", subtext: "138" },
     ];
@@ -296,8 +323,8 @@ function CaseType({ t }) {
         serialNumber: "01.",
       },
       {
-        header: "Bounced Cheque",
-        subtext: "A copy of the bounced chequeon the  basis which this case is being filed",
+        header: "Dishonored Cheque",
+        subtext: "A copy of the dishonored cheque on the basis which this case is being filed",
         subnote: "Upload .pdf or .jpg. Maximum upload size of 50MB",
         serialNumber: "02.",
       },
@@ -308,24 +335,38 @@ function CaseType({ t }) {
         serialNumber: "03.",
       },
       {
-        header: "Proof of Debt/ Liability",
-        subtext: "Anything to prove some sort of agreement between you and the respondent",
-        subnote: "Upload .pdf or .jpg. Maximum upload size of 50MB",
-        serialNumber: "04.",
-      },
-      {
         header: "Legal Demand Notice",
         subtext:
           "Any intimation you provided to the respondent to informing them that their cheque had bounced and they still owed you the cheque amount",
         subnote: "Upload .pdf or .jpg. Maximum upload size of 50MB",
+        serialNumber: "04",
+      },
+      {
+        header: "Postal acknowledgement (Issue of legal demand notice)",
+        subtext:
+          "The acknowledgement provided by the postal department when sending the letter/RPAD/anything else containing legal demand notice (see number 4 in the list) to the accused.",
+        subnote: "Upload .pdf or .jpg. Maximum upload size of 50MB",
         serialNumber: "05",
       },
       {
-        header: "Notarised Affidavit",
+        header: "Postal acknowledgement (Delivery of legal demand notice)",
         subtext:
-          "This is a replacement for your sworn statement which reduces the chances that an admission hearing is needed for the court to take cognisance of your case.",
+          "The acknowledgement provided by the postal department when the letter/RPAD/anything else containing legal demand notice (see number 4 in the list) is received by the accused",
         subnote: "Upload .pdf or .jpg. Maximum upload size of 50MB",
         serialNumber: "06",
+      },
+      {
+        header: "Affidavit under section 223 of BNSS",
+        subtext: "Affidavit under section 223 of BNSS must be there in the infobox at the start of filing.",
+        subnote: "Upload .pdf or .jpg. Maximum upload size of 50MB",
+        serialNumber: "07",
+      },
+      {
+        header: "Any other document you deem necessary",
+        subtext:
+          "Please include any additional documents you believe will strengthen your case and that will be crucial in substantiating your claims when filing the complaint.",
+        subnote: "Upload .pdf or .jpg. Maximum upload size of 50MB",
+        serialNumber: "08",
       },
     ];
     return page === 0 ? caseTypeDetails : listDocumentDetails;
@@ -354,15 +395,9 @@ function CaseType({ t }) {
             style={{ width: "100%" }}
           />
         ))}
+        {page === 0 && <SelectCustomNote t={t} config={customNoteConfig}></SelectCustomNote>}
       </div>
-      {page === 0 && (
-        <CitizenInfoLabel
-          style={{ maxWidth: "100%", padding: "8px", borderRadius: "4px" }}
-          info={t("ES_COMMON_NOTE")}
-          text={t("ES_BANNER_LABEL")}
-          className="doc-banner"
-        ></CitizenInfoLabel>
-      )}
+
       {page === 1 && <Submitbar />}
     </Modal>
   );

@@ -1,10 +1,14 @@
 import { useQuery, useQueryClient } from "react-query";
+import { DRISTIService } from "../../services";
 
 function useGetIndividualUser(reqData, params, moduleCode, individualId, enabled) {
   const client = useQueryClient();
   const { isLoading, data, isFetching, refetch, error } = useQuery(
     `GET_INDIVIDUAL_USER_${moduleCode}_${individualId}`,
-    () => window?.Digit.DRISTIService.searchIndividualUser(reqData, params),
+    () =>
+      DRISTIService.searchIndividualUser(reqData, params)
+        .then((data) => data)
+        .catch(() => ({})),
     {
       cacheTime: 0,
       enabled: Boolean(enabled),

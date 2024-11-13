@@ -67,7 +67,7 @@ const Login = ({ stateCode, isUserRegistered = true }) => {
     if (!user) {
       return;
     }
-    Digit.SessionStorage.set("citizen.userRequestObject", user);
+    localStorage.setItem("citizen.userRequestObject", user);
     Digit.UserService.setUser(user);
     setCitizenDetail(user?.info, user?.access_token, stateCode);
     const redirectPath = location.state?.from || DEFAULT_REDIRECT_URL;
@@ -232,6 +232,8 @@ const Login = ({ stateCode, isUserRegistered = true }) => {
   const handleRememberMeChange = () => {
     setParmas({ ...params, isRememberMe: !params.isRememberMe });
   };
+
+  history.push(`/${window?.contextPath}/citizen/dristi/landing-page`);
 
   return (
     <div className="citizen-form-wrapper">

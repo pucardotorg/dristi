@@ -1,30 +1,30 @@
 $primary-color: #333;
 $secondary-color: #555;
-$highlight-color: #1B7F79;
+$highlight-color: #1b7f79;
 $background-color: #fff;
-$border-color: #E0E0E0;
+$border-color: #e0e0e0;
 $shadow-color: rgba(0, 0, 0, 0.1);
 $button-background: blue;
 $button-color: white;
 
-.container {
-  font-family: Arial, sans-serif;
-  color: $primary-color;
-  width: 100%;
-  margin: 0 auto;
-  padding: 20px;
-  border: 1px solid $border-color;
-  border-radius: 8px;
-  background-color: $background-color;
-}
-
-.header {
-  font-size: 24px;
-  font-weight: bold;
-  margin-bottom: 10px;
-
-  .userName {
-    color: $secondary-color;
+.upcoming-hearing-container {
+  display: flex;
+  gap: 24px;
+  flex-direction: column;
+  border: none;
+  border-radius: 0%;
+  padding: 0px;
+  .header {
+    font-family: Roboto;
+    font-size: 40px;
+    font-weight: 700;
+    line-height: 46.88px;
+    text-align: left;
+    color: #0a0a0a;
+    margin-bottom: 0px;
+    span.userName {
+      color: #77787b;
+    }
   }
 }
 
@@ -32,45 +32,85 @@ $button-color: white;
   display: flex;
   align-items: center;
   justify-content: space-between;
-  background-color: #F9F9F9;
+  background-color: #f7f5f3;
   padding: 16px;
-  border-radius: 8px;
-  box-shadow: 0 2px 4px $shadow-color;
+  border-radius: 4px;
+  gap: 20px;
+
+  .view-hearing-button {
+    padding: 8px 24px;
+    border: 1px #007e7e solid;
+    background-color: #ffffff !important;
+    h2 {
+      font-family: Roboto;
+      font-size: 16px;
+      font-weight: 700;
+      line-height: 18.75px;
+      text-align: center;
+      color: #007e7e;
+      margin: 0px;
+    }
+  }
 
   .hearingDate {
     text-align: center;
-    margin-right: 16px;
-    background-color: $background-color;
-    padding: 8px 12px;
-    border-radius: 4px;
-    box-shadow: 0 2px 4px $shadow-color;
+    width: 80px;
+    background-color: #ffffff;
 
     .dateText {
+      padding: 2px 8px;
       font-size: 14px;
-      color: $secondary-color;
+      color: #fff;
+      background-color: #3d3c3c;
+      font-family: Roboto;
+      font-size: 12px;
+      font-weight: 700;
+      line-height: 14.06px;
+      border-top-left-radius: 4px;
+      border-top-right-radius: 4px;
     }
 
     .dateNumber {
+      padding: 8px;
+      font-family: Roboto;
       font-size: 24px;
-      font-weight: bold;
-      color: $primary-color;
+      font-weight: 700;
+      line-height: 28.13px;
+      color: #231f20;
     }
 
     .dayText {
+      border-top: 1px #e8e8e8 solid;
+      padding: 2px 8px;
+      font-family: Roboto;
       font-size: 14px;
-      color: $secondary-color;
+      font-weight: 400;
+      line-height: 16.41px;
+      color: #231f20;
     }
+  }
+  .time-hearing-type {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
   }
 
   .timeText {
-    font-size: 18px;
-    font-weight: bold;
-    color: $primary-color;
+    font-family: Roboto;
+    font-size: 24px;
+    font-weight: 700;
+    line-height: 28.13px;
+    text-align: left;
+    color: #231f20;
   }
 
   .hearingType {
+    font-family: Roboto;
     font-size: 16px;
-    color: $highlight-color;
+    font-weight: 400;
+    line-height: 18.75px;
+    text-align: left;
+    color: #007e7e;
     text-decoration: underline;
   }
 
@@ -94,7 +134,33 @@ $button-color: white;
   box-shadow: 0 2px 4px $shadow-color;
 }
 
+.info-banner-wrap.doc-banner {
+  display: none;
+}
 
-.info-banner-wrap.doc-banner{
-display: none;
+.ongoing-month-hearing,
+.no-hearing {
+  display: flex;
+  gap: 12px;
+  align-items: center;
+
+  p {
+    margin: 0px;
+    font-family: Roboto;
+    font-size: 16px;
+    font-weight: 400;
+    line-height: 18.75px;
+    text-align: left;
+    color: #231f20;
+
+    span {
+      font-weight: 700;
+    }
+  }
+}
+
+.ongoing-month-hearing {
+  border: 1px #0000001a solid;
+  border-radius: 4px;
+  padding: 12px 16px;
 }

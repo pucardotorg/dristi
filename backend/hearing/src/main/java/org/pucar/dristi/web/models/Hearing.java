@@ -44,6 +44,15 @@ public class Hearing {
     @Valid
     private String hearingId = null;
 
+    @JsonProperty("courtCaseNumber")
+    private String courtCaseNumber = null;
+
+    @JsonProperty("caseReferenceNumber")
+    private String caseReferenceNumber = null;
+
+    @JsonProperty("cmpNumber")
+    private String cmpNumber = null;
+
     @JsonProperty("filingNumber")
 
     private List<String> filingNumber = new ArrayList<>();

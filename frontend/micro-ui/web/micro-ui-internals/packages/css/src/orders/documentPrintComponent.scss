@@ -1,0 +1,83 @@
+.epost-print-and-send {
+  .speed-post-header {
+    font-family: Roboto;
+    font-size: 16px;
+    font-weight: 700;
+    line-height: 18.75px;
+    text-align: left;
+    color: #0b0c0c;
+    margin: 0px;
+  }
+}
+
+.print-documents-heading {
+  font-weight: 700;
+  font-size: 16px;
+  line-height: 18.75px;
+}
+
+.print-documents-box-div {
+  border: 1px solid #bbbbbd;
+  display: flex;
+  justify-content: space-between;
+  border-radius: 4px;
+  padding: 12px 16px;
+  margin-top: 16px;
+  align-items: center;
+}
+
+.print-documents-box-text {
+  font-size: 16px;
+  color: #505a5f;
+  font-weight: 700;
+  line-height: 18.75px;
+  display: flex;
+  align-items: center;
+}
+
+.print-button {
+  font-weight: 400;
+  font-size: 16px;
+  color: #007e7e;
+  background-color: white;
+  line-height: 18.75px;
+  display: flex;
+  align-items: center;
+}
+
+.form-print-and-summon {
+  .employeeCard {
+    margin: 0px;
+    padding: 0px;
+    .label-field-pair {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      margin-bottom: 16px;
+
+      h2.card-label {
+        width: 100%;
+        margin: 0px !important;
+        font-family: Roboto;
+        font-size: 16px;
+        font-weight: 400;
+        line-height: 18.75px;
+        text-align: left;
+        color: #0b0c0c;
+      }
+      .field {
+        width: 100%;
+        input {
+          margin-bottom: 0px;
+        }
+      }
+    }
+  }
+}
+
+.e-post-tracking-main {
+  .toast-success {
+    bottom: 90px !important;
+    right: 64px !important;
+  }
+}

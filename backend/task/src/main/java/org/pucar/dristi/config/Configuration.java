@@ -107,8 +107,14 @@ public class Configuration {
     @Value("${egov.workflow.task.summon.business.name}")
     private String taskSummonBusinessName;
 
+    @Value("${egov.workflow.task.notice.business.name}")
+    private String taskNoticeBusinessName;
+
     @Value("${egov.workflow.task.summon.business.service.name}")
     private String taskSummonBusinessServiceName;
+
+    @Value("${egov.workflow.task.notice.business.service.name}")
+    private String taskNoticeBusinessServiceName;
 
     @Value("${egov.workflow.task.warrant.business.name}")
     private String taskWarrantBusinessName;
@@ -132,4 +138,39 @@ public class Configuration {
 
     @Value("${egov.order.path}")
     private String orderPath;
+
+    @Value("${summons.court.fees.sufix}")
+    private String summonsCourtFeesSufix;
+
+    @Value("${summons.epost.fees.sufix}")
+    private String summonsEpostFeesSufix;
+
+
+    @Value("${egov.billingservice.host}")
+    private String billingServiceHost;
+
+    @Value("${egov.billingservice.search.bill}")
+    private String searchBillEndpoint;
+
+    @Value(("${task.business.service}"))
+    private String taskBusinessService;
+
+    //Idgen
+    @Value("${egov.idgen.taskConfig}")
+    private String taskConfig;
+
+    @Value("${egov.idgen.taskFormat}")
+    private String taskFormat;
+
+    @Value("${egov.idgen.summonIdFormat}")
+    private String summonIdFormat;
+
+    @Value("${egov.idgen.bailIdFormat}")
+    private String bailIdFormat;
+
+    @Value("${egov.idgen.warrantIdFormat}")
+    private String warrantIdFormat;
+
+    @Value("${role.system.admin}")
+    private String systemAdmin;
 }

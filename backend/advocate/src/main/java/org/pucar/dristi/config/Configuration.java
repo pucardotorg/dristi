@@ -132,4 +132,16 @@ public class Configuration {
 	// Advocate clerk application number Id name
 	@Value("${egov.idgen.advocate.clerk.application.number.id.name}")
 	private String advClerkApplicationNumberConfig;
+
+	@Value("${egov.idgen.advConfig}")
+	private String advConfig;
+
+	@Value("${egov.idgen.advFormat}")
+	private String advFormat;
+
+	@Value("${egov.idgen.clerkConfig}")
+	private String clerkConfig;
+
+	@Value("${egov.idgen.clerkFormat}")
+	private String clerkFormat;
 }

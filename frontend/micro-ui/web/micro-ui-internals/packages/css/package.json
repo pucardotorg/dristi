@@ -1,6 +1,6 @@
 {
   "name": "@egovernments/digit-ui-css",
-  "version": "0.0.1-dristi.9",
+  "version": "0.0.1-dristi-kerala.1",
   "license": "MIT",
   "main": "dist/index.css",
   "author": "Jagankumar <jagan.kumar@egov.org.in>",
@@ -30,7 +30,7 @@
   "devDependencies": {
     "autoprefixer": "10.4.14",
     "cssnano": "4.1.11",
-    "gh-pages": "3.2.3",
+    "gh-pages": "5.0.0",
     "gulp": "4.0.2",
     "gulp-clean": "0.4.0",
     "gulp-clean-css": "4.3.0",

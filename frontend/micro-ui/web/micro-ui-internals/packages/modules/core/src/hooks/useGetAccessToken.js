@@ -53,7 +53,7 @@ export function useGetAccessToken(key) {
         .then((res) => {
           const { ResponseInfo, UserRequest: info, ...tokens } = res;
           const user = { info, ...tokens };
-          window?.Digit.SessionStorage.set("citizen.userRequestObject", user);
+          localStorage.setItem("citizen.userRequestObject", user);
           window?.Digit.UserService.setUser(user);
           setCitizenDetail(user?.info, user?.access_token, window?.Digit.ULBService.getStateId());
         })

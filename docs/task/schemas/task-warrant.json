@@ -3,29 +3,7 @@
   "$id": "http://dristi.pucar.org/schemas/warrant.json",
   "$comment": "definition of the schema for issuing a warrant",
   "$version": "0.1.0",
-  "warrantDetails":
-  {
-    "warrantId": {
-      "type" : "string",
-      "description": "alphanumeric string representing the warrant ID"
-    },
-    "warrantType": {
-      "type" : "string",
-      "pattern": "^[a-zA-Z]{1,32}$",
-      "description": "type like arrest, etc. string having a max of 32 alphabets. no numbers"
-    },
-    "isBailable": {
-      "type": "boolean"
-    },
-    "sureties": {
-      "type": "string",
-      "enum" : ["one", "two"]
-    },
-    "suretyAmount": {
-      "type": "integer",
-      "minimum": 0
-    }
-  },
+  "warrantId": "123 456 7890",
   "respondentDetails":
   {
     "name" : {

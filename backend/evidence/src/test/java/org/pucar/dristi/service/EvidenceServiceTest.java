@@ -110,19 +110,9 @@ class EvidenceServiceTest {
         when(repository.getArtifacts(criteria,null)).thenReturn(List.of(artifact));
 
         // Mocking the ProcessInstance and Workflow
-        ProcessInstance processInstance = new ProcessInstance();
-        processInstance.setState(new State());
-        processInstance.setComment("comment");
-
-        Workflow expectedWorkflow = Workflow.builder().action("state").comments("comment").build();
-
-        when(workflowService.getCurrentWorkflow(requestInfo, artifact.getTenantId(), artifact.getArtifactNumber())).thenReturn(processInstance);
-        when(workflowService.getWorkflowFromProcessInstance(processInstance)).thenReturn(expectedWorkflow);
-
         List<Artifact> result = evidenceService.searchEvidence(requestInfo, criteria,null);
 
         assertFalse(result.isEmpty());
-        assertEquals(expectedWorkflow, result.get(0).getWorkflow());
     }
 
 

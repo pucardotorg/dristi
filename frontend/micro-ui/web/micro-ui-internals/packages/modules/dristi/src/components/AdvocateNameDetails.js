@@ -4,29 +4,29 @@ import { idProofVerificationConfig } from "../configs/component";
 import { userTypeOptions } from "../pages/citizen/registration/config";
 
 function splitNamesPartiallyFromFullName(fullName) {
-  const nameParts = fullName.trim().split(/\s+/);
+  const nameParts = fullName?.trim()?.split(/\s+/);
 
   let firstName = "";
   let middleName = "";
   let lastName = "";
 
-  const numParts = nameParts.length;
+  const numParts = nameParts?.length;
 
   if (numParts === 1) {
-    firstName = nameParts[0];
+    firstName = nameParts?.[0];
   } else if (numParts === 2) {
-    firstName = nameParts[0];
-    lastName = nameParts[1];
+    firstName = nameParts?.[0];
+    lastName = nameParts?.[1];
   } else if (numParts >= 3) {
-    firstName = nameParts[0];
-    lastName = nameParts[numParts - 1];
-    middleName = nameParts.slice(1, numParts - 1).join(" ");
+    firstName = nameParts?.[0];
+    lastName = nameParts?.[numParts - 1];
+    middleName = nameParts?.slice(1, numParts - 1)?.join(" ");
   }
 
   return {
     firstName: firstName,
     middleName: middleName,
-    lastName: lastName ? lastName : firstName?.[0],
+    lastName: lastName ? lastName : "",
   };
 }
 
@@ -53,6 +53,7 @@ function AdvocateNameDetails({ t, config, onSelect, formData = {}, errors, regis
 
   const individualId = useMemo(() => data?.Individual?.[0]?.individualId, [data?.Individual]);
   const userType = useMemo(() => data?.Individual?.[0]?.additionalFields?.fields?.find((obj) => obj.key === "userType")?.value, [data?.Individual]);
+
   const { data: searchData, isLoading: isSearchLoading } = window?.Digit.Hooks.dristi.useGetAdvocateClerk(
     {
       criteria: [{ individualId }],
@@ -60,21 +61,21 @@ function AdvocateNameDetails({ t, config, onSelect, formData = {}, errors, regis
     },
     { tenantId },
     moduleCode,
-    Boolean(isUserLoggedIn && individualId && userType !== "LITIGANT"),
-    userType === "ADVOCATE" ? "/advocate/advocate/v1/_search" : "/advocate/clerk/v1/_search"
+    Boolean(isUserLoggedIn && individualId && userType === "ADVOCATE"),
+    "/advocate/v1/_search"
   );
 
   const userTypeDetail = useMemo(() => {
-    return userTypeOptions.find((item) => item.code === userType) || {};
+    return userTypeOptions.find((item) => item?.code === userType) || {};
   }, [userType]);
 
   const searchResult = useMemo(() => {
-    return searchData?.[`${userTypeDetail?.apiDetails?.requestKey}s`]?.[0]?.responseList;
-  }, [searchData, userTypeDetail?.apiDetails?.requestKey]);
+    return userType === "ADVOCATE" && searchData?.[`${userTypeDetail?.apiDetails?.requestKey}s`]?.[0]?.responseList;
+  }, [searchData, userTypeDetail?.apiDetails?.requestKey, userType]);
 
   const isApprovalPending = useMemo(() => {
     return (
-      userType !== "LITIGANT" &&
+      userType === "ADVOCATE" &&
       Array.isArray(searchResult) &&
       searchResult?.length > 0 &&
       searchResult?.[0]?.isActive === false &&
@@ -87,9 +88,30 @@ function AdvocateNameDetails({ t, config, onSelect, formData = {}, errors, regis
     setIsApproved(!isPending);
   }, []);
 
+  const selectedAdvindividualId = useMemo(() => formData?.advocateBarRegNumberWithName?.[0]?.individualId || null, [
+    formData?.advocateBarRegNumberWithName,
+  ]);
+
+  const { data: selectedIndividual, isLoading: isInidividualLoading } = window?.Digit.Hooks.dristi.useGetIndividualUser(
+    {
+      Individual: {
+        individualId: selectedAdvindividualId,
+      },
+    },
+    { tenantId, limit: 1000, offset: 0 },
+    moduleCode,
+    `getindividual-${selectedAdvindividualId}`,
+    selectedAdvindividualId
+  );
+
+  const idType = selectedIndividual?.Individual?.[0]?.identifiers[0]?.identifierType || "";
+  const identifierIdDetails = JSON.parse(
+    selectedIndividual?.Individual?.[0]?.additionalFields?.fields?.find((obj) => obj.key === "identifierIdDetails")?.value || "{}"
+  );
+
   useEffect(() => {
     if (formData.advocateBarRegNumberWithName) {
-      const fullName = formData.advocateBarRegNumberWithName[0]?.advocateName;
+      const fullName = formData?.advocateBarRegNumberWithName?.[0]?.advocateName;
       let advName = "";
       if (!fullName) {
         advName = splitNamesPartiallyFromFullName("");
@@ -105,6 +127,8 @@ function AdvocateNameDetails({ t, config, onSelect, formData = {}, errors, regis
       const barRegNum = searchResult[0]?.barRegistrationNumber;
       const userName = searchResult[0]?.additionalDetails?.username;
       const advocateId = searchResult[0]?.id;
+      const advocateUuid = searchResult[0]?.auditDetails?.createdBy;
+      const individualId = searchResult[0]?.individualId;
       onSelect("advocateBarRegNumberWithName", [
         {
           barRegistrationNumber: `${barRegNum} (${userName})`,
@@ -112,15 +136,42 @@ function AdvocateNameDetails({ t, config, onSelect, formData = {}, errors, regis
           isDisable: true,
           barRegistrationNumberOriginal: barRegNum,
           advocateId,
+          advocateUuid,
+          individualId,
         },
       ]);
       onSelect("AdvocateNameDetails", {
-        firstName: splitNamesPartiallyFromFullName(userName).firstName,
-        middleName: splitNamesPartiallyFromFullName(userName).middleName,
-        lastName: splitNamesPartiallyFromFullName(userName).lastName,
+        firstName: splitNamesPartiallyFromFullName(userName)?.firstName,
+        middleName: splitNamesPartiallyFromFullName(userName)?.middleName,
+        lastName: splitNamesPartiallyFromFullName(userName)?.lastName,
+        advocateIdProof: identifierIdDetails?.fileStoreId
+          ? [
+              {
+                name: idType,
+                fileStore: identifierIdDetails?.fileStoreId,
+                documentName: identifierIdDetails?.filename,
+                fileName: "ID Proof",
+              },
+            ]
+          : null,
       });
     }
-  }, [isApproved, onSelect, searchResult]);
+    if (isApproved && !searchResult && selectedIndividual) {
+      onSelect("AdvocateNameDetails", {
+        ...formData?.AdvocateNameDetails,
+        advocateIdProof: identifierIdDetails?.fileStoreId
+          ? [
+              {
+                name: idType,
+                fileStore: identifierIdDetails?.fileStoreId,
+                documentName: identifierIdDetails?.filename,
+                fileName: "ID Proof",
+              },
+            ]
+          : null,
+      });
+    }
+  }, [isApproved, onSelect, searchResult, selectedIndividual]);
 
   const inputs = useMemo(
     () =>
@@ -145,19 +196,19 @@ function AdvocateNameDetails({ t, config, onSelect, formData = {}, errors, regis
   );
 
   return (
-    <div style={{ marginTop: "20px" }}>
-      {formData.advocateBarRegNumberWithName && (
-        <div>
+    <div className={"advocate-basic-info"} style={config?.componentStyle}>
+      {formData?.advocateBarRegNumberWithName && (
+        <React.Fragment>
           {inputs?.map((input, index) => {
-            let currentValue = advocateName[input.name] || "";
+            let currentValue = advocateName?.[input.name] || "";
             return (
               <React.Fragment key={index}>
-                <CardLabel>{t(input.label)}</CardLabel>
+                <CardLabel>{t(input?.label)}</CardLabel>
                 <LabelFieldPair>
-                  <div className={`field ${input.inputFieldClassName}`}>
+                  <div className={`field ${input?.inputFieldClassName}`}>
                     {
                       <React.Fragment>
-                        <TextInput className="field desktop-w-full" name={input.name} disable={input.isDisabled} value={currentValue} />
+                        <TextInput className="field desktop-w-full" name={input?.name} disable={input?.isDisabled} value={currentValue} />
                       </React.Fragment>
                     }
                   </div>
@@ -165,9 +216,9 @@ function AdvocateNameDetails({ t, config, onSelect, formData = {}, errors, regis
               </React.Fragment>
             );
           })}
-        </div>
+        </React.Fragment>
       )}
-      {!formData.advocateBarRegNumberWithName && <div></div>}
+      {!formData?.advocateBarRegNumberWithName && <div></div>}
     </div>
   );
 }

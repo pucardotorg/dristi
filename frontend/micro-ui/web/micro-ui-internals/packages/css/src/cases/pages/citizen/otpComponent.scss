@@ -1,0 +1,47 @@
+.otp-component {
+  padding: 0px 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 40px;
+
+  .card-text.otp-card-text {
+    margin: 0px;
+    font-family: Roboto;
+    font-size: 14px;
+    font-weight: 400;
+    line-height: 24px;
+    text-align: left;
+    color: #0b0c0c;
+  }
+  .input-otp-wrap {
+    margin: 0px;
+    display: flex;
+    justify-content: space-between;
+
+    .input-otp {
+      flex-grow: 1;
+      margin-right: 16px;
+      margin-bottom: 0px;
+    }
+
+    .input-otp:last-child {
+      margin-right: 0px;
+    }
+  }
+
+  .message {
+    .resend-message {
+      margin: 0px;
+
+      .resend-link {
+        cursor: pointer;
+      }
+    }
+  }
+}
+
+.otp-resend-wrapper {
+  display: flex;
+  flex-direction: column;
+  gap: 28px;
+}

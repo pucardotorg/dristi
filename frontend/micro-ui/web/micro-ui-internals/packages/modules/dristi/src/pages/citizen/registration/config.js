@@ -4,7 +4,23 @@ export const userTypeOptions = [
     name: "LITIGANT_TEXT",
     showBarDetails: false,
     isVerified: false,
-    role: ["CASE_CREATOR", "CASE_EDITOR", "CASE_VIEWER", "DEPOSITION_CREATOR", "DEPOSITION_EDITOR", "DEPOSITION_VIEWER"],
+    role: [
+      "CASE_CREATOR",
+      "CASE_EDITOR",
+      "CASE_VIEWER",
+      "DEPOSITION_CREATOR",
+      "DEPOSITION_VIEWER",
+      "APPLICATION_CREATOR",
+      "APPLICATION_VIEWER",
+      "HEARING_VIEWER",
+      "ORDER_VIEWER",
+      "SUBMISSION_CREATOR",
+      "SUBMISSION_RESPONDER",
+      "SUBMISSION_DELETE",
+      "TASK_VIEWER",
+      "CASE_RESPONDER",
+      "HEARING_ACCEPTOR",
+    ],
     subText: "LITIGANT_SUB_TEXT",
   },
   {
@@ -13,9 +29,27 @@ export const userTypeOptions = [
     showBarDetails: true,
     isVerified: true,
     hasBarRegistrationNo: true,
-    role: ["ADVOCATE_ROLE", "CASE_CREATOR", "CASE_EDITOR", "CASE_VIEWER", "DEPOSITION_CREATOR", "DEPOSITION_EDITOR", "DEPOSITION_VIEWER"],
+    role: [
+      "ADVOCATE_ROLE",
+      "CASE_CREATOR",
+      "CASE_EDITOR",
+      "CASE_VIEWER",
+      "DEPOSITION_CREATOR",
+      "DEPOSITION_VIEWER",
+      "APPLICATION_CREATOR",
+      "APPLICATION_VIEWER",
+      "HEARING_VIEWER",
+      "ORDER_VIEWER",
+      "SUBMISSION_CREATOR",
+      "SUBMISSION_RESPONDER",
+      "SUBMISSION_DELETE",
+      "TASK_VIEWER",
+      "CASE_RESPONDER",
+      "HEARING_ACCEPTOR",
+      "ADVOCATE_VIEWER",
+    ],
     apiDetails: {
-      serviceName: "/advocate/advocate/v1/_create",
+      serviceName: "/advocate/v1/_create",
       requestKey: "advocate",
       AdditionalFields: ["barRegistrationNumber"],
     },
@@ -27,7 +61,24 @@ export const userTypeOptions = [
     showBarDetails: true,
     hasStateRegistrationNo: true,
     isVerified: true,
-    role: ["ADVOCATE_CLERK_ROLE", "CASE_CREATOR", "CASE_EDITOR", "CASE_VIEWER", "DEPOSITION_CREATOR", "DEPOSITION_EDITOR", "DEPOSITION_VIEWER"],
+    role: [
+      "ADVOCATE_CLERK_ROLE",
+      "CASE_CREATOR",
+      "CASE_EDITOR",
+      "CASE_VIEWER",
+      "DEPOSITION_CREATOR",
+      "DEPOSITION_VIEWER",
+      "APPLICATION_CREATOR",
+      "APPLICATION_VIEWER",
+      "HEARING_VIEWER",
+      "ORDER_VIEWER",
+      "SUBMISSION_CREATOR",
+      "SUBMISSION_RESPONDER",
+      "SUBMISSION_DELETE",
+      "TASK_VIEWER",
+      "CASE_RESPONDER",
+      "HEARING_ACCEPTOR",
+    ],
     apiDetails: {
       serviceName: "/advocate/clerk/v1/_create",
       requestKey: "clerk",
@@ -89,7 +140,7 @@ export const newConfig = [
             },
             title: "",
             patternType: "Name",
-            minLength: 2,
+            minLength: 1,
           },
         },
       },
@@ -105,11 +156,6 @@ export const newConfig = [
         withoutLabel: true,
         populators: {
           inputs: [
-            {
-              label: "CS_LOCATION",
-              type: "LocationSearch",
-              name: ["pincode", "state", "district", "city", "coordinates", "locality", "buildingName", "doorNo"],
-            },
             {
               label: "PINCODE",
               type: "text",
@@ -176,11 +222,9 @@ export const newConfig = [
               name: "buildingName",
               validation: {
                 errMsg: "ADDRESS_BUILDING_NAME_INVALID",
-                isRequired: true,
-                minlength: 2,
+                minlength: 1,
                 title: "",
               },
-              isMandatory: true,
             },
             {
               label: "DOOR_NUMBER",
@@ -189,11 +233,10 @@ export const newConfig = [
               validation: {
                 errMsg: "DOOR_NUMBER_ERROR_MESSAGE",
                 pattern: /^[^\$\"'<>?~`!@$%^={}\[\]*:;“”‘’]{0,100}$/i,
-                isRequired: true,
-                minlength: 2,
+                minlength: 1,
+                maxlength: 16,
                 title: "",
               },
-              isMandatory: true,
             },
           ],
           validation: {},
@@ -239,13 +282,13 @@ export const newConfig = [
         isMandatory: true,
         populators: {
           name: "firstName",
-          error: "FIRST_LAST_NAME_MANDATORY_MESSAGE",
+          error: "FIRST_LAST_NAME_MANDATORY_MESSAGE_ONE_CHAR",
           validation: {
             pattern: {
               message: "CORE_COMMON_APPLICANT_NAME_INVALID",
               value: /^[^{0-9}^\$\"<>?\\\\~!@#$%^()+={}\[\]*,/_:;“”‘’]{1,50}$/i,
             },
-            minLength: 2,
+            minLength: 1,
             title: "",
             patternType: "Name",
           },
@@ -268,17 +311,14 @@ export const newConfig = [
       },
       {
         type: "text",
-        label: "LAST_NAME",
-        isMandatory: true,
+        label: "CORE_LAST_NAME",
         populators: {
           name: "lastName",
-          error: "FIRST_LAST_NAME_MANDATORY_MESSAGE",
           validation: {
             pattern: {
               message: "CORE_COMMON_APPLICANT_NAME_INVALID",
               value: /^[^{0-9}^\$\"<>?\\\\~!@#$%^()+={}\[\]*,/_:;“”‘’]{1,50}$/i,
             },
-            minLength: 2,
             title: "",
             patternType: "Name",
           },
@@ -334,18 +374,6 @@ export const newConfig = [
               isMandatory: true,
               disableMandatoryFieldFor: ["aadharNumber"],
               disableFormValidation: false,
-              options: [
-                {
-                  code: "AADHAR",
-                  name: "CS_ADHAAR",
-                  subText: "CS_ADHAAR_SUB_TEXT",
-                },
-                {
-                  code: "OTHER ID",
-                  name: "CS_OTHER",
-                  subText: "CS_OTHER_SUB_TEXT",
-                },
-              ],
               optionsCustomStyle: {
                 top: "40px",
               },
@@ -414,7 +442,7 @@ export const newConfig = [
               label: "CS_ID_TYPE",
               type: "dropdown",
               name: "selectIdType",
-              optionsKey: "name",
+              optionsKey: "type",
               error: "CORE_REQUIRED_FIELD_ERROR",
               validation: {},
               clearFields: { aadharNumber: "", ID_Proof: [] },
@@ -422,16 +450,11 @@ export const newConfig = [
               isMandatory: true,
               disableMandatoryFieldFor: ["aadharNumber"],
               disableFormValidation: false,
-              options: [
-                {
-                  code: "AADHAR",
-                  name: "AADHAR",
-                },
-                {
-                  code: "PAN",
-                  name: "PAN",
-                },
-              ],
+              mdmsConfig: {
+                masterName: "IdentifierType",
+                moduleName: "User Registration",
+                select: "(data) => {return data['User Registration'].IdentifierType?.map((item) => {return item;});}",
+              },
               optionsCustomStyle: {
                 top: "40px",
               },
@@ -442,7 +465,7 @@ export const newConfig = [
               name: "ID_Proof",
               validation: {},
               clearFields: { aadharNumber: "" },
-              allowedFileTypes: /(.*?)(png|jpeg|pdf)$/i,
+              allowedFileTypes: /(.*?)(png|jpg|pdf|jpeg)$/i,
               isMandatory: true,
               disableMandatoryFieldFor: ["aadharNumber"],
               errorMessage: "CUSTOM_DOCUMENT_ERROR_MSG",
@@ -450,6 +473,52 @@ export const newConfig = [
             },
           ],
           validation: {},
+        },
+      },
+    ],
+  },
+  {
+    body: [
+      {
+        type: "component",
+        component: "CustomCheckBoxCard",
+        key: "terms_condition",
+        withoutLabel: true,
+        populators: {
+          inputs: [
+            {
+              label: "Terms and Conditions",
+              subLabel: "Before diving in, we'll need to verify your identity for account setup.",
+              type: "multiple",
+              name: "terms_condition",
+              optionsKey: "name",
+              error: "CORE_REQUIRED_FIELD_ERROR",
+              isMandatory: true,
+              disableFormValidation: false,
+              options: [
+                {
+                  code: "AGREE_MESSAGE",
+                  name:
+                    "By using this app, you agree to abide by our community guidelines, fostering a respectful and inclusive environment for all users",
+                },
+                {
+                  code: "PRIVACY_MESSAGE",
+                  name:
+                    "Your privacy is paramount. Rest assured, your data is securely handled and never shared with third parties without your consent",
+                },
+                {
+                  code: "LAWFUL_MESSAGE",
+                  name:
+                    "Please refrain from engaging in any unlawful activities while using our app, ensuring a safe and compliant platform for everyone",
+                },
+                {
+                  code: "MODIFICATION_MESSAGE",
+                  name:
+                    "We reserve the right to modify our services and terms at any time, keeping you informed of any updates through our communication channels",
+                },
+              ],
+            },
+          ],
         },
       },
     ],
@@ -476,9 +545,6 @@ export const termsAndConditionConfig = [
 
 export const advocateClerkConfig = [
   {
-    head: "CORE_ADVOCATE_VERFICATION",
-    subHead: "CORE_ADVOCATE_VERFICATION_TEXT",
-
     body: [
       {
         type: "component",
@@ -495,9 +561,10 @@ export const advocateClerkConfig = [
               name: "barRegistrationNumber",
               validation: {
                 isRequired: true,
-                pattern: /^[0-9A-Z/]{0,20}$/,
-                errMsg: "BAR_REGISTRATION_NUMBER_INVALID",
+                // pattern: "[A-Z]/\\d{6}/\\d{4}",
+                errMsg: "BAR_REGISTRATION_NUMBER_INVALID_PATTERN",
                 maxlength: 20,
+                minlength: 1,
               },
               isMandatory: true,
               isDependentOn: "selectUserType",
@@ -513,7 +580,7 @@ export const advocateClerkConfig = [
                 isRequired: true,
               },
               isMandatory: true,
-              allowedFileTypes: /(.*?)(png|jpeg|pdf)$/i,
+              allowedFileTypes: /(.*?)(png|jpeg|jpg|pdf)$/i,
               isDependentOn: "selectUserType",
               dependentKey: { selectUserType: ["showBarDetails"] },
             },

@@ -1,5 +1,6 @@
 import { CloseSvg, FormComposerV2, Modal } from "@egovernments/digit-ui-react-components";
-import React from "react";
+import { isEqual } from "lodash";
+import React, { useState } from "react";
 
 const CloseBtn = (props) => {
   return (
@@ -14,10 +15,10 @@ const Heading = (props) => {
 };
 
 function ConfirmCourtModal({ t, setOpenConfirmCourtModal, onSubmitCase }) {
-
   const onCancel = () => {
     setOpenConfirmCourtModal(false);
   };
+  const [courtFormData, setCourtFormData] = useState({});
 
   const config = [
     {
@@ -95,23 +96,32 @@ function ConfirmCourtModal({ t, setOpenConfirmCourtModal, onSubmitCase }) {
             required: false,
             isMandatory: true,
             clearFields: { stateOfRegistration: "", barRegistrationNumber: "", barCouncilId: [], stateRegnNumber: "" },
-            options: [
-              {
-                code: "Kerala High Court",
-                name: "Kerala High Court",
-                isEnabled: true,
-              },
-              {
-                code: "Kerala Local Court",
-                name: "Kerala Local Court",
-                isEnabled: true,
-              },
-            ],
+            mdmsConfig: {
+              moduleName: "common-masters",
+              masterName: "Court_Rooms",
+              localePrefix: "COMMON_MASTERS_COURT_R00M",
+            },
           },
         },
       ],
     },
   ];
+
+  const onFormValueChange = (setValue, formData, formState) => {
+    if (formData.court && !isEqual(courtFormData, formData)) {
+      setCourtFormData(formData);
+      setValue("state", {
+        code: "Kerala",
+        name: "Kerala",
+        isEnabled: true,
+      });
+      setValue("district", {
+        code: "Kollam",
+        name: "Kollam",
+        isEnabled: true,
+      });
+    }
+  };
 
   return (
     <Modal
@@ -125,8 +135,20 @@ function ConfirmCourtModal({ t, setOpenConfirmCourtModal, onSubmitCase }) {
         label={t("CS_COMMON_CONFIRM")}
         config={config}
         onSubmit={onSubmitCase}
-        defaultValues={{}}
+        defaultValues={{
+          state: {
+            code: "Kerala",
+            name: "Kerala",
+            isEnabled: true,
+          },
+          district: {
+            code: "Kollam",
+            name: "Kollam",
+            isEnabled: true,
+          },
+        }}
         cardStyle={{ minWidth: "100%" }}
+        onFormValueChange={onFormValueChange}
         submitInForm={true}
       ></FormComposerV2>
     </Modal>

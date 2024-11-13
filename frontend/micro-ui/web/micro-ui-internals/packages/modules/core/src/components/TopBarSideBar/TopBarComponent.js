@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import PropTypes from "prop-types";
-import { useLocation } from "react-router-dom";
+import { useLocation, useHistory } from "react-router-dom";
 // import BackButton from "./BackButton";
 import { Dropdown, Hamburger, NotificationBell } from "@egovernments/digit-ui-react-components";
 
@@ -26,7 +26,9 @@ const TopBarComponent = ({
   TextToImg,
 }) => {
   const { pathname } = useLocation();
-
+  const history = useHistory();
+  const token = window.localStorage.getItem("token");
+  const isUserLoggedIn = Boolean(token);
   // const showHaburgerorBackButton = () => {
   //   if (pathname === "/digit-ui/citizen" || pathname === "/digit-ui/citizen/" || pathname === "/digit-ui/citizen/select-language") {
   //     return <Hamburger handleClick={toggleSidebar} />;
@@ -35,18 +37,24 @@ const TopBarComponent = ({
   //   }
   // };
   return (
-    <div className="navbar">
+    <div className="navbar" style={{ zIndex: "999" }}>
       <div className="center-container back-wrapper">
         <div className="hambuger-back-wrapper">
           {isMobile && <Hamburger handleClick={toggleSidebar} />}
 
-          <div style={{ display: "flex", gap: "16px" }}>
+          <div
+            style={{ display: "flex", gap: "16px", cursor: "pointer" }}
+            onClick={() => {
+              const pathUnwind = pathname.split("/").slice(0, 3).join("/") + (isUserLoggedIn ? "/home/home-pending-task" : "/dristi");
+              history.push(pathUnwind);
+            }}
+          >
             <img
               className="city"
               id="topbar-logo"
               style={{ display: "flex", alignItems: "center", height: "40px", minWidth: "20px" }}
               src={
-                "https://s3-alpha-sig.figma.com/img/1d0d/d20b/17bba4d1a5b09a0840e516227bbe9364?Expires=1717977600&Key-Pair-Id=APKAQ4GOSFWCVNEHN3O4&Signature=kCzBVvYwPETCwHpSAAaIFB1MZQisvQ1avryik4YbCCH0HDVfJp1dxdl8UNPrDgf34YYKgyA~nNbNeGJ8N9eurZz3JbjCzdLdJiGnJL9ANqQgAOdZV4c9TAroinpq9RhTdTOjJg2U4f00PCM8jYTErO2WvNGAlXx~SqSBIj~SuiwYR2Xf2mozObFIDAjyW2gyDa6HbVLPkdINrnDJnm73S3HrqdL3q6DZkYEmEYd7qtZW0XJ3ywZBbXEuRnhumX6Ylf9RTzLdJqlfP5WaQDwjdxhQTNmIUjBYMqaF-SWqR31gZWISkKjK3uXdtfjAQBW2CYzMu-n~Alh9FwD3dx-SZQ__" ||
+                "https://pucarfilestore.blob.core.windows.net/pucar-filestore/kl/17bba4d1a5b09a0840e516227bbe9364.png" ||
                 "https://cdn.jsdelivr.net/npm/@egovernments/digit-ui-css@1.0.7/img/m_seva_white_logo.png"
               }
               alt="mSeva"
@@ -56,7 +64,7 @@ const TopBarComponent = ({
               id="topbar-logo"
               style={{ display: "flex", alignItems: "center", height: "40px" }}
               src={
-                "https://s3-alpha-sig.figma.com/img/726d/3e39/0de38f6dc850f12fe24f8ef1b9d734a6?Expires=1717977600&Key-Pair-Id=APKAQ4GOSFWCVNEHN3O4&Signature=bdTffHkNhRtbRg7AJmVXJMEpUkC07JA~tyhPaNFaR72o1Vvf0LzLTJRajIwPGt3tryH4jRUYqpxfRqMOL-n2mEvB77r0XgMScymYc1sdeVjkFAqkpMpFkmkzbQ5Vg8w22--v3~rMHrILGXNT09pS8mCquyvUDy73qGwHcUzULXgNVyCoN1NRPEpI5AddOTqO7B2ZCq1n6RMm8trCnIYppfA8sKGxc843tlPQd0dUZc1KO-unKJ41AutHfGqLUsu9-NY-s~aXFwXLsx3BkNjm8xK3hu0euJgPAEPQq941hZFm6hMizxra5RLFvyP8yk~iJg-TTZ0VSdxLltkFK2IW~g__" ||
+                "https://pucarfilestore.blob.core.windows.net/pucar-filestore/kl/Crafting_ON_24x7_final%20(1).png" ||
                 "https://cdn.jsdelivr.net/npm/@egovernments/digit-ui-css@1.0.7/img/m_seva_white_logo.png"
               }
               alt="mSeva"

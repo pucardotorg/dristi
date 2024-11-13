@@ -1,6 +1,7 @@
 export const modalConfig = [
   {
     headModal: "CS_SEND_CASE_BACK",
+    wordCount: "50",
     body: [
       {
         type: "component",
@@ -49,15 +50,15 @@ export const selectParticipantConfig = {
   checkBoxText: "HEADER_PARTICIPANT",
   checkBoxes: [
     {
-      key: "Compliant",
-      name: "CS_COMPLAINANT",
-      dependentText: "CS_COMPLAINANT_SELECT",
+      key: "Litigants",
+      name: "CS_LITIGANTS",
+      dependentText: "CS_LITIGANT_SELECT",
       dependentFields: [],
     },
     {
-      key: "Respondent",
-      name: "CS_RESPONDANT",
-      dependentText: "CS_RESPONDANT_SELECT",
+      key: "Witness",
+      name: "CS_WITNESS",
+      dependentText: "CS_WITNESS_SELECT",
       dependentFields: [],
     },
   ],
@@ -70,11 +71,12 @@ export const scheduleCaseSubmitConfig = {
   isArrow: true,
   showTable: true,
 };
+
 export const admitCaseSubmitConfig = {
   header: "CS_ADMIT_SUCCESS",
   subHeader: "CASE_UPDATES_SENT_VIA_SMS_MESSAGE",
   backButtonText: "BACK_TO_HOME",
-  nextButtonText: "Schedule next hearing",
+  nextButtonText: "SCHEDULE_NEXT_HEARING",
   isArrow: false,
   showTable: true,
 };
@@ -85,4 +87,21 @@ export const sendBackCase = {
   nextButtonText: "NEXT_CASE",
   isArrow: true,
   showCopytext: true,
+};
+
+export const registerCaseConfig = {
+  header: "CS_REGISTER_SUCCESS",
+  subHeader: "CASE_UPDATES_NOTICE_ISSUED",
+  backButtonText: "BACK_TO_HOME",
+  nextButtonText: "CS_SCHEDULE_ADMISSION_HEARING",
+  isArrow: false,
+  showTable: true,
+};
+
+export const scheduleCaseAdmissionConfig = {
+  header: "CS_ADMISSION_SUCCESS",
+  backButtonText: "BACK_TO_HOME",
+  nextButtonText: "ISSUE_NOTICE",
+  isArrow: true,
+  showTable: true,
 };

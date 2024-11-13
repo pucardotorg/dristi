@@ -1,0 +1,129 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "http://dristi.pucar.org/schemas/notice.json",
+  "$comment": "definition of the schema for issuing a notice. date, type, amount, case number etc. will be available in the task object itself. 1 task = 1 notice = 1 delivery channel + 1 address = 1 channel fees + 1 court fees",
+  "$version": "0.1.0",
+  "noticeDetails":
+  {
+    "noticeId": {
+      "type" : "string",
+      "description": "alphanumeric string representing the notice ID"
+    },
+    "issueDate": {
+      "type" : "string",
+      "format": "date"
+    },
+    "noticeType": {
+      "type": "string",
+      "description": "master data ID for notice type"
+    }
+  },
+  "respondentDetails":
+  {
+    "name" : {
+      "type": "string",
+      "pattern": "^[a-zA-Z]{1,100}$",
+      "description": "string having a max of 100 alphabets. no numbers"
+    },
+    "address": {
+      "type": "string",
+      "pattern": "^.{1,400}$",
+      "description": "string having a max of 400 characters and matches any character (including newline characters)"
+    },
+    "phone" : {
+      "type": "string",
+      "pattern": "^\\+?[0-9\\-() ]+$"
+    },
+    "email": {
+      "type": "string",
+      "format": "email"
+    },
+    "age" : {
+      "type": "number",
+      "minimum": 0,
+      "maximum": 120,
+      "description": "age in years and will accept decimals so age can be 10.5 meaning 10 years 6 months"
+    },
+    "gender": {
+      "type": "string",
+      "enum" : ["male", "female","transgender"]
+    }
+  },
+  "complainantDetails":
+  {
+    "name" : {
+      "type": "string",
+      "pattern": "^[a-zA-Z]{1,100}$",
+      "description": "string having a max of 100 alphabets. no numbers"
+    },
+    "address": {
+      "type": "string",
+      "pattern": "^.{1,400}$",
+      "description": "string having a max of 400 characters and matches any character (including newline characters)"
+    }
+  },
+  "caseDetails":
+  {
+    "title": {
+      "type": "string",
+      "pattern": "^[a-zA-Z0-9]{1,512}$",
+      "description": "string having a max of 512 alphanumeric characters"
+    },
+    "year": {
+      "type": "integer",
+      "minimum": 1900,
+      "maximum": 9999,
+      "description": "year the case was logged"
+    },
+    "hearingDate": {
+      "type" : "string",
+      "format": "date"
+    },
+    "judgeName": {
+      "type": "string",
+      "pattern": "^[a-zA-Z]{1,100}$",
+      "description": "string having a max of 100 alphabets. no numbers"
+    },
+    "courtName": {
+      "type": "string",
+      "pattern": "^[a-zA-Z0-9]{1,124}$",
+      "description": "string having a max of 124 alphanumeric characters"
+    },
+    "courtAddress": {
+      "type": "string",
+      "pattern": "^[a-zA-Z0-9]{1,200}$",
+      "description": "string having a max of 200 alphanumeric characters"
+    },
+    "courtPhone": {
+      "type": "string",
+      "pattern": "^\\+?[0-9\\-() ]+$"
+    }
+  },
+  "deliveryChannels" :
+  {
+    "channelName" : {
+      "type": "string",
+      "pattern": "^[a-zA-Z]{1,32}$",
+      "description": "channel name like ePost, email, etc. string having a max of 32 alphabets. no numbers"
+    },
+    "status": {
+      "type": "string",
+      "pattern": "^[a-zA-Z\\s]+$",
+      "description": "current status of notice delivery. mostly alphabets but can have white space"
+    },
+    "statusChangeDate": {
+      "type": "string",
+      "format": "date"
+    },
+    "fees": {
+      "type": "integer",
+      "minimum": 0,
+      "maximum": 5000,
+      "description": "putting some random number for max limit for now"
+    },
+    "feesStatus": {
+      "type": "string",
+      "enum": ["pending", "paid"]
+    }
+  }
+}

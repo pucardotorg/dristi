@@ -1,5 +1,7 @@
 package org.pucar.dristi.service;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+import lombok.extern.slf4j.Slf4j;
 import org.egov.common.contract.models.AuditDetails;
 import org.egov.common.contract.request.RequestInfo;
 import org.egov.common.contract.request.Role;
@@ -14,9 +16,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-
-import lombok.extern.slf4j.Slf4j;
 
 import java.util.Arrays;
 import java.util.List;
@@ -66,10 +65,13 @@ public class PaymentUpdateService {
     public void updateWorkflowForApplicationPayment(RequestInfo requestInfo, String tenantId, PaymentDetail paymentDetail) {
         try {
             Bill bill = paymentDetail.getBill();
+            String consumerCode = bill.getConsumerCode();
+            String[] consumerCodeSplitArray = consumerCode.split("_", 2);
+            String applicationNumber = consumerCodeSplitArray[0];
             ApplicationCriteria criteria = ApplicationCriteria.builder()
-                    .applicationNumber(bill.getConsumerCode())
+                    .applicationNumber(applicationNumber)
                     .build();
-ApplicationSearchRequest applicationSearchRequest=new ApplicationSearchRequest();
+            ApplicationSearchRequest applicationSearchRequest = new ApplicationSearchRequest();
             applicationSearchRequest.setRequestInfo(requestInfo);
             applicationSearchRequest.setCriteria(criteria);
 
@@ -99,7 +101,11 @@ ApplicationSearchRequest applicationSearchRequest=new ApplicationSearchRequest()
                 auditDetails.setLastModifiedTime(paymentDetail.getAuditDetails().getLastModifiedTime());
                 application.setAuditDetails(auditDetails);
 
-                producer.push(configuration.getApplicationUpdateStatusTopic(), application);
+                ApplicationRequest applicationRequest = new ApplicationRequest();
+                applicationRequest.setApplication(application);
+                applicationRequest.setRequestInfo(requestInfo);
+
+                producer.push(configuration.getApplicationUpdateStatusTopic(), applicationRequest);
             }
         } catch (Exception e) {
             log.error("Error updating workflow for application payment: {}", e.getMessage(), e);

@@ -1,0 +1,31 @@
+@startuml
+autonumber
+title "Judge admits a case"
+actor Judge as J
+participant HomeScreenUI as H order 1
+participant PendingTasksUI as I order 2
+participant ViewCaseUI as CI order 3
+participant CaseSvc order 6
+participant Workflow order 10
+J->H: Judge logs in and views home screen
+J->I: View pending tasks
+J->I: Click on a case pending admission
+I->CI: Transition to view case screen
+CI->CaseSvc++: Search for case by\n CNR or FN
+return Case
+CI->CI: Display case details
+alt "Admit Case"
+J -> CI: Click on "Admit case"
+CI->CaseSvc++: Call update with workflow action
+CaseSvc->Workflow++: Update workflow to "Admitted" status
+return workflow
+CaseSvc->CaseSvc:Generate ST number for case
+CaseSvc->CI: Return updated case payload
+else "Reject"
+J->CI: Click on "Reject Case"
+CI->CaseSvc: Call update with workflow action REJECT
+CaseSvc->Workflow++: Update workflow to "DISMISSED" status
+return workflow
+CaseSvc->CI: Show DIMISSED status
+end
+@enduml

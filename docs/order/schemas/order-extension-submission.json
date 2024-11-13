@@ -1,0 +1,46 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "http://dristi.pucar.org/schemas/order-extension-submission.json",
+  "$comment": "definition of the schema for issuing extension submission order",
+  "$version": "0.1.0",
+  "orderDetails":
+  {
+    "advocateName": {
+      "type": "string",
+      "description": "advocate name"
+    },
+    "applicantName": {
+      "type": "string",
+      "description": "applicant name"
+    },
+    "documentName": {
+      "type": "string",
+      "description": "document name"
+    },
+    "applicationDate": {
+      "type": "integer",
+      "format": "int64",
+      "description": "date of application"
+    },
+    "originalDate": {
+      "type": "integer",
+      "format": "int64",
+      "description": "original date"
+    },
+    "originalDocSubmissionDate": {
+      "type": "integer",
+      "format": "int64",
+      "description": "original document submission date"
+    },
+    "proposedSubmissionDate": {
+      "type": "integer",
+      "format": "int64",
+      "description": "proposed submission date"
+    },
+    "newSubmissionDate": {
+      "type": "integer",
+      "format": "int64",
+      "description": "new submission date"
+    }
+  }
+}

@@ -128,19 +128,14 @@ public class OrderRegistrationService {
         Order order = orderRequest.getOrder();
         RequestInfo requestInfo = orderRequest.getRequestInfo();
 
-        String orderType = order.getOrderType();
         String tenantId = order.getTenantId();
         String orderNumber = order.getOrderNumber();
         Workflow workflow = order.getWorkflow();
 
-        String status ;
-        if (orderType.equalsIgnoreCase(JUDGEMENT)) {
-            status = workflowUtil.updateWorkflowStatus(requestInfo, tenantId, orderNumber,
-                    config.getOrderJudgementBusinessServiceName(), workflow, config.getOrderJudgementBusinessName());
-        } else {
-            status = workflowUtil.updateWorkflowStatus(requestInfo, tenantId, orderNumber, config.getOrderBusinessServiceName(),
+        String status = workflowUtil.updateWorkflowStatus(requestInfo, tenantId, orderNumber, config.getOrderBusinessServiceName(),
                     workflow, config.getOrderBusinessName());
-        }
         order.setStatus(status);
+        if (PUBLISHED.equalsIgnoreCase(status))
+            order.setCreatedDate(System.currentTimeMillis());
     }
 }

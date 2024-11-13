@@ -166,4 +166,102 @@ public class Configuration {
 	@Value("${egov.additional.join.case.kafka.topic}")
 	private String additionalJoinCaseTopic;
 
+	//Mdms
+
+	@Value("${mdms.case.module.name}")
+	private String caseModule;
+
+	@Value("${egov.localization.statelevel}")
+	private Boolean isLocalizationStateLevel;
+
+	//Dristi Case Pdf Service
+	@Value("${egov.dristi.case.pdf.host}")
+	private String dristiCasePdfHost;
+
+	@Value("${egov.dristi.case.pdf.path}")
+	private String dristiCasePdfPath;
+
+	@Value("${egov.file.store.save.endpoint}")
+	private String fileStoreSaveEndPoint;
+
+	@Value("${egov.filestore.case.module}")
+	private String fileStoreCaseModule;
+
+
+	@Value("${egov.sms.notification.template.id}")
+	private String smsNotificationTemplateId;
+
+	@Value("${egov.sms.notification.payment.pending.template.id}")
+	private String smsNotificationPaymentPendingTemplateId;
+
+	@Value("${egov.sms.notification.esign.pending.template.id}")
+	private String smsNotificationEsignPendingTemplateId;
+
+	@Value("${egov.sms.notification.advocate.esign.pending.template.id}")
+	private String smsNotificationAdvocateEsignPendingTemplateId;
+
+	@Value("${notification.sms.enabled}")
+	private Boolean isSMSEnabled;
+
+	//Localization
+	@Value("${egov.localization.host}")
+	private String localizationHost;
+
+	@Value("${egov.localization.context.path}")
+	private String localizationContextPath;
+
+	@Value("${egov.localization.search.endpoint}")
+	private String localizationSearchEndpoint;
+
+	// Default User
+	@Value("${egov.default.user.username}")
+	private String defaultUserUserName;
+
+	@Value("${egov.default.user.password}")
+	private String defaultUserPassword;
+
+	@Value("${egov.user.notification.period}")
+	private String userNotificationPeriod;
+
+	@Value("${user.oauth.url}")
+	private String userOauthUrl;
+
+	@Value("${spring.redis.timeout}")
+	private Long redisTimeout;
+
+	//	Models for encryption decryption in MDMS
+	@Value("${egov.enc.mdms.security.policy.court.case}")
+	private String courtCaseEncrypt;
+
+	@Value("${egov.enc.mdms.security.policy.case.decrypt.self}")
+	private String caseDecryptSelf;
+
+	@Value("${egov.enc.mdms.security.policy.court.decrypt.other}")
+	private String caseDecryptOther;
+
+	//Idgen updated
+	@Value("${egov.idgen.caseFilingConfig}")
+	private String caseFilingConfig;
+
+	@Value("${egov.idgen.caseFilingFormat}")
+	private String caseFilingFormat;
+
+	@Value("${egov.idgen.caseCNRConfig}")
+	private String caseCNRConfig;
+
+	@Value("${egov.idgen.caseCNRFormat}")
+	private String caseCNRFormat;
+
+	@Value("${egov.idgen.courtCaseConfig}")
+	private String courtCaseConfig;
+
+	@Value("${egov.idgen.courtCaseSTFormat}")
+	private String courtCaseSTFormat;
+
+	@Value("${egov.idgen.cmpConfig}")
+	private String cmpConfig;
+
+	@Value("${egov.idgen.cmpFormat}")
+	private String cmpFormat;
+
 }

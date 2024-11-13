@@ -5,6 +5,7 @@ import { useLocation } from "react-router-dom";
 import { useHistory } from "react-router-dom/cjs/react-router-dom.min";
 import { useGetAccessToken } from "../../../hooks/useGetAccessToken";
 import { SuccessIcon } from "../../../icons/svgIndex";
+import JoinCaseHome from "../../../../../cases/src/pages/employee/JoinCaseHome";
 
 const Response = ({ refetch, setHideBack }) => {
   const { t } = useTranslation();
@@ -14,7 +15,7 @@ const Response = ({ refetch, setHideBack }) => {
   // const handleLogout = () => {
   //   Digit.UserService.logout();
   // };
-  useGetAccessToken("citizen.refresh-token");
+  useGetAccessToken("citizen.refresh-token", true);
 
   useEffect(() => {
     setHideBack(true);

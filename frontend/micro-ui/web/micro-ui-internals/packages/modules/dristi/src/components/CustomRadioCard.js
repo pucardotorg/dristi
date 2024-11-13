@@ -1,7 +1,8 @@
 import React, { useMemo, useState } from "react";
-import { LabelFieldPair, CardLabelError, CardText, CardHeader } from "@egovernments/digit-ui-react-components";
+import { Loader, LabelFieldPair, CardLabelError, CardText, CardHeader } from "@egovernments/digit-ui-react-components";
 import RadioButtons from "./RadioButton";
 import { useHistory } from "react-router-dom/cjs/react-router-dom.min";
+import _ from "lodash";
 
 const CustomRadioCard = ({ t, config, onSelect, formData = {}, errors, label }) => {
   const Digit = window.Digit || {};
@@ -11,6 +12,12 @@ const CustomRadioCard = ({ t, config, onSelect, formData = {}, errors, label }) 
   function setValue(value, name, input) {
     onSelect(config.key, { ...formData[config.key], [name]: value });
   }
+  const { data: idTypeData, isLoading } = Digit.Hooks.useCustomMDMS(Digit.ULBService.getStateId(), "User Registration", [{ name: "IdType" }], {
+    select: (data) => {
+      return _.get(data, "User Registration.IdType", []).map((opt) => ({ ...opt }));
+    },
+  });
+  if (isLoading) return <Loader />;
   return (
     <div>
       {inputs?.map((input, index) => {
@@ -46,7 +53,7 @@ const CustomRadioCard = ({ t, config, onSelect, formData = {}, errors, label }) 
                 <div className="field" style={{ width: "50%" }}>
                   <RadioButtons
                     style={{ display: "flex", justifyContent: "flex-start", gap: "3rem", ...input.styles }}
-                    options={input?.options || []}
+                    options={input?.options || idTypeData || []}
                     key={input.name}
                     optionsKey={input?.optionsKey}
                     value={formData && formData[config.key] ? formData[config.key][input.name] : undefined}

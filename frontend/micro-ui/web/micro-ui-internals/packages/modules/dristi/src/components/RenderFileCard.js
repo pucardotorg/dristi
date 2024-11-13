@@ -1,11 +1,24 @@
 import { Button, ErrorIcon } from "@egovernments/digit-ui-react-components";
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useMemo, useRef, useState } from "react";
 import { ReactComponent as DeleteFileIcon } from "../images/delete.svg";
 import { FileUploader } from "react-drag-drop-files";
 import { ReactComponent as UploadFileIcon } from "../images/upload.svg";
 import { CloseIconWhite, FileIcon } from "../icons/svgIndex";
-function RenderFileCard({ handleChange, handleDeleteFile, fileData, t, input, index, uploadErrorInfo, isDisabled = false }) {
+import ImageModal from "./ImageModal";
+function RenderFileCard({
+  handleChange,
+  handleDeleteFile,
+  fileData,
+  t,
+  input,
+  index,
+  uploadErrorInfo,
+  isDisabled = false,
+  disableUploadDelete = false,
+}) {
   const [file, setFile] = useState(null);
+  const popupAnchor = useRef();
+  const [showImageModal, setShowImageModal] = useState(false);
 
   useEffect(() => {
     if (fileData.fileStore) {
@@ -14,11 +27,39 @@ function RenderFileCard({ handleChange, handleDeleteFile, fileData, t, input, in
       });
       setFile(draftFile);
     }
-  }, []);
+  }, [fileData]);
+
+  const viewImageModal = useMemo(() => {
+    return (
+      <div>
+        <ImageModal
+          imageInfo={{
+            data: {
+              fileStore: fileData?.fileStore,
+              fileName: fileData?.fileName,
+              documentName: fileData?.documentName,
+              docViewerStyle: { minWidth: "100%", height: "calc(100vh - 154px)" },
+            },
+          }}
+          selectedDocs={[fileData]}
+          t={t}
+          anchorRef={popupAnchor}
+          showFlag={!showImageModal}
+          handleCloseModal={() => {
+            if (showImageModal) {
+              setShowImageModal(false);
+            }
+          }}
+          isPrevScrutiny={false}
+          disableScrutiny={false}
+        />
+      </div>
+    );
+  }, [fileData, showImageModal]);
   return (
     <div className={`uploaded-file-div-main upload-${!!uploadErrorInfo ? "error" : "successful"}`}>
       <div className={`uploaded-file-div-sub ${!!uploadErrorInfo ? "error" : ""}`}>
-        <div className="uploaded-file-div-icon-area">
+        <div className="uploaded-file-div-icon-area" onClick={() => setShowImageModal(true)}>
           <div className="uploaded-file-icon">
             <FileIcon />
           </div>
@@ -35,6 +76,7 @@ function RenderFileCard({ handleChange, handleDeleteFile, fileData, t, input, in
               disabled={isDisabled}
               children={
                 <Button
+                  isDisabled={disableUploadDelete}
                   onButtonClick={() => {
                     if (isDisabled) handleChange(input, index);
                   }}
@@ -51,9 +93,11 @@ function RenderFileCard({ handleChange, handleDeleteFile, fileData, t, input, in
             />
           </div>
           <Button
+            isDisabled={disableUploadDelete}
             onButtonClick={() => {
               handleDeleteFile(input, index);
             }}
+            key={`Delete-${input.name}`}
             icon={
               <div>
                 <DeleteFileIcon />{" "}
@@ -99,6 +143,7 @@ function RenderFileCard({ handleChange, handleDeleteFile, fileData, t, input, in
           </div>
         </div>
       )}
+      {showImageModal && viewImageModal}
     </div>
   );
 }

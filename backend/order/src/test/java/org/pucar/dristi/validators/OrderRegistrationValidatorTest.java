@@ -1,5 +1,6 @@
 package org.pucar.dristi.validators;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.egov.common.contract.models.Document;
 import org.egov.common.contract.request.RequestInfo;
 import org.egov.tracer.model.CustomException;
@@ -9,9 +10,11 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.pucar.dristi.config.Configuration;
 import org.pucar.dristi.repository.OrderRepository;
 import org.pucar.dristi.util.CaseUtil;
 import org.pucar.dristi.util.FileStoreUtil;
+import org.pucar.dristi.util.MdmsUtil;
 import org.pucar.dristi.web.models.*;
 
 import java.util.ArrayList;
@@ -35,12 +38,21 @@ class OrderRegistrationValidatorTest {
     @Mock
     private FileStoreUtil fileStoreUtil;
 
+    @Mock
+    private MdmsUtil mdmsUtil;
+
+    @Mock
+    private Configuration configuration;
+
+    @Mock
+    private ObjectMapper objectMapper;
+
     @InjectMocks
     private OrderRegistrationValidator orderRegistrationValidator;
 
     @BeforeEach
     void setUp() {
-        orderRegistrationValidator = new OrderRegistrationValidator(repository, caseUtil, fileStoreUtil);
+        orderRegistrationValidator = new OrderRegistrationValidator(repository, caseUtil, fileStoreUtil,configuration,mdmsUtil,objectMapper);
     }
 
     @Test

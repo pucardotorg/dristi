@@ -8,6 +8,7 @@
     .hambuger-back-wrapper {
       display: flex !important;
       gap: 16px;
+      cursor: pointer;
       img {
         width: fit-content !important;
       }
@@ -188,15 +189,13 @@
             display: flex;
             align-items: center;
             justify-content: center;
-            a {
-              font-family: Roboto;
-              font-size: 19px;
-              font-weight: 600;
-              line-height: 22.27px;
-              text-align: left;
-              color: #007e7e;
-              text-decoration: none;
-            }
+            font-family: Roboto;
+            font-size: 19px;
+            font-weight: 600;
+            line-height: 22.27px;
+            text-align: left;
+            color: #007e7e;
+            text-decoration: none;
           }
 
           th {
@@ -255,5 +254,13 @@
       padding: 16px !important;
       margin: 0px !important;
     }
+  }
+}
+
+.dristi-employee-main {
+  background-color: #ffffff;
+  .bread-crumb {
+    border-top: 1px #e8e8e8 solid;
+    border-bottom: 0.5px #edeeef solid;
   }
 }

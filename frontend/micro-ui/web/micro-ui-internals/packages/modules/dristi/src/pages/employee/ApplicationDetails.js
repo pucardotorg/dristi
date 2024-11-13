@@ -8,6 +8,7 @@ import { ReactComponent as LocationOnMapIcon } from "../../images/location_onmap
 import { userTypeOptions } from "../citizen/registration/config";
 import Menu from "../../components/Menu";
 import { useToast } from "../../components/Toast/useToast";
+import { ErrorInfoIcon, SuccessIcon } from "../../icons/svgIndex";
 
 const Heading = (props) => {
   return <h1 className="heading-m">{props.label}</h1>;
@@ -28,7 +29,7 @@ const CloseBtn = (props) => {
   );
 };
 
-const LocationContent = ({ latitude = 17.2, longitude = 17.2 }) => {
+const LocationContent = ({ t, latitude = 17.2, longitude = 17.2 }) => {
   return (
     <div style={{ fontSize: "16px", display: "flex", marginTop: "-2px" }}>
       <div>
@@ -38,7 +39,7 @@ const LocationContent = ({ latitude = 17.2, longitude = 17.2 }) => {
           rel="noreferrer"
           style={{ color: "#F47738" }}
         >
-          View on map
+          {t("VIEW_ON_MAP")}
         </a>
       </div>
       <div style={{ marginLeft: "10px" }}>
@@ -52,7 +53,7 @@ const ApplicationDetails = ({ location, match }) => {
   const urlParams = new URLSearchParams(window.location.search);
 
   const toast = useToast();
-
+  const userRoles = Digit.UserService.getUser()?.info?.roles.map((role) => role.code);
   const individualId = urlParams.get("individualId");
   const applicationNo = urlParams.get("applicationNo");
   const type = urlParams.get("type") || "advocate";
@@ -60,6 +61,7 @@ const ApplicationDetails = ({ location, match }) => {
   const { t } = useTranslation();
   const history = useHistory();
   const [showModal, setShowModal] = useState(false);
+  const [showInfoModal, setShowInfoModal] = useState({ isOpen: false, status: "" });
   const [displayMenu, setDisplayMenu] = useState(false);
   const tenantId = window?.Digit.ULBService.getCurrentTenantId();
   const [message, setMessage] = useState(null);
@@ -81,20 +83,19 @@ const ApplicationDetails = ({ location, match }) => {
     individualData?.Individual,
   ]);
 
+  const isAdvocateViewer = useMemo(() => userRoles?.includes("ADVOCATE_VIEWER"), [userRoles]);
+
   const identifierIdDetails = useMemo(
     () => JSON.parse(individualData?.Individual?.[0]?.additionalFields?.fields?.find((obj) => obj.key === "identifierIdDetails")?.value || "{}"),
     [individualData?.Individual]
   );
 
   const { data: searchData, isLoading: isSearchLoading } = window?.Digit.Hooks.dristi.useGetAdvocateClerk(
-    {
-      criteria: [applicationNo ? { applicationNumber: applicationNo } : { individualId }],
-      tenantId,
-    },
     {},
+    { tenantId: tenantId, applicationNumber: applicationNo },
     applicationNo + individualId,
     userType,
-    userType === "ADVOCATE" ? "/advocate/advocate/v1/_search" : "/advocate/clerk/v1/_search"
+    userType === "ADVOCATE" ? `/advocate/v1/applicationnumber/_search` : `/advocate/clerk/v1/applicationnumber/_search`
   );
 
   const userTypeDetail = useMemo(() => {
@@ -110,12 +111,16 @@ const ApplicationDetails = ({ location, match }) => {
       cacheTime: 0,
     },
   });
-  const actions = useMemo(() => workFlowDetails?.processInstances?.[0]?.state?.actions?.map((action) => action.action), [
-    workFlowDetails?.processInstances,
-  ]);
+  const actions = useMemo(
+    () =>
+      workFlowDetails?.processInstances?.[0]?.state?.actions
+        ?.filter((action) => action.roles.every((role) => userRoles.includes(role)))
+        .map((action) => action.action) || [],
+    [workFlowDetails?.processInstances, userRoles]
+  );
 
   const searchResult = useMemo(() => {
-    return searchData?.[`${userTypeDetail?.apiDetails?.requestKey}s`]?.[0]?.responseList;
+    return searchData?.[`${userTypeDetail?.apiDetails?.requestKey}s`];
   }, [searchData, userTypeDetail?.apiDetails?.requestKey]);
   const fileStoreId = useMemo(() => {
     return searchResult?.[0]?.documents?.[0]?.fileStore;
@@ -137,7 +142,7 @@ const ApplicationDetails = ({ location, match }) => {
     const applications = searchResult;
     applications[0].workflow.action = action;
     const data = { [userTypeDetail?.apiDetails?.requestKey]: applications?.[0] };
-    const url = userType === "ADVOCATE_CLERK" ? "/advocate/clerk/v1/_update" : "/advocate/advocate/v1/_update";
+    const url = userType === "ADVOCATE_CLERK" ? "/advocate/clerk/v1/_update" : "/advocate/v1/_update";
     if (showModal) {
       applications[0].workflow.comments = reasons;
     }
@@ -145,17 +150,14 @@ const ApplicationDetails = ({ location, match }) => {
       .then(() => {
         setShowModal(false);
         if (action === "APPROVE") {
-          toast.success(t("ES_USER_APPROVED"));
+          setShowInfoModal({ isOpen: true, status: "ES_USER_APPROVED" });
         } else if (action === "REJECT") {
-          toast.error(t("ES_USER_REJECTED"));
+          setShowInfoModal({ isOpen: true, status: "ES_USER_REJECTED" });
         }
       })
       .catch(() => {
         setShowModal(false);
-        toast.error(t("ES_API_ERROR"));
-      })
-      .then(() => {
-        history.push(`/digit-ui/employee/dristi/registration-requests`);
+        setShowInfoModal({ isOpen: true, status: "ES_API_ERROR" });
       });
   }
 
@@ -192,17 +194,17 @@ const ApplicationDetails = ({ location, match }) => {
 
   const personalData = useMemo(
     () => [
-      { title: "Name", content: fullName },
-      { title: "Location", content: <LocationContent latitude={latitude} longitude={longitude}></LocationContent> },
-      { title: "Address", content: address },
+      { title: t("CS_NAME"), content: fullName },
+      { title: t("CS_LOCATION"), content: <LocationContent t={t} latitude={latitude} longitude={longitude}></LocationContent> },
+      { title: t("ADDRESS"), content: address },
     ],
     [address, fullName, latitude, longitude]
   );
   const barDetails = useMemo(() => {
     return [
-      { title: "BAR Registration Number", content: searchResult?.[0]?.[userTypeDetail?.apiDetails?.AdditionalFields?.[0]] || "N/A" },
+      { title: t("CS_BAR_REGISTRATION_NUMBER"), content: searchResult?.[0]?.[userTypeDetail?.apiDetails?.AdditionalFields?.[0]] || "N/A" },
       {
-        title: "BAR Council ID",
+        title: t("CS_BAR_COUNCIL_ID"),
         image: true,
         content: fileName,
       },
@@ -215,10 +217,10 @@ const ApplicationDetails = ({ location, match }) => {
 
   const aadharData = useMemo(() => {
     return [
-      { title: "Mobile Number", content: individualData?.Individual?.[0]?.mobileNumber },
-      { title: "ID Type", content: individualData?.Individual?.[0]?.identifiers[0]?.identifierType },
+      { title: t("PHONE_NUMBER"), content: individualData?.Individual?.[0]?.mobileNumber },
+      { title: t("ID_TYPE"), content: t(individualData?.Individual?.[0]?.identifiers[0]?.identifierType) },
       {
-        title: identifierIdDetails?.fileStoreId ? "ID Proof" : "Aadhar Number",
+        title: identifierIdDetails?.fileStoreId ? t("CS_ID_PROOF") : t("AADHAR_NUMBER"),
         content: identifierIdDetails?.fileStoreId ? (
           <DocViewerWrapper fileStoreId={identifierIdDetails?.fileStoreId} tenantId={tenantId} displayFilename={identifierIdDetails?.filename} />
         ) : (
@@ -229,8 +231,12 @@ const ApplicationDetails = ({ location, match }) => {
   }, [identifierIdDetails?.fileStoreId, identifierIdDetails?.filename, individualData?.Individual, tenantId]);
 
   const header = useMemo(() => {
-    return applicationNo || applicationNumber ? t(`Application Number ${applicationNo || applicationNumber}`) : "My Application";
+    return applicationNo || applicationNumber ? ` ${t("APPLICATION_NUMBER")} ${applicationNo || applicationNumber}` : "My Application";
   }, [applicationNo, applicationNumber, t]);
+
+  if (!isAdvocateViewer) {
+    history.push(`/${window?.contextPath}/citizen/dristi/home`);
+  }
 
   if (isSearchLoading || isGetUserLoading || isWorkFlowLoading) {
     return <Loader />;
@@ -258,11 +264,11 @@ const ApplicationDetails = ({ location, match }) => {
           )}
           {applicationNo && (
             <div className="action-button-application">
-              {actions.map((option, index) => (
+              {actions?.map((option, index) => (
                 <SubmitBar
                   key={index}
-                  label={option == "REJECT" ? "Reject Request" : "Accept Request"}
-                  style={{ margin: "20px", backgroundColor: option == "REJECT" ? "#BB2C2F" : "#007E7E" }}
+                  label={option === "REJECT" ? t("REJECT_REQUEST") : t("ACCEPT_REQUEST")}
+                  style={{ margin: "20px", backgroundColor: option === "REJECT" ? "#BB2C2F" : "#007E7E" }}
                   onSubmit={(data) => {
                     onActionSelect(option);
                   }}
@@ -286,6 +292,42 @@ const ApplicationDetails = ({ location, match }) => {
                 <CardText style={{ margin: "2px 0px" }}>{t(`REASON_FOR_REJECTION`)}</CardText>
                 <TextArea rows={"3"} onChange={(e) => setReasons(e.target.value)} style={{ maxWidth: "100%", height: "auto" }}></TextArea>
               </Card>
+            </Modal>
+          )}
+          {showInfoModal?.isOpen && (
+            <Modal
+              headerBarEnd={
+                <CloseBtn
+                  onClick={() => {
+                    setShowInfoModal({ isOpen: false, status: "" });
+                    history.push(
+                      userType === "ADVOCATE_CLERK"
+                        ? `/digit-ui/employee/dristi/registration-requests?type=clerk`
+                        : `/digit-ui/employee/dristi/registration-requests?type=advocate`,
+                      { isSentBack: true }
+                    );
+                  }}
+                />
+              }
+              actionSaveLabel={t("GO TO HOME")}
+              actionSaveOnSubmit={() => {
+                setShowInfoModal({ isOpen: false, status: "" });
+                history.push(
+                  userType === "ADVOCATE_CLERK"
+                    ? `/digit-ui/employee/dristi/registration-requests?type=clerk`
+                    : `/digit-ui/employee/dristi/registration-requests?type=advocate`,
+                  { isSentBack: true }
+                );
+              }}
+              style={{ backgroundColor: "#BB2C2F" }}
+              popmoduleClassName="request-processing-info-modal"
+            >
+              <div className="main-div">
+                <div className="icon-div">{showInfoModal?.status === "ES_API_ERROR" ? <ErrorInfoIcon /> : <SuccessIcon />}</div>
+                <div className="info-div">
+                  <h1>{t(showInfoModal?.status)}</h1>
+                </div>
+              </div>
             </Modal>
           )}
         </div>

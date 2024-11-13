@@ -1,0 +1,53 @@
+#created using websequencedigrams.com
+
+title Create CNR-CMP
+
+UI->+CaseSvc: updateCase with workflow action REGSITER
+CaseSvc->*CaseUtil: generateCNR (pass courtID=KLKM52)
+CaseUtil->*CaseRepoSvc:verifyCodeExists(dristi_cnr_master, KLKM52)
+    alt Code exists
+        loop DB TRANSACTION
+            CaseRepoSvc->CaseRepoSvc: CNR = get SEQ_CNR
+            CaseRepoSvc->CaseRepoSvc: Increment SEQ_CNR and save to dristi_cnr_master
+            CaseRepoSvc-->CaseUtil: return (SEQ_CNR-1)
+        end
+    else code doesn't exist
+        CaseRepoSvc->CaseRepoSvc: createCode(dristi_cnr_master, KLKM52)
+        CaseRepoSvc->CaseRepoSvc: Set (SEQ_CNR = 1) for KLKM52
+        CaseRepoSvc-->CaseUtil: return SEQ_CNR
+    end
+
+CaseUtil->CaseUtil: year=getCurrentYear (YYYY)
+CaseUtil->CaseUtil: pad(%06d, SEQ_CNR)
+CaseUtil->CaseUtil: CNR = (string.concatenate(KLKM52+SEQ_CNR+year)
+CaseUtil->CaseSvc: return CNR
+CaseSvc->CaseSvc: enrich case (Set cnrNumber = CNR)
+
+CaseSvc->CaseUtil: generateCMP (pass CNR)
+CaseUtil->CaseRepoSvc: verifyCodeExists(dristi_case_numbering, SEQ_CMP)
+    alt Code exists
+        loop DB TRANSACTION
+            CaseRepoSvc->CaseRepoSvc: CMP = get SEQ_CMP
+            CaseRepoSvc->CaseRepoSvc: Increment SEQ_CMP and save to dristi_case_numbering
+            CaseRepoSvc-->CaseUtil: return (SEQ_CMP-1)
+        end
+    else code doesn't exist
+        CaseRepoSvc->CaseRepoSvc: createCode(dristi_case_numbering, SEQ_CMP)
+        CaseRepoSvc->CaseRepoSvc: Set (SEQ_CMP = 1)
+        CaseRepoSvc-->CaseUtil: return SEQ_CMP
+    end
+    
+    destroy CaseRepoSvc
+CaseUtil->CaseUtil: year=getCurrentYear (YYYY)
+CaseUtil->CaseUtil: CMP = string.concatenate(CMP+"/"+SEQ_CMP+"/"+year)
+CaseUtil->CaseSvc: return CMP
+destroy CaseUtil
+CaseSvc->CaseSvc: enrich case (Set cmpNumber = CMP)
+
+CaseSvc->Workflow: workflow action "REGSITER"
+Workflow-->CaseSvc: return next state "PENDING_ADMISSION_HEARING"
+
+CaseSvc-> Kafka: Push Task payload to topic
+CaseSvc->UI: Return 200 (updated case with CNR and CMP)
+Persister-> Kafka: Read payload
+Persister-> Postgres: Create records in DB

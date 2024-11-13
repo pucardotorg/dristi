@@ -2,14 +2,14 @@ export const judgeInboxConfig = {
   label: "ES_COMMON_INBOX",
   type: "inbox",
   apiDetails: {
-    serviceName: "/case/case/v1/_search",
+    serviceName: "/case/v1/_search",
     requestParam: {},
     requestBody: {
       tenantId: "pg",
       criteria: [
         {
           defaultValues: true,
-          status: "PENDING_ADMISSION",
+          status: [],
           filingNumber: "",
         },
       ],
@@ -35,7 +35,7 @@ export const judgeInboxConfig = {
         },
         fields: [
           {
-            label: "Filing No",
+            label: "CS_FILING_NO",
             type: "text",
             isMandatory: false,
             disable: false,
@@ -59,11 +59,12 @@ export const judgeInboxConfig = {
         columns: [
           {
             label: "Case Name",
-            jsonPath: "",
+            jsonPath: "caseTitle",
           },
           {
             label: "Stage",
-            jsonPath: "",
+            jsonPath: "status",
+            additionalCustomization: true,
           },
           {
             label: "Case ID",
@@ -71,7 +72,8 @@ export const judgeInboxConfig = {
           },
           {
             label: "Case Type",
-            jsonPath: "",
+            jsonPath: "caseType",
+            additionalCustomization: true,
           },
           {
             label: "Days Since Filing",

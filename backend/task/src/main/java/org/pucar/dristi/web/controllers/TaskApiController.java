@@ -78,4 +78,26 @@ public class TaskApiController {
         return new ResponseEntity<>(taskResponse, HttpStatus.OK);
     }
 
+    @RequestMapping(value = "/v1/uploadDocument", method = RequestMethod.POST)
+    public ResponseEntity<TaskResponse> taskV1UploadDocument(@Parameter(in = ParameterIn.DEFAULT, description = "details for the update of task", schema = @Schema()) @Valid @RequestBody TaskRequest body) {
+        Task task = taskService.uploadDocument(body);
+        ResponseInfo responseInfo = responseInfoFactory.createResponseInfoFromRequestInfo(body.getRequestInfo(), true);
+        TaskResponse taskResponse = TaskResponse.builder().task(task).responseInfo(responseInfo).build();
+        return new ResponseEntity<>(taskResponse, HttpStatus.OK);
+    }
+
+    @RequestMapping(value = "/v1/table/search", method = RequestMethod.POST)
+    public ResponseEntity<TaskCaseResponse> taskV1SearchPost(@Parameter(in = ParameterIn.DEFAULT, schema = @Schema()) @Valid @RequestBody TaskCaseSearchRequest request) {
+        List<TaskCase> tasks = taskService.searchCaseTask(request);
+        ResponseInfo responseInfo = responseInfoFactory.createResponseInfoFromRequestInfo(request.getRequestInfo(), true);
+        int totalCount;
+        if (request.getPagination() != null) {
+            totalCount = request.getPagination().getTotalCount().intValue();
+        } else {
+            totalCount = tasks.size();
+        }
+        TaskCaseResponse taskCaseResponse = TaskCaseResponse.builder().list(tasks).totalCount(totalCount).responseInfo(responseInfo).build();
+        return new ResponseEntity<>(taskCaseResponse, HttpStatus.OK);
+    }
+
 }

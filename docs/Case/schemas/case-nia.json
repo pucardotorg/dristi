@@ -39,7 +39,7 @@
       "minLength": 11,
       "maxLength": 11,
       "pattern": "^[a-zA-Z]{4}0[a-zA-Z0-9]{6}$",
-      "description": "11 character string. first for alphabets. fifth 0. last six mostly numeric, but alphanumeric allowed"
+      "description": "11 character string. first four alphabets. fifth 0. last six mostly numeric, but alphanumeric allowed"
     },
     "cheque": {
       "type": "string",
@@ -147,12 +147,11 @@
       "type": "boolean",
       "description": "did the payer pay within 15 days after the notice or not"
     },
-    "accrualDate": {
+    "arrualDate": {
       "type": "string",
       "format": "date",
       "description": "Date when the 15 days from service of demand notice was complete (date of accrual of cause of action). Auto filled based on 15 days from service date"
-    },
-    "required": ["isTimelyNotice", "dispatchMode","issueDate","dispatchDate","serviceDate","isServiceProof"]
+    }
   },
   "delayAppDetails": {
     "isDelayed": {
@@ -167,8 +166,6 @@
       "type": "string",
       "format": "uuid",
       "description": "uuid of the document for delay condonation application, stored in the document array in main case object"
-    },
-    "required": ["isDelayed"]
-  },
-  "required": ["chequeDetails", "debtDetails", "demandNoticeDetails", "delayAppDetails" ]
+    }
+  }
 }

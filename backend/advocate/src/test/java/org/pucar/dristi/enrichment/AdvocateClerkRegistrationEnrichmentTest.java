@@ -56,14 +56,14 @@ class AdvocateClerkRegistrationEnrichmentTest {
         requestInfo.getUserInfo().setTenantId("tenantId");
         advocateClerkRequest.setRequestInfo(requestInfo);
         List<String> idList = List.of("C-2021-01-01-001");
-        when(idgenUtil.getIdList(any(), anyString(), any(), any(), anyInt())).thenReturn(idList);
+        when(idgenUtil.getIdList(any(), anyString(), any(), any(), anyInt(),any())).thenReturn(idList);
 
         // Call the method to test
         advocateClerkRegistrationEnrichment.enrichAdvocateClerkRegistration(advocateClerkRequest);
 
         // Verify IdgenUtil was called correctly
         verify(idgenUtil, times(1)).getIdList(requestInfo, "tenantId",   configuration.getAdvClerkApplicationNumberConfig(),
-                null, 1);
+                null, 1,true);
 
         // Assert that each clerk has been enriched as expected
         assertNotNull(clerk.getId());
@@ -151,7 +151,7 @@ class AdvocateClerkRegistrationEnrichmentTest {
         requestInfo.getUserInfo().setTenantId("tenantId");
         advocateClerkRequest.setRequestInfo(requestInfo);
 
-        when(idgenUtil.getIdList(any(), anyString(), any(), any(), anyInt())).thenThrow(new CustomException());
+        when(idgenUtil.getIdList(any(), anyString(), any(), any(), anyInt(),any())).thenThrow(new CustomException());
 
         // Expect exception due to missing user info
         assertThrows(CustomException.class, () -> advocateClerkRegistrationEnrichment.enrichAdvocateClerkRegistration(advocateClerkRequest));
@@ -171,7 +171,7 @@ class AdvocateClerkRegistrationEnrichmentTest {
         advocateClerkRequest.setRequestInfo(requestInfo);
 
         // Mock IdgenUtil to throw exception
-        when(idgenUtil.getIdList(any(), anyString(), anyString(), any(), anyInt())).thenThrow(new RuntimeException("Mocked Exception"));
+        when(idgenUtil.getIdList(any(), anyString(), anyString(), any(), anyInt(),any())).thenThrow(new RuntimeException("Mocked Exception"));
 
         // Expect exception to propagate
         assertThrows(RuntimeException.class, () -> advocateClerkRegistrationEnrichment.enrichAdvocateClerkRegistration(advocateClerkRequest));

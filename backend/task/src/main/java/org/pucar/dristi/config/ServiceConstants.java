@@ -8,6 +8,7 @@ import org.springframework.stereotype.Component;
 public class ServiceConstants {
     private ServiceConstants() {
     }
+
     public static final String EXTERNAL_SERVICE_EXCEPTION = "External Service threw an Exception: ";
     public static final String SEARCHER_SERVICE_EXCEPTION = "Exception while fetching from searcher: ";
 
@@ -59,9 +60,34 @@ public class ServiceConstants {
     public static final String EXIST_TASK_ERR = "Error while checking task exist";
     public static final String SEARCH_TASK_ERR = "Error while searching task";
     public static final String BAIL = "BAIL";
-    public static final String SUMMON = "SUMMON";
+    public static final String SUMMON = "SUMMONS";
+
+    public static final String MAKE_PAYMENT = "MAKE_PAYMENT";
+
+    public static final String NOTICE = "NOTICE";
     public static final String WARRANT = "WARRANT";
-    public static final String ISSUESUMMON = "ISSUESUMMON";
+    public static final String ISSUESUMMON = "ISSUE_SUMMON";
+
+    public static final String SUMMON_SENT = "SUMMON_SENT";
+
+    public static final String NOTICE_SENT = "NOTICE_SENT";
+
+    public static final String WARRANT_SENT = "WARRANT_SENT";
+
+
+    public static final String ISSUENOTICE = "ISSUE_NOTICE";
+
+    public static final String DOCUMENT_UPLOAD_QUERY_EXCEPTION = "DOCUMENT_UPLOAD_QUERY_EXCEPTION";
+
+
+    public static final String PAYMENT_MODULE_NAME = "payment";
+    public static final String PAYMENT_TYPE_MASTER_NAME = "paymentType";
+
+    public static final String FILTER_PAYMENT_TYPE = "$.[?(@.suffix == '%s' && @.businessService[?(@.businessCode == '%s')])]";
+
+    public static final String FILTER_PAYMENT_TYPE_DELIVERY_CHANNEL = "$[?(@.deliveryChannel == '%s' && @.businessService[?(@.businessCode == '%s')])]";
+
+    public static final String UPLOAD_TASK_DOCUMENT_ERROR = "UPLOAD_TASK_DOCUMENT_ERROR";
 
 
 }

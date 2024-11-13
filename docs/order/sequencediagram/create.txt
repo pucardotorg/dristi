@@ -10,6 +10,34 @@ Order->UI: Return 400 : if caseId invalid
 
 Order->Order: enrich orderId
 
+alt if ordertype = summons/warrant
+    loop for each address and delivery channel
+        Order->Task: Create Task for Summon
+        Task->Task: enrich taskId, orderId, caseId
+        Task->Order: Return 201 : new Task created
+        Order->Task: Update Task with Summons/Warrant details
+        Task->Order: Task updated
+    end
+else if ordertype = bail
+    Order->Task: Create Task for Bail
+    Task->Task: enrich taskId, orderId, caseId
+    Task->Order: Return 201 : new Task created
+    Order->Task: Update Task with BailS
+    Task->Order: Task updated
+else
+    loop for each Party
+        loop for each order type
+            loop for each document type
+            Order->Task: Create Task
+            Task->Task: enrich taskId, orderId, caseId
+            Task->Order: Return 201 : new Task created
+            Order->Task: Update Task with document, person details
+            Task->Order: Task updated
+            end
+        end
+    end
+end
+
 Order->Workflow: get Order status
 Workflow-->Order: return Order status 'Drafted'
 

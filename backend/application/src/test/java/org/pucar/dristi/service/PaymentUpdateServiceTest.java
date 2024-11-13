@@ -62,7 +62,7 @@ class PaymentUpdateServiceTest {
         RequestInfo requestInfo = new RequestInfo();
         PaymentDetail paymentDetail = new PaymentDetail();
         Bill bill = new Bill();
-        bill.setConsumerCode("12345");
+        bill.setConsumerCode("12345_suffix");
         paymentDetail.setBill(bill);
         paymentDetail.setBusinessService("async-order-submission-managelifecycle");
         paymentRequest.setRequestInfo(requestInfo);
@@ -115,7 +115,7 @@ class PaymentUpdateServiceTest {
         RequestInfo requestInfo = new RequestInfo();
         PaymentDetail paymentDetail = new PaymentDetail();
         Bill bill = new Bill();
-        bill.setConsumerCode("12345");
+        bill.setConsumerCode("12345_suffix");
         paymentDetail.setBill(bill);
         paymentDetail.setBusinessService("invalid-business-service");
         paymentRequest.setRequestInfo(requestInfo);
@@ -139,7 +139,7 @@ class PaymentUpdateServiceTest {
         RequestInfo requestInfo = new RequestInfo();
         PaymentDetail paymentDetail = new PaymentDetail();
         Bill bill = new Bill();
-        bill.setConsumerCode("12345");
+        bill.setConsumerCode("12345_suffix");
         paymentDetail.setBill(bill);
         paymentDetail.setBusinessService("async-order-submission-managelifecycle");
         ApplicationSearchRequest applicationSearchRequest = new ApplicationSearchRequest();

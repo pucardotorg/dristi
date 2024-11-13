@@ -1,7 +1,19 @@
 import React, { useMemo } from "react";
 import { CustomArrowDownIcon, CustomCompleteIcon, CustomSchedule } from "../icons/svgIndex";
 
-function Accordion({ t, title, handlePageChange, handleAccordionClick, children, parentIndex, isOpen, showConfirmModal }) {
+function Accordion({
+  t,
+  title,
+  handlePageChange,
+  handleAccordionClick,
+  children,
+  parentIndex,
+  isOpen,
+  showConfirmModal,
+  errorCount,
+  isCaseReAssigned,
+  isDraftInProgress,
+}) {
   const getTime = useMemo(() => {
     switch (parentIndex) {
       case 0: {
@@ -16,6 +28,8 @@ function Accordion({ t, title, handlePageChange, handleAccordionClick, children,
       case 3: {
         return "05m";
       }
+      default:
+        return;
     }
   }, [parentIndex]);
 
@@ -23,13 +37,23 @@ function Accordion({ t, title, handlePageChange, handleAccordionClick, children,
     <div key={parentIndex} className="accordion-wrapper">
       <div className={`accordion-title ${isOpen ? "open" : ""}`} onClick={handleAccordionClick}>
         <span>{`${parentIndex + 1}. ${t(title)}`}</span>
-        <div className="icon">
-          <CustomSchedule />
-          <span style={{ paddingRight: "8px" }}>{getTime}</span>
-          <span className="reverse-arrow">
-            <CustomArrowDownIcon />
-          </span>
-        </div>
+        {isCaseReAssigned && (
+          <div className="icon">
+            <span>{`${errorCount || 0} ${t("CS_ERRORS")}`}</span>
+            <span className="reverse-arrow">
+              <CustomArrowDownIcon />
+            </span>
+          </div>
+        )}
+        {isDraftInProgress && (
+          <div className="icon">
+            <CustomSchedule />
+            <span style={{ paddingRight: "8px" }}>{getTime}</span>
+            <span className="reverse-arrow">
+              <CustomArrowDownIcon />
+            </span>
+          </div>
+        )}
       </div>
       <div className={`accordion-item ${!isOpen ? "collapsed" : ""}`}>
         <div className="accordion-content">

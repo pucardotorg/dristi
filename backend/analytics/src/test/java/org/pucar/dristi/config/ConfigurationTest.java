@@ -71,8 +71,8 @@ class ConfigurationTest {
         configuration.setApiCallDelayInSeconds(10);
         configuration.setMdmsHost("http://mdms-host");
         configuration.setMdmsEndPoint("/mdms/search");
-        configuration.setMdmsModuleName("moduleName");
-        configuration.setMdmsMasterName("masterName");
+        configuration.setMdmsPendingTaskModuleName("moduleName");
+        configuration.setMdmsPendingTaskMasterName("masterName");
 
         assertEquals("http://localhost:9200", configuration.getEsHostUrl());
         assertEquals("30", configuration.getPollInterval());
@@ -98,7 +98,7 @@ class ConfigurationTest {
         assertEquals(10, configuration.getApiCallDelayInSeconds());
         assertEquals("http://mdms-host", configuration.getMdmsHost());
         assertEquals("/mdms/search", configuration.getMdmsEndPoint());
-        assertEquals("moduleName", configuration.getMdmsModuleName());
-        assertEquals("masterName", configuration.getMdmsMasterName());
+        assertEquals("moduleName", configuration.getMdmsPendingTaskModuleName());
+        assertEquals("masterName", configuration.getMdmsPendingTaskMasterName());
     }
 }

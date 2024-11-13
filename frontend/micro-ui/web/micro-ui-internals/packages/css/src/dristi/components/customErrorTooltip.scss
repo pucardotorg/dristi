@@ -1,8 +1,8 @@
 .custom-error-tooltip {
-  position: relative;
-  display: inline-block;
   height: 20px;
   width: 20px;
+  display: flex;
+  align-items: center;
 
   span {
     cursor: pointer;
@@ -18,7 +18,7 @@
 }
 
 .custom-error-tooltip-message {
-  position: absolute;
+  position: relative;
   bottom: 20px;
   left: 0;
   background-color: none;

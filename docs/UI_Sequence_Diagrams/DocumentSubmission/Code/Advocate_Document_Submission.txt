@@ -1,0 +1,71 @@
+@startuml
+autonumber
+skinparam responseMessageBelowArrow true
+
+title "Document Submission by Advocate"
+
+actor Advocate as A
+
+participant HomeScreenUI as HU
+participant ViewCaseUI as VU
+participant DocumentSubmisionUI as DU
+participant DocumentReviewUI as DRU
+
+
+box DRISIT Services
+participant CaseSvc as CS #gold
+participant ArtifactSvc as ARS #gold
+participant ArtifactUtilSvc as ARUS #gold
+end box
+
+participant ESignSvc as ES #orange
+
+box DIGIT Services #lightgray
+participant PDFSvc as PS #lightgreen
+participant FilestoreSvc as FS #lightgreen
+participant Workflow as W #lightgreen
+queue Kafka as K #lightgreen
+end box
+
+== Document Submission ==
+A->HU: login
+HU->CS++: call case list for my cases
+return case summary list
+A->HU: select a case to view
+HU->VU: redirects to View Case screen
+VU->CS++: call case details API (filing/cnr number)
+return case details
+A->VU: Click "Submit Documents"
+VU->DU: redirects to Document submission screen
+A->DU: Fill in the Document details and upload relevant documents
+A->DU: Click "Review Submission"
+DU->DRU: redirect to review screen
+DRU->ARS++: createArtifact(artifact payload, filestoreID, filingNumber)
+ARS->ARUS++: generate ArtifactNumber (filingNumber)
+return artifactNumber
+ARS->W++: action "CREATE"
+W->K: post state transition event
+return "PENDING_E-SIGN"
+return 201 (new artifact)
+opt multiple documents uploaded
+DRU->PS++: merge all documents and generate document PDF
+return PDF
+else single non PDF document uploaded
+DRU->PS++: converted and generate document PDF
+return PDF
+else single PDF uploaded
+note right of DRU: PDF already available. can use for preview directly
+end
+DRU->DRU: Preview PDF
+A->DRU: E-sign documemnt
+DRU->ES++: e-sign document
+return signed documemnt
+DRU->FS++: save document
+return filestoreID
+DRU->ARS++: updateArtifact (filestoreID)
+ARS->W++: action "E-SIGN"
+W->K: post state transition event
+return "COMPLETED"
+return 200 (artifact updated)
+
+@enduml

@@ -1,0 +1,18 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "http://dristi.pucar.org/schemas/order-summons.json",
+  "$comment": "definition of the schema for issuing summon order",
+  "$version": "0.1.0",
+  "orderDetails":
+  {
+    "hearingDate": {
+      "type": "integer",
+      "format": "int64",
+      "description": "date of hearing"
+    },
+    "respondentName": {
+      "type": "string",
+      "description": "to whom summon is issued"
+    }
+  }
+}

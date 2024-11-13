@@ -3,7 +3,7 @@ const delayApplicationFormConfig = [
     body: [
       {
         type: "radio",
-        key: "delayApplicationType",
+        key: "delayCondonationType",
         label: "CS_QUESTION_DELAY_APPLICATION",
         isMandatory: true,
         populators: {
@@ -36,28 +36,42 @@ const delayApplicationFormConfig = [
     ],
   },
   {
-    dependentKey: { delayApplicationType: ["showForm"] },
+    dependentKey: { delayCondonationType: ["showForm"] },
     body: [
+      // {
+      //   type: "component",
+      //   component: "SelectCustomTextArea",
+      //   key: "delayApplicationReason",
+      //   withoutLabel: true,
+      //   populators: {
+      //     inputs: [
+      //       {
+      //         name: "reasonForDelay",
+      //         textAreaHeader: "CS_TEXTAREA_HEADER_DELAY_REASON",
+      //         type: "TextAreaComponent",
+      //         headerClassName: "text-area-header",
+      //       },
+      //     ],
+      //   },
+      // },
       {
         type: "component",
-        component: "SelectCustomTextArea",
+        component: "SelectTranscriptTextArea",
         key: "delayApplicationReason",
         withoutLabel: true,
         populators: {
-          inputs: [
-            {
-              name: "reasonForDelay",
-              textAreaHeader: "CS_TEXTAREA_HEADER_DELAY_REASON",
-              type: "TextAreaComponent",
-              headerClassName: "text-area-header",
-            },
-          ],
+          input: {
+            name: "reasonForDelay",
+            textAreaHeader: "CS_TEXTAREA_HEADER_DELAY_REASON",
+            type: "TranscriptionTextAreaComponent",
+            headerClassName: "text-area-header",
+          },
         },
       },
     ],
   },
   {
-    dependentKey: { delayApplicationType: ["showForm"] },
+    dependentKey: { delayCondonationType: ["showForm"] },
     body: [
       {
         type: "component",
@@ -69,7 +83,7 @@ const delayApplicationFormConfig = [
             {
               infoHeader: "CS_COMMON_NOTE",
               infoText: "CS_NOTE_DELAY_APPLICATION",
-              infoTooltipMessage: "Tooltip",
+              infoTooltipMessage: "CS_NOTE_DELAY_APPLICATION",
               type: "InfoComponent",
             },
           ],
@@ -78,7 +92,7 @@ const delayApplicationFormConfig = [
     ],
   },
   {
-    dependentKey: { delayApplicationType: ["showForm"] },
+    dependentKey: { delayCondonationType: ["showForm"] },
     body: [
       {
         type: "component",
@@ -90,12 +104,12 @@ const delayApplicationFormConfig = [
             {
               name: "document",
               documentHeader: "CS_DELAY_CONDONATION_APPLICATION",
-              infoTooltipMessage: "Tooltip",
+              infoTooltipMessage: "CS_DELAY_CONDONATION_APPLICATION",
               type: "DragDropComponent",
               uploadGuidelines: "UPLOAD_DOC_50",
               maxFileSize: 50,
               maxFileErrorMessage: "CS_FILE_LIMIT_1_MB",
-              fileTypes: ["JPG", "PDF"],
+              fileTypes: ["JPG", "PDF", "PNG"],
             },
           ],
         },

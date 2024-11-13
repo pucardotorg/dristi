@@ -14,6 +14,8 @@ public class ServiceConstants {
 
     public static final String EXTERNAL_SERVICE_EXCEPTION = "External Service threw an Exception: ";
     public static final String SEARCHER_SERVICE_EXCEPTION = "Exception while fetching from searcher: ";
+    public static final String COMPLETED = "COMPLETED";
+    public static final String REJECTED = "REJECTED";
 
     public static final String IDGEN_ERROR = "IDGEN ERROR";
     public static final String NO_IDS_FOUND_ERROR = "No ids returned from idgen Service";
@@ -77,5 +79,6 @@ public class ServiceConstants {
     public static final String COMMENT_ADD_ERR = "COMMENT_ADD_ERR";
     public static final String INVALID_FILESTORE_ID = "INVALID_FILESTORE_ID";
     public static final String INVALID_DOCUMENT_DETAILS = "Invalid document details";
+    public static final String DELAY_CONDONATION = "DELAY_CONDONATION";
 
 }

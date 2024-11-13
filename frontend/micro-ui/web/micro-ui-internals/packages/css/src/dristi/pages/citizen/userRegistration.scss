@@ -544,6 +544,19 @@
         }
       }
     }
+
+    .terms-condition {
+      max-width: 600px;
+      form {
+        padding: 40px;
+        background-color: #ffffff;
+        .card {
+          margin: 0px;
+          padding: 0px;
+          padding-bottom: 32px;
+        }
+      }
+    }
   }
   .card-label-error {
     margin-bottom: 0px;

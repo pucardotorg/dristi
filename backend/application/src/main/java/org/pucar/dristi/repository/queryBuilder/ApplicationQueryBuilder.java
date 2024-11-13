@@ -22,6 +22,8 @@ public class ApplicationQueryBuilder {
                     " app.onbehalfof as onbehalfof, app.applicationtype as applicationtype, app.applicationnumber as applicationnumber," +
                     " app.statuteSection as statuteSection, app.issuedby as issuedby, app.status as status, app.comment as comment, app.isactive as isactive," +
                     " app.additionaldetails as additionaldetails,"+
+                    " app.reason_for_application as reason_for_application,"+
+                    " app.application_details as application_details,"+
                     " app.createdby as createdby," +
                     " app.lastmodifiedby as lastmodifiedby, app.createdtime as createdtime, app.lastmodifiedtime as lastmodifiedtime," +
                     " app.status as status ";
@@ -127,13 +129,18 @@ public class ApplicationQueryBuilder {
         return query + " LIMIT ? OFFSET ?";
     }
     public String addOrderByQuery(String query, Pagination pagination) {
-        if (pagination == null || pagination.getSortBy() == null || pagination.getOrder() == null) {
+        if (isPaginationInvalid(pagination) || pagination.getSortBy().contains(";")) {
             return query + DEFAULT_ORDERBY_CLAUSE;
         } else {
             query = query + ORDERBY_CLAUSE;
         }
         return query.replace("{orderBy}", pagination.getSortBy()).replace("{sortingOrder}", pagination.getOrder().name());
     }
+
+    private static boolean isPaginationInvalid(Pagination pagination) {
+        return pagination == null || pagination.getSortBy() == null || pagination.getOrder() == null;
+    }
+
     public String getDocumentSearchQuery(List<String> ids, List<Object> preparedStmtList, List<Integer> preparedStmtArgListDoc) {
         try {
             StringBuilder query = new StringBuilder(DOCUMENT_SELECT_QUERY_APP);

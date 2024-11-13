@@ -1,10 +1,11 @@
 import { Button, InboxSearchComposer, Loader } from "@egovernments/digit-ui-react-components";
-import React, { useMemo } from "react";
-import { useHistory } from "react-router-dom";
-import { litigantInboxConfig } from "./litigantInboxConfig";
+import React, { useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
+import { useHistory } from "react-router-dom";
 import { useRouteMatch } from "react-router-dom/cjs/react-router-dom.min";
+import JoinCaseHome from "../../../../../../cases/src/pages/employee/JoinCaseHome";
 import { userTypeOptions } from "../../registration/config";
+import { litigantInboxConfig } from "./litigantInboxConfig";
 
 const sectionsParentStyle = {
   height: "50%",
@@ -48,8 +49,12 @@ function Home() {
     {},
     individualId,
     userType,
-    "/advocate/advocate/v1/_search"
+    "/advocate/v1/_search"
   );
+
+  const [callRefetch, SetCallRefetch] = useState(false);
+  const [caseDetails, setCaseDetails] = useState(null);
+  const [selectedParty, setSelectedParty] = useState({});
 
   if (userType === "ADVOCATE" && searchData) {
     const advocateBarRegNumber = searchData?.advocates?.[0]?.responseList?.[0]?.barRegistrationNumber;
@@ -74,20 +79,21 @@ function Home() {
 
   if (isLoading || isFetching || isSearchLoading) {
     return <Loader />;
+  } else {
+    history.push(`/${window?.contextPath}/citizen/home/home-pending-task`);
   }
+
+  const refreshInbox = () => {
+    SetCallRefetch(true);
+  };
+
   return (
     <React.Fragment>
       <div className="home-screen-wrapper" style={{ minHeight: "calc(100vh - 90px)", width: "100%", padding: "30px" }}>
         <div className="header-class">
           <div className="header">{t("CS_YOUR_CASE")}</div>
           <div className="button-field" style={{ width: "50%" }}>
-            <Button
-              variation={"secondary"}
-              className={"secondary-button-selector"}
-              label={t("JOIN_A_CASE")}
-              labelClassName={"secondary-label-selector"}
-              onButtonClick={() => {}}
-            />
+            <JoinCaseHome refreshInbox={refreshInbox} />
             <Button
               className={"tertiary-button-selector"}
               label={t("FILE_A_CASE")}
@@ -100,6 +106,7 @@ function Home() {
         </div>
         <div className="inbox-search-wrapper">
           <InboxSearchComposer
+            key={`InboxSearchComposer-${callRefetch}`}
             customStyle={sectionsParentStyle}
             configs={{
               ...litigantInboxConfig,
@@ -108,7 +115,7 @@ function Home() {
                   ? {
                       searchKey: "filingNumber",
                       defaultFields: true,
-                      "advocateId ": advocateId,
+                      advocateId: advocateId,
                     }
                   : {
                       searchKey: "filingNumber",
@@ -120,7 +127,10 @@ function Home() {
             additionalConfig={{
               resultsTable: {
                 onClickRow: (props) => {
-                  history.push(`${path}/file-case/case?caseId=${props?.original?.id}`);
+                  const statusArray = ["CASE_ADMITTED", "ADMISSION_HEARING_SCHEDULED", "PENDING_PAYMENT", "UNDER_SCRUTINY", "PENDING_ADMISSION"];
+                  statusArray.includes(props?.original?.status)
+                    ? history.push(`${path}/view-case?caseId=${props.original.id}&filingNumber=${props.original.filingNumber}&tab=Overview`)
+                    : history.push(`${path}/file-case/case?caseId=${props?.original?.id}`);
                 },
               },
             }}

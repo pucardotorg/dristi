@@ -39,7 +39,7 @@ function ApplicationAwaitingPage({ individualId }) {
     {},
     applicationNo + individualId,
     userType,
-    userType === "ADVOCATE" ? "/advocate/advocate/v1/_search" : "/advocate/clerk/v1/_search"
+    userType === "ADVOCATE" ? "/advocate/v1/_search" : "/advocate/clerk/v1/_search"
   );
 
   const userTypeDetail = useMemo(() => {
@@ -73,16 +73,14 @@ function ApplicationAwaitingPage({ individualId }) {
         <CardHeader> {t("APPROVAL_WAITING")}</CardHeader>
       </div>
       <div style={{ "text-align": "center", maxWidth: "50%" }}>
-        <CardText>
-          {`Your registration (ID: ${applicationNumber}) is in progress. It takes 2-3 days for verification. You'll get an SMS when it's done.`}
-        </CardText>
+        <CardText>{`${t("RG_YOUR_REGISTRATION_NUMBER")} (ID: ${applicationNumber}).${t("RG_RECEIVE_MESSAGE")}`}</CardText>
       </div>
       <div>
         <Button
           onButtonClick={() => {
-            history.push(`/digit-ui/citizen/dristi/home/application-details?individualId=${individualId}`);
+            history.push(`/digit-ui/citizen/dristi/home/application-details?individualId=${individualId}&applicationNo=${applicationNumber}`);
           }}
-          label={t("View My Application")}
+          label={t("VIEW_MY_APPLICATION")}
           style={{
             flex: 1,
             boxShadow: "none",

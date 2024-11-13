@@ -1,0 +1,109 @@
+@startuml
+title Complainant/Advocate files a case
+autonumber
+actor CaseSubmitter as P
+actor Advocate as A #aqua
+actor Complianant as C #gold
+
+participant HomeScreen as HU
+participant CaseFilingUI as CU
+participant ViewCaseUI as VU
+participant PaymentUI as PU
+participant ESignUI as EU
+
+box DRISIT Services
+participant CaseSvc as CS #gold
+end box
+
+box DIGIT Services
+participant PaymentSvc as PS #lightgreen
+participant PDFService as PDF #lightgreen
+participant FileStoreSvc as FS #lightgreen
+end box
+
+== Case Filing Advocate/Complainant ==
+note right of P
+     Either Advocate or Complainant can file the case. 
+     They can login interchangeably and work on the same draft file
+end note
+
+
+P->HU: Advocate/Complainant logs in and navigates to home screen
+P->HU: Click on "File a case"
+HU->CU: Navigate to case filing screen
+rnote over CU
+   Follow UI screen flow & fill out details
+end rnote
+P->CU: Save Draft
+CU->CS++: Create Case
+CS->CS: enrich case with filingNumber
+return case 
+
+opt Advocate Submits the Case
+A->CU: Click on "Submit Case"
+A->CU: Select online or offline sign
+
+opt online sign
+
+   note right of CU:  go to "Complainant Submits the case" section
+else offline sign
+   A->CS++: update case (workflow moved to "Pending Sign")
+   return success
+   A->CU: Advocate downloads the Case PDF
+   return success
+   note right of CU
+       Advocate and Complainant sign the document 
+       (either print/sign/rescan or use their DSC)
+   end note
+   A->CU: Uploads signed Case PDF document
+   CU->FS++: upload signed Case PDF
+   return filestoreId
+   CU->CS++: update case (filestoreId, workflow moved to "Payment Pending")
+   return success
+end
+   else Complianant Submits the case
+   note right of C:  go to "Complainant Submits the case" section
+end
+
+== Complainant Submits the case == 
+
+C->HU: login
+HU->CU: Navigate to case filing screen
+CU->CS++: update case (workflow moved to"Pending E-sign"
+return success
+
+C-> EU: Click on e-sign of case PDF
+rnote over EU
+    Follow e-signing screen flow
+end rnote
+EU -> FS ++: Upload signed PDF document
+return filestoreId
+EU->CS++: update case (filestoreId, workflow moved to "Pending E-sign 2")
+return success
+A->HU: login
+note right of A
+    Advocate follows the flow to view case and get to the e-sign page
+end note
+A-> EU: Click on e-sign of case PDF
+rnote over EU
+    Follow e-signing screen flow
+end rnote
+EU -> FS ++: Upload signed PDF document
+return filestoreId
+EU->CS++: update case (filestoreId, workflow moved to "Payment Pending")
+return success
+
+== Payment Flow Advocate/Complainant == 
+EU->PU: Navigate to Payment UI
+P->PU: Click make payment
+rnote over PU
+Demand, billing, collection flow happens
+end rnote
+PU-> PS++: make payment
+return payment success
+PU -> CS++: Update workflow status to "Pending Scrutiny"
+return "updated payload"
+rnote over CU
+Action pending with FSO now
+end rnote
+@enduml

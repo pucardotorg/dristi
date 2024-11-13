@@ -1,0 +1,22 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "http://dristi.pucar.org/schemas/order-warrant.json",
+  "$comment": "definition of the schema for issuing warrant order",
+  "$version": "0.1.0",
+  "orderDetails":
+  {
+    "hearingDate": {
+      "type": "integer",
+      "format": "int64",
+      "description": "date of hearing"
+    },
+    "respondentName": {
+      "type": "string",
+      "description": "to whom warrant is issued"
+    },
+    "reasonForWarrant": {
+      "type": "string",
+      "description": "reason for warrant"
+    }
+  }
+}

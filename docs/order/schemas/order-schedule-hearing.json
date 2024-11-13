@@ -9,10 +9,27 @@
       "type" : "string",
       "description": "purpose of hearing"
     },
-    "partyName": {
-      "type" : "string",
-      "description": "name of parties"
-    },
+    "partyNames": [
+      {
+      "name": {
+        "type": "string",
+        "description": "The name of the party."
+       },
+      "uuid": {
+        "type": "string",
+        "format": "uuid",
+        "description": "The unique identifier for the party."
+       },
+      "partyType": {
+        "type": "string",
+        "description": "The type of party ex: complainant, respondent"
+       },
+      "individualId": {
+        "type": "string",
+        "description": "The optional identifier for an individual, following the format 'IND-yyyy-MM-dd-nnnnnn'."
+       }
+      }
+    ],
     "hearingDate": {
       "type": "integer",
       "format": "int64",

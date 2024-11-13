@@ -1,36 +1,36 @@
-import { advocateDetailsConfig } from "./advocateDetailsConfig";
-import { chequeDetailsConfig } from "./chequedetailsConfig";
-import { complaintdetailconfig } from "./complaindetailsConfig";
-import { debtliabilityconfig } from "./debtLiabilityConfig";
-import { delayApplicationConfig } from "./delayApplicationConfig";
 import { demandNoticeConfig } from "./demandNoticeConfig";
-import { prayerAndSwornConfig } from "./prayerAndSwornConfig";
-import { respondentconfig } from "./respondentConfig";
-import { reviewcasefileconfig } from "./reviewcasefileconfig";
-import { signatureconfig } from "./signatureconfig";
-import { witnessConfig } from "./witnessConfig";
 
 export const sideMenuConfig = [
   {
     isOpen: false,
     isDisabled: false,
     title: "CS_LITIGENT_DETAILS",
+    key: "litigentDetails",
     children: [
       {
-        key: "complaintDetails",
+        key: "complainantDetails",
         label: "CS_COMPLAINT_DETAILS",
         checked: false,
         isCompleted: false,
         isDisabled: false,
-        pageConfig: complaintdetailconfig,
+        pageConfig: [
+          {
+            moduleName: "commonUiConfig",
+            masterDetails: [
+              {
+                name: "complainantDetailsConfig",
+              },
+            ],
+          },
+        ],
         mandatoryFields: [
           "complainantType",
           "complainantId.complainantId",
           "firstName",
-          "lastName",
+          // "dateOfBirth",
           "complainantVerification.otpNumber", // checkThis- make sure to unset otpNumber if otp model is closed or canceled.
         ],
-        initialMandatoryFieldCount: 10,
+        initialMandatoryFieldCount: 12,
         dependentMandatoryFields: [
           { field: "addressCompanyDetails-select.pincode", dependentOn: "complainantType", dependentOnKey: "showCompanyDetails" },
           { field: "addressCompanyDetails-select.state", dependentOn: "complainantType", dependentOnKey: "showCompanyDetails" },
@@ -42,12 +42,15 @@ export const sideMenuConfig = [
           { field: "addressDetails-select.district", dependentOn: "complainantType", dependentOnKey: "isIndividual" },
           { field: "addressDetails-select.city", dependentOn: "complainantType", dependentOnKey: "isIndividual" },
           { field: "addressDetails-select.locality", dependentOn: "complainantType", dependentOnKey: "isIndividual" },
-          { field: "companyName", dependentOn: "complainantType", dependentOnKey: "showCompanyDetails" },
-          { field: "companyDetailsUpload.document", dependentOn: "complainantType", dependentOnKey: "showCompanyDetails" },
+          { field: "complainantCompanyName", dependentOn: "complainantType", dependentOnKey: "showCompanyDetails" },
+          { field: "complainantTypeOfEntity", dependentOn: "complainantType", dependentOnKey: "showCompanyDetails" },
         ],
-        optionalFields: ["middleName"],
-        initialOptionalFieldCount: 1,
-        dependentOptionalFields: [],
+        optionalFields: ["middleName", "lastName", "complainantAge"],
+        initialOptionalFieldCount: 3,
+        dependentOptionalFields: [
+          { field: "companyDetailsUpload.document", dependentOn: "complainantType", dependentOnKey: "showCompanyDetails" },
+          { field: "complainantDesignation", dependentOn: "complainantType", dependentOnKey: "showCompanyDetails" },
+        ],
       },
       {
         key: "respondentDetails",
@@ -55,8 +58,17 @@ export const sideMenuConfig = [
         checked: false,
         isCompleted: false,
         isDisabled: false,
-        pageConfig: respondentconfig,
-        mandatoryFields: ["respondentType", "respondentFirstName", "respondentLastName"],
+        pageConfig: [
+          {
+            moduleName: "commonUiConfig",
+            masterDetails: [
+              {
+                name: "respondentConfig",
+              },
+            ],
+          },
+        ],
+        mandatoryFields: ["respondentType", "respondentFirstName"],
         ifMultipleAddressLocations: {
           // using this for counting mandatory fields in case of multiple locations .
           dataKey: "addressDetails",
@@ -68,14 +80,24 @@ export const sideMenuConfig = [
             "addressDetails.locality",
           ],
         },
-        initialMandatoryFieldCount: 8,
+        initialMandatoryFieldCount: 10,
         dependentMandatoryFields: [
-          { field: "companyName", dependentOn: "respondentType", dependentOnKey: "showCompanyDetails" },
-          { field: "companyDetailsUpload.document", dependentOn: "respondentType", dependentOnKey: "showCompanyDetails" },
+          { field: "respondentCompanyName", dependentOn: "respondentType", dependentOnKey: "showCompanyDetails" },
+          { field: "respondentTypeOfEntity", dependentOn: "respondentType", dependentOnKey: "showCompanyDetails" },
         ],
-        optionalFields: ["middleName", "phonenumbers.mobileNumber", "emails.emailId", "inquiryAffidavitFileUpload.document"],
-        dependentOptionalFields: [],
-        initialOptionalFieldCount: 4,
+        optionalFields: [
+          "middleName",
+          "respondentLastName",
+          "respondentAge",
+          "phonenumbers.mobileNumber",
+          "emails.emailId",
+          "inquiryAffidavitFileUpload.document",
+        ],
+        dependentOptionalFields: [
+          { field: "companyDetailsUpload.document", dependentOn: "respondentType", dependentOnKey: "showCompanyDetails" },
+          { field: "respondentDesignation", dependentOn: "respondentType", dependentOnKey: "showCompanyDetails" },
+        ],
+        initialOptionalFieldCount: 6,
       },
     ],
   },
@@ -83,6 +105,7 @@ export const sideMenuConfig = [
     isOpen: false,
     isDisabled: false,
     title: "CS_CASE_SPECIFIC_DETAILS",
+    key: "caseSpecificDetails",
     children: [
       {
         key: "chequeDetails",
@@ -90,23 +113,36 @@ export const sideMenuConfig = [
         checked: false,
         isCompleted: false,
         isDisabled: false,
-        pageConfig: chequeDetailsConfig,
+        pageConfig: [
+          {
+            moduleName: "commonUiConfig",
+            masterDetails: [
+              {
+                name: "chequeDetailsConfig",
+              },
+            ],
+          },
+        ],
         mandatoryFields: [
           "chequeSignatoryName",
           "bouncedChequeFileUpload.document",
           "name",
           "chequeNumber",
           "issuanceDate",
-          "bankName",
+          "payeeBankName",
+          "payeeBranchName",
+          "payerBankName",
+          "payerBranchName",
+          "delayReason.reasonForReturnCheque",
           "ifsc",
           "chequeAmount",
+          "policeStation",
           "depositDate",
-          "depositChequeFileUpload.document",
           "returnMemoFileUpload.document",
         ],
         dependentMandatoryFields: [],
-        initialMandatoryFieldCount: 11,
-        optionalFields: ["chequeAdditionalDetails"],
+        initialMandatoryFieldCount: 12,
+        optionalFields: ["chequeAdditionalDetails", "depositChequeFileUpload.document"],
         dependentOptionalFields: [],
         initialOptionalFieldCount: 1,
       },
@@ -116,7 +152,16 @@ export const sideMenuConfig = [
         checked: false,
         isCompleted: false,
         isDisabled: false,
-        pageConfig: debtliabilityconfig,
+        pageConfig: [
+          {
+            moduleName: "commonUiConfig",
+            masterDetails: [
+              {
+                name: "debtLiabilityConfig",
+              },
+            ],
+          },
+        ],
         mandatoryFields: ["liabilityNature", "liabilityType"],
         initialMandatoryFieldCount: 2,
         dependentMandatoryFields: [{ field: "totalAmount", dependentOn: "liabilityType", dependentOnKey: "showAmountCovered" }],
@@ -130,23 +175,29 @@ export const sideMenuConfig = [
         checked: false,
         isCompleted: false,
         isDisabled: false,
-        pageConfig: demandNoticeConfig,
+        pageConfig: [
+          {
+            moduleName: "commonUiConfig",
+            masterDetails: [
+              {
+                name: "demandNoticeConfig",
+              },
+            ],
+          },
+        ],
         mandatoryFields: [
-          "SelectUserTypeComponent",
-          "dateOfIssuance",
           "dateOfDispatch",
-          "SelectCustomDragDrop.legalDemandNoticeFileUpload",
-          "SelectCustomDragDrop.proofOfDispatchFileUpload",
+          "legalDemandNoticeFileUpload.document",
+          "proofOfDispatchFileUpload.document",
           "proofOfService",
           "proofOfReply",
           "dateOfAccrual",
-          "delayApplicationType",
         ],
         initialMandatoryFieldCount: 9,
         dependentMandatoryFields: [
           { field: "dateOfService", dependentOn: "proofOfService", dependentOnKey: "showProofOfAcknowledgment" },
           {
-            field: "SelectCustomDragDrop.proofOfAcknowledgmentFileUpload",
+            field: "proofOfAcknowledgmentFileUpload.document",
             dependentOn: "proofOfService",
             dependentOnKey: "showProofOfAcknowledgment",
           },
@@ -155,7 +206,7 @@ export const sideMenuConfig = [
         dependentOptionalFields: [
           { field: "dateOfReply", dependentOn: "proofOfReply", dependentOnKey: "showProofOfReply" },
           {
-            field: "SelectCustomDragDrop.proofOfReplyFileUpload",
+            field: "proofOfReplyFileUpload.document",
             dependentOn: "proofOfReply",
             dependentOnKey: "showProofOfReply",
           },
@@ -168,14 +219,22 @@ export const sideMenuConfig = [
         checked: false,
         isCompleted: false,
         isDisabled: false,
-        pageConfig: delayApplicationConfig,
-        mandatoryFields: ["delayApplicationType"],
+        pageConfig: [
+          {
+            moduleName: "commonUiConfig",
+            masterDetails: [
+              {
+                name: "delayApplicationFormConfig",
+              },
+            ],
+          },
+        ],
+        mandatoryFields: ["delayCondonationType"],
         initialMandatoryFieldCount: 1,
         dependentMandatoryFields: [
-          { field: "delayApplicationReason.reasonForDelay", dependentOn: "delayApplicationType", dependentOnKey: "showForm" },
           {
             field: "condonationFileUpload.document",
-            dependentOn: "delayApplicationType",
+            dependentOn: "delayCondonationType",
             dependentOnKey: "showForm",
           },
         ],
@@ -191,6 +250,7 @@ export const sideMenuConfig = [
     isOpen: false,
     isDisabled: false,
     title: "CS_ADDITIONAL_DETAILS",
+    key: "additionalDetails",
     children: [
       {
         key: "witnessDetails",
@@ -198,11 +258,17 @@ export const sideMenuConfig = [
         checked: false,
         isCompleted: false,
         isDisabled: false,
-        pageConfig: witnessConfig,
-        mandatoryFields: [
-          "firstName", // whole witness details form is optional.
-          "lastName",
+        pageConfig: [
+          {
+            moduleName: "commonUiConfig",
+            masterDetails: [
+              {
+                name: "witnessConfig",
+              },
+            ],
+          },
         ],
+        anyOneOfTheseMandatoryFields: [["firstName", "witnessDesignation"]],
         ifMultipleAddressLocations: {
           // using this for counting mandatory fields in case of multiple locations .
           dataKey: "addressDetails",
@@ -216,7 +282,7 @@ export const sideMenuConfig = [
         },
         initialMandatoryFieldCount: 0,
         dependentMandatoryFields: [],
-        optionalFields: ["middleName", "phonenumbers.mobileNumber", "emails.emailId", "witnessAdditionalDetails.text"],
+        optionalFields: ["middleName", "lastName", "phonenumbers.mobileNumber", "emails.emailId", "witnessAdditionalDetails.text"],
         dependentOptionalFields: [],
         initialOptionalFieldCount: 4,
       },
@@ -226,19 +292,23 @@ export const sideMenuConfig = [
         checked: false,
         isCompleted: false,
         isDisabled: false,
-        pageConfig: prayerAndSwornConfig,
-        mandatoryFields: ["prayerAndSwornStatementType"],
-        anyOneOfTheseMandatoryFields: [
-          ["memorandumOfComplaint.text", "memorandumOfComplaint.document"],
-          ["prayerForRelief.text", "prayerForRelief.document"],
+        pageConfig: [
+          {
+            moduleName: "commonUiConfig",
+            masterDetails: [
+              {
+                name: "prayerAndSwornConfig",
+              },
+            ],
+          },
         ],
-        initialMandatoryFieldCount: 3,
+        mandatoryFields: ["memorandumOfComplaint.text"],
+        anyOneOfTheseMandatoryFields: ["swornStatement.document"],
+        initialMandatoryFieldCount: 2,
         dependentMandatoryFields: [],
         optionalFields: [
-          "caseSettlementCondition",
-          "SelectCustomDragDrop.swornStatement",
+          "prayerAndSwornStatementType",
           "additionalDetails.text",
-          "additionalActsSections.text",
           "SelectUploadDocWithName.docName",
           "SelectUploadDocWithName.document",
         ],
@@ -251,7 +321,16 @@ export const sideMenuConfig = [
         checked: false,
         isCompleted: false,
         isDisabled: false,
-        pageConfig: advocateDetailsConfig,
+        pageConfig: [
+          {
+            moduleName: "commonUiConfig",
+            masterDetails: [
+              {
+                name: "advocateDetailsConfig",
+              },
+            ],
+          },
+        ],
         mandatoryFields: [
           "isAdvocateRepresenting",
           // if advocateBarRegistrationNumber is present, 3 name fields will be filled automatically.
@@ -276,6 +355,7 @@ export const sideMenuConfig = [
     isOpen: false,
     isDisabled: false,
     title: "CS_REVIEW_SIGN",
+    key: "reviewcasedetails",
     children: [
       {
         key: "reviewCaseFile",
@@ -283,9 +363,31 @@ export const sideMenuConfig = [
         checked: false,
         isCompleted: false,
         isDisabled: false,
-        pageConfig: reviewcasefileconfig,
+        pageConfig: [
+          {
+            moduleName: "commonUiConfig",
+            masterDetails: [
+              {
+                name: "reviewCaseFileConfig",
+              },
+            ],
+          },
+        ],
       },
-      { key: "addSignature", label: "CS_ADD_SIGNATURE", checked: false, isCompleted: false, isDisabled: false, pageConfig: signatureconfig },
     ],
   },
 ];
+
+export const documentTypeMapping = {
+  bouncedChequeFileUpload: "BOUNCED_CHEQUE",
+  depositChequeFileUpload: "PROOF_OF_DEPOSIT_OF_CHEQUE",
+  returnMemoFileUpload: "RETURN_MEMO",
+  debtLiabilityFileUpload: "DEBT_LIABILITY",
+  legalDemandNoticeFileUpload: "DEMAND_NOTICE",
+  proofOfAcknowledgmentFileUpload: "PROOF_OF_ACK_OF_LEGAL_NOTICE",
+  proofOfDispatchFileUpload: "PROOF_OF_DISPATCH_OF_LEGAL_NOTICE",
+  proofOfReplyFileUpload: "PROOF_OF_REPLY_TO_LEGAL_NOTICE",
+  swornStatement: "SWORN_STATEMENT",
+  inquiryAffidavitFileUpload: "AFFIDAVIT",
+  vakalatnamaFileUpload: "VAKALATNAMA",
+};

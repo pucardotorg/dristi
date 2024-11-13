@@ -4,7 +4,7 @@ const demandNoticeFormConfig = [
       {
         type: "component",
         component: "SelectUserTypeComponent",
-        key: "SelectUserTypeComponent",
+        key: "modeOfDispatchType",
         isMandatory: true,
         withoutLabel: true,
         populators: {
@@ -17,14 +17,11 @@ const demandNoticeFormConfig = [
               error: "CORE_REQUIRED_FIELD_ERROR",
               required: false,
               isMandatory: true,
-              options: [
-                {
-                  code: "POST",
-                  name: "POST",
-                  commonFields: true,
-                  isEnabled: true,
-                },
-              ],
+              mdmsConfig: {
+                masterName: "DispatchMode",
+                moduleName: "case",
+                select: "(data) => {return data['case'].DispatchMode?.map((item) => {return item;});}",
+              },
             },
           ],
         },
@@ -36,11 +33,16 @@ const demandNoticeFormConfig = [
       {
         type: "date",
         label: "CS_DATE_OF_ISSUANCE_LDN",
+        labelChildren: "OutlinedInfoIcon",
         isMandatory: true,
         populators: {
           name: "dateOfIssuance",
           validation: {
-            max: new Date().toISOString().split("T")[0],
+            max: {
+              patternType: "date",
+              masterName: "commonUiConfig",
+              moduleName: "maxDateValidation",
+            },
           },
         },
       },
@@ -51,11 +53,16 @@ const demandNoticeFormConfig = [
       {
         type: "date",
         label: "CS_DATE_OF_DISPATCH_LDN",
+        labelChildren: "OutlinedInfoIcon",
         isMandatory: true,
         populators: {
           name: "dateOfDispatch",
           validation: {
-            max: new Date().toISOString().split("T")[0],
+            max: {
+              patternType: "date",
+              masterName: "commonUiConfig",
+              moduleName: "maxDateValidation",
+            },
           },
         },
       },
@@ -66,19 +73,19 @@ const demandNoticeFormConfig = [
       {
         type: "component",
         component: "SelectCustomDragDrop",
-        key: "SelectCustomDragDrop",
+        key: "legalDemandNoticeFileUpload",
         withoutLabel: true,
         populators: {
           inputs: [
             {
-              name: "legalDemandNoticeFileUpload",
+              name: "document",
               documentHeader: "LEGAL_DEMAND_NOTICE",
               type: "DragDropComponent",
               uploadGuidelines: "UPLOAD_DOC_50",
               maxFileSize: 50,
               maxFileErrorMessage: "CS_FILE_LIMIT_50_MB",
-              fileTypes: ["JPG", "PDF"],
-              isMultipleUpload: false,
+              fileTypes: ["JPG", "PDF", "PNG"],
+              isMultipleUpload: true,
             },
           ],
         },
@@ -90,19 +97,19 @@ const demandNoticeFormConfig = [
       {
         type: "component",
         component: "SelectCustomDragDrop",
-        key: "SelectCustomDragDrop",
+        key: "proofOfDispatchFileUpload",
         withoutLabel: true,
         populators: {
           inputs: [
             {
-              name: "proofOfDispatchFileUpload",
+              name: "document",
               documentHeader: "PROOF_OF_DISPATCH_LDN",
               type: "DragDropComponent",
               uploadGuidelines: "UPLOAD_DOC_50",
               maxFileSize: 50,
               maxFileErrorMessage: "CS_FILE_LIMIT_50_MB",
-              fileTypes: ["JPG", "PDF"],
-              isMultipleUpload: false,
+              fileTypes: ["JPG", "PDF", "PNG"],
+              isMultipleUpload: true,
             },
           ],
         },
@@ -125,7 +132,12 @@ const demandNoticeFormConfig = [
           required: false,
           isMandatory: true,
           isDependent: true,
-          clearFields: { stateOfRegistration: "", barRegistrationNumber: "", barCouncilId: [], stateRegnNumber: "" },
+          clearFields: {
+            stateOfRegistration: "",
+            barRegistrationNumber: "",
+            barCouncilId: [],
+            stateRegnNumber: "",
+          },
           options: [
             {
               code: "YES",
@@ -147,7 +159,6 @@ const demandNoticeFormConfig = [
     ],
   },
   {
-    dependentKey: { proofOfService: ["showProofOfAcknowledgment"] },
     body: [
       {
         type: "date",
@@ -156,30 +167,36 @@ const demandNoticeFormConfig = [
         populators: {
           name: "dateOfService",
           validation: {
-            max: new Date().toISOString().split("T")[0],
+            max: {
+              patternType: "date",
+              masterName: "commonUiConfig",
+              moduleName: "maxDateValidation",
+            },
           },
         },
       },
     ],
   },
   {
-    dependentKey: { proofOfService: ["showProofOfAcknowledgment"] },
     body: [
       {
         type: "component",
         component: "SelectCustomDragDrop",
-        key: "SelectCustomDragDrop",
+        key: "proofOfAcknowledgmentFileUpload",
+        isDocDependentOn: "proofOfService",
+        isDocDependentKey: "showProofOfAcknowledgment",
         populators: {
           inputs: [
             {
-              name: "proofOfAcknowledgmentFileUpload",
+              name: "document",
               documentHeader: "PROOF_LEGAL_DEMAND_NOTICE",
               type: "DragDropComponent",
               uploadGuidelines: "UPLOAD_DOC_50",
               maxFileSize: 50,
               maxFileErrorMessage: "CS_FILE_LIMIT_50_MB",
-              fileTypes: ["JPG", "PDF"],
-              isMultipleUpload: false,
+              fileTypes: ["JPG", "PDF", "PNG"],
+              isMultipleUpload: true,
+              documentHeaderStyle: { textAlign: "left" },
             },
           ],
         },
@@ -202,7 +219,12 @@ const demandNoticeFormConfig = [
           required: false,
           isMandatory: true,
           isDependent: true,
-          clearFields: { stateOfRegistration: "", barRegistrationNumber: "", barCouncilId: [], stateRegnNumber: "" },
+          clearFields: {
+            stateOfRegistration: "",
+            barRegistrationNumber: "",
+            barCouncilId: [],
+            stateRegnNumber: "",
+          },
           options: [
             {
               code: "YES",
@@ -224,7 +246,9 @@ const demandNoticeFormConfig = [
     ],
   },
   {
-    dependentKey: { proofOfReply: ["showProofOfReply"] },
+    dependentKey: {
+      proofOfReply: ["showProofOfReply"],
+    },
     body: [
       {
         type: "date",
@@ -233,30 +257,35 @@ const demandNoticeFormConfig = [
         populators: {
           name: "dateOfReply",
           validation: {
-            max: new Date().toISOString().split("T")[0],
+            max: {
+              patternType: "date",
+              masterName: "commonUiConfig",
+              moduleName: "maxDateValidation",
+            },
           },
         },
       },
     ],
   },
   {
-    dependentKey: { proofOfReply: ["showProofOfReply"] },
     body: [
       {
         type: "component",
         component: "SelectCustomDragDrop",
-        key: "SelectCustomDragDrop",
+        key: "proofOfReplyFileUpload",
+        isDocDependentOn: "proofOfReply",
+        isDocDependentKey: "showProofOfReply",
         populators: {
           inputs: [
             {
-              name: "proofOfReplyFileUpload",
+              name: "document",
               documentHeader: "CS_PROOF_TO_REPLY_DEMAND_NOTICE",
               type: "DragDropComponent",
               uploadGuidelines: "UPLOAD_DOC_50",
               maxFileSize: 50,
               maxFileErrorMessage: "CS_FILE_LIMIT_50_MB",
-              fileTypes: ["JPG", "PDF"],
-              isMultipleUpload: false,
+              fileTypes: ["JPG", "PDF", "PNG"],
+              isMultipleUpload: true,
             },
           ],
         },
@@ -268,11 +297,16 @@ const demandNoticeFormConfig = [
       {
         type: "date",
         label: "CS_DATE_OF_ACCRUAL_LDN",
+        labelChildren: "OutlinedInfoIcon",
         isMandatory: true,
         populators: {
           name: "dateOfAccrual",
           validation: {
-            max: new Date().toISOString().split("T")[0],
+            max: {
+              patternType: "date",
+              masterName: "commonUiConfig",
+              moduleName: "maxDateValidation",
+            },
           },
         },
       },
@@ -294,7 +328,12 @@ const demandNoticeFormConfig = [
           required: false,
           isMandatory: true,
           isDependent: true,
-          clearFields: { stateOfRegistration: "", barRegistrationNumber: "", barCouncilId: [], stateRegnNumber: "" },
+          clearFields: {
+            stateOfRegistration: "",
+            barRegistrationNumber: "",
+            barCouncilId: [],
+            stateRegnNumber: "",
+          },
           options: [
             {
               code: "YES",

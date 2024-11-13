@@ -150,6 +150,8 @@ components:
           type: string
         status:
           type: string
+        name:
+          type: string
     TaskRequest:
       type: object
       properties:
@@ -279,14 +281,12 @@ components:
         taskType:
           type: string
           description: there will be various types of tasks, that will define their own schema for information required. This type will help identify what schema to pick from MDMS
-          example: document submission, summons, bail.cash, bail.surety warrant
+          example: document.submission, summons, bail.cash, bail.surety, warrant, notice
         taskDetails:
           type: object
           description: fields specific to task type like summons, bail, warrant, based on schema defined in MDMS. It will also have details for things like delivery channel like ePost, NSTEP, iCoPs, etc
-
         amount:
           $ref: '#/components/schemas/Amount'
-
         status:
           type: string
           description: workflow status

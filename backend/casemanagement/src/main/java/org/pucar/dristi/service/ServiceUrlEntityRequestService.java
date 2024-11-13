@@ -42,7 +42,8 @@ public class ServiceUrlEntityRequestService {
         try{
             String responseBodyString = objectMapper.writeValueAsString(response.getBody());
             log.info("Response from the task search: " + responseBodyString);
-            taskDetailsString = JsonPath.parse(responseBodyString).read("$.list[0].taskDetails", String.class);
+            Object taskDetails = JsonPath.parse(responseBodyString).read("$.list[0].taskDetails");
+            taskDetailsString = objectMapper.writeValueAsString(taskDetails);
             orderId = JsonPath.parse(responseBodyString).read("$.list[0].orderId", String.class);
 
 

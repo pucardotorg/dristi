@@ -1,5 +1,5 @@
 import { CustomDropdown, InboxSearchComposer } from "@egovernments/digit-ui-react-components";
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useHistory } from "react-router-dom/cjs/react-router-dom.min";
 import { dropdownConfig, newconfigAdvocate, newconfigClerk } from "./config";
@@ -18,12 +18,10 @@ const Inbox = ({ tenants, parentRoute }) => {
   const { t } = useTranslation();
   Digit.SessionStorage.set("ENGAGEMENT_TENANTS", tenants);
   const tenantId = Digit.ULBService.getCurrentTenantId();
-  let isMobile = window.Digit.Utils.browser.isMobile();
+  const roles = Digit.UserService.getUser()?.info?.roles;
   const history = useHistory();
   const urlParams = new URLSearchParams(window.location.search);
   const type = urlParams.get("type") || "advocate";
-  const actions = urlParams.get("actions");
-
   const defaultType = { code: type, name: type?.charAt(0)?.toUpperCase() + type?.slice(1) };
   const [{ userType }, setSearchParams] = useState({
     eventStatus: [],
@@ -35,6 +33,11 @@ const Inbox = ({ tenants, parentRoute }) => {
     userType: defaultType,
     ulb: tenants?.find((tenant) => tenant?.code === tenantId),
   });
+  const hasApprovalRoles = ["ADVOCATE_APPROVER", "ADVOCATE_CLERK_APPROVER"].every((requiredRole) => roles.some((role) => role.code === requiredRole));
+
+  if (!hasApprovalRoles) {
+    history.push(`/${window?.contextPath}/employee/home/home-pending-task`);
+  }
 
   return (
     <React.Fragment>

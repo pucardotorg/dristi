@@ -76,7 +76,7 @@ public class TaskService {
 
         try {
             // Fetch tasks from database according to the given search criteria
-            return taskRepository.getApplications(request.getCriteria(), request.getPagination());
+            return taskRepository.getTasks(request.getCriteria(), request.getPagination());
         } catch (CustomException e) {
             log.error("Custom Exception occurred while searching task :: {}", e.toString());
             throw e;
@@ -99,7 +99,7 @@ public class TaskService {
             workflowUpdate(body);
 
             String status = body.getTask().getStatus();
-            if (ISSUESUMMON.equalsIgnoreCase(status))
+            if (SUMMON_SENT.equalsIgnoreCase(status) || NOTICE_SENT.equalsIgnoreCase(status) || WARRANT_SENT.equalsIgnoreCase(status))
                 producer.push(config.getTaskIssueSummonTopic(), body);
 
             producer.push(config.getTaskUpdateTopic(), body);
@@ -144,10 +144,39 @@ public class TaskService {
                     config.getTaskSummonBusinessServiceName(), workflow, config.getTaskSummonBusinessName());
             case WARRANT -> workflowUtil.updateWorkflowStatus(requestInfo, tenantId, taskNumber,
                     config.getTaskWarrantBusinessServiceName(), workflow, config.getTaskWarrantBusinessName());
+            case NOTICE -> workflowUtil.updateWorkflowStatus(requestInfo, tenantId, taskNumber,
+                    config.getTaskNoticeBusinessServiceName(), workflow, config.getTaskNoticeBusinessName());
             default -> workflowUtil.updateWorkflowStatus(requestInfo, tenantId, taskNumber,
                     config.getTaskBusinessServiceName(), workflow, config.getTaskBusinessName());
         };
 
         task.setStatus(status);
+    }
+
+
+    public Task uploadDocument(TaskRequest body) {
+        try {
+            Task task = validator.validateApplicationUploadDocumentExistence(body.getTask(), body.getRequestInfo());
+
+            // Enrich application upon update
+           TaskRequest taskRequest = TaskRequest.builder().requestInfo(body.getRequestInfo()).task(task).build();
+            enrichmentUtil.enrichCaseApplicationUponUpdate(taskRequest);
+
+            producer.push(config.getTaskUpdateTopic(), taskRequest);
+
+            return taskRequest.getTask();
+
+        } catch (CustomException e) {
+            log.error("Custom Exception occurred while uploading document into task :: {}", e.toString());
+            throw e;
+        } catch (Exception e) {
+            log.error("Error occurred while uploading document into task :: {}", e.toString());
+            throw new CustomException(DOCUMENT_UPLOAD_QUERY_EXCEPTION, "Error occurred while uploading document into task: " + e.getMessage());
+        }
+    }
+
+    public List<TaskCase> searchCaseTask(TaskCaseSearchRequest request) {
+        return taskRepository.getTaskWithCaseDetails(request);
+
     }
 }

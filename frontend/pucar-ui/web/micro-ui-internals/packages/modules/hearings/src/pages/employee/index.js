@@ -21,7 +21,7 @@ import ViewPendingTask from "./ViewPendingTask";
 import HearingPopup from "./HearingPopUp";
 import InsideHearing from "./InsideHearing";
 import ViewCase from "./ViewCase";
-const bredCrumbStyle={ maxWidth: "min-content" };
+const bredCrumbStyle = { maxWidth: "min-content" };
 const ProjectBreadCrumb = ({ location }) => {
   const { t } = useTranslation();
   const crumbs = [

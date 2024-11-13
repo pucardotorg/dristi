@@ -50,7 +50,8 @@ public class ApplicationService {
             validator.validateApplication(body);
             enrichmentUtil.enrichApplication(body);
             validator.validateOrderDetails(body);
-            workflowService.updateWorkflowStatus(body);
+            if(body.getApplication().getWorkflow()!=null)
+                workflowService.updateWorkflowStatus(body);
             producer.push(config.getApplicationCreateTopic(), body);
             return body.getApplication();
         } catch (Exception e) {
@@ -69,8 +70,8 @@ public class ApplicationService {
             // Enrich application upon update
             enrichmentUtil.enrichApplicationUponUpdate(applicationRequest);
             validator.validateOrderDetails(applicationRequest);
-            workflowService.updateWorkflowStatus(applicationRequest);
-
+            if (application.getWorkflow()!=null)
+                workflowService.updateWorkflowStatus(applicationRequest);
             producer.push(config.getApplicationUpdateTopic(), applicationRequest);
 
             return applicationRequest.getApplication();
@@ -93,7 +94,6 @@ public class ApplicationService {
                 // If no applications are found, return an empty list
                 if (CollectionUtils.isEmpty(applicationList))
                     return new ArrayList<>();
-                applicationList.forEach(application -> application.setWorkflow(workflowService.getWorkflowFromProcessInstance(workflowService.getCurrentWorkflow(request.getRequestInfo(), request.getCriteria().getTenantId(), application.getApplicationNumber()))));
                 return applicationList;
             } catch (Exception e) {
                 log.error("Error while fetching to search results {}", e.toString());
@@ -137,7 +137,10 @@ public class ApplicationService {
             AuditDetails applicationAuditDetails = applicationToUpdate.getAuditDetails();
             applicationAuditDetails.setLastModifiedBy(auditDetails.getLastModifiedBy());
             applicationAuditDetails.setLastModifiedTime(auditDetails.getLastModifiedTime());
-            producer.push(config.getApplicationUpdateCommentsTopic(), applicationToUpdate);
+
+            ApplicationRequest applicationRequest = ApplicationRequest.builder().application(applicationToUpdate)
+                    .requestInfo(applicationAddCommentRequest.getRequestInfo()).build();
+            producer.push(config.getApplicationUpdateCommentsTopic(), applicationRequest);
         }
         catch (CustomException e){
             log.error("Error while adding comments {}", e.toString());

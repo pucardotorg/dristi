@@ -74,6 +74,10 @@ public class Artifact {
 
 	private String order = null;
 
+	@JsonProperty("cnrNumber")
+
+	private String cnrNumber = null;
+
 	@JsonProperty("mediaType")
 
 	private String mediaType = null;

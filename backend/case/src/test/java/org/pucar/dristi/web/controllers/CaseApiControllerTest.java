@@ -1,44 +1,32 @@
 package org.pucar.dristi.web.controllers;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.when;
-
-import java.util.List;
-
 import org.egov.common.contract.request.RequestInfo;
 import org.egov.common.contract.response.ResponseInfo;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.MockitoAnnotations;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.pucar.dristi.service.CaseService;
 import org.pucar.dristi.service.WitnessService;
 import org.pucar.dristi.util.ResponseInfoFactory;
-import org.pucar.dristi.web.models.CaseCriteria;
-import org.pucar.dristi.web.models.CaseExists;
-import org.pucar.dristi.web.models.CaseExistsRequest;
-import org.pucar.dristi.web.models.CaseExistsResponse;
-import org.pucar.dristi.web.models.CaseListResponse;
-import org.pucar.dristi.web.models.CaseRequest;
-import org.pucar.dristi.web.models.CaseResponse;
-import org.pucar.dristi.web.models.CaseSearchRequest;
-import org.pucar.dristi.web.models.CourtCase;
-import org.pucar.dristi.web.models.JoinCaseRequest;
-import org.pucar.dristi.web.models.JoinCaseResponse;
-import org.pucar.dristi.web.models.Witness;
-import org.pucar.dristi.web.models.WitnessRequest;
-import org.pucar.dristi.web.models.WitnessResponse;
-import org.pucar.dristi.web.models.WitnessSearchRequest;
+import org.pucar.dristi.web.models.*;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 
+import java.util.Collections;
+import java.util.List;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
+
 /**
-* API tests for CaseApiController
-*/
+ * API tests for CaseApiController
+ */
 @ExtendWith(MockitoExtension.class)
 public class CaseApiControllerTest {
 
@@ -51,10 +39,6 @@ public class CaseApiControllerTest {
     @Mock
     private ResponseInfoFactory responseInfoFactory;
 
-    @BeforeEach
-    public void setup() {
-        MockitoAnnotations.openMocks(this);
-    }
 
     @Test
     public void caseV1CreatePostSuccess() {
@@ -223,5 +207,44 @@ public class CaseApiControllerTest {
         assertEquals(HttpStatus.OK, responseEntity.getStatusCode());
         assertEquals(witness, responseEntity.getBody().getWitnesses().get(0));
     }
+
+
+
+    @Test
+    public void caseV1SummaryPost_withEmptyResponse() {
+        CaseSummaryRequest caseSummaryRequest = new CaseSummaryRequest();
+        RequestInfo requestInfo = new RequestInfo();
+        caseSummaryRequest.setRequestInfo(requestInfo);
+        caseSummaryRequest.setPagination(new Pagination());
+
+
+        ResponseEntity<CaseSummaryResponse> responseEntity = caseApiController.caseV1SummaryPost(caseSummaryRequest);
+
+        assertEquals(HttpStatus.OK, responseEntity.getStatusCode());
+        assertTrue(responseEntity.getBody().getCases().isEmpty());
+    }
+
+    @Test
+    public void caseV1SummaryPostSuccessV1() {
+        CaseSummaryRequest caseSummaryRequest = new CaseSummaryRequest();
+        RequestInfo requestInfo = new RequestInfo();
+        caseSummaryRequest.setRequestInfo(requestInfo);
+        caseSummaryRequest.setPagination(new Pagination());
+
+        List<CaseSummary> emptyCaseList = Collections.emptyList();
+        when(caseService.getCaseSummary(any())).thenReturn(emptyCaseList);
+
+        ResponseInfo mockResponseInfo = new ResponseInfo();
+        when(responseInfoFactory.createResponseInfoFromRequestInfo(any(), any())).thenReturn(mockResponseInfo);
+
+        ResponseEntity<CaseSummaryResponse> responseEntity = caseApiController.caseV1SummaryPost(caseSummaryRequest);
+
+        assertEquals(HttpStatus.OK, responseEntity.getStatusCode());
+        assertEquals(0, responseEntity.getBody().getCases().size());
+        assertEquals(mockResponseInfo, responseEntity.getBody().getResponseInfo());
+        verify(caseService).getCaseSummary(caseSummaryRequest);
+        verify(responseInfoFactory).createResponseInfoFromRequestInfo(eq(requestInfo), eq(true));
+    }
+
 
 }

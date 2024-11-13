@@ -1,8 +1,13 @@
-import React from 'react';
+import React, {useState, useEffect} from 'react';
 import { Dropdown, Button } from "@egovernments/digit-ui-components";
 import { CardLabel, LabelFieldPair, PropertyHouse } from "@egovernments/digit-ui-react-components";
+import SummonsAndWarrantsModal from '../pages/employee/SummonsAndWarrantsModal';
 //[TODO: Static values need to be removed and integrated with API data]
 const TasksComponent = () => {
+    const [showModal, setShowModal] = useState(false);
+    const handleOpenModal = () => {
+      setShowModal(true);
+    };
     return (
         <div className="tasks-component">
             <h2>Your Tasks</h2>
@@ -38,7 +43,7 @@ const TasksComponent = () => {
                 <div className="task-header">
                     <span>Complete this week (2)</span>
                 </div>
-                <div className="task-item due-today">
+                <div className="task-item due-today" onClick={handleOpenModal}>
                     <input type="checkbox" />
                     <div className="task-details">
                         <span className="task-title">Reschedule hearing request: Aparna vs Sandesh</span>
@@ -58,6 +63,7 @@ const TasksComponent = () => {
                         <span className="task-title completed">Reschedule hearing request: Aparna vs Sandesh</span>
                     </div>
                 </div>
+                {showModal && <SummonsAndWarrantsModal isOpen={showModal} setShowModal={setShowModal} caseData={{filingNumber: "F-C.1973.002-2024-000512", applicationNumber:"", cnrNumber: ""}}/>}
             </div>
             <div className="task-section">
                 <div className="task-header">

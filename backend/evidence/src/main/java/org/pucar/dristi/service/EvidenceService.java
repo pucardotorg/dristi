@@ -30,9 +30,7 @@ public class EvidenceService {
     private final Configuration config;
 
     @Autowired
-    public EvidenceService(EvidenceValidator validator, EvidenceEnrichment evidenceEnrichment,
-                           WorkflowService workflowService, EvidenceRepository repository,
-                           Producer producer, Configuration config) {
+    public EvidenceService(EvidenceValidator validator, EvidenceEnrichment evidenceEnrichment, WorkflowService workflowService, EvidenceRepository repository, Producer producer, Configuration config) {
         this.validator = validator;
         this.evidenceEnrichment = evidenceEnrichment;
         this.workflowService = workflowService;
@@ -49,15 +47,14 @@ public class EvidenceService {
 
             // Enrich applications
             evidenceEnrichment.enrichEvidenceRegistration(body);
-
+            if (body.getArtifact().getIsEvidence().equals(true)) {
+                evidenceEnrichment.enrichEvidenceNumber(body);
+            }
             // Initiate workflow for the new application-
             if (body.getArtifact().getArtifactType() != null && body.getArtifact().getArtifactType().equals(DEPOSITION)) {
                 workflowService.updateWorkflowStatus(body);
                 producer.push(config.getEvidenceCreateTopic(), body);
             } else {
-                if (body.getArtifact().getIsEvidence().equals(true)) {
-                    evidenceEnrichment.enrichEvidenceNumber(body);
-                }
                 producer.push(config.getEvidenceCreateWithoutWorkflowTopic(), body);
             }
             return body.getArtifact();
@@ -76,9 +73,7 @@ public class EvidenceService {
             List<Artifact> artifacts = repository.getArtifacts(evidenceSearchCriteria, pagination);
 
             // If no applications are found matching the given criteria, return an empty list
-            if (CollectionUtils.isEmpty(artifacts))
-                return new ArrayList<>();
-            artifacts.forEach(artifact -> artifact.setWorkflow(workflowService.getWorkflowFromProcessInstance(workflowService.getCurrentWorkflow(requestInfo, artifact.getTenantId(), artifact.getArtifactNumber()))));
+            if (CollectionUtils.isEmpty(artifacts)) return new ArrayList<>();
             return artifacts;
         } catch (CustomException e) {
             log.error("Custom Exception occurred while searching");
@@ -99,14 +94,15 @@ public class EvidenceService {
             // Enrich application upon update
             evidenceEnrichment.enrichEvidenceRegistrationUponUpdate(evidenceRequest);
 
+            if (evidenceRequest.getArtifact().getIsEvidence().equals(true) && evidenceRequest.getArtifact().getEvidenceNumber() == null) {
+                evidenceEnrichment.enrichEvidenceNumber(evidenceRequest);
+            }
+
             if (evidenceRequest.getArtifact().getArtifactType() != null && evidenceRequest.getArtifact().getArtifactType().equals(DEPOSITION)) {
                 workflowService.updateWorkflowStatus(evidenceRequest);
                 enrichBasedOnStatus(evidenceRequest);
                 producer.push(config.getUpdateEvidenceKafkaTopic(), evidenceRequest);
             } else {
-                if (evidenceRequest.getArtifact().getIsEvidence().equals(true) && evidenceRequest.getArtifact().getEvidenceNumber() == null) {
-                    evidenceEnrichment.enrichEvidenceNumber(evidenceRequest);
-                }
                 producer.push(config.getUpdateEvidenceWithoutWorkflowKafkaTopic(), evidenceRequest);
             }
             return evidenceRequest.getArtifact();
@@ -156,7 +152,12 @@ public class EvidenceService {
             AuditDetails applicationAuditDetails = artifactToUpdate.getAuditdetails();
             applicationAuditDetails.setLastModifiedBy(auditDetails.getLastModifiedBy());
             applicationAuditDetails.setLastModifiedTime(auditDetails.getLastModifiedTime());
-            producer.push(config.getEvidenceUpdateCommentsTopic(), artifactToUpdate);
+
+            EvidenceRequest evidenceRequest = new EvidenceRequest();
+            evidenceRequest.setArtifact(artifactToUpdate);
+            evidenceRequest.setRequestInfo(evidenceAddCommentRequest.getRequestInfo());
+
+            producer.push(config.getEvidenceUpdateCommentsTopic(), evidenceRequest);
         } catch (CustomException e) {
             log.error("Custom exception while adding comments {}", e.toString());
             throw e;
@@ -167,12 +168,7 @@ public class EvidenceService {
     }
 
     private AuditDetails createAuditDetails(RequestInfo requestInfo) {
-        return AuditDetails.builder()
-                .createdBy(requestInfo.getUserInfo().getUuid())
-                .createdTime(System.currentTimeMillis())
-                .lastModifiedBy(requestInfo.getUserInfo().getUuid())
-                .lastModifiedTime(System.currentTimeMillis())
-                .build();
+        return AuditDetails.builder().createdBy(requestInfo.getUserInfo().getUuid()).createdTime(System.currentTimeMillis()).lastModifiedBy(requestInfo.getUserInfo().getUuid()).lastModifiedTime(System.currentTimeMillis()).build();
     }
 
 }

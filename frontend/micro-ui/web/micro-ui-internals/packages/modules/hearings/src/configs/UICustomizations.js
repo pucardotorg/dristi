@@ -1,351 +1,313 @@
-import { Link, useHistory, } from "react-router-dom";
-import React from "react";
-import _ from "lodash";
 import { Button } from "@egovernments/digit-ui-react-components";
-import OverlayDropdown from "../components/custom_dropdown";
+import React from "react";
+import OverlayDropdown from "../components/HearingOverlayDropdown";
+import { hearingService } from "../hooks/services";
+import { HearingWorkflowState } from "@egovernments/digit-ui-module-orders/src/utils/hearingWorkflow";
 
-//create functions here based on module name set in mdms(eg->SearchProjectConfig)
-//how to call these -> Digit?.Customizations?.[masterName]?.[moduleName]
-// these functions will act as middlewares
-// var Digit = window.Digit || {};
-const customColumnStyle={ whiteSpace: "nowrap" };
-
-
-
-const handleNavigate = (path) => {
-  console.log("Funvtion called ")
-  const contextPath = window?.contextPath || ''; // Adjust as per your context path logic
-  // history.push(`/${contextPath}${path}`)
-  
-  window.location.href = `/${contextPath}${path}`
-
-
- 
-  
-};
+function normalizeData(input) {
+  try {
+    return typeof input === "string" ? JSON.parse(input) : input;
+  } catch (error) {
+    console.error("Failed to parse input", error);
+    return null;
+  }
+}
 
 export const UICustomizations = {
-     SearchHearingsConfig: {
-        customValidationCheck: (data) => {
-          //checking both to and from date are present
-          const { createdFrom, createdTo } = data;
-          if ((createdFrom === "" && createdTo !== "") || (createdFrom !== "" && createdTo === ""))
-            return { warning: true, label: "ES_COMMON_ENTER_DATE_RANGE" };
-    
-          return false;
+  PreHearingsConfig: {
+    preProcess: (requestCriteria, additionalDetails) => {
+      const updatedCriteria = {
+        pagination: {
+          ...requestCriteria.state.tableForm,
+          ...requestCriteria?.state?.searchForm?.sortCaseListByStartDate,
         },
-        preProcess: (data) => {
-        //   data.params = { ...data.params, tenantId: Digit.ULBService.getCurrentTenantId() };
-    
-        //   let requestBody = { ...data.body.Individual };
-        //   const pathConfig = {
-        //     name: "name.givenName",
-        //   };
-        //   const dateConfig = {
-        //     createdFrom: "daystart",
-        //     createdTo: "dayend",
-        //   };
-        //   const selectConfig = {
-        //     wardCode: "wardCode[0].code",
-        //     socialCategory: "socialCategory.code",
-        //   };
-        //   const textConfig = ["name", "individualId"];
-        //   let Individual = Object.keys(requestBody)
-        //     .map((key) => {
-        //       if (selectConfig[key]) {
-        //         requestBody[key] = _.get(requestBody, selectConfig[key], null);
-        //       } else if (typeof requestBody[key] == "object") {
-        //         requestBody[key] = requestBody[key]?.code;
-        //       } else if (textConfig?.includes(key)) {
-        //         requestBody[key] = requestBody[key]?.trim();
-        //       }
-        //       return key;
-        //     })
-        //     .filter((key) => requestBody[key])
-        //     .reduce((acc, curr) => {
-        //       if (pathConfig[curr]) {
-        //         _.set(acc, pathConfig[curr], requestBody[curr]);
-        //       } else if (dateConfig[curr] && dateConfig[curr]?.includes("day")) {
-        //         _.set(acc, curr, Digit.Utils.date.convertDateToEpoch(requestBody[curr], dateConfig[curr]));
-        //       } else {
-        //         _.set(acc, curr, requestBody[curr]);
-        //       }
-        //       return acc;
-        //     }, {});
-    
-        //   data.body.Individual = { ...Individual };
-        console.log(data,"data");
-          return data;
-        },
-        additionalCustomizations: (row, key, column, value, t, searchResult) => {
-          //here we can add multiple conditions
-          //like if a cell is link then we return link
-          //first we can identify which column it belongs to then we can return relevant result
-          switch (key) {
-            case "MASTERS_WAGESEEKER_ID":
-              return (
-                <span className="link">
-                  <Link to={`/${window.contextPath}/employee/masters/view-wageseeker?tenantId=${row?.tenantId}&individualId=${value}`}>
-                    {String(value ? (column.translate ? t(column.prefix ? `${column.prefix}${value}` : value) : value) : t("ES_COMMON_NA"))}
-                  </Link>
-                </span>
-              );
-    
-            case "MASTERS_SOCIAL_CATEGORY":
-              return value ? <span style={customColumnStyle}>{String(t(`MASTERS_${value}`))}</span> : t("ES_COMMON_NA");
-    
-            case "CORE_COMMON_PROFILE_CITY":
-              return value ? <span style={customColumnStyle}>{String(t(Digit.Utils.locale.getCityLocale(value)))}</span> : t("ES_COMMON_NA");
-    
-            case "MASTERS_WARD":
-              return value ? (
-                <span style={customColumnStyle}>{String(t(Digit.Utils.locale.getMohallaLocale(value, row?.tenantId)))}</span>
-              ) : (
-                t("ES_COMMON_NA")
-              );
-    
-            case "MASTERS_LOCALITY":
-              return value ? (
-                <span style={customColumnStyle}>{String(t(Digit.Utils.locale.getMohallaLocale(value, row?.tenantId)))}</span>
-              ) : (
-                t("ES_COMMON_NA")
-              );
-            default:
-              return t("ES_COMMON_NA");
-          }
-        },
-        MobileDetailsOnClick: (row, tenantId) => {
-          let link;
-          Object.keys(row).map((key) => {
-            if (key === "MASTERS_WAGESEEKER_ID")
-              link = `/${window.contextPath}/employee/masters/view-wageseeker?tenantId=${tenantId}&wageseekerId=${row[key]}`;
-          });
-          return link;
-        },
-        additionalValidations: (type, data, keys) => {
-          if (type === "date") {
-            return data[keys.start] && data[keys.end] ? () => new Date(data[keys.start]).getTime() <= new Date(data[keys.end]).getTime() : true;
-          }
-        },
-      },
+        fromDate: requestCriteria?.params.fromDate,
+        toDate: requestCriteria?.params.toDate,
+        attendeeIndividualId: additionalDetails?.attendeeIndividualId ? additionalDetails?.attendeeIndividualId : "",
+      };
 
-      homeHearingUIConfig: {
-        customValidationCheck: (data) => {
-          //checking both to and from date are present
-          const { createdFrom, createdTo } = data;
-          if ((createdFrom === "" && createdTo !== "") || (createdFrom !== "" && createdTo === ""))
-            return { warning: true, label: "ES_COMMON_ENTER_DATE_RANGE" };
-          return false;
+      return {
+        ...requestCriteria,
+        body: {
+          ...requestCriteria?.body,
+          criteria: updatedCriteria,
         },
-        preProcess: (data) => {
-          //   data.params = { ...data.params, tenantId: Digit.ULBService.getCurrentTenantId() };
-          //   let requestBody = { ...data.body.Individual };
-          //   const pathConfig = {
-          //     name: "name.givenName",
-          //   };
-          //   const dateConfig = {
-          //     createdFrom: "daystart",
-          //     createdTo: "dayend",
-          //   };
-          //   const selectConfig = {
-          //     wardCode: "wardCode[0].code",
-          //     socialCategory: "socialCategory.code",
-          //   };
-          //   const textConfig = ["name", "individualId"];
-          //   let Individual = Object.keys(requestBody)
-          //     .map((key) => {
-          //       if (selectConfig[key]) {
-          //         requestBody[key] = _.get(requestBody, selectConfig[key], null);
-          //       } else if (typeof requestBody[key] == "object") {
-          //         requestBody[key] = requestBody[key]?.code;
-          //       } else if (textConfig?.includes(key)) {
-          //         requestBody[key] = requestBody[key]?.trim();
-          //       }
-          //       return key;
-          //     })
-          //     .filter((key) => requestBody[key])
-          //     .reduce((acc, curr) => {
-          //       if (pathConfig[curr]) {
-          //         _.set(acc, pathConfig[curr], requestBody[curr]);
-          //       } else if (dateConfig[curr] && dateConfig[curr]?.includes("day")) {
-          //         _.set(acc, curr, Digit.Utils.date.convertDateToEpoch(requestBody[curr], dateConfig[curr]));
-          //       } else {
-          //         _.set(acc, curr, requestBody[curr]);
-          //       }
-          //       return acc;
-          //     }, {});
-          //   data.body.Individual = { ...Individual };
-          console.log(data, "dataaaaaaaaaaaaaaaaaaaaaaaa");
-          return data;
-        },
-        additionalCustomizations: (row, key, column, value, t, searchResult) => {
-          //here we can add multiple conditions
-          //like if a cell is link then we return link
-          //first we can identify which column it belongs to then we can return relevant result
-          console.log('sdddddddddddddddddddddd'
+      };
+    },
+    additionalCustomizations: (row, key, column, value, t, searchResult) => {
+      const userInfo = JSON.parse(window.localStorage.getItem("user-info"));
+      const userType = userInfo?.type === "CITIZEN" ? "citizen" : "employee";
+      const searchParams = new URLSearchParams();
+      const showAction =
+        (row.hearing.status === "SCHEDULED" && userInfo?.roles.map((role) => role.code).includes("HEARING_START")) ||
+        row.hearing.status === HearingWorkflowState?.INPROGRESS;
+      searchParams.set("hearingId", row.hearingId);
+      switch (key) {
+        case "Actions":
+          return (
+            <div style={{ display: "flex", justifyContent: "flex-end  ", alignItems: "center" }}>
+              {row.hearing.status === "SCHEDULED" && userInfo?.roles.map((role) => role.code).includes("HEARING_START") && (
+                <Button
+                  variation={"secondary"}
+                  label={t(`START_HEARING`)}
+                  onButtonClick={() => {
+                    hearingService.startHearing({ hearing: row.hearing }).then(() => {
+                      window.location.href = `/${window.contextPath}/${userType}/hearings/inside-hearing?${searchParams.toString()}`;
+                    });
+                  }}
+                  style={{ marginRight: "1rem" }}
+                  textStyles={{
+                    fontFamily: "Roboto",
+                    fontSize: "16px",
+                    fontWeight: 700,
+                    lineHeight: "18.75px",
+                    textAlign: "center",
+                  }}
+                />
+              )}
+              {row.hearing.status === "SCHEDULED" && !userInfo.roles.map((role) => role.code).includes("HEARING_START") && (
+                <span style={{ color: "#007E7E" }}>{t("HEARING_AWAITING_START")}</span>
+              )}
+              {row.hearing.status === HearingWorkflowState?.INPROGRESS && userInfo.roles.map((role) => role.code).includes("HEARING_START") && (
+                <Button
+                  variation={"secondary"}
+                  label={t("JOIN_HEARING")}
+                  onButtonClick={() => {
+                    window.location.href = `/${window.contextPath}/${userType}/hearings/inside-hearing?${searchParams.toString()}`;
+                  }}
+                  style={{ marginRight: "1rem" }}
+                  textStyles={{
+                    fontFamily: "Roboto",
+                    fontSize: "16px",
+                    fontWeight: 700,
+                    lineHeight: "18.75px",
+                    textAlign: "center",
+                  }}
+                />
+              )}
+              {showAction && (
+                <OverlayDropdown
+                  styles={{
+                    width: "40px",
+                    height: "40px",
+                    rotate: "90deg",
+                    border: "1px solid #0A5757",
+                  }}
+                  textStyle={{
+                    color: "#0A5757",
+                  }}
+                  column={column}
+                  row={row}
+                  master="commonUiConfig"
+                  module="PreHearingsConfig"
+                />
+              )}
+            </div>
           );
-          switch (key) {
-            case "MASTERS_WAGESEEKER_ID":
-              return (
-                <span className="link">
-                  <Link to={`/${window.contextPath}/employee/masters/view-wageseeker?tenantId=${row?.tenantId}&individualId=${value}`}>
-                    {String(value ? (column.translate ? t(column.prefix ? `${column.prefix}${value}` : value) : value) : t("ES_COMMON_NA"))}
-                  </Link>
-                </span>
-              );
-            case "MASTERS_SOCIAL_CATEGORY":
-              return value ? <span style={customColumnStyle}>{String(t(`MASTERS_${value}`))}</span> : t("ES_COMMON_NA");
-            case "CORE_COMMON_PROFILE_CITY":
-              return value ? <span style={customColumnStyle}>{String(t(Digit.Utils.locale.getCityLocale(value)))}</span> : t("ES_COMMON_NA");
-            case "MASTERS_WARD":
-              return value ? (
-                <span style={customColumnStyle}>{String(t(Digit.Utils.locale.getMohallaLocale(value, row?.tenantId)))}</span>
-              ) : (
-                t("ES_COMMON_NA")
-              );
-            case "MASTERS_LOCALITY":
-              return value ? (
-                <span style={customColumnStyle}>{String(t(Digit.Utils.locale.getMohallaLocale(value, row?.tenantId)))}</span>
-              ) : (
-                t("ES_COMMON_NA")
-              );
-            default:
-              return t("ES_COMMON_NA");
-          }
-        },
-        MobileDetailsOnClick: (row, tenantId) => {
-          let link;
-          Object.keys(row).map((key) => {
-            if (key === "MASTERS_WAGESEEKER_ID")
-              link = `/${window.contextPath}/employee/masters/view-wageseeker?tenantId=${tenantId}&wageseekerId=${row[key]}`;
-          });
-          return link;
-        },
-        additionalValidations: (type, data, keys) => {
-          if (type === "date") {
-            return data[keys.start] && data[keys.end] ? () => new Date(data[keys.start]).getTime() <= new Date(data[keys.end]).getTime() : true;
-          }
-        },
-      },
-      ViewHearingsConfig: {
-        customValidationCheck: (data) => {
-          //checking both to and from date are present
-          const { createdFrom, createdTo } = data;
-          if ((createdFrom === "" && createdTo !== "") || (createdFrom !== "" && createdTo === ""))
-            return { warning: true, label: "ES_COMMON_ENTER_DATE_RANGE" };
-    
-          return false;
-        },
-        preProcess: (data) => {
-        //   data.params = { ...data.params, tenantId: Digit.ULBService.getCurrentTenantId() };
-    
-        //   let requestBody = { ...data.body.Individual };
-        //   const pathConfig = {
-        //     name: "name.givenName",
-        //   };
-        //   const dateConfig = {
-        //     createdFrom: "daystart",
-        //     createdTo: "dayend",
-        //   };
-        //   const selectConfig = {
-        //     wardCode: "wardCode[0].code",
-        //     socialCategory: "socialCategory.code",
-        //   };
-        //   const textConfig = ["name", "individualId"];
-        //   let Individual = Object.keys(requestBody)
-        //     .map((key) => {
-        //       if (selectConfig[key]) {
-        //         requestBody[key] = _.get(requestBody, selectConfig[key], null);
-        //       } else if (typeof requestBody[key] == "object") {
-        //         requestBody[key] = requestBody[key]?.code;
-        //       } else if (textConfig?.includes(key)) {
-        //         requestBody[key] = requestBody[key]?.trim();
-        //       }
-        //       return key;
-        //     })
-        //     .filter((key) => requestBody[key])
-        //     .reduce((acc, curr) => {
-        //       if (pathConfig[curr]) {
-        //         _.set(acc, pathConfig[curr], requestBody[curr]);
-        //       } else if (dateConfig[curr] && dateConfig[curr]?.includes("day")) {
-        //         _.set(acc, curr, Digit.Utils.date.convertDateToEpoch(requestBody[curr], dateConfig[curr]));
-        //       } else {
-        //         _.set(acc, curr, requestBody[curr]);
-        //       }
-        //       return acc;
-        //     }, {});
-    
-        //   data.body.Individual = { ...Individual };
-        console.log(data,"data");
-          return data;
-        },
-        additionalCustomizations: (row, key, column, value, t, searchResult) => {
-          //here we can add multiple conditions
-          //like if a cell is link then we return link
-          //first we can identify which column it belongs to then we can return relevant result
-          console.log(key,value)
-          switch (key) {
-            case "MASTERS_WAGESEEKER_ID":
-              return (
-                <span className="link">
-                  <Link to={`/${window.contextPath}/employee/masters/view-wageseeker?tenantId=${row?.tenantId}&individualId=${value}`}>
-                    {String(value ? (column.translate ? t(column.prefix ? `${column.prefix}${value}` : value) : value) : t("ES_COMMON_NA"))}
-                  </Link>
-                </span>
-              );
+        default:
+          return t("ES_COMMON_NA");
+      }
+    },
+    dropDownItems: (row) => {
+      const OrderWorkflowAction = Digit.ComponentRegistryService.getComponent("OrderWorkflowActionEnum") || {};
+      const ordersService = Digit.ComponentRegistryService.getComponent("OrdersService") || {};
+      const userInfo = JSON.parse(window.localStorage.getItem("user-info"));
+      const userType = userInfo?.type === "CITIZEN" ? "citizen" : "employee";
+      const searchParams = new URLSearchParams();
+      const future = row.hearing.startTime > Date.now();
+      if (userInfo?.roles.map((role) => role.code).includes("EMPLOYEE")) {
+        if (future) {
+          return [
+            {
+              label: "View Case",
+              id: "view_case",
+              action: (history) => {
+                searchParams.set("caseId", row.caseId);
+                searchParams.set("filingNumber", row.filingNumber);
 
-              case "Actions":
-                return (
-                  // <span className="link">
-                  //   <Link to={``}>
-                  //     {String(value ? (column.translate ? t(column.prefix ? `${column.prefix}${value}` : value) : value) : t("ES_COMMON_NA"))}
-                  //   </Link>
-                  // </span>
-                  <div style={{    display: "flex",
-                    justifyContent: "center",
-                    alignItems: "center"
-                }}>
-                
-                  <Button variation={"secondary"} label={"Start"} onButtonClick={()=> handleNavigate('/employee/hearings/inside-hearing')}></Button>,
-                  <OverlayDropdown style={{position:"absolute"}}/>
-                  </div>
-                );
-    
-            case "MASTERS_SOCIAL_CATEGORY":
-              return value ? <span style={customColumnStyle}>{String(t(`MASTERS_${value}`))}</span> : t("ES_COMMON_NA");
-    
-            case "CORE_COMMON_PROFILE_CITY":
-              return value ? <span style={customColumnStyle}>{String(t(Digit.Utils.locale.getCityLocale(value)))}</span> : t("ES_COMMON_NA");
-    
-            case "MASTERS_WARD":
-              return value ? (
-                <span style={customColumnStyle}>{String(t(Digit.Utils.locale.getMohallaLocale(value, row?.tenantId)))}</span>
-              ) : (
-                t("ES_COMMON_NA")
-              );
-    
-            case "MASTERS_LOCALITY":
-              return value ? (
-                <span style={customColumnStyle}>{String(t(Digit.Utils.locale.getMohallaLocale(value, row?.tenantId)))}</span>
-              ) : (
-                t("ES_COMMON_NA")
-              );
-            default:
-              return t("ES_COMMON_NA");
-          }
+                history.push({ pathname: `/${window.contextPath}/${userType}/dristi/home/view-case`, search: searchParams.toString() });
+              },
+            },
+            {
+              label: "Reschedule hearing",
+              id: "reschedule",
+              action: (history, column) => {
+                column.openRescheduleDialog(row);
+              },
+            },
+          ];
+        }
+        return [
+          {
+            label: "View Case",
+            id: "view_case",
+            action: (history) => {
+              searchParams.set("caseId", row.caseId);
+              searchParams.set("filingNumber", row.filingNumber);
+
+              history.push({ pathname: `/${window.contextPath}/${userType}/dristi/home/view-case`, search: searchParams.toString() });
+            },
+          },
+          {
+            label: "View transcript",
+            id: "view_transcript",
+            hide: false,
+            action: (history) => {
+              alert("Not Yet Implemented");
+            },
+          },
+          {
+            label: "View witness deposition",
+            id: "view_witness",
+            hide: false,
+            action: (history) => {
+              alert("Not Yet Implemented");
+            },
+          },
+          {
+            label: "View pending task",
+            id: "view_pending_tasks",
+            hide: true,
+            action: (history) => {
+              alert("Not Yet Implemented");
+            },
+          },
+        ];
+      }
+
+      if (userInfo?.roles.map((role) => role.code).includes("CITIZEN")) {
+        if (future) {
+          return [
+            {
+              label: "View Case",
+              id: "view_case",
+              action: (history) => {
+                searchParams.set("caseId", row.caseId);
+                searchParams.set("filingNumber", row.filingNumber);
+
+                history.push({ pathname: `/${window.contextPath}/${userType}/dristi/home/view-case`, search: searchParams.toString() });
+              },
+            },
+            {
+              label: "Request for Reschedule",
+              id: "reschedule",
+              action: (history) => {
+                searchParams.set("hearingId", row.hearingId);
+                searchParams.set("applicationType", "RE_SCHEDULE");
+                searchParams.set("filingNumber", row.filingNumber);
+                history.push({ pathname: `/${window.contextPath}/${userType}/submissions/submissions-create`, search: searchParams.toString() });
+              },
+            },
+          ];
+        }
+        return [
+          {
+            label: "View Case",
+            id: "view_case",
+            action: (history) => {
+              searchParams.set("caseId", row.caseId);
+              searchParams.set("filingNumber", row.filingNumber);
+
+              history.push({ pathname: `/${window.contextPath}/${userType}/dristi/home/view-case`, search: searchParams.toString() });
+            },
+          },
+          {
+            label: "View transcript",
+            id: "view_transcript",
+            hide: false,
+            action: (history) => {
+              alert("Not Yet Implemented");
+            },
+          },
+          {
+            label: "View witness deposition",
+            id: "view_witness",
+            hide: false,
+            action: (history) => {
+              alert("Not Yet Implemented");
+            },
+          },
+          {
+            label: "View pending task",
+            id: "view_pending_tasks",
+            hide: true,
+            action: (history) => {
+              alert("Not Yet Implemented");
+            },
+          },
+        ];
+      }
+      return [];
+    },
+  },
+  summonWarrantConfig: {
+    preProcess: (requestCriteria, additionalDetails) => {
+      // We need to change tenantId "processSearchCriteria" here
+      const tenantId = window?.Digit.ULBService.getStateId();
+
+      return {
+        ...requestCriteria,
+        config: {
+          ...requestCriteria?.config,
+          select: (data) => {
+            const generateAddress = ({
+              pincode = "",
+              district = "",
+              city = "",
+              state = "",
+              coordinates = { longitude: "", latitude: "" },
+              locality = "",
+              address = "",
+            }) => {
+              if (address) {
+                return address;
+              }
+              return `${locality} ${district} ${city} ${state} ${pincode ? ` - ${pincode}` : ""}`.trim();
+            };
+            const taskData = data?.list
+              ?.filter((data) => data?.filingNumber === additionalDetails?.filingNumber && data?.orderId === additionalDetails?.orderId)
+              ?.map((data) => {
+                let taskDetail = structuredClone(data?.taskDetails);
+                taskDetail = normalizeData(taskDetail);
+                const channelDetailsEnum = {
+                  SMS: "phone",
+                  Email: "email",
+                  Post: "address",
+                  Police: "address",
+                  RPAD: "address",
+                };
+                const channelDetails = taskDetail?.respondentDetails?.[channelDetailsEnum?.[taskDetail?.deliveryChannels?.channelName]];
+                return {
+                  deliveryChannel: taskDetail?.deliveryChannels?.channelName,
+                  channelDetails: typeof channelDetails === "object" ? generateAddress({ ...channelDetails }) : channelDetails,
+                  status: data?.status,
+                  remarks: taskDetail?.deliveryChannels?.status,
+                };
+              });
+            return { list: taskData };
+          },
         },
-        MobileDetailsOnClick: (row, tenantId) => {
-          let link;
-          Object.keys(row).map((key) => {
-            if (key === "MASTERS_WAGESEEKER_ID")
-              link = `/${window.contextPath}/employee/masters/view-wageseeker?tenantId=${tenantId}&wageseekerId=${row[key]}`;
-          });
-          return link;
-        },
-        additionalValidations: (type, data, keys) => {
-          if (type === "date") {
-            return data[keys.start] && data[keys.end] ? () => new Date(data[keys.start]).getTime() <= new Date(data[keys.end]).getTime() : true;
-          }
-        },
-      },
+      };
+    },
+    additionalValidations: (type, data, keys) => {
+      if (type === "date") {
+        return data[keys.start] && data[keys.end] ? () => new Date(data[keys.start]).getTime() <= new Date(data[keys.end]).getTime() : true;
+      }
+    },
+    MobileDetailsOnClick: (row, tenantId) => {
+      let link;
+      Object.keys(row).map((key) => {
+        if (key === "Case ID") link = ``;
+      });
+      return link;
+    },
+    additionalCustomizations: (row, key, column, value, t, searchResult) => {
+      switch (key) {
+        case "Status":
+          return t(value);
+        default:
+          return t("ES_COMMON_NA");
+      }
+    },
+  },
 };

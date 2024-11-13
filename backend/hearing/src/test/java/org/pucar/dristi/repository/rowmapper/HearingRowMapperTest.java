@@ -68,6 +68,9 @@ public class HearingRowMapperTest {
         when(rs.getLong("lastmodifiedtime")).thenReturn(1625144400000L);
         when(rs.getString("cnrnumbers")).thenReturn(cnrNumbersJson);
         when(rs.getString("filingnumber")).thenReturn(filingNumberJson);
+        when(rs.getString("courtcasenumber")).thenReturn(" ");
+        when(rs.getString("casereferencenumber")).thenReturn(" ");
+        when(rs.getString("cmpNumber")).thenReturn(" ");
         when(rs.getString("applicationnumbers")).thenReturn(applicationNumbersJson);
         when(rs.getString("presidedby")).thenReturn(presidedByJson);
         when(rs.getString("attendees")).thenReturn(attendeesJson);
@@ -131,6 +134,9 @@ public class HearingRowMapperTest {
         when(rs.getString("cnrnumbers")).thenReturn(null);
         when(rs.getString("filingnumber")).thenReturn("");
         when(rs.getString("applicationnumbers")).thenReturn(" ");
+        when(rs.getString("courtcasenumber")).thenReturn(" ");
+        when(rs.getString("casereferencenumber")).thenReturn(" ");
+        when(rs.getString("cmpNumber")).thenReturn(" ");
         when(rs.getString("presidedby")).thenReturn(null);
         when(rs.getString("attendees")).thenReturn("");
         when(rs.getString("transcript")).thenReturn(null);
@@ -143,6 +149,9 @@ public class HearingRowMapperTest {
                 .id(UUID.fromString(uuid))
                 .hearingId("hearing1")
                 .hearingType("type1")
+                .courtCaseNumber("courtcasenumber")
+                .caseReferenceNumber("casereferencenumber")
+                .cmpNumber("cmpNumber")
                 .status("status1")
                 .startTime(0L)
                 .endTime(1625140800000L)

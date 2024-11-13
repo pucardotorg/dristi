@@ -4,11 +4,13 @@ import { useRouteMatch } from "react-router-dom";
 import { default as EmployeeApp } from "./pages/employee";
 import HearingsCard from "./components/HearingsCard";
 import { overrideHooks, updateCustomConfigs } from "./utils";
+import MonthlyCalendar from "./pages/employee/CalendarView";
+import SummonsAndWarrantsModal from "./pages/employee/SummonsAndWarrantsModal";
 
 export const HearingsModule = ({ stateCode, userType, tenants }) => {
   const { path, url } = useRouteMatch();
   const tenantId = Digit.ULBService.getCurrentTenantId();
-  const moduleCode = ["hearings", "common", "workflow"];
+  const moduleCode = ["hearings", "case", "common", "workflow"];
   const language = Digit.StoreData.getCurrentLanguage();
   const { isLoading, data: store } = Digit.Services.useStore({
     stateCode,
@@ -23,8 +25,10 @@ export const HearingsModule = ({ stateCode, userType, tenants }) => {
 };
 
 const componentsToRegister = {
+  HearingsCalendar: MonthlyCalendar,
   HearingsModule,
   HearingsCard,
+  SummonsAndWarrantsModal,
 };
 
 export const initHearingsComponents = () => {

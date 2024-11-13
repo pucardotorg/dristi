@@ -1,12 +1,14 @@
 package org.pucar.dristi;
 
 import org.egov.tracer.config.TracerConfiguration;
+import org.pucar.dristi.config.CaseEncryptionConfiguration;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Import;
 
-@Import({ TracerConfiguration.class })
+
+@Import({ TracerConfiguration.class, CaseEncryptionConfiguration.class})
 @SpringBootApplication
 @ComponentScan(basePackages = { "org.pucar.dristi", "org.pucar.dristi.web.controllers", "org.pucar.dristi.config" })
 public class Main {

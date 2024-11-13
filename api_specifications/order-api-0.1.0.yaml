@@ -235,7 +235,7 @@ components:
     Order:
       description: An order is created as an outcome of an hearing or based on an application. Order will contain a set of tasks
       type: object
-      required: [ tenantId, createdDate, orderType, isActive ]
+      required: [ tenantId, createdDate, orderType, status, isActive ]
       properties:
         id:
           type: string
@@ -258,7 +258,7 @@ components:
           items:
             type: string
             description: application number the order is based on. Could be null if not based on any application
-        hearingId:
+        hearingNumber:
           type: string
           description: in case the order is part of a hearing. if not, this will be set to null
         orderNumber:
@@ -274,6 +274,7 @@ components:
         createdDate:
           type: integer
           format: int64
+          description: the date on which the order was created. Can be treated as the start date also
         issuedBy:
           $ref: '#/components/schemas/IssuedBy'
         orderType:
@@ -285,7 +286,7 @@ components:
           example: Intermediate, Judgement
         orderDetails:
           type: object
-          description: schema to define fields that required to creation of ORDER PDFs. will be used to validate the fields before creating the PDF
+          description: schema to define fields that required to creation of ORDER PDFs. will be used to validate the fields before creating the PDF          
         status:
           type: string
           description: workflow status

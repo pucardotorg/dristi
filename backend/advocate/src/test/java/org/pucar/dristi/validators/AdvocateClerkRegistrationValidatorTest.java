@@ -85,7 +85,7 @@ import static org.mockito.Mockito.*;
         advocateClerk.setApplicationNumber("testAppNumber");
         List<AdvocateClerk> existingApplications = new ArrayList<>();
         existingApplications.add(advocateClerk);
-        when(repository.getApplications(anyList(), anyString(), anyInt(), anyInt())).thenReturn(existingApplications);
+        when(repository.getClerks(anyList(), anyString(), anyInt(), anyInt())).thenReturn(existingApplications);
 
         // Act
         AdvocateClerk result = validator.validateApplicationExistence(advocateClerk);
@@ -101,7 +101,7 @@ import static org.mockito.Mockito.*;
         AdvocateClerk advocateClerk = new AdvocateClerk();
         advocateClerk.setTenantId("pg");
         advocateClerk.setApplicationNumber("nonExistingAppNumber");
-        when(repository.getApplications(anyList(), anyString(), anyInt(), anyInt())).thenReturn(Collections.emptyList());
+        when(repository.getClerks(anyList(), anyString(), anyInt(), anyInt())).thenReturn(Collections.emptyList());
 
         // Act + Assert
         assertThrows(CustomException.class, () -> validator.validateApplicationExistence(advocateClerk));

@@ -100,7 +100,7 @@ class TaskApiControllerTest {
     void testTaskV1SearchPost_Success() {
 
         TaskSearchRequest TaskSearchRequest = new TaskSearchRequest();
-        TaskSearchRequest.setCriteria(new TaskCriteria());
+        TaskSearchRequest.setCriteria(TaskCriteria.builder().build());
         TaskSearchRequest.setRequestInfo(new RequestInfo());
 
         // Mock TaskService response
@@ -206,7 +206,7 @@ class TaskApiControllerTest {
     @Test
     void testTaskV1SearchPost_EmptyList() throws Exception {
         TaskSearchRequest TaskSearchRequest = new TaskSearchRequest();
-        TaskSearchRequest.setCriteria(new TaskCriteria());
+        TaskSearchRequest.setCriteria(TaskCriteria.builder().build());
         TaskSearchRequest.setRequestInfo(new RequestInfo());
 
         // Mock service to return empty list

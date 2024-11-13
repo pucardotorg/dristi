@@ -1,14 +1,8 @@
 package org.pucar.dristi.repository;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyList;
-import static org.mockito.ArgumentMatchers.anyString;
-import static org.mockito.Mockito.lenient;
-import static org.mockito.Mockito.times;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
+import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.ArgumentMatchers.*;
+import static org.mockito.Mockito.*;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -27,25 +21,9 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.pucar.dristi.repository.querybuilder.CaseQueryBuilder;
-import org.pucar.dristi.repository.rowmapper.CaseRowMapper;
-import org.pucar.dristi.repository.rowmapper.DocumentRowMapper;
-import org.pucar.dristi.repository.rowmapper.LinkedCaseDocumentRowMapper;
-import org.pucar.dristi.repository.rowmapper.LinkedCaseRowMapper;
-import org.pucar.dristi.repository.rowmapper.LitigantDocumentRowMapper;
-import org.pucar.dristi.repository.rowmapper.LitigantRowMapper;
-import org.pucar.dristi.repository.rowmapper.RepresentativeRowMapper;
-import org.pucar.dristi.repository.rowmapper.RepresentingDocumentRowMapper;
-import org.pucar.dristi.repository.rowmapper.RepresentingRowMapper;
-import org.pucar.dristi.repository.rowmapper.RepresentiveDocumentRowMapper;
-import org.pucar.dristi.repository.rowmapper.StatuteSectionRowMapper;
-import org.pucar.dristi.web.models.AdvocateMapping;
-import org.pucar.dristi.web.models.CaseCriteria;
-import org.pucar.dristi.web.models.CaseExists;
-import org.pucar.dristi.web.models.CaseRequest;
-import org.pucar.dristi.web.models.CourtCase;
-import org.pucar.dristi.web.models.LinkedCase;
-import org.pucar.dristi.web.models.Party;
-import org.pucar.dristi.web.models.StatuteSection;
+import org.pucar.dristi.repository.querybuilder.CaseSummaryQueryBuilder;
+import org.pucar.dristi.repository.rowmapper.*;
+import org.pucar.dristi.web.models.*;
 import org.springframework.jdbc.core.JdbcTemplate;
 
 @ExtendWith(MockitoExtension.class)
@@ -80,6 +58,12 @@ class CaseRepositoryTest {
 
     @Mock
     private RepresentingDocumentRowMapper representingDocumentRowMapper;
+
+    @Mock
+    private CaseSummaryQueryBuilder caseSummaryQueryBuilder;
+
+    @Mock
+    private CaseSummaryRowMapper caseSummaryRowMapper;
 
     @InjectMocks
     private CaseRepository caseRepository;
@@ -214,7 +198,7 @@ class CaseRepositoryTest {
         lenient().when(jdbcTemplate.query(anyString(), any(Object[].class), any(), any(RepresentingDocumentRowMapper.class))).thenReturn(caseRepresentingDocumentMap);
 
         // Invoke the method
-        List<CaseCriteria> resultCourtCaseList = caseRepository.getApplications(searchCriteria, requestInfo);
+        List<CaseCriteria> resultCourtCaseList = caseRepository.getCases(searchCriteria, requestInfo);
 
         // Verify interactions
         verify(queryBuilder, times(1)).getCasesSearchQuery(any(), any(), any(),any());
@@ -267,7 +251,7 @@ class CaseRepositoryTest {
         lenient().when(jdbcTemplate.query(anyString(), any(Object[].class), any(CaseRowMapper.class))).thenThrow(new RuntimeException());
 
         assertThrows(Exception.class, () -> {
-            caseRepository.getApplications(searchCriteria, requestInfo);
+            caseRepository.getCases(searchCriteria, requestInfo);
         });
     }
 
@@ -314,7 +298,7 @@ class CaseRepositoryTest {
         lenient().when(jdbcTemplate.query(anyString(), any(Object[].class), any(CaseRowMapper.class))).thenThrow(new CustomException());
 
         assertThrows(CustomException.class, () -> {
-            caseRepository.getApplications(searchCriteria, requestInfo);
+            caseRepository.getCases(searchCriteria, requestInfo);
         });
     }
 
@@ -328,15 +312,15 @@ class CaseRepositoryTest {
         caseExistsList.add(caseExists2);
 
         // Mock dependencies
-        lenient().when(queryBuilder.checkCaseExistQuery(anyString(), anyString(), anyString(), anyString())).thenReturn("SELECT COUNT(*) FROM cases WHERE ...");
-        lenient().when(jdbcTemplate.queryForObject(anyString(), any(Class.class))).thenReturn(1); // Assuming case exists
+        lenient().when(queryBuilder.checkCaseExistQuery(any(), anyList(), anyList())).thenReturn("SELECT COUNT(*) FROM cases WHERE ...");
+        lenient().when(jdbcTemplate.queryForObject(anyString(), any(), any(), any(Class.class))).thenReturn(1); // Assuming case exists
 
         // Invoke the method
         List<CaseExists> result = caseRepository.checkCaseExists(caseExistsList);
 
         // Verify interactions
-        verify(queryBuilder, times(1)).checkCaseExistQuery(anyString(), anyString(), anyString(), anyString());
-        verify(jdbcTemplate, times(1)).queryForObject(anyString(), any(Class.class));
+        verify(queryBuilder, times(1)).checkCaseExistQuery(any(), anyList(), anyList());
+        verify(jdbcTemplate, times(1)).queryForObject(anyString(), any(), any(), any(Class.class));
 
         // Assert result
         assertEquals(2, result.size());
@@ -354,7 +338,7 @@ class CaseRepositoryTest {
         caseExistsList.add(caseExists2);
 
         // Mock dependencies
-        lenient().when(queryBuilder.checkCaseExistQuery(anyString(), anyString(), anyString(), anyString())).thenThrow(new RuntimeException());
+        lenient().when(queryBuilder.checkCaseExistQuery(any(), anyList(), anyList())).thenThrow(new RuntimeException());
 //        when(jdbcTemplate.queryForObject(anyString(), any(Class.class))).thenReturn(1); // Assuming case exists
 
         assertThrows(Exception.class, () -> {
@@ -372,7 +356,7 @@ class CaseRepositoryTest {
         caseExistsList.add(caseExists2);
 
         // Mock dependencies
-        lenient().when(queryBuilder.checkCaseExistQuery(anyString(), anyString(), anyString(), anyString())).thenThrow(new CustomException());
+        lenient().when(queryBuilder.checkCaseExistQuery(any(), anyList(), anyList())).thenThrow(new CustomException());
 //        when(jdbcTemplate.queryForObject(anyString(), any(Class.class))).thenReturn(1); // Assuming case exists
 
         assertThrows(CustomException.class, () -> {
@@ -387,16 +371,121 @@ class CaseRepositoryTest {
         caseExistsRequest.add(caseExists1);
         caseExistsRequest.add(caseExists2);
 
-        when(queryBuilder.checkCaseExistQuery(anyString(), anyString(), anyString(), anyString())).thenReturn("SELECT COUNT(*) FROM cases WHERE ...");
-        when(jdbcTemplate.queryForObject(anyString(), any(Class.class))).thenReturn(1);
+        when(queryBuilder.checkCaseExistQuery(any(), anyList(), anyList())).thenReturn("SELECT COUNT(*) FROM cases WHERE ...");
+        when(jdbcTemplate.queryForObject(anyString(), any(), any(),any(Class.class))).thenReturn(1);
 
         List<CaseExists> result = caseRepository.checkCaseExists(caseExistsRequest);
 
-        verify(queryBuilder, times(1)).checkCaseExistQuery(anyString(), anyString(), anyString(), anyString());
-        verify(jdbcTemplate, times(1)).queryForObject(anyString(), any(Class.class));
+        verify(queryBuilder, times(1)).checkCaseExistQuery(any(), anyList(), anyList());
+        verify(jdbcTemplate, times(1)).queryForObject(anyString(), any(), any(), any(Class.class));
 
         assertEquals(2, result.size());
         assertEquals(true, result.get(0).getExists());
         assertEquals(false, result.get(1).getExists());
+    }
+
+    @Test
+    void getCaseSummary_ShouldReturnListOfCaseSummaries() {
+        // Prepare test data
+        CaseSummaryRequest request = new CaseSummaryRequest();
+        CaseSearchCriteria criteria = new CaseSearchCriteria();
+        request.setCriteria(criteria);
+        Pagination pagination = new Pagination();
+        request.setPagination(pagination);
+
+        List<CaseSummary> expectedSummaryList = new ArrayList<>();
+        CaseSummary caseSummary = new CaseSummary();
+        caseSummary.setId(UUID.randomUUID().toString());
+        caseSummary.setCaseTitle("CASE-2024-001");
+        expectedSummaryList.add(caseSummary);
+
+        // Mock dependencies
+        when(caseSummaryQueryBuilder.getCaseBaseQuery(request.getCriteria(), new ArrayList<>(), new ArrayList<>()))
+                .thenReturn("SELECT * FROM case_summary WHERE ...");
+        when(caseSummaryQueryBuilder.getCaseSummarySearchQuery(any())).thenReturn("SELECT * FROM case_summary WHERE ...");
+        when(caseSummaryQueryBuilder.addOrderByQuery(anyString(), any()))
+                .thenReturn("SELECT * FROM case_summary WHERE ... ORDER BY ...");
+        when(jdbcTemplate.queryForObject(anyString(), any(Object[].class), eq(Integer.class)))
+                .thenReturn(1);
+        when(caseSummaryQueryBuilder.addPaginationQuery(anyString(), anyList(), any(), anyList()))
+                .thenReturn("SELECT * FROM case_summary WHERE ... ORDER BY ... LIMIT ...");
+        when(jdbcTemplate.query(anyString(), any(Object[].class), any(), any(CaseSummaryRowMapper.class)))
+                .thenReturn(expectedSummaryList);
+        when(queryBuilder.getTotalCountQuery("SELECT * FROM case_summary WHERE ... ORDER BY ...")).thenReturn("SELECT COUNT(*) FROM case_summary");
+
+        // Invoke the method
+        List<CaseSummary> result = caseRepository.getCaseSummary(request);
+
+        // Verify interactions
+        verify(caseSummaryQueryBuilder, times(1)).getCaseSummarySearchQuery(any());
+        verify(caseSummaryQueryBuilder, times(1)).addOrderByQuery(anyString(), any());
+        verify(jdbcTemplate, times(1)).queryForObject(anyString(), any(Object[].class), eq(Integer.class));
+        verify(caseSummaryQueryBuilder, times(1)).addPaginationQuery(anyString(), anyList(), any(), anyList());
+        verify(jdbcTemplate, times(1)).query(anyString(), any(Object[].class), any(), any(CaseSummaryRowMapper.class));
+
+        // Assert results
+        assertNotNull(result);
+        assertEquals(expectedSummaryList.size(), result.size());
+        assertEquals(expectedSummaryList.get(0).getId(), result.get(0).getId());
+        assertEquals(expectedSummaryList.get(0).getCaseTitle(), result.get(0).getCaseTitle());
+    }
+
+    @Test
+    void getCaseSummary_WithNullPagination_ShouldReturnListOfCaseSummaries() {
+        // Prepare test data
+        CaseSummaryRequest request = new CaseSummaryRequest();
+        CaseSearchCriteria criteria = new CaseSearchCriteria();
+        request.setCriteria(criteria);
+        // Not setting pagination, testing null case
+
+        List<CaseSummary> expectedSummaryList = new ArrayList<>();
+        CaseSummary caseSummary = new CaseSummary();
+        caseSummary.setId(UUID.randomUUID().toString());
+        expectedSummaryList.add(caseSummary);
+
+        // Mock dependencies
+        when(caseSummaryQueryBuilder.getCaseBaseQuery(request.getCriteria(), new ArrayList<>(), new ArrayList<>()))
+                .thenReturn("SELECT * FROM case_summary WHERE ...");
+        when(caseSummaryQueryBuilder.getCaseSummarySearchQuery(any()))
+                .thenReturn("SELECT * FROM case_summary WHERE ...");
+        when(caseSummaryQueryBuilder.addOrderByQuery(anyString(), any()))
+                .thenReturn("SELECT * FROM case_summary WHERE ... ORDER BY ...");
+        when(jdbcTemplate.query(anyString(), any(Object[].class), any(), any(CaseSummaryRowMapper.class)))
+                .thenReturn(expectedSummaryList);
+
+        // Invoke the method
+        List<CaseSummary> result = caseRepository.getCaseSummary(request);
+
+        // Verify interactions
+        verify(caseSummaryQueryBuilder, times(1)).getCaseSummarySearchQuery(any());
+        verify(caseSummaryQueryBuilder, times(1)).addOrderByQuery(anyString(), isNull());
+        verify(jdbcTemplate, times(1)).query(anyString(), any(Object[].class), any(), any(CaseSummaryRowMapper.class));
+
+        // Assert results
+        assertNotNull(result);
+        assertEquals(expectedSummaryList.size(), result.size());
+        assertEquals(expectedSummaryList.get(0).getId(), result.get(0).getId());
+    }
+
+    @Test
+    void getCaseSummary_Exception() {
+        // Prepare test data
+        CaseSummaryRequest request = new CaseSummaryRequest();
+        CaseSearchCriteria criteria = new CaseSearchCriteria();
+        request.setCriteria(criteria);
+        Pagination pagination = new Pagination();
+        request.setPagination(pagination);
+
+        // Mock dependencies
+        when(caseSummaryQueryBuilder.getCaseSummarySearchQuery(any()))
+                .thenReturn("SELECT * FROM case_summary WHERE ...");
+        when(caseSummaryQueryBuilder.addOrderByQuery(anyString(), any()))
+                .thenReturn("SELECT * FROM case_summary WHERE ... ORDER BY ...");
+        when(jdbcTemplate.queryForObject(anyString(), any(Object[].class), eq(Integer.class))
+        ).thenThrow(new RuntimeException());
+
+        assertThrows(Exception.class, () -> {
+            caseRepository.getCaseSummary(request);
+        });
     }
 }

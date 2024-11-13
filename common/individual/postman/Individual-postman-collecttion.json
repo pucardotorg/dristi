@@ -1,0 +1,1682 @@
+{
+  "info": {
+    "_postman_id": "b88b62fc-7dfb-4f92-b8a4-3df1b0edb036",
+    "name": ".Collection Copy",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+    "_exporter_id": "34981239"
+  },
+  "item": [
+    {
+      "name": "Individual",
+      "item": [
+        {
+          "name": "Individual Create",
+          "event": [
+            {
+              "listen": "prerequest",
+              "script": {
+                "exec": [
+                  "// {",
+                  "//     \"RequestInfo\": {",
+                  "//         \"authToken\": \"{{authToken}}\"",
+                  "//     },",
+                  "//     \"Individual\":",
+                  "//         {",
+                  "//             \"tenantId\": \"default\",",
+                  "//             \"clientReferenceId\": \"{{uuid}}\",",
+                  "//             \"name\": {",
+                  "//                 \"givenName\": \"{{individualGivenName}}\",",
+                  "//                 \"familyName\": \"{{individualFamilyName}}\",",
+                  "//                 \"otherNames\": \"{{individualOtherName}}\"",
+                  "//             },",
+                  "//             \"dateOfBirth\": \"{{individualDateOfBirth}}\",",
+                  "//             \"gender\": \"{{individualGenderType}}\",",
+                  "//             \"bloodGroup\": \"{{individualBloodGroup}}\",",
+                  "//             \"mobileNumber\": \"9972527280\",",
+                  "//             \"altContactNumber\": \"8765432109\",",
+                  "//             \"email\": \"souravganguly_dada@gmail.com\",",
+                  "//             \"address\": [",
+                  "//                 {",
+                  "//                     \"clientReferenceId\": \"{{uuid2}}\",",
+                  "//                     \"tenantId\": \"default\",",
+                  "//                     \"doorNo\": \"123\",",
+                  "//                     \"latitude\": 40.82,",
+                  "//                     \"longitude\": 35.06,",
+                  "//                     \"locationAccuracy\": 14.27,",
+                  "//                     \"type\": \"PERMANENT\",",
+                  "//                     \"addressLine1\": \"Apartment\",",
+                  "//                     \"addressLine2\": \"2nd Floor\",",
+                  "//                     \"landmark\": \"Near Juhu Beach\",",
+                  "//                     \"city\": \"Mumbai\",",
+                  "//                     \"pincode\": \"123456\",",
+                  "//                     \"buildingName\": \"Apartment\",",
+                  "//                     \"street\": \"Necklace Road\",",
+                  "//                     \"locality\": {",
+                  "//                         \"code\": \"test_9b31746b933d\",",
+                  "//                         \"name\": \"test_58630a388978\",",
+                  "//                         \"label\": \"test_7b7f928dcab8\",",
+                  "//                         \"latitude\": \"test_15d4a90d15a6\",",
+                  "//                         \"longitude\": \"test_e8854daed039\",",
+                  "//                         \"children\": []",
+                  "//                     }",
+                  "//                 }",
+                  "//             ],",
+                  "//             \"fatherName\": \"Ganguly Sr\",",
+                  "//             \"husbandName\": null,",
+                  "//             \"identifiers\":[",
+                  "//                 {",
+                  "//                     \"identifierType\":\"{{individualIdentifierType}}\",",
+                  "//                     \"identifierId\": \"{{individualIdentifierId}}\"",
+                  "//                 }",
+                  "//             ],",
+                  "//             \"skills\": [",
+                  "//                 {",
+                  "//                     \"type\": \"{{individualSkillType}}\",",
+                  "//                     \"level\": \"{{individualSkillLevel}}\",",
+                  "//                     \"experience\": \"{{individualSkillExperience}}\",",
+                  "//                     \"clientReferenceId\": \"{{individualSkillClientReferenceId}}\"",
+                  "//                 }",
+                  "//             ],",
+                  "//             \"photo\": \"test_35bd4e8545d8\",",
+                  "//             \"additionalFields\": {",
+                  "//                 \"schema\": \"test_f76b4cca6bff\",",
+                  "//                 \"version\": 23,",
+                  "//                 \"fields\": [",
+                  "//                     {",
+                  "//                         \"key\": \"test_80f7fb8d8a45\",",
+                  "//                         \"value\": \"test_38bfd0dc223b\"",
+                  "//                     }",
+                  "//                 ]",
+                  "//             },",
+                  "//             \"isSystemUser\": true,",
+                  "//             \"rowVersion\": 1",
+                  "//         }",
+                  "// }"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n    \"RequestInfo\": {\n        \"authToken\": \"{{authToken}}\"\n        // \"userInfo\": {\n        //     \"id\": 324783744763,\n        //     \"uuid\":\"{{uuid2}}\"\n        // }\n    },\n    \"Individual\":\n        {\n            \"tenantId\": \"mz\",\n            \"clientReferenceId\": \"{{uuid}}\",\n            \"name\": {\n                \"givenName\": \"{{individualGivenName}}\",\n                \"familyName\": \"{{individualFamilyName}}\",\n                \"otherNames\": \"{{individualOtherName}}\"\n            },\n            \"dateOfBirth\": \"{{individualDateOfBirth}}\",\n            \"gender\": \"{{individualGenderType}}\",\n            \"bloodGroup\": \"{{individualBloodGroup}}\",\n            \"mobileNumber\": \"9972527280\",\n            \"altContactNumber\": \"8765432109\",\n            \"email\": \"souravganguly_dada@gmail.com\",\n            \"address\": [\n                {\n                    \"clientReferenceId\": \"{{uuid2}}\",\n                    \"tenantId\": \"mz\",\n                    \"doorNo\": \"123\",\n                    \"latitude\": -19,\n                    \"longitude\": 34,\n                    \"locationAccuracy\": 14.27,\n                    \"type\": \"PERMANENT\",\n                    \"addressLine1\": \"Apartment\",\n                    \"addressLine2\": \"2nd Floor\",\n                    \"landmark\": \"Near Juhu Beach\",\n                    \"city\": \"Mumbai\",\n                    \"pincode\": \"123456\",\n                    \"buildingName\": \"Apartment\",\n                    \"street\": \"Necklace Road\",\n                    \"locality\": {\n                        \"code\": \"test_9b31746b933d\",\n                        \"name\": \"test_58630a388978\",\n                        \"label\": \"test_7b7f928dcab8\",\n                        \"latitude\": \"test_15d4a90d15a6\",\n                        \"longitude\": \"test_e8854daed039\",\n                        \"children\": []\n                    }\n                }\n            ],\n            \"fatherName\": \"Ganguly Sr\",\n            \"husbandName\": null,\n            \"identifiers\":[\n                {\n                    \"identifierType\":\"AADHAAR\",\n                    \"identifierId\": \"987364390021\"\n                }\n            ],\n            \"skills\": [\n                {\n                    \"type\": \"{{individualSkillType}}\",\n                    \"level\": \"{{individualSkillLevel}}\",\n                    \"experience\": \"{{individualSkillExperience}}\",\n                    \"clientReferenceId\": \"{{individualSkillClientReferenceId}}\"\n                }\n            ],\n            \"photo\": \"test_35bd4e8545d8\",\n            \"additionalFields\": {\n                \"schema\": \"test_f76b4cca6bff\",\n                \"version\": 23,\n                \"fields\": [\n                    {\n                        \"key\": \"test_80f7fb8d8a45\",\n                        \"value\": \"test_38bfd0dc223b\"\n                    }\n                ]\n            },\n            \"isSystemUser\": true,\n            \"rowVersion\": 1,\n            \"nonRecoverableError\":false,\n            \"clientAuditDetails\":{\n                \"createdBy\": \"a8c7b5c5-6007-4556-945e-3969c98b5167\",\n                \"lastModifiedBy\": \"a8c7b5c5-6007-4556-945e-3969c98b5167\",\n                \"createdTime\":1692774224,\n                \"lastModifiedTime\":16927742467\n            },\n            \"auditDetails\": {\n                \"createdBy\": \"a8c7b5c5-6007-4556-945e-3969c98b5155\",\n                \"lastModifiedBy\": \"a8c7b5c5-6007-4556-945e-3969c98b5155\",\n                \"createdTime\": 1692856327242,\n                \"lastModifiedTime\": 1692856327242\n            }\n        }\n}"
+            },
+            "url": {
+              "raw": "{{URL}}/individual/v1/_create",
+              "host": [
+                "{{URL}}"
+              ],
+              "path": [
+                "individual",
+                "v1",
+                "_create"
+              ]
+            }
+          },
+          "response": [
+            {
+              "name": "Individual Create Response",
+              "originalRequest": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n    \"RequestInfo\": {\n        \"authToken\": \"{{authToken}}\"\n    },\n    \"Individual\": {\n        \"tenantId\": \"default\",\n        \"clientReferenceId\": \"{{uuid}}\",\n        \"name\": {\n            \"givenName\": \"{{individualGivenName}}\",\n            \"familyName\": \"{{individualFamilyName}}\",\n            \"otherNames\": \"{{individualOtherName}}\"\n        },\n        \"dateOfBirth\": \"{{individualDateOfBirth}}\",\n        \"gender\": \"{{individualGenderType}}\",\n        \"bloodGroup\": \"{{individualBloodGroup}}\",\n        \"mobileNumber\": \"9876543210\",\n        \"altContactNumber\": \"8765432109\",\n        \"email\": \"souravganguly_dada@gmail.com\",\n        \"address\": [\n            {\n                \"tenantId\": \"default\",\n                \"doorNo\": \"123\",\n                \"latitude\": 40.82,\n                \"longitude\": 35.06,\n                \"locationAccuracy\": 14.27,\n                \"type\": \"PERMANENT\",\n                \"addressLine1\": \"Apartment\",\n                \"addressLine2\": \"2nd Floor\",\n                \"landmark\": \"Near Juhu Beach\",\n                \"city\": \"Mumbai\",\n                \"pincode\": \"123456\",\n                \"buildingName\": \"Apartment\",\n                \"street\": \"Necklace Road\",\n                \"locality\": {\n                    \"code\": \"test_9b31746b933d\",\n                    \"name\": \"test_58630a388978\",\n                    \"label\": \"test_7b7f928dcab8\",\n                    \"latitude\": \"test_15d4a90d15a6\",\n                    \"longitude\": \"test_e8854daed039\",\n                    \"children\": []\n                }\n            }\n        ],\n        \"fatherName\": \"Ganguly Sr\",\n        \"husbandName\": null,\n        \"identifiers\": [\n            {\n                \"identifierType\": \"{{individualIdentifierType}}\",\n                \"identifierId\": \"{{individualIdentifierId}}\"\n            }\n        ],\n        \"skills\": [\n            {\n                \"type\": \"{{individualSkillType}}\",\n                \"level\": \"{{individualSkillLevel}}\",\n                \"experience\": \"{{individualSkillExperience}}\"\n            }\n        ],\n        \"photo\": \"test_35bd4e8545d8\",\n        \"additionalFields\": {\n            \"schema\": \"test_f76b4cca6bff\",\n            \"version\": 23,\n            \"fields\": [\n                {\n                    \"key\": \"test_80f7fb8d8a45\",\n                    \"value\": \"test_38bfd0dc223b\"\n                }\n            ]\n        },\n        \"isDeleted\": false,\n        \"rowVersion\": 1\n    }\n}"
+                },
+                "url": {
+                  "raw": "{{qa}}/individual/v1/_create",
+                  "host": [
+                    "{{qa}}"
+                  ],
+                  "path": [
+                    "individual",
+                    "v1",
+                    "_create"
+                  ]
+                }
+              },
+              "status": "Accepted",
+              "code": 202,
+              "_postman_previewlanguage": "json",
+              "header": [
+                {
+                  "key": "Date",
+                  "value": "Mon, 06 Feb 2023 12:23:54 GMT"
+                },
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                },
+                {
+                  "key": "Transfer-Encoding",
+                  "value": "chunked"
+                },
+                {
+                  "key": "Connection",
+                  "value": "keep-alive"
+                },
+                {
+                  "key": "Strict-Transport-Security",
+                  "value": "max-age=63072000; includeSubdomains; preload"
+                },
+                {
+                  "key": "X-Lua-Resty-WAF-ID",
+                  "value": "aaf03643155ea00e32d7"
+                },
+                {
+                  "key": "x-correlation-id",
+                  "value": "2066eaed-6e1d-46e0-bc7a-6d8922c2f8c2"
+                },
+                {
+                  "key": "Cache-Control",
+                  "value": "no-cache, no-store, max-age=0, must-revalidate"
+                },
+                {
+                  "key": "Content-Security-Policy",
+                  "value": "default-src 'self' https: 'unsafe-eval' 'unsafe-inline'; object-src 'none'; img-src 'self' https: data: blob:; style-src https: blob: 'unsafe-inline'; worker-src 'self' blob:; font-src 'self' https: data: blob:; child-src 'self' https: data: blob:;"
+                },
+                {
+                  "key": "Referrer-Policy",
+                  "value": "no-referrer-when-downgrade"
+                },
+                {
+                  "key": "X-Content-Type-Options",
+                  "value": "nosniff"
+                },
+                {
+                  "key": "X-Download-Options",
+                  "value": "noopen"
+                },
+                {
+                  "key": "X-Frame-Options",
+                  "value": "sameorigin"
+                },
+                {
+                  "key": "X-XSS-Protection",
+                  "value": "1"
+                }
+              ],
+              "cookie": [],
+              "body": "{\n    \"ResponseInfo\": {\n        \"apiId\": null,\n        \"ver\": null,\n        \"ts\": 1675686234286,\n        \"resMsgId\": null,\n        \"msgId\": null,\n        \"status\": \"successful\"\n    },\n    \"Individual\": {\n        \"id\": \"IND-2023-02-06-000202\",\n        \"tenantId\": \"default\",\n        \"clientReferenceId\": \"98e1f72f-f978-4b96-a02c-a96918057fbc\",\n        \"userId\": null,\n        \"name\": {\n            \"givenName\": \"Souravushk9ekdgg\",\n            \"familyName\": \"Gangulynwnjjw58gd\",\n            \"otherNames\": \"Dadabf2k7cvvr5\"\n        },\n        \"dateOfBirth\": \"09/10/1999\",\n        \"gender\": \"FEMALE\",\n        \"bloodGroup\": \"A+\",\n        \"mobileNumber\": \"9876543210\",\n        \"altContactNumber\": \"8765432109\",\n        \"email\": \"souravganguly_dada@gmail.com\",\n        \"address\": [\n            {\n                \"id\": \"d399fa43-0c9f-4a26-95f4-3dde5b981aee\",\n                \"individualId\": \"IND-2023-02-06-000202\",\n                \"tenantId\": \"default\",\n                \"doorNo\": \"123\",\n                \"latitude\": 40.82,\n                \"longitude\": 35.06,\n                \"locationAccuracy\": 14.27,\n                \"type\": \"PERMANENT\",\n                \"addressLine1\": \"Apartment\",\n                \"addressLine2\": \"2nd Floor\",\n                \"landmark\": \"Near Juhu Beach\",\n                \"city\": \"Mumbai\",\n                \"pincode\": \"123456\",\n                \"buildingName\": \"Apartment\",\n                \"street\": \"Necklace Road\",\n                \"locality\": {\n                    \"code\": \"test_9b31746b933d\",\n                    \"name\": \"test_58630a388978\",\n                    \"label\": \"test_7b7f928dcab8\",\n                    \"latitude\": \"test_15d4a90d15a6\",\n                    \"longitude\": \"test_e8854daed039\",\n                    \"children\": [],\n                    \"materializedPath\": null\n                },\n                \"isDeleted\": false,\n                \"auditDetails\": {\n                    \"createdBy\": \"6af8acab-cb2f-472b-8def-aab27864ad16\",\n                    \"lastModifiedBy\": \"6af8acab-cb2f-472b-8def-aab27864ad16\",\n                    \"createdTime\": 1675686234096,\n                    \"lastModifiedTime\": 1675686234096\n                }\n            }\n        ],\n        \"fatherName\": \"Ganguly Sr\",\n        \"husbandName\": null,\n        \"identifiers\": [\n            {\n                \"id\": \"ccf3ae4c-5106-43d0-b17f-a52c1b2a2e42\",\n                \"individualId\": \"IND-2023-02-06-000202\",\n                \"identifierType\": \"SYSTEM_GENERATED\",\n                \"identifierId\": \"936455495159\",\n                \"isDeleted\": false,\n                \"auditDetails\": {\n                    \"createdBy\": \"6af8acab-cb2f-472b-8def-aab27864ad16\",\n                    \"lastModifiedBy\": \"6af8acab-cb2f-472b-8def-aab27864ad16\",\n                    \"createdTime\": 1675686234099,\n                    \"lastModifiedTime\": 1675686234099\n                }\n            }\n        ],\n        \"skills\": [\n            {\n                \"id\": \"63dea78e-965d-48d6-abe6-8b8c5b9eba5a\",\n                \"individualId\": \"IND-2023-02-06-000202\",\n                \"type\": \"Dancing\",\n                \"level\": \"Learner\",\n                \"experience\": \"7 Years\",\n                \"isDeleted\": false,\n                \"auditDetails\": {\n                    \"createdBy\": \"6af8acab-cb2f-472b-8def-aab27864ad16\",\n                    \"lastModifiedBy\": \"6af8acab-cb2f-472b-8def-aab27864ad16\",\n                    \"createdTime\": 1675686234101,\n                    \"lastModifiedTime\": 1675686234101\n                }\n            }\n        ],\n        \"photo\": \"test_35bd4e8545d8\",\n        \"additionalFields\": {\n            \"schema\": \"test_f76b4cca6bff\",\n            \"version\": 23,\n            \"fields\": [\n                {\n                    \"key\": \"test_80f7fb8d8a45\",\n                    \"value\": \"test_38bfd0dc223b\"\n                }\n            ]\n        },\n        \"isDeleted\": false,\n        \"rowVersion\": 1,\n        \"auditDetails\": {\n            \"createdBy\": \"6af8acab-cb2f-472b-8def-aab27864ad16\",\n            \"lastModifiedBy\": \"6af8acab-cb2f-472b-8def-aab27864ad16\",\n            \"createdTime\": 1675686234089,\n            \"lastModifiedTime\": 1675686234089\n        }\n    }\n}"
+            }
+          ]
+        },
+        {
+          "name": "Individual Bulk Create",
+          "event": [
+            {
+              "listen": "prerequest",
+              "script": {
+                "exec": [
+                  "var individualArray = []",
+                  "var uuid = require('uuid')",
+                  "var identifierTypes = [\"SYSTEM_GENERATED\", \"AADHAAR\", \"PAN\", \"VOTER ID CARD\", \"PASSPORT\", \"DRIVING LICENSE\"]",
+                  "var skillTypes = [\"Type Writing\", \"Computer\", \"Science\", \"Singing\", \"Dancing\", \"Event Organizer\"]",
+                  "var skillLevels = [\"Novice\", \"Learner\", \"Profecient\", \"Expert\"]",
+                  "var skillExperiences = [\"1 Year\", \"2 Years\", \"3 Years\", \"4 Years\", \"5 Years\", \"6 Years\", \"7 Years\", \"8 Years\", \"9 Years\", \"10 Years\", \"10+ Years\"]",
+                  "var bloodGroups = [\"A+\", \"B+\", \"O+\", \"AB+\", \"A-\", \"B-\", \"AB-\", \"O-\"]",
+                  "var genderTypes = [ \"MALE\", \"FEMALE\", \"OTHER\" ]",
+                  "var address = [",
+                  "            {",
+                  "                \"tenantId\": \"default\",",
+                  "                \"doorNo\": \"123\",",
+                  "                \"latitude\": 40.82,",
+                  "                \"longitude\": 35.06,",
+                  "                \"locationAccuracy\": 14.27,",
+                  "                \"type\": \"PERMANENT\",",
+                  "                \"addressLine1\": \"Apartment\",",
+                  "                \"addressLine2\": \"2nd Floor\",",
+                  "                \"landmark\": \"Near Juhu Beach\",",
+                  "                \"city\": \"Mumbai\",",
+                  "                \"pincode\": \"123456\",",
+                  "                \"buildingName\": \"Apartment\",",
+                  "                \"street\": \"Necklace Road\",",
+                  "                \"locality\": {",
+                  "                    \"code\": \"test_9b31746b933d\",",
+                  "                    \"name\": \"test_58630a388978\",",
+                  "                    \"label\": \"test_7b7f928dcab8\",",
+                  "                    \"latitude\": \"test_15d4a90d15a6\",",
+                  "                    \"longitude\": \"test_e8854daed039\",",
+                  "                    \"children\": []",
+                  "                }",
+                  "            }",
+                  "        ]",
+                  "var additionalFields = {",
+                  "      \"schema\": \"INDIVIDUAL\",",
+                  "      \"version\": 2,",
+                  "      \"fields\": [",
+                  "        {",
+                  "          \"key\": \"height\",",
+                  "          \"value\": \"180\"",
+                  "        }",
+                  "      ]",
+                  "    }",
+                  "for(let i = 0; i<= 10; i++){",
+                  "    var individualArrayItem = {}",
+                  "    var dt = String(Math.floor((Math.random() * (999999999999 - 100000000000 + 1)) + 100000000000))",
+                  "    individualArrayItem.tenantId = \"default\"",
+                  "    individualArrayItem.clientReferenceId = uuid.v4()",
+                  "    individualArrayItem.name = {}",
+                  "    individualArrayItem.name.givenName = \"Sourav\"+ Math.random().toString(36).slice(-10)",
+                  "    individualArrayItem.name.familyName = \"Ganguly\"+ Math.random().toString(36).slice(-10)",
+                  "    individualArrayItem.name.otherNames = \"Dada\"+ Math.random().toString(36).slice(-10)",
+                  "    individualArrayItem.dateOfBirth = new Date(new Date() - Math.random()*(1e+12)).toLocaleDateString('en-GB')",
+                  "    individualArrayItem.gender = genderTypes[Math.floor(Math.random() * genderTypes.length)]",
+                  "    individualArrayItem.bloodGroup = bloodGroups[Math.floor(Math.random() * bloodGroups.length)]",
+                  "    individualArrayItem.mobileNumber = Math.floor(Math.random() * 10000000000)",
+                  "    individualArrayItem.altContactNumber = Math.floor(Math.random() * 10000000000)",
+                  "    individualArrayItem.email = \"abc@test.com\"",
+                  "    individualArrayItem.address = address",
+                  "    individualArrayItem.address[0].addressLine1 = individualArrayItem.address[0].addressLine1 + dt",
+                  "    individualArrayItem.address[0].addressLine2 = individualArrayItem.address[0].addressLine2 + dt",
+                  "    individualArrayItem.address[0].landmark = individualArrayItem.address[0].landmark + dt",
+                  "    individualArrayItem.address[0].buildingName = individualArrayItem.address[0].buildingName + dt",
+                  "    individualArrayItem.address[0].street = individualArrayItem.address[0].street + dt",
+                  "    individualArrayItem.address[0].locality.code = String(new Date().getTime())",
+                  "    individualArrayItem.fatherName = \"test_\" + Math.floor(Math.random() * 1000000)",
+                  "    if(individualArrayItem.gender == \"FEMALE\")",
+                  "        individualArrayItem.husbandName = \"Husband Name\"",
+                  "    else",
+                  "        individualArrayItem.husbandName = null",
+                  "",
+                  "    individualArrayItem.identifiers = []",
+                  "    var identifierElem = {}",
+                  "    identifierElem.identifierType = identifierTypes[Math.floor(Math.random() * identifierTypes.length)]",
+                  "    identifierElem.identifierId = Math.floor((Math.random() * (999999999999 - 100000000000 + 1)) + 100000000000)",
+                  "    individualArrayItem.identifiers.push(identifierElem)",
+                  "",
+                  "    individualArrayItem.skills = []",
+                  "    var skillElem = {}",
+                  "    skillElem.type =  skillTypes[Math.floor(Math.random() * skillTypes.length)]",
+                  "    skillElem.level = skillLevels[Math.floor(Math.random() * skillLevels.length)]",
+                  "    skillElem.experience = skillExperiences[Math.floor(Math.random() * skillExperiences.length)]",
+                  "    individualArrayItem.skills.push(skillElem)",
+                  "",
+                  "    individualArrayItem.photo = dt",
+                  "    individualArrayItem.additionalFields = additionalFields",
+                  "    individualArrayItem.rowVersion = 1",
+                  "",
+                  "    individualArray.push(individualArrayItem)",
+                  "}",
+                  "pm.environment.set(\"individualArray\", JSON.stringify(individualArray))"
+                ],
+                "type": "text/javascript",
+                "packages": {}
+              }
+            },
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "// {",
+                  "//     \"RequestInfo\": {",
+                  "//         \"authToken\": \"{{authToken}}\"",
+                  "//     },",
+                  "//     \"Individuals\": {{individualArray}}",
+                  "// }"
+                ],
+                "type": "text/javascript",
+                "packages": {}
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n    \"RequestInfo\": {\n        \"authToken\": \"{{authToken}}\"\n    },\n    \"Individuals\": [\n        {\n            \"tenantId\": \"default\",\n            \"clientReferenceId\": \"{{uuid}}\",\n            \"name\": {\n                \"givenName\": \"{{individualGivenName}}\",\n                \"familyName\": \"{{individualFamilyName}}\",\n                \"otherNames\": \"{{individualOtherName}}\"\n            },\n            \"dateOfBirth\": \"{{individualDateOfBirth}}\",\n            \"gender\": \"{{individualGenderType}}\",\n            \"bloodGroup\": \"{{individualBloodGroup}}\",\n            \"mobileNumber\": \"9972527280\",\n            \"altContactNumber\": \"8765432109\",\n            \"email\": \"souravganguly_dada@gmail.com\",\n            \"address\": [\n                {\n                    \"clientReferenceId\": \"{{uuid2}}\",\n                    \"tenantId\": \"default\",\n                    \"doorNo\": \"123\",\n                    \"latitude\": 40.82,\n                    \"longitude\": 35.06,\n                    \"locationAccuracy\": 14.27,\n                    \"type\": \"PERMANENT\",\n                    \"addressLine1\": \"address1\",\n                    \"addressLine2\": \"add2\",\n                    \"landmark\": \"Landmark\",\n                    \"city\": \"Bangalore\",\n                    \"pincode\": \"1234567\",\n                    \"buildingName\": \"Alpine Apartments\",\n                    \"street\": \"test_da0b8ebec5ef\",\n                    \"locality\": {\n                        \"code\": \"locality code\",\n                        \"name\": null,\n                        \"label\": null,\n                        \"latitude\": null,\n                        \"longitude\": null,\n                        \"materializedPath\": null\n                    }\n                }\n            ],\n            \"fatherName\": \"Ganguly Sr\",\n            \"husbandName\": null,\n            \"identifiers\": [\n                {\n                    \"identifierType\": \"AADHAAR\",\n                    \"identifierId\": \"987654321001\"\n                }\n            ],\n            \"skills\": [\n                {\n                    \"type\": \"{{individualSkillType}}\",\n                    \"level\": \"{{individualSkillLevel}}\",\n                    \"experience\": \"{{individualSkillExperience}}\",\n                    \"clientReferenceId\": \"{{individualSkillClientReferenceId}}\"\n                }\n            ],\n            \"photo\": \"test_35bd4e8545d8\",\n            \"additionalFields\": {\n                \"schema\": \"test_f76b4cca6bff\",\n                \"version\": 23,\n                \"fields\": [\n                    {\n                        \"key\": \"test_80f7fb8d8a45\",\n                        \"value\": \"test_38bfd0dc223b\"\n                    }\n                ]\n            },\n            \"isSystemUser\": false,\n            \"rowVersion\": 1,\n            \"clientAuditDetails\": {\n                \"createdBy\": \"a8c7b5c5-6007-4556-945e-3969c98b5167\",\n                \"lastModifiedBy\": \"a8c7b5c5-6007-4556-945e-3969c98b5167\",\n                \"createdTime\": 1692774224,\n                \"lastModifiedTime\": 16927742467\n            }\n        }\n    ]\n}"
+            },
+            "url": {
+              "raw": "{{URL}}/individual/v1/bulk/_create",
+              "host": [
+                "{{URL}}"
+              ],
+              "path": [
+                "individual",
+                "v1",
+                "bulk",
+                "_create"
+              ]
+            }
+          },
+          "response": [
+            {
+              "name": "Individual Bulk Create Response",
+              "originalRequest": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n    \"RequestInfo\": {\n        \"authToken\": \"{{authToken}}\"\n    },\n    \"Individuals\": [\n        {\n            \"tenantId\": \"default\",\n            \"clientReferenceId\": \"{{uuid}}\",\n            \"name\": {\n                \"givenName\": \"{{individualGivenName}}\",\n                \"familyName\": \"{{individualFamilyName}}\",\n                \"otherNames\": \"{{individualOtherName}}\"\n            },\n            \"dateOfBirth\": \"{{individualDateOfBirth}}\",\n            \"gender\": \"{{individualGenderType}}\",\n            \"bloodGroup\": \"{{individualBloodGroup}}\",\n            \"mobileNumber\": \"9876543210\",\n            \"altContactNumber\": \"8765432109\",\n            \"email\": \"souravganguly_dada@gmail.com\",\n            \"address\": [\n                {\n                    \"tenantId\": \"default\",\n                    \"doorNo\": \"123\",\n                    \"latitude\": 40.82,\n                    \"longitude\": 35.06,\n                    \"locationAccuracy\": 14.27,\n                    \"type\": \"PERMANENT\",\n                    \"addressLine1\": \"Apartment\",\n                    \"addressLine2\": \"2nd Floor\",\n                    \"landmark\": \"Near Juhu Beach\",\n                    \"city\": \"Mumbai\",\n                    \"pincode\": \"123456\",\n                    \"buildingName\": \"Apartment\",\n                    \"street\": \"Necklace Road\",\n                    \"locality\": {\n                        \"code\": \"test_9b31746b933d\",\n                        \"name\": \"test_58630a388978\",\n                        \"label\": \"test_7b7f928dcab8\",\n                        \"latitude\": \"test_15d4a90d15a6\",\n                        \"longitude\": \"test_e8854daed039\",\n                        \"children\": []\n                    }\n                }\n            ],\n            \"fatherName\": \"Ganguly Sr\",\n            \"husbandName\": null,\n            \"identifiers\": [\n                {\n                    \"identifierType\": \"{{individualIdentifierType}}\",\n                    \"identifierId\": \"{{individualIdentifierId}}\"\n                }\n            ],\n            \"skills\": [\n                {\n                    \"type\": \"{{individualSkillType}}\",\n                    \"level\": \"{{individualSkillLevel}}\",\n                    \"experience\": \"{{individualSkillExperience}}\"\n                }\n            ],\n            \"photo\": \"test_35bd4e8545d8\",\n            \"additionalFields\": {\n                \"schema\": \"test_f76b4cca6bff\",\n                \"version\": 23,\n                \"fields\": [\n                    {\n                        \"key\": \"test_80f7fb8d8a45\",\n                        \"value\": \"test_38bfd0dc223b\"\n                    }\n                ]\n            },\n            \"isDeleted\": false,\n            \"rowVersion\": 1\n        },\n        {\n            \"tenantId\": \"default\",\n            \"clientReferenceId\": \"{{uuid2}}\",\n            \"name\": {\n                \"givenName\": \"{{individualGivenName2}}\",\n                \"familyName\": \"{{individualFamilyName2}}\",\n                \"otherNames\": \"{{individualOtherName2}}\"\n            },\n            \"dateOfBirth\": \"{{individualDateOfBirth2}}\",\n            \"gender\": \"{{individualGenderType}}\",\n            \"bloodGroup\": \"{{individualBloodGroup}}\",\n            \"mobileNumber\": \"9876543210\",\n            \"altContactNumber\": \"8765432109\",\n            \"email\": \"souravganguly_dada@gmail.com\",\n            \"address\": [\n                {\n                    \"tenantId\": \"default\",\n                    \"doorNo\": \"123\",\n                    \"latitude\": 40.82,\n                    \"longitude\": 35.06,\n                    \"locationAccuracy\": 14.27,\n                    \"type\": \"PERMANENT\",\n                    \"addressLine1\": \"Apartment\",\n                    \"addressLine2\": \"2nd Floor\",\n                    \"landmark\": \"Near Juhu Beach\",\n                    \"city\": \"Mumbai\",\n                    \"pincode\": \"123456\",\n                    \"buildingName\": \"Apartment\",\n                    \"street\": \"Necklace Road\",\n                    \"locality\": {\n                        \"code\": \"test_9b31746b933d\",\n                        \"name\": \"test_58630a388978\",\n                        \"label\": \"test_7b7f928dcab8\",\n                        \"latitude\": \"test_15d4a90d15a6\",\n                        \"longitude\": \"test_e8854daed039\",\n                        \"children\": []\n                    }\n                }\n            ],\n            \"fatherName\": \"Ganguly Sr\",\n            \"husbandName\": null,\n            \"identifiers\": [\n                {\n                    \"identifierType\": \"{{individualIdentifierType}}\",\n                    \"identifierId\": \"{{individualIdentifierId2}}\"\n                }\n            ],\n            \"skills\": [\n                {\n                    \"type\": \"{{individualSkillType}}\",\n                    \"level\": \"{{individualSkillLevel}}\",\n                    \"experience\": \"{{individualSkillExperience}}\"\n                }\n            ],\n            \"photo\": \"test_35bd4e8545d8\",\n            \"additionalFields\": {\n                \"schema\": \"test_f76b4cca6bff\",\n                \"version\": 23,\n                \"fields\": [\n                    {\n                        \"key\": \"test_80f7fb8d8a45\",\n                        \"value\": \"test_38bfd0dc223b\"\n                    }\n                ]\n            },\n            \"isDeleted\": false,\n            \"rowVersion\": 0\n        }\n    ]\n}"
+                },
+                "url": {
+                  "raw": "{{qa}}/individual/v1/bulk/_create",
+                  "host": [
+                    "{{qa}}"
+                  ],
+                  "path": [
+                    "individual",
+                    "v1",
+                    "bulk",
+                    "_create"
+                  ]
+                }
+              },
+              "status": "Accepted",
+              "code": 202,
+              "_postman_previewlanguage": "json",
+              "header": [
+                {
+                  "key": "Date",
+                  "value": "Mon, 06 Feb 2023 12:39:23 GMT"
+                },
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                },
+                {
+                  "key": "Transfer-Encoding",
+                  "value": "chunked"
+                },
+                {
+                  "key": "Connection",
+                  "value": "keep-alive"
+                },
+                {
+                  "key": "Strict-Transport-Security",
+                  "value": "max-age=63072000; includeSubdomains; preload"
+                },
+                {
+                  "key": "X-Lua-Resty-WAF-ID",
+                  "value": "ba3e54e110e2157de439"
+                },
+                {
+                  "key": "x-correlation-id",
+                  "value": "dfcb9a84-1fb7-41b6-a2ee-23734ed8ef8a"
+                },
+                {
+                  "key": "Cache-Control",
+                  "value": "no-cache, no-store, max-age=0, must-revalidate"
+                },
+                {
+                  "key": "Content-Security-Policy",
+                  "value": "default-src 'self' https: 'unsafe-eval' 'unsafe-inline'; object-src 'none'; img-src 'self' https: data: blob:; style-src https: blob: 'unsafe-inline'; worker-src 'self' blob:; font-src 'self' https: data: blob:; child-src 'self' https: data: blob:;"
+                },
+                {
+                  "key": "Referrer-Policy",
+                  "value": "no-referrer-when-downgrade"
+                },
+                {
+                  "key": "X-Content-Type-Options",
+                  "value": "nosniff"
+                },
+                {
+                  "key": "X-Download-Options",
+                  "value": "noopen"
+                },
+                {
+                  "key": "X-Frame-Options",
+                  "value": "sameorigin"
+                },
+                {
+                  "key": "X-XSS-Protection",
+                  "value": "1"
+                }
+              ],
+              "cookie": [],
+              "body": "{\n    \"apiId\": \"/individual/v1/bulk/_create\",\n    \"ver\": null,\n    \"ts\": 1675687163708,\n    \"resMsgId\": null,\n    \"msgId\": null,\n    \"status\": \"successful\"\n}"
+            }
+          ]
+        },
+        {
+          "name": "Individual Bulk Create Copy",
+          "event": [
+            {
+              "listen": "prerequest",
+              "script": {
+                "exec": [
+                  "var individualArray = []",
+                  "var uuid = require('uuid')",
+                  "var identifierTypes = [\"SYSTEM_GENERATED\", \"AADHAAR\", \"PAN\", \"VOTER ID CARD\", \"PASSPORT\", \"DRIVING LICENSE\"]",
+                  "var skillTypes = [\"Type Writing\", \"Computer\", \"Science\", \"Singing\", \"Dancing\", \"Event Organizer\"]",
+                  "var skillLevels = [\"Novice\", \"Learner\", \"Profecient\", \"Expert\"]",
+                  "var skillExperiences = [\"1 Year\", \"2 Years\", \"3 Years\", \"4 Years\", \"5 Years\", \"6 Years\", \"7 Years\", \"8 Years\", \"9 Years\", \"10 Years\", \"10+ Years\"]",
+                  "var bloodGroups = [\"A+\", \"B+\", \"O+\", \"AB+\", \"A-\", \"B-\", \"AB-\", \"O-\"]",
+                  "var genderTypes = [ \"MALE\", \"FEMALE\", \"OTHER\" ]",
+                  "var address = [",
+                  "            {",
+                  "                \"tenantId\": \"default\",",
+                  "                \"doorNo\": \"123\",",
+                  "                \"latitude\": 40.82,",
+                  "                \"longitude\": 35.06,",
+                  "                \"locationAccuracy\": 14.27,",
+                  "                \"type\": \"PERMANENT\",",
+                  "                \"addressLine1\": \"Apartment\",",
+                  "                \"addressLine2\": \"2nd Floor\",",
+                  "                \"landmark\": \"Near Juhu Beach\",",
+                  "                \"city\": \"Mumbai\",",
+                  "                \"pincode\": \"123456\",",
+                  "                \"buildingName\": \"Apartment\",",
+                  "                \"street\": \"Necklace Road\",",
+                  "                \"locality\": {",
+                  "                    \"code\": \"test_9b31746b933d\",",
+                  "                    \"name\": \"test_58630a388978\",",
+                  "                    \"label\": \"test_7b7f928dcab8\",",
+                  "                    \"latitude\": \"test_15d4a90d15a6\",",
+                  "                    \"longitude\": \"test_e8854daed039\",",
+                  "                    \"children\": []",
+                  "                }",
+                  "            }",
+                  "        ]",
+                  "var additionalFields = {",
+                  "      \"schema\": \"INDIVIDUAL\",",
+                  "      \"version\": 2,",
+                  "      \"fields\": [",
+                  "        {",
+                  "          \"key\": \"height\",",
+                  "          \"value\": \"180\"",
+                  "        }",
+                  "      ]",
+                  "    }",
+                  "for(let i = 0; i<= 10; i++){",
+                  "    var individualArrayItem = {}",
+                  "    var dt = String(Math.floor((Math.random() * (999999999999 - 100000000000 + 1)) + 100000000000))",
+                  "    individualArrayItem.tenantId = \"default\"",
+                  "    individualArrayItem.clientReferenceId = uuid.v4()",
+                  "    individualArrayItem.name = {}",
+                  "    individualArrayItem.name.givenName = \"Sourav\"+ Math.random().toString(36).slice(-10)",
+                  "    individualArrayItem.name.familyName = \"Ganguly\"+ Math.random().toString(36).slice(-10)",
+                  "    individualArrayItem.name.otherNames = \"Dada\"+ Math.random().toString(36).slice(-10)",
+                  "    individualArrayItem.dateOfBirth = new Date(new Date() - Math.random()*(1e+12)).toLocaleDateString('en-GB')",
+                  "    individualArrayItem.gender = genderTypes[Math.floor(Math.random() * genderTypes.length)]",
+                  "    individualArrayItem.bloodGroup = bloodGroups[Math.floor(Math.random() * bloodGroups.length)]",
+                  "    individualArrayItem.mobileNumber = Math.floor(Math.random() * 10000000000)",
+                  "    individualArrayItem.altContactNumber = Math.floor(Math.random() * 10000000000)",
+                  "    individualArrayItem.email = \"abc@test.com\"",
+                  "    individualArrayItem.address = address",
+                  "    individualArrayItem.address[0].addressLine1 = individualArrayItem.address[0].addressLine1 + dt",
+                  "    individualArrayItem.address[0].addressLine2 = individualArrayItem.address[0].addressLine2 + dt",
+                  "    individualArrayItem.address[0].landmark = individualArrayItem.address[0].landmark + dt",
+                  "    individualArrayItem.address[0].buildingName = individualArrayItem.address[0].buildingName + dt",
+                  "    individualArrayItem.address[0].street = individualArrayItem.address[0].street + dt",
+                  "    individualArrayItem.address[0].locality.code = String(new Date().getTime())",
+                  "    individualArrayItem.fatherName = \"test_\" + Math.floor(Math.random() * 1000000)",
+                  "    if(individualArrayItem.gender == \"FEMALE\")",
+                  "        individualArrayItem.husbandName = \"Husband Name\"",
+                  "    else",
+                  "        individualArrayItem.husbandName = null",
+                  "",
+                  "    individualArrayItem.identifiers = []",
+                  "    var identifierElem = {}",
+                  "    identifierElem.identifierType = identifierTypes[Math.floor(Math.random() * identifierTypes.length)]",
+                  "    identifierElem.identifierId = Math.floor((Math.random() * (999999999999 - 100000000000 + 1)) + 100000000000)",
+                  "    individualArrayItem.identifiers.push(identifierElem)",
+                  "",
+                  "    individualArrayItem.skills = []",
+                  "    var skillElem = {}",
+                  "    skillElem.type =  skillTypes[Math.floor(Math.random() * skillTypes.length)]",
+                  "    skillElem.level = skillLevels[Math.floor(Math.random() * skillLevels.length)]",
+                  "    skillElem.experience = skillExperiences[Math.floor(Math.random() * skillExperiences.length)]",
+                  "    individualArrayItem.skills.push(skillElem)",
+                  "",
+                  "    individualArrayItem.photo = dt",
+                  "    individualArrayItem.additionalFields = additionalFields",
+                  "    individualArrayItem.rowVersion = 1",
+                  "",
+                  "    individualArray.push(individualArrayItem)",
+                  "}",
+                  "pm.environment.set(\"individualArray\", JSON.stringify(individualArray))"
+                ],
+                "type": "text/javascript"
+              }
+            },
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "// {",
+                  "//     \"RequestInfo\": {",
+                  "//         \"authToken\": \"{{authToken}}\"",
+                  "//     },",
+                  "//     \"Individuals\": {{individualArray}}",
+                  "// }"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n    \"RequestInfo\": {\n        \"authToken\": \"{{authToken}}\"\n    },\n    \"Individuals\": [\n        {\n            \"tenantId\": \"default\",\n            \"clientReferenceId\": \"{{uuid}}\",\n            \"name\": {\n                \"givenName\": \"{{individualGivenName}}\",\n                \"familyName\": \"{{individualFamilyName}}\",\n                \"otherNames\": \"{{individualOtherName}}\"\n            },\n            \"dateOfBirth\": \"{{individualDateOfBirth}}\",\n            \"gender\": \"{{individualGenderType}}\",\n            \"bloodGroup\": \"{{individualBloodGroup}}\",\n            \"mobileNumber\": \"9972527280\",\n            \"altContactNumber\": \"8765432109\",\n            \"email\": \"souravganguly_dada@gmail.com\",\n            \"address\": [\n                {\n                    \"clientReferenceId\": \"{{uuid2}}\",\n                    \"tenantId\": \"default\",\n                    \"doorNo\": \"123\",\n                    \"latitude\": -19,\n                    \"longitude\": 34,\n                    \"locationAccuracy\": 14.27,\n                    \"type\": \"PERMANENT\",\n                    \"addressLine1\": \"address1\",\n                    \"addressLine2\": \"add2\",\n                    \"landmark\": \"Landmark\",\n                    \"city\": \"Bangalore\",\n                    \"pincode\": \"1234567\",\n                    \"buildingName\": \"Alpine Apartments\",\n                    \"street\": \"test_da0b8ebec5ef\",\n                    \"locality\": {\n                        \"code\": \"locality code\",\n                        \"name\": null,\n                        \"label\": null,\n                        \"latitude\": null,\n                        \"longitude\": null,\n                        \"materializedPath\": null\n                    }\n                }\n            ],\n            \"fatherName\": \"Ganguly Sr\",\n            \"husbandName\": null,\n            \"identifiers\": [\n                {\n                    \"identifierType\": \"AADHAAR\",\n                    \"identifierId\": \"987654321001\"\n                }\n            ],\n            \"skills\": [\n                {\n                    \"type\": \"{{individualSkillType}}\",\n                    \"level\": \"{{individualSkillLevel}}\",\n                    \"experience\": \"{{individualSkillExperience}}\",\n                    \"clientReferenceId\": \"{{individualSkillClientReferenceId}}\"\n                }\n            ],\n            \"photo\": \"test_35bd4e8545d8\",\n            \"additionalFields\": {\n                \"schema\": \"test_f76b4cca6bff\",\n                \"version\": 23,\n                \"fields\": [\n                    {\n                        \"key\": \"test_80f7fb8d8a45\",\n                        \"value\": \"test_38bfd0dc223b\"\n                    }\n                ]\n            },\n            \"isSystemUser\": false,\n            \"rowVersion\": 1\n        }\n    ]\n}"
+            },
+            "url": {
+              "raw": "http://localhost:8099/individual/v1/bulk/_create",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "8099",
+              "path": [
+                "individual",
+                "v1",
+                "bulk",
+                "_create"
+              ]
+            }
+          },
+          "response": [
+            {
+              "name": "Individual Bulk Create Response",
+              "originalRequest": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n    \"RequestInfo\": {\n        \"authToken\": \"{{authToken}}\"\n    },\n    \"Individuals\": [\n        {\n            \"tenantId\": \"default\",\n            \"clientReferenceId\": \"{{uuid}}\",\n            \"name\": {\n                \"givenName\": \"{{individualGivenName}}\",\n                \"familyName\": \"{{individualFamilyName}}\",\n                \"otherNames\": \"{{individualOtherName}}\"\n            },\n            \"dateOfBirth\": \"{{individualDateOfBirth}}\",\n            \"gender\": \"{{individualGenderType}}\",\n            \"bloodGroup\": \"{{individualBloodGroup}}\",\n            \"mobileNumber\": \"9876543210\",\n            \"altContactNumber\": \"8765432109\",\n            \"email\": \"souravganguly_dada@gmail.com\",\n            \"address\": [\n                {\n                    \"tenantId\": \"default\",\n                    \"doorNo\": \"123\",\n                    \"latitude\": 40.82,\n                    \"longitude\": 35.06,\n                    \"locationAccuracy\": 14.27,\n                    \"type\": \"PERMANENT\",\n                    \"addressLine1\": \"Apartment\",\n                    \"addressLine2\": \"2nd Floor\",\n                    \"landmark\": \"Near Juhu Beach\",\n                    \"city\": \"Mumbai\",\n                    \"pincode\": \"123456\",\n                    \"buildingName\": \"Apartment\",\n                    \"street\": \"Necklace Road\",\n                    \"locality\": {\n                        \"code\": \"test_9b31746b933d\",\n                        \"name\": \"test_58630a388978\",\n                        \"label\": \"test_7b7f928dcab8\",\n                        \"latitude\": \"test_15d4a90d15a6\",\n                        \"longitude\": \"test_e8854daed039\",\n                        \"children\": []\n                    }\n                }\n            ],\n            \"fatherName\": \"Ganguly Sr\",\n            \"husbandName\": null,\n            \"identifiers\": [\n                {\n                    \"identifierType\": \"{{individualIdentifierType}}\",\n                    \"identifierId\": \"{{individualIdentifierId}}\"\n                }\n            ],\n            \"skills\": [\n                {\n                    \"type\": \"{{individualSkillType}}\",\n                    \"level\": \"{{individualSkillLevel}}\",\n                    \"experience\": \"{{individualSkillExperience}}\"\n                }\n            ],\n            \"photo\": \"test_35bd4e8545d8\",\n            \"additionalFields\": {\n                \"schema\": \"test_f76b4cca6bff\",\n                \"version\": 23,\n                \"fields\": [\n                    {\n                        \"key\": \"test_80f7fb8d8a45\",\n                        \"value\": \"test_38bfd0dc223b\"\n                    }\n                ]\n            },\n            \"isDeleted\": false,\n            \"rowVersion\": 1\n        },\n        {\n            \"tenantId\": \"default\",\n            \"clientReferenceId\": \"{{uuid2}}\",\n            \"name\": {\n                \"givenName\": \"{{individualGivenName2}}\",\n                \"familyName\": \"{{individualFamilyName2}}\",\n                \"otherNames\": \"{{individualOtherName2}}\"\n            },\n            \"dateOfBirth\": \"{{individualDateOfBirth2}}\",\n            \"gender\": \"{{individualGenderType}}\",\n            \"bloodGroup\": \"{{individualBloodGroup}}\",\n            \"mobileNumber\": \"9876543210\",\n            \"altContactNumber\": \"8765432109\",\n            \"email\": \"souravganguly_dada@gmail.com\",\n            \"address\": [\n                {\n                    \"tenantId\": \"default\",\n                    \"doorNo\": \"123\",\n                    \"latitude\": 40.82,\n                    \"longitude\": 35.06,\n                    \"locationAccuracy\": 14.27,\n                    \"type\": \"PERMANENT\",\n                    \"addressLine1\": \"Apartment\",\n                    \"addressLine2\": \"2nd Floor\",\n                    \"landmark\": \"Near Juhu Beach\",\n                    \"city\": \"Mumbai\",\n                    \"pincode\": \"123456\",\n                    \"buildingName\": \"Apartment\",\n                    \"street\": \"Necklace Road\",\n                    \"locality\": {\n                        \"code\": \"test_9b31746b933d\",\n                        \"name\": \"test_58630a388978\",\n                        \"label\": \"test_7b7f928dcab8\",\n                        \"latitude\": \"test_15d4a90d15a6\",\n                        \"longitude\": \"test_e8854daed039\",\n                        \"children\": []\n                    }\n                }\n            ],\n            \"fatherName\": \"Ganguly Sr\",\n            \"husbandName\": null,\n            \"identifiers\": [\n                {\n                    \"identifierType\": \"{{individualIdentifierType}}\",\n                    \"identifierId\": \"{{individualIdentifierId2}}\"\n                }\n            ],\n            \"skills\": [\n                {\n                    \"type\": \"{{individualSkillType}}\",\n                    \"level\": \"{{individualSkillLevel}}\",\n                    \"experience\": \"{{individualSkillExperience}}\"\n                }\n            ],\n            \"photo\": \"test_35bd4e8545d8\",\n            \"additionalFields\": {\n                \"schema\": \"test_f76b4cca6bff\",\n                \"version\": 23,\n                \"fields\": [\n                    {\n                        \"key\": \"test_80f7fb8d8a45\",\n                        \"value\": \"test_38bfd0dc223b\"\n                    }\n                ]\n            },\n            \"isDeleted\": false,\n            \"rowVersion\": 0\n        }\n    ]\n}"
+                },
+                "url": {
+                  "raw": "{{qa}}/individual/v1/bulk/_create",
+                  "host": [
+                    "{{qa}}"
+                  ],
+                  "path": [
+                    "individual",
+                    "v1",
+                    "bulk",
+                    "_create"
+                  ]
+                }
+              },
+              "status": "Accepted",
+              "code": 202,
+              "_postman_previewlanguage": "json",
+              "header": [
+                {
+                  "key": "Date",
+                  "value": "Mon, 06 Feb 2023 12:39:23 GMT"
+                },
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                },
+                {
+                  "key": "Transfer-Encoding",
+                  "value": "chunked"
+                },
+                {
+                  "key": "Connection",
+                  "value": "keep-alive"
+                },
+                {
+                  "key": "Strict-Transport-Security",
+                  "value": "max-age=63072000; includeSubdomains; preload"
+                },
+                {
+                  "key": "X-Lua-Resty-WAF-ID",
+                  "value": "ba3e54e110e2157de439"
+                },
+                {
+                  "key": "x-correlation-id",
+                  "value": "dfcb9a84-1fb7-41b6-a2ee-23734ed8ef8a"
+                },
+                {
+                  "key": "Cache-Control",
+                  "value": "no-cache, no-store, max-age=0, must-revalidate"
+                },
+                {
+                  "key": "Content-Security-Policy",
+                  "value": "default-src 'self' https: 'unsafe-eval' 'unsafe-inline'; object-src 'none'; img-src 'self' https: data: blob:; style-src https: blob: 'unsafe-inline'; worker-src 'self' blob:; font-src 'self' https: data: blob:; child-src 'self' https: data: blob:;"
+                },
+                {
+                  "key": "Referrer-Policy",
+                  "value": "no-referrer-when-downgrade"
+                },
+                {
+                  "key": "X-Content-Type-Options",
+                  "value": "nosniff"
+                },
+                {
+                  "key": "X-Download-Options",
+                  "value": "noopen"
+                },
+                {
+                  "key": "X-Frame-Options",
+                  "value": "sameorigin"
+                },
+                {
+                  "key": "X-XSS-Protection",
+                  "value": "1"
+                }
+              ],
+              "cookie": [],
+              "body": "{\n    \"apiId\": \"/individual/v1/bulk/_create\",\n    \"ver\": null,\n    \"ts\": 1675687163708,\n    \"resMsgId\": null,\n    \"msgId\": null,\n    \"status\": \"successful\"\n}"
+            }
+          ]
+        },
+        {
+          "name": "Individual Search",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n    \"RequestInfo\": {\n        \"authToken\": \"{{authToken}}\"\n    },\n    \"Individual\": {\n        \"id\": [\"3145ae8e-bfd4-4ec2-98f2-298d00bd80e1\"],\n        \"clientReferenceId\":[\"ed350c69-5cb9-42ab-b1d0-2ca50b386770\"]\n        // \"boundaryCode\":\"w22L4En0Zgg\"\n        // \"gender\":\"OTHER\"\n        // \"userId\": \"220b68a5-a3ad-4094-ac3c-49923f6caeec\"\n    }\n}"
+            },
+            "url": {
+              "raw": "{{URL}}/health-individual/v1/_search?limit=1000&offset=0&tenantId=mz&includeDeleted=true",
+              "host": [
+                "{{URL}}"
+              ],
+              "path": [
+                "health-individual",
+                "v1",
+                "_search"
+              ],
+              "query": [
+                {
+                  "key": "limit",
+                  "value": "1000"
+                },
+                {
+                  "key": "offset",
+                  "value": "0"
+                },
+                {
+                  "key": "tenantId",
+                  "value": "mz"
+                },
+                {
+                  "key": "includeDeleted",
+                  "value": "true"
+                }
+              ]
+            }
+          },
+          "response": [
+            {
+              "name": "Individual Search Response",
+              "originalRequest": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n    \"RequestInfo\": {\n        \"authToken\": \"{{authToken}}\"\n    },\n    \"Individual\": {\n        \"id\": [\n            \"IND-2023-02-06-000206\"\n        ],\n        \"clientReferenceId\": [\n            \"de20471f-5b04-4b3f-977b-03852a7184f3\"\n        ],\n        \"name\": {\n            \"givenName\": \"Sourav6kluywgfr4\",\n            \"familyName\": \"Gangulyvg2ixcv6o7\",\n            \"otherNames\": \"Dadayleygwz15n\"\n        },\n        \"dateOfBirth\": \"16/06/2013\",\n        \"gender\": \"FEMALE\",\n        \"identifier\": {\n            \"identifierType\": \"PAN\",\n            \"identifierId\": \"test_112569275563\"\n        },\n        \"boundaryCode\": \"test_9b31746b933d\"\n    }\n}"
+                },
+                "url": {
+                  "raw": "{{qa}}/individual/v1/_search?limit=100&offset=0&tenantId=default",
+                  "host": [
+                    "{{qa}}"
+                  ],
+                  "path": [
+                    "individual",
+                    "v1",
+                    "_search"
+                  ],
+                  "query": [
+                    {
+                      "key": "limit",
+                      "value": "100"
+                    },
+                    {
+                      "key": "offset",
+                      "value": "0"
+                    },
+                    {
+                      "key": "tenantId",
+                      "value": "default"
+                    }
+                  ]
+                }
+              },
+              "status": "OK",
+              "code": 200,
+              "_postman_previewlanguage": "json",
+              "header": [
+                {
+                  "key": "Date",
+                  "value": "Mon, 06 Feb 2023 13:10:49 GMT"
+                },
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                },
+                {
+                  "key": "Transfer-Encoding",
+                  "value": "chunked"
+                },
+                {
+                  "key": "Connection",
+                  "value": "keep-alive"
+                },
+                {
+                  "key": "Vary",
+                  "value": "Accept-Encoding"
+                },
+                {
+                  "key": "Strict-Transport-Security",
+                  "value": "max-age=63072000; includeSubdomains; preload"
+                },
+                {
+                  "key": "X-Lua-Resty-WAF-ID",
+                  "value": "acffe8146b21766d1686"
+                },
+                {
+                  "key": "x-correlation-id",
+                  "value": "9b047802-eb1a-4bd9-b964-6014fe0c029b"
+                },
+                {
+                  "key": "Cache-Control",
+                  "value": "no-cache, no-store, max-age=0, must-revalidate"
+                },
+                {
+                  "key": "Content-Security-Policy",
+                  "value": "default-src 'self' https: 'unsafe-eval' 'unsafe-inline'; object-src 'none'; img-src 'self' https: data: blob:; style-src https: blob: 'unsafe-inline'; worker-src 'self' blob:; font-src 'self' https: data: blob:; child-src 'self' https: data: blob:;"
+                },
+                {
+                  "key": "Referrer-Policy",
+                  "value": "no-referrer-when-downgrade"
+                },
+                {
+                  "key": "X-Content-Type-Options",
+                  "value": "nosniff"
+                },
+                {
+                  "key": "X-Download-Options",
+                  "value": "noopen"
+                },
+                {
+                  "key": "X-Frame-Options",
+                  "value": "sameorigin"
+                },
+                {
+                  "key": "X-XSS-Protection",
+                  "value": "1"
+                },
+                {
+                  "key": "Content-Encoding",
+                  "value": "gzip"
+                }
+              ],
+              "cookie": [],
+              "body": "{\n    \"ResponseInfo\": {\n        \"apiId\": null,\n        \"ver\": null,\n        \"ts\": 1675689049214,\n        \"resMsgId\": null,\n        \"msgId\": null,\n        \"status\": \"successful\"\n    },\n    \"Individual\": [\n        {\n            \"id\": \"IND-2023-02-06-000206\",\n            \"tenantId\": \"default\",\n            \"clientReferenceId\": \"de20471f-5b04-4b3f-977b-03852a7184f3\",\n            \"userId\": null,\n            \"name\": {\n                \"givenName\": \"Sourav6kluywgfr4\",\n                \"familyName\": \"Gangulyvg2ixcv6o7\",\n                \"otherNames\": \"Dadayleygwz15n\"\n            },\n            \"dateOfBirth\": \"16/06/2013\",\n            \"gender\": \"FEMALE\",\n            \"bloodGroup\": \"O-\",\n            \"mobileNumber\": \"9876543210\",\n            \"altContactNumber\": \"8765432109\",\n            \"email\": \"souravganguly_dada2@gmail.com\",\n            \"address\": [\n                {\n                    \"id\": \"18090d6b-fdc0-4b14-8211-467d65ddbbc5\",\n                    \"individualId\": \"IND-2023-02-06-000206\",\n                    \"tenantId\": \"default\",\n                    \"doorNo\": \"123\",\n                    \"latitude\": 40.82,\n                    \"longitude\": 35.06,\n                    \"locationAccuracy\": 14,\n                    \"type\": \"PERMANENT\",\n                    \"addressLine1\": \"Apartment\",\n                    \"addressLine2\": \"2nd Floor\",\n                    \"landmark\": \"Near Juhu Beach\",\n                    \"city\": \"Mumbai\",\n                    \"pincode\": \"123456\",\n                    \"buildingName\": \"Apartment\",\n                    \"street\": \"Necklace Road\",\n                    \"locality\": {\n                        \"code\": \"test_9b31746b933d\",\n                        \"name\": null,\n                        \"label\": null,\n                        \"latitude\": null,\n                        \"longitude\": null,\n                        \"children\": null,\n                        \"materializedPath\": null\n                    },\n                    \"isDeleted\": false,\n                    \"auditDetails\": {\n                        \"createdBy\": \"6af8acab-cb2f-472b-8def-aab27864ad16\",\n                        \"lastModifiedBy\": \"6af8acab-cb2f-472b-8def-aab27864ad16\",\n                        \"createdTime\": 1675687163794,\n                        \"lastModifiedTime\": 1675688229098\n                    }\n                }\n            ],\n            \"fatherName\": \"Ganguly Sr\",\n            \"husbandName\": null,\n            \"identifiers\": [\n                {\n                    \"id\": \"b74bea7d-d1e0-4d44-ada4-54f48dfe9fcd\",\n                    \"individualId\": \"IND-2023-02-06-000206\",\n                    \"identifierType\": \"PAN\",\n                    \"identifierId\": \"test_112569275563\",\n                    \"isDeleted\": false,\n                    \"auditDetails\": {\n                        \"createdBy\": \"6af8acab-cb2f-472b-8def-aab27864ad16\",\n                        \"lastModifiedBy\": \"6af8acab-cb2f-472b-8def-aab27864ad16\",\n                        \"createdTime\": 1675687163795,\n                        \"lastModifiedTime\": 1675688229099\n                    }\n                }\n            ],\n            \"skills\": null,\n            \"photo\": \"test_35bd4e8545d8\",\n            \"additionalFields\": {\n                \"schema\": \"test_f76b4cca6bff\",\n                \"version\": 23,\n                \"fields\": [\n                    {\n                        \"key\": \"test_80f7fb8d8a45\",\n                        \"value\": \"test_38bfd0dc223b\"\n                    }\n                ]\n            },\n            \"isDeleted\": false,\n            \"rowVersion\": 2,\n            \"auditDetails\": {\n                \"createdBy\": \"6af8acab-cb2f-472b-8def-aab27864ad16\",\n                \"lastModifiedBy\": \"6af8acab-cb2f-472b-8def-aab27864ad16\",\n                \"createdTime\": 1675687163793,\n                \"lastModifiedTime\": 1675688229099\n            }\n        }\n    ]\n}"
+            }
+          ]
+        },
+        {
+          "name": "Individual Update",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n    \"RequestInfo\": {\n        \"authToken\": \"{{authToken}}\"\n    },\n    \"Individual\":  {\n            \"id\": \"c87f656c-7f34-47e0-8e8f-35efb815106a\",\n            \"individualId\": \"IND-2023-05-08-188813\",\n            \"tenantId\": \"default\",\n            \"clientReferenceId\": \"407e829e-e5b2-46d1-acc6-9bdb9d38d950\",\n            \"userId\": null,\n            \"name\": {\n                \"givenName\": \"Sourav0jk7cemqre\",\n                \"familyName\": \"Gangulyhll5kltd8w\",\n                \"otherNames\": \"Dadaz9t8f8wqpf\"\n            },\n            \"dateOfBirth\": \"30/11/2005\",\n            \"gender\": \"MALE\",\n            \"bloodGroup\": \"A+\",\n            \"mobileNumber\": \"9972527280\",\n            \"altContactNumber\": \"8765432109\",\n            \"email\": \"souravganguly_dada@gmail.com\",\n            \"address\": [\n                {\n                    \"id\": \"64b90689-34a7-4ce5-8ec4-b2af15707cbd\",\n                    \"clientReferenceId\": \"221e4bd9-f2a4-4f96-ab4a-b8f1852c2308\",\n                    \"individualId\": \"c87f656c-7f34-47e0-8e8f-35efb815106a\",\n                    \"tenantId\": \"default\",\n                    \"doorNo\": \"123\",\n                    \"latitude\": 40.82,\n                    \"longitude\": 35.06,\n                    \"locationAccuracy\": 14.0,\n                    \"type\": \"PERMANENT\",\n                    \"addressLine1\": \"Apartment\",\n                    \"addressLine2\": \"2nd Floor\",\n                    \"landmark\": \"Near Juhu Beach\",\n                    \"city\": \"Mumbai\",\n                    \"pincode\": \"123456\",\n                    \"buildingName\": \"Apartment\",\n                    \"street\": \"Necklace Road\",\n                    \"locality\": {\n                        \"code\": \"test_9b31746b933d\",\n                        \"name\": null,\n                        \"label\": null,\n                        \"latitude\": null,\n                        \"longitude\": null,\n                        \"children\": null,\n                        \"materializedPath\": null\n                    },\n                    \"ward\": null,\n                    \"isDeleted\": false,\n                    \"auditDetails\": {\n                        \"createdBy\": \"2268179b-cae5-4751-9e0b-d72f825557c3\",\n                        \"lastModifiedBy\": \"2268179b-cae5-4751-9e0b-d72f825557c3\",\n                        \"createdTime\": 1683538796488,\n                        \"lastModifiedTime\": 1683538796488\n                    }\n                }\n            ],\n            \"fatherName\": \"Ganguly Sr\",\n            \"husbandName\": null,\n            \"relationship\": null,\n            \"identifiers\": [\n                {\n                    \"id\": \"bbb25935-e8bf-446e-94c5-b86c95cdd50c\",\n                    \"clientReferenceId\": null,\n                    \"individualId\": \"c87f656c-7f34-47e0-8e8f-35efb815106a\",\n                    \"identifierType\": \"AADHAAR\",\n                    \"identifierId\": \"987654321002\",\n                    \"isDeleted\": false,\n                    \"auditDetails\": {\n                        \"createdBy\": \"2268179b-cae5-4751-9e0b-d72f825557c3\",\n                        \"lastModifiedBy\": \"2268179b-cae5-4751-9e0b-d72f825557c3\",\n                        \"createdTime\": 1683538796488,\n                        \"lastModifiedTime\": 1683538796488\n                    }\n                }\n            ],\n            \"skills\": [\n                {\n                    \"id\": \"b36e2088-6748-4e33-a92b-2330438c775b\",\n                    \"clientReferenceId\": \"10bb51a4-acdf-405c-afd2-efbfc39b384f\",\n                    \"individualId\": \"c87f656c-7f34-47e0-8e8f-35efb815106a\",\n                    \"type\": \"Computer\",\n                    \"level\": \"Novice\",\n                    \"experience\": \"10 Years\",\n                    \"isDeleted\": false,\n                    \"auditDetails\": {\n                        \"createdBy\": \"2268179b-cae5-4751-9e0b-d72f825557c3\",\n                        \"lastModifiedBy\": \"2268179b-cae5-4751-9e0b-d72f825557c3\",\n                        \"createdTime\": 1683538796488,\n                        \"lastModifiedTime\": 1683538796488\n                    }\n                }\n            ],\n            \"photo\": \"test_35bd4e8545d8\",\n            \"additionalFields\": {\n                \"schema\": \"test_f76b4cca6bff\",\n                \"version\": 23,\n                \"fields\": [\n                    {\n                        \"key\": \"test_80f7fb8d8a45\",\n                        \"value\": \"test_38bfd0dc223b\"\n                    }\n                ]\n            },\n            \"isDeleted\": false,\n            \"rowVersion\": 2,\n            \"auditDetails\": {\n                \"createdBy\": \"2268179b-cae5-4751-9e0b-d72f825557c3\",\n                \"lastModifiedBy\": \"2268179b-cae5-4751-9e0b-d72f825557c3\",\n                \"createdTime\": 1683538796487,\n                \"lastModifiedTime\": 1683538796487\n            },\n            \"isSystemUser\": false\n        }\n}"
+            },
+            "url": {
+              "raw": "{{URL}}/individual/v1/_update",
+              "host": [
+                "{{URL}}"
+              ],
+              "path": [
+                "individual",
+                "v1",
+                "_update"
+              ]
+            }
+          },
+          "response": [
+            {
+              "name": "Individual Update Response",
+              "originalRequest": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n    \"RequestInfo\": {\n        \"authToken\": \"{{authToken}}\"\n    },\n    \"Individual\": {\n        \"id\": \"IND-2023-02-06-000202\",\n        \"tenantId\": \"default\",\n        \"clientReferenceId\": \"98e1f72f-f978-4b96-a02c-a96918057fbc\",\n        \"userId\": null,\n        \"name\": {\n            \"givenName\": \"Souravushk9ekdgg\",\n            \"familyName\": \"Gangulynwnjjw58gd\",\n            \"otherNames\": \"Dadabf2k7cvvr5\"\n        },\n        \"dateOfBirth\": \"09/10/1999\",\n        \"gender\": \"FEMALE\",\n        \"bloodGroup\": \"A+\",\n        \"mobileNumber\": \"9876543210\",\n        \"altContactNumber\": \"8765432109\",\n        \"email\": \"souravganguly_dada@gmail.com\",\n        \"address\": [\n            {\n                \"id\": \"d399fa43-0c9f-4a26-95f4-3dde5b981aee\",\n                \"individualId\": \"IND-2023-02-06-000202\",\n                \"tenantId\": \"default\",\n                \"doorNo\": \"123\",\n                \"latitude\": 40.82,\n                \"longitude\": 35.06,\n                \"locationAccuracy\": 14.0,\n                \"type\": \"PERMANENT\",\n                \"addressLine1\": \"Apartment\",\n                \"addressLine2\": \"2nd Floor\",\n                \"landmark\": \"Near Juhu Beach\",\n                \"city\": \"Mumbai\",\n                \"pincode\": \"123456\",\n                \"buildingName\": \"Apartment\",\n                \"street\": \"Necklace Road\",\n                \"locality\": {\n                    \"code\": \"test_9b31746b933d\",\n                    \"name\": null,\n                    \"label\": null,\n                    \"latitude\": null,\n                    \"longitude\": null,\n                    \"children\": null,\n                    \"materializedPath\": null\n                },\n                \"isDeleted\": false,\n                \"auditDetails\": {\n                    \"createdBy\": \"6af8acab-cb2f-472b-8def-aab27864ad16\",\n                    \"lastModifiedBy\": \"6af8acab-cb2f-472b-8def-aab27864ad16\",\n                    \"createdTime\": 1675686234096,\n                    \"lastModifiedTime\": 1675686234096\n                }\n            }\n        ],\n        \"fatherName\": \"Ganguly Sr\",\n        \"husbandName\": null,\n        \"identifiers\": [\n            {\n                \"id\": \"ccf3ae4c-5106-43d0-b17f-a52c1b2a2e42\",\n                \"individualId\": \"IND-2023-02-06-000202\",\n                \"identifierType\": \"SYSTEM_GENERATED\",\n                \"identifierId\": \"936455495159\",\n                \"isDeleted\": false,\n                \"auditDetails\": {\n                    \"createdBy\": \"6af8acab-cb2f-472b-8def-aab27864ad16\",\n                    \"lastModifiedBy\": \"6af8acab-cb2f-472b-8def-aab27864ad16\",\n                    \"createdTime\": 1675686234099,\n                    \"lastModifiedTime\": 1675686234099\n                }\n            }\n        ],\n        \"skills\": [\n            {\n                \"id\": \"63dea78e-965d-48d6-abe6-8b8c5b9eba5a\",\n                \"individualId\": \"IND-2023-02-06-000202\",\n                \"type\": \"Dancing\",\n                \"level\": \"Learner\",\n                \"experience\": \"7 Years\",\n                \"isDeleted\": false,\n                \"auditDetails\": {\n                    \"createdBy\": \"6af8acab-cb2f-472b-8def-aab27864ad16\",\n                    \"lastModifiedBy\": \"6af8acab-cb2f-472b-8def-aab27864ad16\",\n                    \"createdTime\": 1675686234101,\n                    \"lastModifiedTime\": 1675686234101\n                }\n            },\n            {\n               \"type\": \"Singing\",\n                \"level\": \"Professional\",\n                \"experience\": \"10 Years\" \n            }\n        ],\n        \"photo\": \"test_35bd4e8545d8\",\n        \"additionalFields\": {\n            \"schema\": \"test_f76b4cca6bff\",\n            \"version\": 23,\n            \"fields\": [\n                {\n                    \"key\": \"test_80f7fb8d8a45\",\n                    \"value\": \"test_38bfd0dc223b\"\n                }\n            ]\n        },\n        \"isDeleted\": false,\n        \"rowVersion\": 1,\n        \"auditDetails\": {\n            \"createdBy\": \"6af8acab-cb2f-472b-8def-aab27864ad16\",\n            \"lastModifiedBy\": \"6af8acab-cb2f-472b-8def-aab27864ad16\",\n            \"createdTime\": 1675686234089,\n            \"lastModifiedTime\": 1675686234089\n        }\n    }\n}"
+                },
+                "url": {
+                  "raw": "{{qa}}/individual/v1/_update",
+                  "host": [
+                    "{{qa}}"
+                  ],
+                  "path": [
+                    "individual",
+                    "v1",
+                    "_update"
+                  ]
+                }
+              },
+              "status": "Accepted",
+              "code": 202,
+              "_postman_previewlanguage": "json",
+              "header": [
+                {
+                  "key": "Date",
+                  "value": "Mon, 06 Feb 2023 12:29:16 GMT"
+                },
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                },
+                {
+                  "key": "Transfer-Encoding",
+                  "value": "chunked"
+                },
+                {
+                  "key": "Connection",
+                  "value": "keep-alive"
+                },
+                {
+                  "key": "Strict-Transport-Security",
+                  "value": "max-age=63072000; includeSubdomains; preload"
+                },
+                {
+                  "key": "X-Lua-Resty-WAF-ID",
+                  "value": "df28af99657d830822bf"
+                },
+                {
+                  "key": "x-correlation-id",
+                  "value": "3ed219bc-2bf6-4f76-8c02-3bca32d0589d"
+                },
+                {
+                  "key": "Cache-Control",
+                  "value": "no-cache, no-store, max-age=0, must-revalidate"
+                },
+                {
+                  "key": "Content-Security-Policy",
+                  "value": "default-src 'self' https: 'unsafe-eval' 'unsafe-inline'; object-src 'none'; img-src 'self' https: data: blob:; style-src https: blob: 'unsafe-inline'; worker-src 'self' blob:; font-src 'self' https: data: blob:; child-src 'self' https: data: blob:;"
+                },
+                {
+                  "key": "Referrer-Policy",
+                  "value": "no-referrer-when-downgrade"
+                },
+                {
+                  "key": "X-Content-Type-Options",
+                  "value": "nosniff"
+                },
+                {
+                  "key": "X-Download-Options",
+                  "value": "noopen"
+                },
+                {
+                  "key": "X-Frame-Options",
+                  "value": "sameorigin"
+                },
+                {
+                  "key": "X-XSS-Protection",
+                  "value": "1"
+                }
+              ],
+              "cookie": [],
+              "body": "{\n    \"ResponseInfo\": {\n        \"apiId\": null,\n        \"ver\": null,\n        \"ts\": 1675686556411,\n        \"resMsgId\": null,\n        \"msgId\": null,\n        \"status\": \"successful\"\n    },\n    \"Individual\": {\n        \"id\": \"IND-2023-02-06-000202\",\n        \"tenantId\": \"default\",\n        \"clientReferenceId\": \"98e1f72f-f978-4b96-a02c-a96918057fbc\",\n        \"userId\": null,\n        \"name\": {\n            \"givenName\": \"Souravushk9ekdgg\",\n            \"familyName\": \"Gangulynwnjjw58gd\",\n            \"otherNames\": \"Dadabf2k7cvvr5\"\n        },\n        \"dateOfBirth\": \"09/10/1999\",\n        \"gender\": \"FEMALE\",\n        \"bloodGroup\": \"A+\",\n        \"mobileNumber\": \"9876543210\",\n        \"altContactNumber\": \"8765432109\",\n        \"email\": \"souravganguly_dada@gmail.com\",\n        \"address\": [\n            {\n                \"id\": \"d399fa43-0c9f-4a26-95f4-3dde5b981aee\",\n                \"individualId\": \"IND-2023-02-06-000202\",\n                \"tenantId\": \"default\",\n                \"doorNo\": \"123\",\n                \"latitude\": 40.82,\n                \"longitude\": 35.06,\n                \"locationAccuracy\": 14,\n                \"type\": \"PERMANENT\",\n                \"addressLine1\": \"Apartment\",\n                \"addressLine2\": \"2nd Floor\",\n                \"landmark\": \"Near Juhu Beach\",\n                \"city\": \"Mumbai\",\n                \"pincode\": \"123456\",\n                \"buildingName\": \"Apartment\",\n                \"street\": \"Necklace Road\",\n                \"locality\": {\n                    \"code\": \"test_9b31746b933d\",\n                    \"name\": null,\n                    \"label\": null,\n                    \"latitude\": null,\n                    \"longitude\": null,\n                    \"children\": null,\n                    \"materializedPath\": null\n                },\n                \"isDeleted\": false,\n                \"auditDetails\": {\n                    \"createdBy\": \"6af8acab-cb2f-472b-8def-aab27864ad16\",\n                    \"lastModifiedBy\": \"6af8acab-cb2f-472b-8def-aab27864ad16\",\n                    \"createdTime\": 1675686234096,\n                    \"lastModifiedTime\": 1675686556359\n                }\n            }\n        ],\n        \"fatherName\": \"Ganguly Sr\",\n        \"husbandName\": null,\n        \"identifiers\": [\n            {\n                \"id\": \"ccf3ae4c-5106-43d0-b17f-a52c1b2a2e42\",\n                \"individualId\": \"IND-2023-02-06-000202\",\n                \"identifierType\": \"SYSTEM_GENERATED\",\n                \"identifierId\": \"936455495159\",\n                \"isDeleted\": false,\n                \"auditDetails\": {\n                    \"createdBy\": \"6af8acab-cb2f-472b-8def-aab27864ad16\",\n                    \"lastModifiedBy\": \"6af8acab-cb2f-472b-8def-aab27864ad16\",\n                    \"createdTime\": 1675686234099,\n                    \"lastModifiedTime\": 1675686556360\n                }\n            }\n        ],\n        \"skills\": [\n            {\n                \"id\": \"63dea78e-965d-48d6-abe6-8b8c5b9eba5a\",\n                \"individualId\": \"IND-2023-02-06-000202\",\n                \"type\": \"Dancing\",\n                \"level\": \"Learner\",\n                \"experience\": \"7 Years\",\n                \"isDeleted\": false,\n                \"auditDetails\": {\n                    \"createdBy\": \"6af8acab-cb2f-472b-8def-aab27864ad16\",\n                    \"lastModifiedBy\": \"6af8acab-cb2f-472b-8def-aab27864ad16\",\n                    \"createdTime\": 1675686234101,\n                    \"lastModifiedTime\": 1675686556362\n                }\n            },\n            {\n                \"id\": \"5d694a47-9a5a-466c-b577-691137055e55\",\n                \"individualId\": \"IND-2023-02-06-000202\",\n                \"type\": \"Singing\",\n                \"level\": \"Professional\",\n                \"experience\": \"10 Years\",\n                \"isDeleted\": false,\n                \"auditDetails\": {\n                    \"createdBy\": \"6af8acab-cb2f-472b-8def-aab27864ad16\",\n                    \"lastModifiedBy\": \"6af8acab-cb2f-472b-8def-aab27864ad16\",\n                    \"createdTime\": 1675686556361,\n                    \"lastModifiedTime\": 1675686556362\n                }\n            }\n        ],\n        \"photo\": \"test_35bd4e8545d8\",\n        \"additionalFields\": {\n            \"schema\": \"test_f76b4cca6bff\",\n            \"version\": 23,\n            \"fields\": [\n                {\n                    \"key\": \"test_80f7fb8d8a45\",\n                    \"value\": \"test_38bfd0dc223b\"\n                }\n            ]\n        },\n        \"isDeleted\": false,\n        \"rowVersion\": 2,\n        \"auditDetails\": {\n            \"createdBy\": \"6af8acab-cb2f-472b-8def-aab27864ad16\",\n            \"lastModifiedBy\": \"6af8acab-cb2f-472b-8def-aab27864ad16\",\n            \"createdTime\": 1675686234089,\n            \"lastModifiedTime\": 1675686556364\n        }\n    }\n}"
+            }
+          ]
+        },
+        {
+          "name": "Individual Bulk Update",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n    \"RequestInfo\": {\n        \"authToken\": \"{{authToken}}\"\n    },\n    \"Individuals\": [\n        {\n            \"id\": \"0ccbff78-140e-4a62-9c47-9c86f4aacc87\",\n            \"individualId\": \"IND-2023-05-15-000475\",\n            \"tenantId\": \"default\",\n            \"clientReferenceId\": \"46162ad0-36dd-48f0-aadc-944b87a03c85\",\n            \"userId\": null,\n            \"name\": {\n                \"givenName\": \"Souravw8a8iqq4tb\",\n                \"familyName\": \"Gangulyug3juhi5h3\",\n                \"otherNames\": \"Dadaj9r3i80v78\"\n            },\n            \"dateOfBirth\": \"26/04/2023\",\n            \"gender\": \"MALE\",\n            \"bloodGroup\": \"AB+\",\n            \"mobileNumber\": \"9972527280\",\n            \"altContactNumber\": \"8765432109\",\n            \"email\": \"souravganguly_dada@gmail.com\",\n            \"address\": [\n                {\n                    \"id\": \"8dcd73f9-d69a-432f-8ef8-17b02fd8849c\",\n                    \"clientReferenceId\": \"0dd82dd9-64ab-4410-9ddb-2ba22f194140\",\n                    \"individualId\": \"0ccbff78-140e-4a62-9c47-9c86f4aacc87\",\n                    \"tenantId\": \"default\",\n                    \"doorNo\": \"123\",\n                    \"latitude\": 40.82,\n                    \"longitude\": 35.06,\n                    \"locationAccuracy\": 14.0,\n                    \"type\": \"PERMANENT\",\n                    \"addressLine1\": \"address1\",\n                    \"addressLine2\": \"add2 updated\",\n                    \"landmark\": \"Landmark\",\n                    \"city\": \"Bangalore\",\n                    \"pincode\": \"1234567\",\n                    \"buildingName\": \"Alpine Apartments\",\n                    \"street\": \"test_da0b8ebec5ef\",\n                    \"locality\": {\n                        \"code\": \"locality code\",\n                        \"name\": null,\n                        \"label\": null,\n                        \"latitude\": null,\n                        \"longitude\": null,\n                        \"children\": null,\n                        \"materializedPath\": null\n                    },\n                    \"ward\": null,\n                    \"isDeleted\": false,\n                    \"auditDetails\": {\n                        \"createdBy\": \"36e23e7d-d890-402d-a7b0-b3ac65abc4c3\",\n                        \"lastModifiedBy\": \"36e23e7d-d890-402d-a7b0-b3ac65abc4c3\",\n                        \"createdTime\": 1684153906481,\n                        \"lastModifiedTime\": 1684153906481\n                    }\n                }\n            ],\n            \"fatherName\": \"Ganguly Sr\",\n            \"husbandName\": null,\n            \"relationship\": null,\n            \"identifiers\": [\n                {\n                    \"id\": \"6c7d0db7-336c-48aa-88b2-53239e0ee3a6\",\n                    \"clientReferenceId\": null,\n                    \"individualId\": \"0ccbff78-140e-4a62-9c47-9c86f4aacc87\",\n                    \"identifierType\": \"AADHAAR\",\n                    \"identifierId\": \"987654321001\",\n                    \"isDeleted\": false,\n                    \"auditDetails\": {\n                        \"createdBy\": \"36e23e7d-d890-402d-a7b0-b3ac65abc4c3\",\n                        \"lastModifiedBy\": \"36e23e7d-d890-402d-a7b0-b3ac65abc4c3\",\n                        \"createdTime\": 1684153906482,\n                        \"lastModifiedTime\": 1684153906482\n                    }\n                }\n            ],\n            \"skills\": [\n                {\n                    \"id\": \"022699a1-9d07-4173-ad97-aecbe4a35bf5\",\n                    \"clientReferenceId\": \"36298629-c0f8-4ce3-89e6-e0ce87e51044\",\n                    \"individualId\": \"0ccbff78-140e-4a62-9c47-9c86f4aacc87\",\n                    \"type\": \"Singing\",\n                    \"level\": \"Profecient\",\n                    \"experience\": \"2 Years\",\n                    \"isDeleted\": false,\n                    \"auditDetails\": {\n                        \"createdBy\": \"36e23e7d-d890-402d-a7b0-b3ac65abc4c3\",\n                        \"lastModifiedBy\": \"36e23e7d-d890-402d-a7b0-b3ac65abc4c3\",\n                        \"createdTime\": 1684153906482,\n                        \"lastModifiedTime\": 1684153906482\n                    }\n                }\n            ],\n            \"photo\": \"test_35bd4e8545d8\",\n            \"additionalFields\": {\n                \"schema\": \"test_f76b4cca6bff\",\n                \"version\": 23,\n                \"fields\": [\n                    {\n                        \"key\": \"test_80f7fb8d8a45\",\n                        \"value\": \"test_38bfd0dc223b\"\n                    }\n                ]\n            },\n            \"isDeleted\": false,\n            \"rowVersion\": 1,\n            \"auditDetails\": {\n                \"createdBy\": \"36e23e7d-d890-402d-a7b0-b3ac65abc4c3\",\n                \"lastModifiedBy\": \"36e23e7d-d890-402d-a7b0-b3ac65abc4c3\",\n                \"createdTime\": 1684153906481,\n                \"lastModifiedTime\": 1684153906481\n            },\n            \"isSystemUser\": false\n        }\n    ]\n}"
+            },
+            "url": {
+              "raw": "{{URL}}/individual/v1/bulk/_update",
+              "host": [
+                "{{URL}}"
+              ],
+              "path": [
+                "individual",
+                "v1",
+                "bulk",
+                "_update"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Individual Delete",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n    \"RequestInfo\": {\n        \"authToken\": \"{{authToken}}\"\n    },\n    \"Individual\":{\n            \"id\": \"c1a1d102-5758-464b-8fe9-412cf2b6fa80\",\n            \"individualId\": \"IND-2023-08-30-292393\",\n            \"tenantId\": \"default\",\n            \"clientReferenceId\": \"efa186e0-6f09-45ce-9142-83659f724aac\",\n            \"userId\": null,\n            \"userUuid\": null,\n            \"name\": {\n                \"givenName\": \"Souravwo31pfd31i\",\n                \"familyName\": \"Ganguly713z75czvj\",\n                \"otherNames\": \"Dadadgmppf5i8g\"\n            },\n            \"dateOfBirth\": \"03/03/1999\",\n            \"gender\": \"MALE\",\n            \"bloodGroup\": \"O-\",\n            \"mobileNumber\": \"9972527280\",\n            \"altContactNumber\": \"8765432109\",\n            \"email\": \"souravganguly_dada@gmail.com\",\n            \"address\": [\n                {\n                    \"id\": \"c2a0291a-7127-4255-8856-a92de26ad6d1\",\n                    \"clientReferenceId\": \"abf1a1cc-6903-4937-9c34-860d14aeac61\",\n                    \"individualId\": \"c1a1d102-5758-464b-8fe9-412cf2b6fa80\",\n                    \"tenantId\": \"default\",\n                    \"doorNo\": \"123\",\n                    \"latitude\": -19.0,\n                    \"longitude\": 34.0,\n                    \"locationAccuracy\": 14.0,\n                    \"type\": \"PERMANENT\",\n                    \"addressLine1\": \"Apartment\",\n                    \"addressLine2\": \"2nd Floor\",\n                    \"landmark\": \"Near Juhu Beach\",\n                    \"city\": \"Mumbai\",\n                    \"pincode\": \"123456\",\n                    \"buildingName\": \"Apartment\",\n                    \"street\": \"Necklace Road\",\n                    \"locality\": {\n                        \"code\": \"test_9b31746b933d\",\n                        \"name\": null,\n                        \"label\": null,\n                        \"latitude\": null,\n                        \"longitude\": null,\n                        \"children\": null,\n                        \"materializedPath\": null\n                    },\n                    \"ward\": null,\n                    \"isDeleted\": false,\n                    \"auditDetails\": {\n                        \"createdBy\": \"8d6b222c-ff04-4a5e-8b69-b45b4cb73f2a\",\n                        \"lastModifiedBy\": \"8d6b222c-ff04-4a5e-8b69-b45b4cb73f2a\",\n                        \"createdTime\": 1693392652018,\n                        \"lastModifiedTime\": 1693392652018\n                    }\n                }\n            ],\n            \"fatherName\": \"Ganguly Sr\",\n            \"husbandName\": null,\n            \"relationship\": null,\n            \"identifiers\": [\n                {\n                    \"id\": \"8f11e63a-b09a-4497-8db0-f00e8de177b9\",\n                    \"clientReferenceId\": null,\n                    \"individualId\": \"c1a1d102-5758-464b-8fe9-412cf2b6fa80\",\n                    \"identifierType\": \"AADHAAR\",\n                    \"identifierId\": \"********1013\",\n                    \"isDeleted\": false,\n                    \"auditDetails\": {\n                        \"createdBy\": \"8d6b222c-ff04-4a5e-8b69-b45b4cb73f2a\",\n                        \"lastModifiedBy\": \"8d6b222c-ff04-4a5e-8b69-b45b4cb73f2a\",\n                        \"createdTime\": 1693392652019,\n                        \"lastModifiedTime\": 1693392652019\n                    }\n                }\n            ],\n            \"skills\": [\n                {\n                    \"id\": \"923676c4-f6dd-4bb5-85be-2be7ab0af8e3\",\n                    \"clientReferenceId\": \"186d0730-746c-4d66-811c-a913ecc79aa3\",\n                    \"individualId\": \"c1a1d102-5758-464b-8fe9-412cf2b6fa80\",\n                    \"type\": \"Singing\",\n                    \"level\": \"Novice\",\n                    \"experience\": \"10+ Years\",\n                    \"isDeleted\": false,\n                    \"auditDetails\": {\n                        \"createdBy\": \"8d6b222c-ff04-4a5e-8b69-b45b4cb73f2a\",\n                        \"lastModifiedBy\": \"8d6b222c-ff04-4a5e-8b69-b45b4cb73f2a\",\n                        \"createdTime\": 1693392652021,\n                        \"lastModifiedTime\": 1693392652021\n                    }\n                }\n            ],\n            \"photo\": \"test_35bd4e8545d8\",\n            \"additionalFields\": {\n                \"schema\": \"test_f76b4cca6bff\",\n                \"version\": 23,\n                \"fields\": [\n                    {\n                        \"key\": \"test_80f7fb8d8a45\",\n                        \"value\": \"test_38bfd0dc223b\"\n                    }\n                ]\n            },\n            \"isDeleted\": true,\n            \"rowVersion\": 1,\n            \"auditDetails\": {\n                \"createdBy\": \"8d6b222c-ff04-4a5e-8b69-b45b4cb73f2a\",\n                \"lastModifiedBy\": \"8d6b222c-ff04-4a5e-8b69-b45b4cb73f2a\",\n                \"createdTime\": 1693392652018,\n                \"lastModifiedTime\": 1693392652018\n            },\n            \"clientAuditDetails\": {\n                \"createdBy\": \"a8c7b5c5-6007-4556-945e-3969c98b5152\",\n                \"lastModifiedBy\": \"a8c7b5c5-6007-4556-945e-3969c98b5152\",\n                \"createdTime\": 1692774224,\n                \"lastModifiedTime\": 16927742467\n            },\n            \"isSystemUser\": false,\n            \"isSystemUserActive\": true,\n            \"userDetails\": {\n                \"username\": null,\n                \"password\": null,\n                \"tenantId\": \"default\",\n                \"roles\": null,\n                \"type\": null\n            }\n        }\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{URL}}/individual/v1/_delete",
+              "host": [
+                "{{URL}}"
+              ],
+              "path": [
+                "individual",
+                "v1",
+                "_delete"
+              ]
+            }
+          },
+          "response": [
+            {
+              "name": "Individual Delete Response",
+              "originalRequest": {
+                "method": "POST",
+                "header": [],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n    \"RequestInfo\": {\n        \"authToken\": \"{{authToken}}\"\n    },\n    \"Individual\": {\n        \"id\": \"IND-2023-02-07-000208\",\n        \"tenantId\": \"default\",\n        \"clientReferenceId\": \"09df7d6d-aad6-44b1-8cc9-c47a367385f4\",\n        \"userId\": null,\n        \"name\": {\n            \"givenName\": \"Souravzdpfce6xcr\",\n            \"familyName\": \"Ganguly9r2x5j3t09\",\n            \"otherNames\": \"Dadaa1hdol6b26\"\n        },\n        \"dateOfBirth\": \"22/12/2010\",\n        \"gender\": \"FEMALE\",\n        \"bloodGroup\": \"AB-\",\n        \"mobileNumber\": \"9876543210\",\n        \"altContactNumber\": \"8765432109\",\n        \"email\": \"souravganguly_dada@gmail.com\",\n        \"address\": [\n            {\n                \"id\": \"d28952b4-3c9c-42c6-b122-2d388b2520ce\",\n                \"individualId\": \"IND-2023-02-07-000208\",\n                \"tenantId\": \"default\",\n                \"doorNo\": \"123\",\n                \"latitude\": 40.82,\n                \"longitude\": 35.06,\n                \"locationAccuracy\": 14.27,\n                \"type\": \"PERMANENT\",\n                \"addressLine1\": \"Apartment\",\n                \"addressLine2\": \"2nd Floor\",\n                \"landmark\": \"Near Juhu Beach\",\n                \"city\": \"Mumbai\",\n                \"pincode\": \"123456\",\n                \"buildingName\": \"Apartment\",\n                \"street\": \"Necklace Road\",\n                \"locality\": {\n                    \"code\": \"test_9b31746b933d\",\n                    \"name\": \"test_58630a388978\",\n                    \"label\": \"test_7b7f928dcab8\",\n                    \"latitude\": \"test_15d4a90d15a6\",\n                    \"longitude\": \"test_e8854daed039\",\n                    \"children\": [],\n                    \"materializedPath\": null\n                },\n                \"isDeleted\": false,\n                \"auditDetails\": {\n                    \"createdBy\": \"6af8acab-cb2f-472b-8def-aab27864ad16\",\n                    \"lastModifiedBy\": \"6af8acab-cb2f-472b-8def-aab27864ad16\",\n                    \"createdTime\": 1675741782727,\n                    \"lastModifiedTime\": 1675741782727\n                }\n            }\n        ],\n        \"fatherName\": \"Ganguly Sr\",\n        \"husbandName\": null,\n        \"identifiers\": [\n            {\n                \"id\": \"574c15f9-07c0-4dbe-9961-cdc54b771704\",\n                \"individualId\": \"IND-2023-02-07-000208\",\n                \"identifierType\": \"AADHAAR\",\n                \"identifierId\": \"663463366872\",\n                \"isDeleted\": false,\n                \"auditDetails\": {\n                    \"createdBy\": \"6af8acab-cb2f-472b-8def-aab27864ad16\",\n                    \"lastModifiedBy\": \"6af8acab-cb2f-472b-8def-aab27864ad16\",\n                    \"createdTime\": 1675741782728,\n                    \"lastModifiedTime\": 1675741782728\n                }\n            }\n        ],\n        \"skills\": [\n            {\n                \"id\": \"d3040926-f977-49a2-8a47-d36d5e95b66e\",\n                \"individualId\": \"IND-2023-02-07-000208\",\n                \"type\": \"Dancing\",\n                \"level\": \"Novice\",\n                \"experience\": \"6 Years\",\n                \"isDeleted\": false,\n                \"auditDetails\": {\n                    \"createdBy\": \"6af8acab-cb2f-472b-8def-aab27864ad16\",\n                    \"lastModifiedBy\": \"6af8acab-cb2f-472b-8def-aab27864ad16\",\n                    \"createdTime\": 1675741782729,\n                    \"lastModifiedTime\": 1675741782729\n                }\n            }\n        ],\n        \"photo\": \"test_35bd4e8545d8\",\n        \"additionalFields\": {\n            \"schema\": \"test_f76b4cca6bff\",\n            \"version\": 23,\n            \"fields\": [\n                {\n                    \"key\": \"test_80f7fb8d8a45\",\n                    \"value\": \"test_38bfd0dc223b\"\n                }\n            ]\n        },\n        \"isDeleted\": true,\n        \"rowVersion\": 1,\n        \"auditDetails\": {\n            \"createdBy\": \"6af8acab-cb2f-472b-8def-aab27864ad16\",\n            \"lastModifiedBy\": \"6af8acab-cb2f-472b-8def-aab27864ad16\",\n            \"createdTime\": 1675741782726,\n            \"lastModifiedTime\": 1675741782726\n        }\n    }\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                },
+                "url": {
+                  "raw": "{{qa}}/individual/v1/_delete",
+                  "host": [
+                    "{{qa}}"
+                  ],
+                  "path": [
+                    "individual",
+                    "v1",
+                    "_delete"
+                  ]
+                }
+              },
+              "status": "Accepted",
+              "code": 202,
+              "_postman_previewlanguage": "json",
+              "header": [
+                {
+                  "key": "Date",
+                  "value": "Tue, 07 Feb 2023 03:51:40 GMT"
+                },
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                },
+                {
+                  "key": "Transfer-Encoding",
+                  "value": "chunked"
+                },
+                {
+                  "key": "Connection",
+                  "value": "keep-alive"
+                },
+                {
+                  "key": "Strict-Transport-Security",
+                  "value": "max-age=63072000; includeSubdomains; preload"
+                },
+                {
+                  "key": "X-Lua-Resty-WAF-ID",
+                  "value": "48143fddbff93a8be9f2"
+                },
+                {
+                  "key": "x-correlation-id",
+                  "value": "2601cdab-a995-4030-9fb8-2068439dea71"
+                },
+                {
+                  "key": "Cache-Control",
+                  "value": "no-cache, no-store, max-age=0, must-revalidate"
+                },
+                {
+                  "key": "Content-Security-Policy",
+                  "value": "default-src 'self' https: 'unsafe-eval' 'unsafe-inline'; object-src 'none'; img-src 'self' https: data: blob:; style-src https: blob: 'unsafe-inline'; worker-src 'self' blob:; font-src 'self' https: data: blob:; child-src 'self' https: data: blob:;"
+                },
+                {
+                  "key": "Referrer-Policy",
+                  "value": "no-referrer-when-downgrade"
+                },
+                {
+                  "key": "X-Content-Type-Options",
+                  "value": "nosniff"
+                },
+                {
+                  "key": "X-Download-Options",
+                  "value": "noopen"
+                },
+                {
+                  "key": "X-Frame-Options",
+                  "value": "sameorigin"
+                },
+                {
+                  "key": "X-XSS-Protection",
+                  "value": "1"
+                }
+              ],
+              "cookie": [],
+              "body": "{\n    \"ResponseInfo\": {\n        \"apiId\": null,\n        \"ver\": null,\n        \"ts\": 1675741900777,\n        \"resMsgId\": null,\n        \"msgId\": null,\n        \"status\": \"successful\"\n    },\n    \"Individual\": {\n        \"id\": \"IND-2023-02-07-000208\",\n        \"tenantId\": \"default\",\n        \"clientReferenceId\": \"09df7d6d-aad6-44b1-8cc9-c47a367385f4\",\n        \"userId\": null,\n        \"name\": {\n            \"givenName\": \"Souravzdpfce6xcr\",\n            \"familyName\": \"Ganguly9r2x5j3t09\",\n            \"otherNames\": \"Dadaa1hdol6b26\"\n        },\n        \"dateOfBirth\": \"22/12/2010\",\n        \"gender\": \"FEMALE\",\n        \"bloodGroup\": \"AB-\",\n        \"mobileNumber\": \"9876543210\",\n        \"altContactNumber\": \"8765432109\",\n        \"email\": \"souravganguly_dada@gmail.com\",\n        \"address\": [\n            {\n                \"id\": \"d28952b4-3c9c-42c6-b122-2d388b2520ce\",\n                \"individualId\": \"IND-2023-02-07-000208\",\n                \"tenantId\": \"default\",\n                \"doorNo\": \"123\",\n                \"latitude\": 40.82,\n                \"longitude\": 35.06,\n                \"locationAccuracy\": 14.27,\n                \"type\": \"PERMANENT\",\n                \"addressLine1\": \"Apartment\",\n                \"addressLine2\": \"2nd Floor\",\n                \"landmark\": \"Near Juhu Beach\",\n                \"city\": \"Mumbai\",\n                \"pincode\": \"123456\",\n                \"buildingName\": \"Apartment\",\n                \"street\": \"Necklace Road\",\n                \"locality\": {\n                    \"code\": \"test_9b31746b933d\",\n                    \"name\": \"test_58630a388978\",\n                    \"label\": \"test_7b7f928dcab8\",\n                    \"latitude\": \"test_15d4a90d15a6\",\n                    \"longitude\": \"test_e8854daed039\",\n                    \"children\": [],\n                    \"materializedPath\": null\n                },\n                \"isDeleted\": true,\n                \"auditDetails\": {\n                    \"createdBy\": \"6af8acab-cb2f-472b-8def-aab27864ad16\",\n                    \"lastModifiedBy\": \"6af8acab-cb2f-472b-8def-aab27864ad16\",\n                    \"createdTime\": 1675741782727,\n                    \"lastModifiedTime\": 1675741900761\n                }\n            }\n        ],\n        \"fatherName\": \"Ganguly Sr\",\n        \"husbandName\": null,\n        \"identifiers\": [\n            {\n                \"id\": \"574c15f9-07c0-4dbe-9961-cdc54b771704\",\n                \"individualId\": \"IND-2023-02-07-000208\",\n                \"identifierType\": \"AADHAAR\",\n                \"identifierId\": \"663463366872\",\n                \"isDeleted\": true,\n                \"auditDetails\": {\n                    \"createdBy\": \"6af8acab-cb2f-472b-8def-aab27864ad16\",\n                    \"lastModifiedBy\": \"6af8acab-cb2f-472b-8def-aab27864ad16\",\n                    \"createdTime\": 1675741782728,\n                    \"lastModifiedTime\": 1675741900761\n                }\n            }\n        ],\n        \"skills\": [\n            {\n                \"id\": \"d3040926-f977-49a2-8a47-d36d5e95b66e\",\n                \"individualId\": \"IND-2023-02-07-000208\",\n                \"type\": \"Dancing\",\n                \"level\": \"Novice\",\n                \"experience\": \"6 Years\",\n                \"isDeleted\": true,\n                \"auditDetails\": {\n                    \"createdBy\": \"6af8acab-cb2f-472b-8def-aab27864ad16\",\n                    \"lastModifiedBy\": \"6af8acab-cb2f-472b-8def-aab27864ad16\",\n                    \"createdTime\": 1675741782729,\n                    \"lastModifiedTime\": 1675741900761\n                }\n            }\n        ],\n        \"photo\": \"test_35bd4e8545d8\",\n        \"additionalFields\": {\n            \"schema\": \"test_f76b4cca6bff\",\n            \"version\": 23,\n            \"fields\": [\n                {\n                    \"key\": \"test_80f7fb8d8a45\",\n                    \"value\": \"test_38bfd0dc223b\"\n                }\n            ]\n        },\n        \"isDeleted\": true,\n        \"rowVersion\": 2,\n        \"auditDetails\": {\n            \"createdBy\": \"6af8acab-cb2f-472b-8def-aab27864ad16\",\n            \"lastModifiedBy\": \"6af8acab-cb2f-472b-8def-aab27864ad16\",\n            \"createdTime\": 1675741782726,\n            \"lastModifiedTime\": 1675741900761\n        }\n    }\n}"
+            }
+          ]
+        },
+        {
+          "name": "Individual Bulk Delete",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n    \"RequestInfo\": {\n        \"authToken\": \"{{authToken}}\"\n    },\n    \"Individuals\": [\n        {\n            \"id\": \"IND-2023-02-07-000209\",\n            \"tenantId\": \"default\",\n            \"clientReferenceId\": \"270189f1-2e28-4f28-bc02-c69d9e09a489\",\n            \"userId\": null,\n            \"name\": {\n                \"givenName\": \"Souravllccl9e5gn\",\n                \"familyName\": \"Gangulyje5yr7ira4\",\n                \"otherNames\": \"Dadaba9v9b4yii\"\n            },\n            \"dateOfBirth\": \"13/12/2019\",\n            \"gender\": \"FEMALE\",\n            \"bloodGroup\": \"A+\",\n            \"mobileNumber\": \"9876543210\",\n            \"altContactNumber\": \"8765432109\",\n            \"email\": \"souravganguly_dada@gmail.com\",\n            \"address\": [\n                {\n                    \"id\": \"ce67eb3e-5ac5-4b37-ab93-7129e46c9907\",\n                    \"individualId\": \"IND-2023-02-07-000209\",\n                    \"tenantId\": \"default\",\n                    \"doorNo\": \"123\",\n                    \"latitude\": 40.82,\n                    \"longitude\": 35.06,\n                    \"locationAccuracy\": 14.27,\n                    \"type\": \"PERMANENT\",\n                    \"addressLine1\": \"Apartment\",\n                    \"addressLine2\": \"2nd Floor\",\n                    \"landmark\": \"Near Juhu Beach\",\n                    \"city\": \"Mumbai\",\n                    \"pincode\": \"123456\",\n                    \"buildingName\": \"Apartment\",\n                    \"street\": \"Necklace Road\",\n                    \"locality\": {\n                        \"code\": \"test_9b31746b933d\",\n                        \"name\": \"test_58630a388978\",\n                        \"label\": \"test_7b7f928dcab8\",\n                        \"latitude\": \"test_15d4a90d15a6\",\n                        \"longitude\": \"test_e8854daed039\",\n                        \"children\": [],\n                        \"materializedPath\": null\n                    },\n                    \"isDeleted\": false,\n                    \"auditDetails\": {\n                        \"createdBy\": \"6af8acab-cb2f-472b-8def-aab27864ad16\",\n                        \"lastModifiedBy\": \"6af8acab-cb2f-472b-8def-aab27864ad16\",\n                        \"createdTime\": 1675742551622,\n                        \"lastModifiedTime\": 1675742551622\n                    }\n                }\n            ],\n            \"fatherName\": \"Ganguly Sr\",\n            \"husbandName\": null,\n            \"identifiers\": [\n                {\n                    \"id\": \"00c2944f-6f64-4828-ab6a-0469a24960bf\",\n                    \"individualId\": \"IND-2023-02-07-000209\",\n                    \"identifierType\": \"VOTER ID CARD\",\n                    \"identifierId\": \"186995723310\",\n                    \"isDeleted\": false,\n                    \"auditDetails\": {\n                        \"createdBy\": \"6af8acab-cb2f-472b-8def-aab27864ad16\",\n                        \"lastModifiedBy\": \"6af8acab-cb2f-472b-8def-aab27864ad16\",\n                        \"createdTime\": 1675742551622,\n                        \"lastModifiedTime\": 1675742551622\n                    }\n                }\n            ],\n            \"skills\": [\n                {\n                    \"id\": \"c1659ffe-b4f1-453f-a5ef-ed43a0cf10dd\",\n                    \"individualId\": \"IND-2023-02-07-000209\",\n                    \"type\": \"Science\",\n                    \"level\": \"Expert\",\n                    \"experience\": \"1 Year\",\n                    \"isDeleted\": false,\n                    \"auditDetails\": {\n                        \"createdBy\": \"6af8acab-cb2f-472b-8def-aab27864ad16\",\n                        \"lastModifiedBy\": \"6af8acab-cb2f-472b-8def-aab27864ad16\",\n                        \"createdTime\": 1675742551623,\n                        \"lastModifiedTime\": 1675742551623\n                    }\n                }\n            ],\n            \"photo\": \"test_35bd4e8545d8\",\n            \"additionalFields\": {\n                \"schema\": \"test_f76b4cca6bff\",\n                \"version\": 23,\n                \"fields\": [\n                    {\n                        \"key\": \"test_80f7fb8d8a45\",\n                        \"value\": \"test_38bfd0dc223b\"\n                    }\n                ]\n            },\n            \"isDeleted\": true,\n            \"rowVersion\": 1,\n            \"auditDetails\": {\n                \"createdBy\": \"6af8acab-cb2f-472b-8def-aab27864ad16\",\n                \"lastModifiedBy\": \"6af8acab-cb2f-472b-8def-aab27864ad16\",\n                \"createdTime\": 1675742551621,\n                \"lastModifiedTime\": 1675742551621\n            }\n        },\n        {\n            \"id\": \"IND-2023-02-07-000210\",\n            \"tenantId\": \"default\",\n            \"clientReferenceId\": \"d054434b-50f1-4eb3-997d-cfd11aae0a56\",\n            \"userId\": null,\n            \"name\": {\n                \"givenName\": \"Souravr1fek6rjtm\",\n                \"familyName\": \"Ganguly2aj3wuwmmn\",\n                \"otherNames\": \"Dada6zp25apntl\"\n            },\n            \"dateOfBirth\": \"10/01/2006\",\n            \"gender\": \"FEMALE\",\n            \"bloodGroup\": \"A+\",\n            \"mobileNumber\": \"9876543210\",\n            \"altContactNumber\": \"8765432109\",\n            \"email\": \"souravganguly_dada@gmail.com\",\n            \"address\": [\n                {\n                    \"id\": \"1c4d7b0e-4cbf-4fe0-a003-6fbbd64fbd20\",\n                    \"individualId\": \"IND-2023-02-07-000210\",\n                    \"tenantId\": \"default\",\n                    \"doorNo\": \"123\",\n                    \"latitude\": 40.82,\n                    \"longitude\": 35.06,\n                    \"locationAccuracy\": 14.27,\n                    \"type\": \"PERMANENT\",\n                    \"addressLine1\": \"Apartment\",\n                    \"addressLine2\": \"2nd Floor\",\n                    \"landmark\": \"Near Juhu Beach\",\n                    \"city\": \"Mumbai\",\n                    \"pincode\": \"123456\",\n                    \"buildingName\": \"Apartment\",\n                    \"street\": \"Necklace Road\",\n                    \"locality\": {\n                        \"code\": \"test_9b31746b933d\",\n                        \"name\": \"test_58630a388978\",\n                        \"label\": \"test_7b7f928dcab8\",\n                        \"latitude\": \"test_15d4a90d15a6\",\n                        \"longitude\": \"test_e8854daed039\",\n                        \"children\": [],\n                        \"materializedPath\": null\n                    },\n                    \"isDeleted\": false,\n                    \"auditDetails\": {\n                        \"createdBy\": \"6af8acab-cb2f-472b-8def-aab27864ad16\",\n                        \"lastModifiedBy\": \"6af8acab-cb2f-472b-8def-aab27864ad16\",\n                        \"createdTime\": 1675742551622,\n                        \"lastModifiedTime\": 1675742551622\n                    }\n                }\n            ],\n            \"fatherName\": \"Ganguly Sr\",\n            \"husbandName\": null,\n            \"identifiers\": [\n                {\n                    \"id\": \"6926efd0-16e3-449c-aa12-d0da4c922927\",\n                    \"individualId\": \"IND-2023-02-07-000210\",\n                    \"identifierType\": \"VOTER ID CARD\",\n                    \"identifierId\": \"test_727723688195\",\n                    \"isDeleted\": false,\n                    \"auditDetails\": {\n                        \"createdBy\": \"6af8acab-cb2f-472b-8def-aab27864ad16\",\n                        \"lastModifiedBy\": \"6af8acab-cb2f-472b-8def-aab27864ad16\",\n                        \"createdTime\": 1675742551622,\n                        \"lastModifiedTime\": 1675742551622\n                    }\n                }\n            ],\n            \"skills\": [\n                {\n                    \"id\": \"20ab125d-85a0-493c-9abd-6e8e05913df2\",\n                    \"individualId\": \"IND-2023-02-07-000210\",\n                    \"type\": \"Science\",\n                    \"level\": \"Expert\",\n                    \"experience\": \"1 Year\",\n                    \"isDeleted\": false,\n                    \"auditDetails\": {\n                        \"createdBy\": \"6af8acab-cb2f-472b-8def-aab27864ad16\",\n                        \"lastModifiedBy\": \"6af8acab-cb2f-472b-8def-aab27864ad16\",\n                        \"createdTime\": 1675742551623,\n                        \"lastModifiedTime\": 1675742551623\n                    }\n                }\n            ],\n            \"photo\": \"test_35bd4e8545d8\",\n            \"additionalFields\": {\n                \"schema\": \"test_f76b4cca6bff\",\n                \"version\": 23,\n                \"fields\": [\n                    {\n                        \"key\": \"test_80f7fb8d8a45\",\n                        \"value\": \"test_38bfd0dc223b\"\n                    }\n                ]\n            },\n            \"isDeleted\": true,\n            \"rowVersion\": 1,\n            \"auditDetails\": {\n                \"createdBy\": \"6af8acab-cb2f-472b-8def-aab27864ad16\",\n                \"lastModifiedBy\": \"6af8acab-cb2f-472b-8def-aab27864ad16\",\n                \"createdTime\": 1675742551621,\n                \"lastModifiedTime\": 1675742551621\n            }\n        }\n    ]\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{URL}}/individual/v1/bulk/_delete",
+              "host": [
+                "{{URL}}"
+              ],
+              "path": [
+                "individual",
+                "v1",
+                "bulk",
+                "_delete"
+              ]
+            }
+          },
+          "response": [
+            {
+              "name": "Individual Delete Response",
+              "originalRequest": {
+                "method": "POST",
+                "header": [],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n    \"RequestInfo\": {\n        \"authToken\": \"{{authToken}}\"\n    },\n    \"Individual\": {\n        \"id\": \"IND-2023-02-07-000208\",\n        \"tenantId\": \"default\",\n        \"clientReferenceId\": \"09df7d6d-aad6-44b1-8cc9-c47a367385f4\",\n        \"userId\": null,\n        \"name\": {\n            \"givenName\": \"Souravzdpfce6xcr\",\n            \"familyName\": \"Ganguly9r2x5j3t09\",\n            \"otherNames\": \"Dadaa1hdol6b26\"\n        },\n        \"dateOfBirth\": \"22/12/2010\",\n        \"gender\": \"FEMALE\",\n        \"bloodGroup\": \"AB-\",\n        \"mobileNumber\": \"9876543210\",\n        \"altContactNumber\": \"8765432109\",\n        \"email\": \"souravganguly_dada@gmail.com\",\n        \"address\": [\n            {\n                \"id\": \"d28952b4-3c9c-42c6-b122-2d388b2520ce\",\n                \"individualId\": \"IND-2023-02-07-000208\",\n                \"tenantId\": \"default\",\n                \"doorNo\": \"123\",\n                \"latitude\": 40.82,\n                \"longitude\": 35.06,\n                \"locationAccuracy\": 14.27,\n                \"type\": \"PERMANENT\",\n                \"addressLine1\": \"Apartment\",\n                \"addressLine2\": \"2nd Floor\",\n                \"landmark\": \"Near Juhu Beach\",\n                \"city\": \"Mumbai\",\n                \"pincode\": \"123456\",\n                \"buildingName\": \"Apartment\",\n                \"street\": \"Necklace Road\",\n                \"locality\": {\n                    \"code\": \"test_9b31746b933d\",\n                    \"name\": \"test_58630a388978\",\n                    \"label\": \"test_7b7f928dcab8\",\n                    \"latitude\": \"test_15d4a90d15a6\",\n                    \"longitude\": \"test_e8854daed039\",\n                    \"children\": [],\n                    \"materializedPath\": null\n                },\n                \"isDeleted\": false,\n                \"auditDetails\": {\n                    \"createdBy\": \"6af8acab-cb2f-472b-8def-aab27864ad16\",\n                    \"lastModifiedBy\": \"6af8acab-cb2f-472b-8def-aab27864ad16\",\n                    \"createdTime\": 1675741782727,\n                    \"lastModifiedTime\": 1675741782727\n                }\n            }\n        ],\n        \"fatherName\": \"Ganguly Sr\",\n        \"husbandName\": null,\n        \"identifiers\": [\n            {\n                \"id\": \"574c15f9-07c0-4dbe-9961-cdc54b771704\",\n                \"individualId\": \"IND-2023-02-07-000208\",\n                \"identifierType\": \"AADHAAR\",\n                \"identifierId\": \"663463366872\",\n                \"isDeleted\": false,\n                \"auditDetails\": {\n                    \"createdBy\": \"6af8acab-cb2f-472b-8def-aab27864ad16\",\n                    \"lastModifiedBy\": \"6af8acab-cb2f-472b-8def-aab27864ad16\",\n                    \"createdTime\": 1675741782728,\n                    \"lastModifiedTime\": 1675741782728\n                }\n            }\n        ],\n        \"skills\": [\n            {\n                \"id\": \"d3040926-f977-49a2-8a47-d36d5e95b66e\",\n                \"individualId\": \"IND-2023-02-07-000208\",\n                \"type\": \"Dancing\",\n                \"level\": \"Novice\",\n                \"experience\": \"6 Years\",\n                \"isDeleted\": false,\n                \"auditDetails\": {\n                    \"createdBy\": \"6af8acab-cb2f-472b-8def-aab27864ad16\",\n                    \"lastModifiedBy\": \"6af8acab-cb2f-472b-8def-aab27864ad16\",\n                    \"createdTime\": 1675741782729,\n                    \"lastModifiedTime\": 1675741782729\n                }\n            }\n        ],\n        \"photo\": \"test_35bd4e8545d8\",\n        \"additionalFields\": {\n            \"schema\": \"test_f76b4cca6bff\",\n            \"version\": 23,\n            \"fields\": [\n                {\n                    \"key\": \"test_80f7fb8d8a45\",\n                    \"value\": \"test_38bfd0dc223b\"\n                }\n            ]\n        },\n        \"isDeleted\": true,\n        \"rowVersion\": 1,\n        \"auditDetails\": {\n            \"createdBy\": \"6af8acab-cb2f-472b-8def-aab27864ad16\",\n            \"lastModifiedBy\": \"6af8acab-cb2f-472b-8def-aab27864ad16\",\n            \"createdTime\": 1675741782726,\n            \"lastModifiedTime\": 1675741782726\n        }\n    }\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                },
+                "url": {
+                  "raw": "{{qa}}/individual/v1/_delete",
+                  "host": [
+                    "{{qa}}"
+                  ],
+                  "path": [
+                    "individual",
+                    "v1",
+                    "_delete"
+                  ]
+                }
+              },
+              "status": "Accepted",
+              "code": 202,
+              "_postman_previewlanguage": "json",
+              "header": [
+                {
+                  "key": "Date",
+                  "value": "Tue, 07 Feb 2023 03:51:40 GMT"
+                },
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                },
+                {
+                  "key": "Transfer-Encoding",
+                  "value": "chunked"
+                },
+                {
+                  "key": "Connection",
+                  "value": "keep-alive"
+                },
+                {
+                  "key": "Strict-Transport-Security",
+                  "value": "max-age=63072000; includeSubdomains; preload"
+                },
+                {
+                  "key": "X-Lua-Resty-WAF-ID",
+                  "value": "48143fddbff93a8be9f2"
+                },
+                {
+                  "key": "x-correlation-id",
+                  "value": "2601cdab-a995-4030-9fb8-2068439dea71"
+                },
+                {
+                  "key": "Cache-Control",
+                  "value": "no-cache, no-store, max-age=0, must-revalidate"
+                },
+                {
+                  "key": "Content-Security-Policy",
+                  "value": "default-src 'self' https: 'unsafe-eval' 'unsafe-inline'; object-src 'none'; img-src 'self' https: data: blob:; style-src https: blob: 'unsafe-inline'; worker-src 'self' blob:; font-src 'self' https: data: blob:; child-src 'self' https: data: blob:;"
+                },
+                {
+                  "key": "Referrer-Policy",
+                  "value": "no-referrer-when-downgrade"
+                },
+                {
+                  "key": "X-Content-Type-Options",
+                  "value": "nosniff"
+                },
+                {
+                  "key": "X-Download-Options",
+                  "value": "noopen"
+                },
+                {
+                  "key": "X-Frame-Options",
+                  "value": "sameorigin"
+                },
+                {
+                  "key": "X-XSS-Protection",
+                  "value": "1"
+                }
+              ],
+              "cookie": [],
+              "body": "{\n    \"ResponseInfo\": {\n        \"apiId\": null,\n        \"ver\": null,\n        \"ts\": 1675741900777,\n        \"resMsgId\": null,\n        \"msgId\": null,\n        \"status\": \"successful\"\n    },\n    \"Individual\": {\n        \"id\": \"IND-2023-02-07-000208\",\n        \"tenantId\": \"default\",\n        \"clientReferenceId\": \"09df7d6d-aad6-44b1-8cc9-c47a367385f4\",\n        \"userId\": null,\n        \"name\": {\n            \"givenName\": \"Souravzdpfce6xcr\",\n            \"familyName\": \"Ganguly9r2x5j3t09\",\n            \"otherNames\": \"Dadaa1hdol6b26\"\n        },\n        \"dateOfBirth\": \"22/12/2010\",\n        \"gender\": \"FEMALE\",\n        \"bloodGroup\": \"AB-\",\n        \"mobileNumber\": \"9876543210\",\n        \"altContactNumber\": \"8765432109\",\n        \"email\": \"souravganguly_dada@gmail.com\",\n        \"address\": [\n            {\n                \"id\": \"d28952b4-3c9c-42c6-b122-2d388b2520ce\",\n                \"individualId\": \"IND-2023-02-07-000208\",\n                \"tenantId\": \"default\",\n                \"doorNo\": \"123\",\n                \"latitude\": 40.82,\n                \"longitude\": 35.06,\n                \"locationAccuracy\": 14.27,\n                \"type\": \"PERMANENT\",\n                \"addressLine1\": \"Apartment\",\n                \"addressLine2\": \"2nd Floor\",\n                \"landmark\": \"Near Juhu Beach\",\n                \"city\": \"Mumbai\",\n                \"pincode\": \"123456\",\n                \"buildingName\": \"Apartment\",\n                \"street\": \"Necklace Road\",\n                \"locality\": {\n                    \"code\": \"test_9b31746b933d\",\n                    \"name\": \"test_58630a388978\",\n                    \"label\": \"test_7b7f928dcab8\",\n                    \"latitude\": \"test_15d4a90d15a6\",\n                    \"longitude\": \"test_e8854daed039\",\n                    \"children\": [],\n                    \"materializedPath\": null\n                },\n                \"isDeleted\": true,\n                \"auditDetails\": {\n                    \"createdBy\": \"6af8acab-cb2f-472b-8def-aab27864ad16\",\n                    \"lastModifiedBy\": \"6af8acab-cb2f-472b-8def-aab27864ad16\",\n                    \"createdTime\": 1675741782727,\n                    \"lastModifiedTime\": 1675741900761\n                }\n            }\n        ],\n        \"fatherName\": \"Ganguly Sr\",\n        \"husbandName\": null,\n        \"identifiers\": [\n            {\n                \"id\": \"574c15f9-07c0-4dbe-9961-cdc54b771704\",\n                \"individualId\": \"IND-2023-02-07-000208\",\n                \"identifierType\": \"AADHAAR\",\n                \"identifierId\": \"663463366872\",\n                \"isDeleted\": true,\n                \"auditDetails\": {\n                    \"createdBy\": \"6af8acab-cb2f-472b-8def-aab27864ad16\",\n                    \"lastModifiedBy\": \"6af8acab-cb2f-472b-8def-aab27864ad16\",\n                    \"createdTime\": 1675741782728,\n                    \"lastModifiedTime\": 1675741900761\n                }\n            }\n        ],\n        \"skills\": [\n            {\n                \"id\": \"d3040926-f977-49a2-8a47-d36d5e95b66e\",\n                \"individualId\": \"IND-2023-02-07-000208\",\n                \"type\": \"Dancing\",\n                \"level\": \"Novice\",\n                \"experience\": \"6 Years\",\n                \"isDeleted\": true,\n                \"auditDetails\": {\n                    \"createdBy\": \"6af8acab-cb2f-472b-8def-aab27864ad16\",\n                    \"lastModifiedBy\": \"6af8acab-cb2f-472b-8def-aab27864ad16\",\n                    \"createdTime\": 1675741782729,\n                    \"lastModifiedTime\": 1675741900761\n                }\n            }\n        ],\n        \"photo\": \"test_35bd4e8545d8\",\n        \"additionalFields\": {\n            \"schema\": \"test_f76b4cca6bff\",\n            \"version\": 23,\n            \"fields\": [\n                {\n                    \"key\": \"test_80f7fb8d8a45\",\n                    \"value\": \"test_38bfd0dc223b\"\n                }\n            ]\n        },\n        \"isDeleted\": true,\n        \"rowVersion\": 2,\n        \"auditDetails\": {\n            \"createdBy\": \"6af8acab-cb2f-472b-8def-aab27864ad16\",\n            \"lastModifiedBy\": \"6af8acab-cb2f-472b-8def-aab27864ad16\",\n            \"createdTime\": 1675741782726,\n            \"lastModifiedTime\": 1675741900761\n        }\n    }\n}"
+            }
+          ]
+        },
+        {
+          "name": "Individual Search - Proximity based search with identifier",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n    \"RequestInfo\": {\n        \"authToken\": \"{{authToken}}\"\n    },\n    \"Individual\": {\n        \"identifier\": {\n        \"identifierType\": \"AADHAAR\",\n        \"identifierId\": \"d4340833-fc81-4b64-bb74-48a716b4f26e\"\n        },\n        \"boundaryCode\": \"string\",\n        \"latitude\" : -19,\n        \"longitude\" : 34,\n        \"searchRadius\" : 0.5\n    }\n}"
+            },
+            "url": {
+              "raw": "http://localhost:8099/individual/v1/_search?limit=1000&offset=0&tenantId=default&includeDeleted=true",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "8099",
+              "path": [
+                "individual",
+                "v1",
+                "_search"
+              ],
+              "query": [
+                {
+                  "key": "limit",
+                  "value": "1000"
+                },
+                {
+                  "key": "offset",
+                  "value": "0"
+                },
+                {
+                  "key": "tenantId",
+                  "value": "default"
+                },
+                {
+                  "key": "includeDeleted",
+                  "value": "true"
+                }
+              ]
+            }
+          },
+          "response": [
+            {
+              "name": "Individual Search Response",
+              "originalRequest": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n    \"RequestInfo\": {\n        \"authToken\": \"{{authToken}}\"\n    },\n    \"Individual\": {\n        \"id\": [\n            \"IND-2023-02-06-000206\"\n        ],\n        \"clientReferenceId\": [\n            \"de20471f-5b04-4b3f-977b-03852a7184f3\"\n        ],\n        \"name\": {\n            \"givenName\": \"Sourav6kluywgfr4\",\n            \"familyName\": \"Gangulyvg2ixcv6o7\",\n            \"otherNames\": \"Dadayleygwz15n\"\n        },\n        \"dateOfBirth\": \"16/06/2013\",\n        \"gender\": \"FEMALE\",\n        \"identifier\": {\n            \"identifierType\": \"PAN\",\n            \"identifierId\": \"test_112569275563\"\n        },\n        \"boundaryCode\": \"test_9b31746b933d\"\n    }\n}"
+                },
+                "url": {
+                  "raw": "{{qa}}/individual/v1/_search?limit=100&offset=0&tenantId=default",
+                  "host": [
+                    "{{qa}}"
+                  ],
+                  "path": [
+                    "individual",
+                    "v1",
+                    "_search"
+                  ],
+                  "query": [
+                    {
+                      "key": "limit",
+                      "value": "100"
+                    },
+                    {
+                      "key": "offset",
+                      "value": "0"
+                    },
+                    {
+                      "key": "tenantId",
+                      "value": "default"
+                    }
+                  ]
+                }
+              },
+              "status": "OK",
+              "code": 200,
+              "_postman_previewlanguage": "json",
+              "header": [
+                {
+                  "key": "Date",
+                  "value": "Mon, 06 Feb 2023 13:10:49 GMT"
+                },
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                },
+                {
+                  "key": "Transfer-Encoding",
+                  "value": "chunked"
+                },
+                {
+                  "key": "Connection",
+                  "value": "keep-alive"
+                },
+                {
+                  "key": "Vary",
+                  "value": "Accept-Encoding"
+                },
+                {
+                  "key": "Strict-Transport-Security",
+                  "value": "max-age=63072000; includeSubdomains; preload"
+                },
+                {
+                  "key": "X-Lua-Resty-WAF-ID",
+                  "value": "acffe8146b21766d1686"
+                },
+                {
+                  "key": "x-correlation-id",
+                  "value": "9b047802-eb1a-4bd9-b964-6014fe0c029b"
+                },
+                {
+                  "key": "Cache-Control",
+                  "value": "no-cache, no-store, max-age=0, must-revalidate"
+                },
+                {
+                  "key": "Content-Security-Policy",
+                  "value": "default-src 'self' https: 'unsafe-eval' 'unsafe-inline'; object-src 'none'; img-src 'self' https: data: blob:; style-src https: blob: 'unsafe-inline'; worker-src 'self' blob:; font-src 'self' https: data: blob:; child-src 'self' https: data: blob:;"
+                },
+                {
+                  "key": "Referrer-Policy",
+                  "value": "no-referrer-when-downgrade"
+                },
+                {
+                  "key": "X-Content-Type-Options",
+                  "value": "nosniff"
+                },
+                {
+                  "key": "X-Download-Options",
+                  "value": "noopen"
+                },
+                {
+                  "key": "X-Frame-Options",
+                  "value": "sameorigin"
+                },
+                {
+                  "key": "X-XSS-Protection",
+                  "value": "1"
+                },
+                {
+                  "key": "Content-Encoding",
+                  "value": "gzip"
+                }
+              ],
+              "cookie": [],
+              "body": "{\n    \"ResponseInfo\": {\n        \"apiId\": null,\n        \"ver\": null,\n        \"ts\": 1675689049214,\n        \"resMsgId\": null,\n        \"msgId\": null,\n        \"status\": \"successful\"\n    },\n    \"Individual\": [\n        {\n            \"id\": \"IND-2023-02-06-000206\",\n            \"tenantId\": \"default\",\n            \"clientReferenceId\": \"de20471f-5b04-4b3f-977b-03852a7184f3\",\n            \"userId\": null,\n            \"name\": {\n                \"givenName\": \"Sourav6kluywgfr4\",\n                \"familyName\": \"Gangulyvg2ixcv6o7\",\n                \"otherNames\": \"Dadayleygwz15n\"\n            },\n            \"dateOfBirth\": \"16/06/2013\",\n            \"gender\": \"FEMALE\",\n            \"bloodGroup\": \"O-\",\n            \"mobileNumber\": \"9876543210\",\n            \"altContactNumber\": \"8765432109\",\n            \"email\": \"souravganguly_dada2@gmail.com\",\n            \"address\": [\n                {\n                    \"id\": \"18090d6b-fdc0-4b14-8211-467d65ddbbc5\",\n                    \"individualId\": \"IND-2023-02-06-000206\",\n                    \"tenantId\": \"default\",\n                    \"doorNo\": \"123\",\n                    \"latitude\": 40.82,\n                    \"longitude\": 35.06,\n                    \"locationAccuracy\": 14,\n                    \"type\": \"PERMANENT\",\n                    \"addressLine1\": \"Apartment\",\n                    \"addressLine2\": \"2nd Floor\",\n                    \"landmark\": \"Near Juhu Beach\",\n                    \"city\": \"Mumbai\",\n                    \"pincode\": \"123456\",\n                    \"buildingName\": \"Apartment\",\n                    \"street\": \"Necklace Road\",\n                    \"locality\": {\n                        \"code\": \"test_9b31746b933d\",\n                        \"name\": null,\n                        \"label\": null,\n                        \"latitude\": null,\n                        \"longitude\": null,\n                        \"children\": null,\n                        \"materializedPath\": null\n                    },\n                    \"isDeleted\": false,\n                    \"auditDetails\": {\n                        \"createdBy\": \"6af8acab-cb2f-472b-8def-aab27864ad16\",\n                        \"lastModifiedBy\": \"6af8acab-cb2f-472b-8def-aab27864ad16\",\n                        \"createdTime\": 1675687163794,\n                        \"lastModifiedTime\": 1675688229098\n                    }\n                }\n            ],\n            \"fatherName\": \"Ganguly Sr\",\n            \"husbandName\": null,\n            \"identifiers\": [\n                {\n                    \"id\": \"b74bea7d-d1e0-4d44-ada4-54f48dfe9fcd\",\n                    \"individualId\": \"IND-2023-02-06-000206\",\n                    \"identifierType\": \"PAN\",\n                    \"identifierId\": \"test_112569275563\",\n                    \"isDeleted\": false,\n                    \"auditDetails\": {\n                        \"createdBy\": \"6af8acab-cb2f-472b-8def-aab27864ad16\",\n                        \"lastModifiedBy\": \"6af8acab-cb2f-472b-8def-aab27864ad16\",\n                        \"createdTime\": 1675687163795,\n                        \"lastModifiedTime\": 1675688229099\n                    }\n                }\n            ],\n            \"skills\": null,\n            \"photo\": \"test_35bd4e8545d8\",\n            \"additionalFields\": {\n                \"schema\": \"test_f76b4cca6bff\",\n                \"version\": 23,\n                \"fields\": [\n                    {\n                        \"key\": \"test_80f7fb8d8a45\",\n                        \"value\": \"test_38bfd0dc223b\"\n                    }\n                ]\n            },\n            \"isDeleted\": false,\n            \"rowVersion\": 2,\n            \"auditDetails\": {\n                \"createdBy\": \"6af8acab-cb2f-472b-8def-aab27864ad16\",\n                \"lastModifiedBy\": \"6af8acab-cb2f-472b-8def-aab27864ad16\",\n                \"createdTime\": 1675687163793,\n                \"lastModifiedTime\": 1675688229099\n            }\n        }\n    ]\n}"
+            }
+          ]
+        },
+        {
+          "name": "Individual Search - Proximity Based Search",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n    \"RequestInfo\": {\n        \"authToken\": \"{{authToken}}\"\n    },\n    \"Individual\": {\n        \"latitude\": -19.0,\n        \"longitude\": 34.0,\n        \"searchRadius\": 0.1\n    }\n}"
+            },
+            "url": {
+              "raw": "http://localhost:8083/individual/v1/_search?limit=1000&offset=0&tenantId=default&includeDeleted=true",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "8083",
+              "path": [
+                "individual",
+                "v1",
+                "_search"
+              ],
+              "query": [
+                {
+                  "key": "limit",
+                  "value": "1000"
+                },
+                {
+                  "key": "offset",
+                  "value": "0"
+                },
+                {
+                  "key": "tenantId",
+                  "value": "default"
+                },
+                {
+                  "key": "includeDeleted",
+                  "value": "true"
+                }
+              ]
+            }
+          },
+          "response": [
+            {
+              "name": "Individual Search Response",
+              "originalRequest": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n    \"RequestInfo\": {\n        \"authToken\": \"{{authToken}}\"\n    },\n    \"Individual\": {\n        \"id\": [\n            \"IND-2023-02-06-000206\"\n        ],\n        \"clientReferenceId\": [\n            \"de20471f-5b04-4b3f-977b-03852a7184f3\"\n        ],\n        \"name\": {\n            \"givenName\": \"Sourav6kluywgfr4\",\n            \"familyName\": \"Gangulyvg2ixcv6o7\",\n            \"otherNames\": \"Dadayleygwz15n\"\n        },\n        \"dateOfBirth\": \"16/06/2013\",\n        \"gender\": \"FEMALE\",\n        \"identifier\": {\n            \"identifierType\": \"PAN\",\n            \"identifierId\": \"test_112569275563\"\n        },\n        \"boundaryCode\": \"test_9b31746b933d\"\n    }\n}"
+                },
+                "url": {
+                  "raw": "{{qa}}/individual/v1/_search?limit=100&offset=0&tenantId=default",
+                  "host": [
+                    "{{qa}}"
+                  ],
+                  "path": [
+                    "individual",
+                    "v1",
+                    "_search"
+                  ],
+                  "query": [
+                    {
+                      "key": "limit",
+                      "value": "100"
+                    },
+                    {
+                      "key": "offset",
+                      "value": "0"
+                    },
+                    {
+                      "key": "tenantId",
+                      "value": "default"
+                    }
+                  ]
+                }
+              },
+              "status": "OK",
+              "code": 200,
+              "_postman_previewlanguage": "json",
+              "header": [
+                {
+                  "key": "Date",
+                  "value": "Mon, 06 Feb 2023 13:10:49 GMT"
+                },
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                },
+                {
+                  "key": "Transfer-Encoding",
+                  "value": "chunked"
+                },
+                {
+                  "key": "Connection",
+                  "value": "keep-alive"
+                },
+                {
+                  "key": "Vary",
+                  "value": "Accept-Encoding"
+                },
+                {
+                  "key": "Strict-Transport-Security",
+                  "value": "max-age=63072000; includeSubdomains; preload"
+                },
+                {
+                  "key": "X-Lua-Resty-WAF-ID",
+                  "value": "acffe8146b21766d1686"
+                },
+                {
+                  "key": "x-correlation-id",
+                  "value": "9b047802-eb1a-4bd9-b964-6014fe0c029b"
+                },
+                {
+                  "key": "Cache-Control",
+                  "value": "no-cache, no-store, max-age=0, must-revalidate"
+                },
+                {
+                  "key": "Content-Security-Policy",
+                  "value": "default-src 'self' https: 'unsafe-eval' 'unsafe-inline'; object-src 'none'; img-src 'self' https: data: blob:; style-src https: blob: 'unsafe-inline'; worker-src 'self' blob:; font-src 'self' https: data: blob:; child-src 'self' https: data: blob:;"
+                },
+                {
+                  "key": "Referrer-Policy",
+                  "value": "no-referrer-when-downgrade"
+                },
+                {
+                  "key": "X-Content-Type-Options",
+                  "value": "nosniff"
+                },
+                {
+                  "key": "X-Download-Options",
+                  "value": "noopen"
+                },
+                {
+                  "key": "X-Frame-Options",
+                  "value": "sameorigin"
+                },
+                {
+                  "key": "X-XSS-Protection",
+                  "value": "1"
+                },
+                {
+                  "key": "Content-Encoding",
+                  "value": "gzip"
+                }
+              ],
+              "cookie": [],
+              "body": "{\n    \"ResponseInfo\": {\n        \"apiId\": null,\n        \"ver\": null,\n        \"ts\": 1675689049214,\n        \"resMsgId\": null,\n        \"msgId\": null,\n        \"status\": \"successful\"\n    },\n    \"Individual\": [\n        {\n            \"id\": \"IND-2023-02-06-000206\",\n            \"tenantId\": \"default\",\n            \"clientReferenceId\": \"de20471f-5b04-4b3f-977b-03852a7184f3\",\n            \"userId\": null,\n            \"name\": {\n                \"givenName\": \"Sourav6kluywgfr4\",\n                \"familyName\": \"Gangulyvg2ixcv6o7\",\n                \"otherNames\": \"Dadayleygwz15n\"\n            },\n            \"dateOfBirth\": \"16/06/2013\",\n            \"gender\": \"FEMALE\",\n            \"bloodGroup\": \"O-\",\n            \"mobileNumber\": \"9876543210\",\n            \"altContactNumber\": \"8765432109\",\n            \"email\": \"souravganguly_dada2@gmail.com\",\n            \"address\": [\n                {\n                    \"id\": \"18090d6b-fdc0-4b14-8211-467d65ddbbc5\",\n                    \"individualId\": \"IND-2023-02-06-000206\",\n                    \"tenantId\": \"default\",\n                    \"doorNo\": \"123\",\n                    \"latitude\": 40.82,\n                    \"longitude\": 35.06,\n                    \"locationAccuracy\": 14,\n                    \"type\": \"PERMANENT\",\n                    \"addressLine1\": \"Apartment\",\n                    \"addressLine2\": \"2nd Floor\",\n                    \"landmark\": \"Near Juhu Beach\",\n                    \"city\": \"Mumbai\",\n                    \"pincode\": \"123456\",\n                    \"buildingName\": \"Apartment\",\n                    \"street\": \"Necklace Road\",\n                    \"locality\": {\n                        \"code\": \"test_9b31746b933d\",\n                        \"name\": null,\n                        \"label\": null,\n                        \"latitude\": null,\n                        \"longitude\": null,\n                        \"children\": null,\n                        \"materializedPath\": null\n                    },\n                    \"isDeleted\": false,\n                    \"auditDetails\": {\n                        \"createdBy\": \"6af8acab-cb2f-472b-8def-aab27864ad16\",\n                        \"lastModifiedBy\": \"6af8acab-cb2f-472b-8def-aab27864ad16\",\n                        \"createdTime\": 1675687163794,\n                        \"lastModifiedTime\": 1675688229098\n                    }\n                }\n            ],\n            \"fatherName\": \"Ganguly Sr\",\n            \"husbandName\": null,\n            \"identifiers\": [\n                {\n                    \"id\": \"b74bea7d-d1e0-4d44-ada4-54f48dfe9fcd\",\n                    \"individualId\": \"IND-2023-02-06-000206\",\n                    \"identifierType\": \"PAN\",\n                    \"identifierId\": \"test_112569275563\",\n                    \"isDeleted\": false,\n                    \"auditDetails\": {\n                        \"createdBy\": \"6af8acab-cb2f-472b-8def-aab27864ad16\",\n                        \"lastModifiedBy\": \"6af8acab-cb2f-472b-8def-aab27864ad16\",\n                        \"createdTime\": 1675687163795,\n                        \"lastModifiedTime\": 1675688229099\n                    }\n                }\n            ],\n            \"skills\": null,\n            \"photo\": \"test_35bd4e8545d8\",\n            \"additionalFields\": {\n                \"schema\": \"test_f76b4cca6bff\",\n                \"version\": 23,\n                \"fields\": [\n                    {\n                        \"key\": \"test_80f7fb8d8a45\",\n                        \"value\": \"test_38bfd0dc223b\"\n                    }\n                ]\n            },\n            \"isDeleted\": false,\n            \"rowVersion\": 2,\n            \"auditDetails\": {\n                \"createdBy\": \"6af8acab-cb2f-472b-8def-aab27864ad16\",\n                \"lastModifiedBy\": \"6af8acab-cb2f-472b-8def-aab27864ad16\",\n                \"createdTime\": 1675687163793,\n                \"lastModifiedTime\": 1675688229099\n            }\n        }\n    ]\n}"
+            }
+          ]
+        },
+        {
+          "name": "individual-update",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n    \"RequestInfo\": {\n        \"userInfo\": {\n            \"id\": 350,\n            \"uuid\": \"4dee55de-bd82-4859-9e4b-7b7bed024ed0\",\n            \"userName\": \"8786787686\",\n            \"name\": \"individual null\",\n            \"mobileNumber\": \"8786787686\",\n            \"emailId\": null,\n            \"locale\": null,\n            \"type\": \"CITIZEN\",\n            \"roles\": [\n                {\n                    \"name\": \"HEARING_VIEWER\",\n                    \"code\": \"HEARING_VIEWER\",\n                    \"tenantId\": \"kl\"\n                },\n                {\n                    \"name\": \"CASE_VIEWER\",\n                    \"code\": \"CASE_VIEWER\",\n                    \"tenantId\": \"kl\"\n                },\n                {\n                    \"name\": \"DEPOSITION_VIEWER\",\n                    \"code\": \"DEPOSITION_VIEWER\",\n                    \"tenantId\": \"kl\"\n                },\n                {\n                    \"name\": \"Citizen\",\n                    \"code\": \"CITIZEN\",\n                    \"tenantId\": \"kl\"\n                },\n                {\n                    \"name\": \"ADVOCATE_ROLE\",\n                    \"code\": \"ADVOCATE_ROLE\",\n                    \"tenantId\": \"kl\"\n                },\n                {\n                    \"name\": \"APPLICATION_CREATOR\",\n                    \"code\": \"APPLICATION_CREATOR\",\n                    \"tenantId\": \"kl\"\n                },\n                {\n                    \"name\": \"SUBMISSION_DELETE\",\n                    \"code\": \"SUBMISSION_DELETE\",\n                    \"tenantId\": \"kl\"\n                },\n                {\n                    \"name\": \"HEARING_ACCEPTOR\",\n                    \"code\": \"HEARING_ACCEPTOR\",\n                    \"tenantId\": \"kl\"\n                },\n                {\n                    \"name\": \"CASE_RESPONDER\",\n                    \"code\": \"CASE_RESPONDER\",\n                    \"tenantId\": \"kl\"\n                },\n                {\n                    \"name\": \"DEPOSITION_CREATOR\",\n                    \"code\": \"DEPOSITION_CREATOR\",\n                    \"tenantId\": \"kl\"\n                },\n                {\n                    \"name\": \"SUBMISSION_RESPONDER\",\n                    \"code\": \"SUBMISSION_RESPONDER\",\n                    \"tenantId\": \"kl\"\n                },\n                {\n                    \"name\": \"ORDER_VIEWER\",\n                    \"code\": \"ORDER_VIEWER\",\n                    \"tenantId\": \"kl\"\n                },\n                {\n                    \"name\": \"CASE_EDITOR\",\n                    \"code\": \"CASE_EDITOR\",\n                    \"tenantId\": \"kl\"\n                },\n                {\n                    \"name\": \"SUBMISSION_CREATOR\",\n                    \"code\": \"SUBMISSION_CREATOR\",\n                    \"tenantId\": \"kl\"\n                },\n                {\n                    \"name\": \"APPLICATION_VIEWER\",\n                    \"code\": \"APPLICATION_VIEWER\",\n                    \"tenantId\": \"kl\"\n                },\n                {\n                    \"name\": \"TASK_VIEWER\",\n                    \"code\": \"TASK_VIEWER\",\n                    \"tenantId\": \"kl\"\n                },\n                {\n                    \"name\": \"CASE_CREATOR\",\n                    \"code\": \"CASE_CREATOR\",\n                    \"tenantId\": \"kl\"\n                }\n            ],\n            \"active\": true,\n            \"tenantId\": \"kl\",\n            \"permanentCity\": null\n        },\n        \"authToken\": \"2cb55ac8-1b58-473f-a739-7960e0a626a4\"\n    },\n    \"Individual\": {\n        \"id\": \"fe2cc34a-7b1a-4ec2-8828-ad63bd5d5168\",\n        \"tenantId\": \"kl\",\n        \"clientReferenceId\": null,\n        \"userId\": 350,\n        \"name\": {\n            \"givenName\": \"individual\",\n            \"familyName\": null,\n            \"otherNames\": null\n        },\n        \"dateOfBirth\": null,\n        \"gender\": null,\n        \"bloodGroup\": null,\n        \"mobileNumber\": \"8786787686\",\n        \"altContactNumber\": null,\n        \"email\": null,\n        \"address\": [\n            {\n                \"id\": \"342ab87a-4468-4a43-b504-745e84f5559c\",\n                \"individualId\": \"IND-2024-10-29-000195\",\n                \"tenantId\": \"default\",\n                \"doorNo\": \"123\",\n                \"latitude\": 40.82,\n                \"longitude\": 35.06,\n                \"locationAccuracy\": 14.0,\n                \"type\": \"PERMANENT\",\n                \"addressLine1\": \"Apartment\",\n                \"addressLine2\": \"2nd Floor\",\n                \"landmark\": \"Near Juhu Beach\",\n                \"city\": \"Mumbai\",\n                \"pincode\": \"123456\",\n                \"buildingName\": \"Apartment\",\n                \"street\": \"Necklace Road\",\n                \"locality\": {\n                    \"code\": \"test_9b31746b933d\",\n                    \"name\": null,\n                    \"label\": null,\n                    \"latitude\": null,\n                    \"longitude\": null,\n                    \"children\": null,\n                    \"materializedPath\": null\n                },\n                \"isDeleted\": false,\n                \"auditDetails\": {\n                    \"createdBy\": \"6af8acab-cb2f-472b-8def-aab27864ad16\",\n                    \"lastModifiedBy\": \"6af8acab-cb2f-472b-8def-aab27864ad16\",\n                    \"createdTime\": 1675686234096,\n                    \"lastModifiedTime\": 1675686234096\n                }\n            }\n        ],\n        \"fatherName\": null,\n        \"husbandName\": null,\n        \"identifiers\": [\n            {\n                \"id\": \"d51e76fd-ea4b-4d9a-94b1-164e12428aa9\",\n                \"individualId\": \"IND-2024-10-29-000195\",\n                \"identifierType\": \"SYSTEM_GENERATED\",\n                \"identifierId\": \"936455495159\",\n                \"isDeleted\": false,\n                \"auditDetails\": {\n                    \"createdBy\": \"6af8acab-cb2f-472b-8def-aab27864ad16\",\n                    \"lastModifiedBy\": \"6af8acab-cb2f-472b-8def-aab27864ad16\",\n                    \"createdTime\": 1675686234099,\n                    \"lastModifiedTime\": 1675686234099\n                }\n            }\n        ],\n        // \"skills\": [\n        //     {\n        //         \"id\": \"63dea78e-965d-48d6-abe6-8b8c5b9eba5a\",\n        //         \"individualId\": \"IND-2023-02-06-000202\",\n        //         \"type\": \"Dancing\",\n        //         \"level\": \"Learner\",\n        //         \"experience\": \"7 Years\",\n        //         \"isDeleted\": false,\n        //         \"auditDetails\": {\n        //             \"createdBy\": \"6af8acab-cb2f-472b-8def-aab27864ad16\",\n        //             \"lastModifiedBy\": \"6af8acab-cb2f-472b-8def-aab27864ad16\",\n        //             \"createdTime\": 1675686234101,\n        //             \"lastModifiedTime\": 1675686234101\n        //         }\n        //     },\n        //     {\n        //        \"type\": \"Singing\",\n        //         \"level\": \"Professional\",\n        //         \"experience\": \"10 Years\" \n        //     }\n        // ],\n        \"photo\": \"test_35bd4e8545d8\",\n        \"additionalFields\": {\n            \"schema\": \"test_f76b4cca6bff\",\n            \"version\": 23,\n            \"fields\": [\n                {\n                    \"key\": \"test_80f7fb8d8a45\",\n                    \"value\": \"test_38bfd0dc223b\"\n                }\n            ]\n        },\n        \"isDeleted\": false,\n        \"rowVersion\": 3,\n        \"auditDetails\": {\n            \"createdBy\": \"6af8acab-cb2f-472b-8def-aab27864ad16\",\n            \"lastModifiedBy\": \"6af8acab-cb2f-472b-8def-aab27864ad16\",\n            \"createdTime\": 1675686234089,\n            \"lastModifiedTime\": 1675686234089\n        }\n    }\n}"
+            },
+            "url": {
+              "raw": "http://localhost:8080/individual/v1/_update",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "8080",
+              "path": [
+                "individual",
+                "v1",
+                "_update"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "individual-create",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "authority",
+                "value": "dristi-kerala-qa.pucar.org"
+              },
+              {
+                "key": "accept",
+                "value": "application/json, text/plain, */*"
+              },
+              {
+                "key": "accept-language",
+                "value": "en-GB,en;q=0.9"
+              },
+              {
+                "key": "content-type",
+                "value": "application/json;charset=UTF-8"
+              },
+              {
+                "key": "origin",
+                "value": "https://dristi-kerala-qa.pucar.org"
+              },
+              {
+                "key": "referer",
+                "value": "https://dristi-kerala-qa.pucar.org/digit-ui/citizen/dristi/home/registration/terms-condition"
+              },
+              {
+                "key": "sec-ch-ua",
+                "value": "\"Not A(Brand\";v=\"99\", \"Google Chrome\";v=\"121\", \"Chromium\";v=\"121\""
+              },
+              {
+                "key": "sec-ch-ua-mobile",
+                "value": "?0"
+              },
+              {
+                "key": "sec-ch-ua-platform",
+                "value": "\"Linux\""
+              },
+              {
+                "key": "sec-fetch-dest",
+                "value": "empty"
+              },
+              {
+                "key": "sec-fetch-mode",
+                "value": "cors"
+              },
+              {
+                "key": "sec-fetch-site",
+                "value": "same-origin"
+              },
+              {
+                "key": "user-agent",
+                "value": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/121.0.0.0 Safari/537.36"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n    \"Individual\": {\n        \"tenantId\": \"kl\",\n        \"name\": {\n            \"givenName\": \"individual\"\n        },\n        \"userDetails\": {\n            \"username\": \"8786787686\",\n            \"roles\": [\n                {\n                    \"code\": \"CITIZEN\",\n                    \"name\": \"Citizen\",\n                    \"tenantId\": \"kl\"\n                },\n                {\n                    \"code\": \"ADVOCATE_ROLE\",\n                    \"name\": \"ADVOCATE_ROLE\",\n                    \"tenantId\": \"kl\"\n                },\n                {\n                    \"code\": \"CASE_CREATOR\",\n                    \"name\": \"CASE_CREATOR\",\n                    \"tenantId\": \"kl\"\n                },\n                {\n                    \"code\": \"CASE_EDITOR\",\n                    \"name\": \"CASE_EDITOR\",\n                    \"tenantId\": \"kl\"\n                },\n                {\n                    \"code\": \"CASE_VIEWER\",\n                    \"name\": \"CASE_VIEWER\",\n                    \"tenantId\": \"kl\"\n                },\n                {\n                    \"code\": \"DEPOSITION_CREATOR\",\n                    \"name\": \"DEPOSITION_CREATOR\",\n                    \"tenantId\": \"kl\"\n                },\n                {\n                    \"code\": \"DEPOSITION_VIEWER\",\n                    \"name\": \"DEPOSITION_VIEWER\",\n                    \"tenantId\": \"kl\"\n                },\n                {\n                    \"code\": \"APPLICATION_CREATOR\",\n                    \"name\": \"APPLICATION_CREATOR\",\n                    \"tenantId\": \"kl\"\n                },\n                {\n                    \"code\": \"APPLICATION_VIEWER\",\n                    \"name\": \"APPLICATION_VIEWER\",\n                    \"tenantId\": \"kl\"\n                },\n                {\n                    \"code\": \"HEARING_VIEWER\",\n                    \"name\": \"HEARING_VIEWER\",\n                    \"tenantId\": \"kl\"\n                },\n                {\n                    \"code\": \"ORDER_VIEWER\",\n                    \"name\": \"ORDER_VIEWER\",\n                    \"tenantId\": \"kl\"\n                },\n                {\n                    \"code\": \"SUBMISSION_CREATOR\",\n                    \"name\": \"SUBMISSION_CREATOR\",\n                    \"tenantId\": \"kl\"\n                },\n                {\n                    \"code\": \"SUBMISSION_RESPONDER\",\n                    \"name\": \"SUBMISSION_RESPONDER\",\n                    \"tenantId\": \"kl\"\n                },\n                {\n                    \"code\": \"SUBMISSION_DELETE\",\n                    \"name\": \"SUBMISSION_DELETE\",\n                    \"tenantId\": \"kl\"\n                },\n                {\n                    \"code\": \"TASK_VIEWER\",\n                    \"name\": \"TASK_VIEWER\",\n                    \"tenantId\": \"kl\"\n                },\n                {\n                    \"code\": \"CASE_RESPONDER\",\n                    \"name\": \"CASE_RESPONDER\",\n                    \"tenantId\": \"kl\"\n                },\n                {\n                    \"code\": \"HEARING_ACCEPTOR\",\n                    \"name\": \"HEARING_ACCEPTOR\",\n                    \"tenantId\": \"kl\"\n                }\n            ],\n            \"type\": \"CITIZEN\"\n        },\n        \"userUuid\": \"4dee55de-bd82-4859-9e4b-7b7bed024ed0\",\n        \"userId\": 350,\n        \"mobileNumber\": \"8786787686\",\n        \"address\": [\n            {\n                \"tenantId\": \"kl\",\n                \"type\": \"PERMANENT\",\n                \"latitude\": 8.89277008,\n                \"longitude\": 76.57501922,\n                \"city\": \"Kollam\",\n                \"pincode\": \"691013\",\n                \"addressLine1\": \"Kerala\",\n                \"addressLine2\": \"Kollam\",\n                \"street\": \"VHVF+4X3, Vidya Nagar\",\n                \"doorNo\": \"\",\n                \"buildingName\": \"\"\n            }\n        ],\n        \"identifiers\": [\n            {\n                \"identifierType\": \"OTHER\",\n                \"identifierId\": \"e1fcf8cd-53cc-408e-86cc-04cf2ca12d3f\"\n            }\n        ],\n        \"isSystemUser\": true,\n        \"skills\": [],\n        \"additionalFields\": {\n            \"fields\": [\n                {\n                    \"key\": \"userType\",\n                    \"value\": \"ADVOCATE\"\n                },\n                {\n                    \"key\": \"userTypeDetail\",\n                    \"value\": \"{\\\"code\\\":\\\"ADVOCATE\\\",\\\"name\\\":\\\"ADVOCATE_TEXT\\\",\\\"showBarDetails\\\":true,\\\"isVerified\\\":true,\\\"hasBarRegistrationNo\\\":true,\\\"role\\\":[\\\"ADVOCATE_ROLE\\\",\\\"CASE_CREATOR\\\",\\\"CASE_EDITOR\\\",\\\"CASE_VIEWER\\\",\\\"DEPOSITION_CREATOR\\\",\\\"DEPOSITION_VIEWER\\\",\\\"APPLICATION_CREATOR\\\",\\\"APPLICATION_VIEWER\\\",\\\"HEARING_VIEWER\\\",\\\"ORDER_VIEWER\\\",\\\"SUBMISSION_CREATOR\\\",\\\"SUBMISSION_RESPONDER\\\",\\\"SUBMISSION_DELETE\\\",\\\"TASK_VIEWER\\\",\\\"CASE_RESPONDER\\\",\\\"HEARING_ACCEPTOR\\\"],\\\"apiDetails\\\":{\\\"serviceName\\\":\\\"/advocate/v1/_create\\\",\\\"requestKey\\\":\\\"advocate\\\",\\\"AdditionalFields\\\":[\\\"barRegistrationNumber\\\"]},\\\"subText\\\":\\\"ADVOCATE_SUB_TEXT\\\"}\"\n                },\n                {\n                    \"key\": \"termsAndCondition\",\n                    \"value\": true\n                },\n                {\n                    \"key\": \"identifierIdDetails\",\n                    \"value\": \"{\\\"fileStoreId\\\":\\\"e1fcf8cd-53cc-408e-86cc-04cf2ca12d3f\\\",\\\"filename\\\":\\\"user_847969.png\\\"}\"\n                }\n            ]\n        },\n        \"clientAuditDetails\": {},\n        \"auditDetails\": {}\n    },\n    \"RequestInfo\": {\n        \"apiId\": \"Rainmaker\",\n        \"authToken\": \"9a0e4888-8930-4c76-a2dc-7702a149dd76\",\n        \"msgId\": \"1730188058238|en_IN\",\n        \"plainAccessRequest\": {},\n        \"userInfo\": {\n            \"id\": 350,\n            \"uuid\": \"4dee55de-bd82-4859-9e4b-7b7bed024ed0\",\n            \"userName\": \"8786787686\",\n            \"name\": \"individual null\",\n            \"mobileNumber\": \"8786787686\",\n            \"emailId\": null,\n            \"locale\": null,\n            \"type\": \"CITIZEN\",\n            \"roles\": [\n                {\n                    \"name\": \"HEARING_VIEWER\",\n                    \"code\": \"HEARING_VIEWER\",\n                    \"tenantId\": \"kl\"\n                },\n                {\n                    \"name\": \"CASE_VIEWER\",\n                    \"code\": \"CASE_VIEWER\",\n                    \"tenantId\": \"kl\"\n                },\n                {\n                    \"name\": \"DEPOSITION_VIEWER\",\n                    \"code\": \"DEPOSITION_VIEWER\",\n                    \"tenantId\": \"kl\"\n                },\n                {\n                    \"name\": \"Citizen\",\n                    \"code\": \"CITIZEN\",\n                    \"tenantId\": \"kl\"\n                },\n                {\n                    \"name\": \"ADVOCATE_ROLE\",\n                    \"code\": \"ADVOCATE_ROLE\",\n                    \"tenantId\": \"kl\"\n                },\n                {\n                    \"name\": \"APPLICATION_CREATOR\",\n                    \"code\": \"APPLICATION_CREATOR\",\n                    \"tenantId\": \"kl\"\n                },\n                {\n                    \"name\": \"SUBMISSION_DELETE\",\n                    \"code\": \"SUBMISSION_DELETE\",\n                    \"tenantId\": \"kl\"\n                },\n                {\n                    \"name\": \"HEARING_ACCEPTOR\",\n                    \"code\": \"HEARING_ACCEPTOR\",\n                    \"tenantId\": \"kl\"\n                },\n                {\n                    \"name\": \"CASE_RESPONDER\",\n                    \"code\": \"CASE_RESPONDER\",\n                    \"tenantId\": \"kl\"\n                },\n                {\n                    \"name\": \"DEPOSITION_CREATOR\",\n                    \"code\": \"DEPOSITION_CREATOR\",\n                    \"tenantId\": \"kl\"\n                },\n                {\n                    \"name\": \"SUBMISSION_RESPONDER\",\n                    \"code\": \"SUBMISSION_RESPONDER\",\n                    \"tenantId\": \"kl\"\n                },\n                {\n                    \"name\": \"ORDER_VIEWER\",\n                    \"code\": \"ORDER_VIEWER\",\n                    \"tenantId\": \"kl\"\n                },\n                {\n                    \"name\": \"CASE_EDITOR\",\n                    \"code\": \"CASE_EDITOR\",\n                    \"tenantId\": \"kl\"\n                },\n                {\n                    \"name\": \"SUBMISSION_CREATOR\",\n                    \"code\": \"SUBMISSION_CREATOR\",\n                    \"tenantId\": \"kl\"\n                },\n                {\n                    \"name\": \"APPLICATION_VIEWER\",\n                    \"code\": \"APPLICATION_VIEWER\",\n                    \"tenantId\": \"kl\"\n                },\n                {\n                    \"name\": \"TASK_VIEWER\",\n                    \"code\": \"TASK_VIEWER\",\n                    \"tenantId\": \"kl\"\n                },\n                {\n                    \"name\": \"CASE_CREATOR\",\n                    \"code\": \"CASE_CREATOR\",\n                    \"tenantId\": \"kl\"\n                }\n            ],\n            \"active\": true,\n            \"tenantId\": \"kl\",\n            \"permanentCity\": null\n        }\n    }\n}"
+            },
+            "url": {
+              "raw": "http://localhost:8080/individual/v1/_create?tenantId=kl&_=1730188058239",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "8080",
+              "path": [
+                "individual",
+                "v1",
+                "_create"
+              ],
+              "query": [
+                {
+                  "key": "tenantId",
+                  "value": "kl"
+                },
+                {
+                  "key": "_",
+                  "value": "1730188058239"
+                }
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
+    }
+  ]
+}

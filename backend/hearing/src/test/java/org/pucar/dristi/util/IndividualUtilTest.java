@@ -90,4 +90,45 @@ class IndividualUtilTest {
        assertFalse(thrown.getMessage().contains("Exception in individual utility service: Error"));
        verify(serviceRequestRepository, times(1)).fetchResult(any(), any());
    }
+
+   @Test
+   void testGetIndividualByIndividualIdEmptyResponse() {
+       IndividualSearchRequest request = new IndividualSearchRequest();
+       StringBuilder uri = new StringBuilder("http://localhost:8080");
+
+       when(serviceRequestRepository.fetchResult(any(), any())).thenReturn(null);
+
+       assertNull(individualUtil.getIndividualByIndividualId(request, uri));
+       verify(serviceRequestRepository, times(1)).fetchResult(any(), any());
+   }
+
+   @Test
+    void testGetIndividualByIndividualIdCustomException() {
+         IndividualSearchRequest request = new IndividualSearchRequest();
+         StringBuilder uri = new StringBuilder("http://localhost:8080");
+
+         when(serviceRequestRepository.fetchResult(any(), any())).thenThrow(new CustomException("CODE", "Custom Exception"));
+
+         CustomException thrown = assertThrows(CustomException.class, () -> {
+              individualUtil.getIndividualByIndividualId(request, uri);
+         });
+
+         assertTrue(thrown.getMessage().contains("Custom Exception"));
+         verify(serviceRequestRepository, times(1)).fetchResult(any(), any());
+    }
+
+    @Test
+    void testGetIndividualByIndividualIdGenericException() {
+         IndividualSearchRequest request = new IndividualSearchRequest();
+         StringBuilder uri = new StringBuilder("http://localhost:8080");
+
+         when(serviceRequestRepository.fetchResult(any(), any())).thenThrow(new RuntimeException("Error"));
+
+         CustomException thrown = assertThrows(CustomException.class, () -> {
+              individualUtil.getIndividualByIndividualId(request, uri);
+         });
+
+        assertTrue(thrown.getMessage().contains("Error"));
+         verify(serviceRequestRepository, times(1)).fetchResult(any(), any());
+    }
 }

@@ -1,0 +1,68 @@
+@startuml
+autonumber
+title "Judge admits a case"
+actor Judge as J
+
+participant HomeScreenUI as H 
+participant PendingTasksUI as I 
+participant ViewCaseUI as CI 
+
+box DRISTI Services
+participant CaseSvc as CS #gold
+participant HearingSvc as HS #gold
+end box
+
+box DIGIT Services
+participant Workflow #lightgreen
+end box
+
+J->H: Judge logs in and views home screen
+J->I: View pending tasks
+J->I: Click on a case pending admission
+I->CI: Transition to view case screen
+CI->CaseSvc++: Search for case by\n CNR or FN
+return Case
+CI->CI: Display case details
+alt "Admit Case"
+J -> CI: Click on "Admit case"
+
+opt Delay Condonation application not approved
+note right of CI
+   Please allow/dismiss application for Delay condonation first. 
+   You can find it in the list of Applications in the View a Case Page’
+end note
+end
+
+CI->CS++: Call update with workflow action
+CS->Workflow++: Update workflow to "Admitted" status
+return workflow
+CS->CaseSvc:Generate ST number for case
+return updated case payload
+
+CI->HS++: search Hearing (for admission hearing, CNR)
+return admission hearing
+CI->CI: check if (admissionHearing.Date > today)
+alt true
+CI->CI: Show popup "Admission hearing is scheduled. Do you want to cancel it?"
+alt
+J->CI: selects "Yes"
+note over CI: flow for cancel of admission hearing
+else
+J->CI: selects "No"
+note over CI: no further action required
+end
+end
+CI->CS++: search Case (CNR)
+return Case
+CI->CI: check if respondent has joined the case
+alt No
+note over CI: flow for issue of summons
+end
+else "Reject"
+J->CI: Click on "Reject Case"
+CI->CS: Call update with workflow action REJECT
+CS->Workflow++: Update workflow to "DISMISSED" status
+return workflow
+CS->CI: Show DIMISSED status
+end
+@enduml

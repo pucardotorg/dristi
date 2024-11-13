@@ -2,8 +2,8 @@
     "BusinessServices": [
         {
             "tenantId": "kl",
-            "businessService": "case",
-            "business": "case-services",
+            "business": "case",
+            "businessService": "case-default",
             "businessServiceSla": null,
             "states": [
                 {
@@ -24,9 +24,16 @@
                         },
                         {
                             "action": "SUBMIT_CASE",
-                            "nextState": "PAYMENT_PENDING",
+                            "nextState": "PENDING_E-SIGN",
                             "roles": [
                                 "CASE_CREATOR"
+                            ]
+                        },
+                        {
+                            "action": "SUBMIT_CASE_ADVOCATE",
+                            "nextState": "PENDING_SIGN",
+                            "roles": [
+                                "ADVOCATE_ROLE"
                             ]
                         }
                     ]
@@ -41,17 +48,17 @@
                     "isStateUpdatable": true,
                     "actions": [
                         {
-                            "action": "SAVE_DRAFT",
-                            "nextState": "DRAFT_IN_PROGRESS",
+                            "action": "SUBMIT_CASE",
+                            "nextState": "PENDING_E-SIGN",
                             "roles": [
                                 "CASE_CREATOR"
                             ]
                         },
                         {
-                            "action": "SUBMIT_CASE",
-                            "nextState": "PAYMENT_PENDING",
+                            "action": "SUBMIT_CASE_ADVOCATE",
+                            "nextState": "PENDING_SIGN",
                             "roles": [
-                                "CASE_CREATOR"
+                                "ADVOCATE_ROLE"
                             ]
                         },
                         {
@@ -65,7 +72,76 @@
                 },
                 {
                     "sla": null,
-                    "state": "PAYMENT_PENDING",
+                    "state": "PENDING_E-SIGN",
+                    "applicationStatus": "INWORKFLOW",
+                    "docUploadRequired": false,
+                    "isStartState": false,
+                    "isTerminateState": false,
+                    "isStateUpdatable": true,
+                    "actions": [
+                        {
+                            "action": "E-SIGN",
+                            "nextState": "PENDING_E-SIGN-2",
+                            "roles": [
+                                "CASE_CREATOR",
+                                "SYSTEM",
+                                "SYSTEM_ADMIN"
+                            ]
+                        },
+                        {
+                            "action": "E-SIGN_PARTY_IN_PERSON",
+                            "nextState": "PENDING_PAYMENT",
+                            "roles": [
+                                "CASE_CREATOR",
+                                "SYSTEM",
+                                "SYSTEM_ADMIN"
+                            ]
+                        }
+                    ]
+                },
+                {
+                    "sla": null,
+                    "state": "PENDING_E-SIGN-2",
+                    "applicationStatus": "INWORKFLOW",
+                    "docUploadRequired": false,
+                    "isStartState": false,
+                    "isTerminateState": false,
+                    "isStateUpdatable": true,
+                    "actions": [
+                        {
+                            "action": "E-SIGN",
+                            "nextState": "PENDING_PAYMENT",
+                            "roles": [
+                                "ADVOCATE_ROLE",
+                                "SYSTEM",
+                                "SYSTEM_ADMIN"
+                            ]
+                        }
+                    ]
+                },
+                {
+                    "sla": null,
+                    "state": "PENDING_SIGN",
+                    "applicationStatus": "INWORKFLOW",
+                    "docUploadRequired": false,
+                    "isStartState": false,
+                    "isTerminateState": false,
+                    "isStateUpdatable": true,
+                    "actions": [
+                        {
+                            "action": "UPLOAD",
+                            "nextState": "PENDING_PAYMENT",
+                            "roles": [
+                                "ADVOCATE_ROLE",
+                                "SYSTEM",
+                                "SYSTEM_ADMIN"
+                            ]
+                        }
+                    ]
+                },
+                {
+                    "sla": null,
+                    "state": "PENDING_PAYMENT",
                     "applicationStatus": "INWORKFLOW",
                     "docUploadRequired": false,
                     "isStartState": false,
@@ -76,7 +152,9 @@
                             "action": "MAKE_PAYMENT",
                             "nextState": "UNDER_SCRUTINY",
                             "roles": [
-                                "SYSTEM_ADMIN"
+                                "SYSTEM",
+                                "SYSTEM_ADMIN",
+                                "CASE_CREATOR"
                             ]
                         }
                     ]
@@ -92,14 +170,14 @@
                     "actions": [
                         {
                             "action": "VALIDATE",
-                            "nextState": "PENDING_ADMISSION",
+                            "nextState": "PENDING_REGISTRATION",
                             "roles": [
                                 "CASE_REVIEWER"
                             ]
                         },
                         {
                             "action": "SEND_BACK",
-                            "nextState": "CASE_RE_ASSIGNED",
+                            "nextState": "CASE_REASSIGNED",
                             "roles": [
                                 "CASE_REVIEWER"
                             ]
@@ -108,7 +186,32 @@
                 },
                 {
                     "sla": null,
-                    "state": "CASE_RE_ASSIGNED",
+                    "state": "PENDING_REGISTRATION",
+                    "applicationStatus": "INWORKFLOW",
+                    "docUploadRequired": false,
+                    "isStartState": false,
+                    "isTerminateState": false,
+                    "isStateUpdatable": true,
+                    "actions": [
+                        {
+                            "action": "REGISTER",
+                            "nextState": "PENDING_ADMISSION_HEARING",
+                            "roles": [
+                                "CASE_APPROVER"
+                            ]
+                        },
+                        {
+                            "action": "SEND_BACK",
+                            "nextState": "CASE_REASSIGNED",
+                            "roles": [
+                                "CASE_APPROVER"
+                            ]
+                        }
+                    ]
+                },
+                {
+                    "sla": null,
+                    "state": "CASE_REASSIGNED",
                     "applicationStatus": "INWORKFLOW",
                     "docUploadRequired": false,
                     "isStartState": false,
@@ -117,16 +220,92 @@
                     "actions": [
                         {
                             "action": "EDIT_CASE",
-                            "nextState": "UNDER_SCRUTINY",
+                            "nextState": "PENDING_RE_E-SIGN",
                             "roles": [
                                 "CASE_CREATOR"
+                            ]
+                        },
+                        {
+                            "action": "EDIT_CASE_ADVOCATE",
+                            "nextState": "PENDING_RE_SIGN",
+                            "roles": [
+                                "ADVOCATE_ROLE"
                             ]
                         }
                     ]
                 },
                 {
                     "sla": null,
-                    "state": "PENDING_ADMISSION",
+                    "state": "PENDING_RE_SIGN",
+                    "applicationStatus": "INWORKFLOW",
+                    "docUploadRequired": false,
+                    "isStartState": false,
+                    "isTerminateState": false,
+                    "isStateUpdatable": true,
+                    "actions": [
+                        {
+                            "action": "UPLOAD",
+                            "nextState": "UNDER_SCRUTINY",
+                            "roles": [
+                                "ADVOCATE_ROLE",
+                                "SYSTEM",
+                                "SYSTEM_ADMIN"
+                            ]
+                        }
+                    ]
+                },
+                {
+                    "sla": null,
+                    "state": "PENDING_RE_E-SIGN",
+                    "applicationStatus": "INWORKFLOW",
+                    "docUploadRequired": false,
+                    "isStartState": false,
+                    "isTerminateState": false,
+                    "isStateUpdatable": true,
+                    "actions": [
+                        {
+                            "action": "E-SIGN",
+                            "nextState": "PENDING_RE_E-SIGN-2",
+                            "roles": [
+                                "SYSTEM",
+                                "SYSTEM_ADMIN",
+                                "CASE_CREATOR"
+                            ]
+                        },
+                        {
+                            "action": "E-SIGN_PARTY_IN_PERSON",
+                            "nextState": "UNDER_SCRUTINY",
+                            "roles": [
+                                "CASE_CREATOR",
+                                "SYSTEM",
+                                "SYSTEM_ADMIN"
+                            ]
+                        }
+                    ]
+                },
+                {
+                    "sla": null,
+                    "state": "PENDING_RE_E-SIGN-2",
+                    "applicationStatus": "INWORKFLOW",
+                    "docUploadRequired": false,
+                    "isStartState": false,
+                    "isTerminateState": false,
+                    "isStateUpdatable": true,
+                    "actions": [
+                        {
+                            "action": "E-SIGN",
+                            "nextState": "UNDER_SCRUTINY",
+                            "roles": [
+                                "SYSTEM",
+                                "SYSTEM_ADMIN",
+                                "ADVOCATE_ROLE"
+                            ]
+                        }
+                    ]
+                },
+                {
+                    "sla": null,
+                    "state": "PENDING_ADMISSION_HEARING",
                     "applicationStatus": "INWORKFLOW",
                     "docUploadRequired": false,
                     "isStartState": false,
@@ -139,17 +318,21 @@
                             "roles": [
                                 "CASE_APPROVER"
                             ]
-                        },
-                        {
-                            "action": "SEND_BACK",
-                            "nextState": "CASE_RE_ASSIGNED",
-                            "roles": [
-                                "CASE_APPROVER"
-                            ]
-                        },
+                        }
+                    ]
+                },
+                {
+                    "sla": null,
+                    "state": "ADMISSION_HEARING_SCHEDULED",
+                    "applicationStatus": "INWORKFLOW",
+                    "docUploadRequired": false,
+                    "isStartState": false,
+                    "isTerminateState": false,
+                    "isStateUpdatable": true,
+                    "actions": [
                         {
                             "action": "ADMIT",
-                            "nextState": "CASE_ADMITTED",
+                            "nextState": "PENDING_NOTICE",
                             "roles": [
                                 "CASE_APPROVER"
                             ]
@@ -158,7 +341,65 @@
                 },
                 {
                     "sla": null,
-                    "state": "ADMISSION_HEARING_SCHEDULED",
+                    "state": "PENDING_NOTICE",
+                    "applicationStatus": "INWORKFLOW",
+                    "docUploadRequired": false,
+                    "isStartState": false,
+                    "isTerminateState": false,
+                    "isStateUpdatable": true,
+                    "actions": [
+                        {
+                            "action": "ISSUE_ORDER",
+                            "nextState": "PENDING_RESPONSE",
+                            "roles": [
+                                "CASE_APPROVER"
+                            ]
+                        },
+                        {
+                            "action": "REJECT",
+                            "nextState": "CASE_DISMISSED",
+                            "roles": [
+                                "CASE_APPROVER"
+                            ]
+                        }
+                    ]
+                },
+                {
+                    "sla": null,
+                    "state": "PENDING_RESPONSE",
+                    "applicationStatus": "INWORKFLOW",
+                    "docUploadRequired": false,
+                    "isStartState": false,
+                    "isTerminateState": false,
+                    "isStateUpdatable": true,
+                    "actions": [
+                        {
+                            "action": "RESPOND",
+                            "nextState": "PENDING_ADMISSION",
+                            "roles": [
+                                "SYSTEM",
+                                "SYSTEM_ADMIN"
+                            ]
+                        },
+                        {
+                            "action": "ADMIT",
+                            "nextState": "CASE_ADMITTED",
+                            "roles": [
+                                "CASE_APPROVER"
+                            ]
+                        },
+                        {
+                            "action": "REJECT",
+                            "nextState": "CASE_DISMISSED",
+                            "roles": [
+                                "CASE_APPROVER"
+                            ]
+                        }
+                    ]
+                },
+                {
+                    "sla": null,
+                    "state": "PENDING_ADMISSION",
                     "applicationStatus": "INWORKFLOW",
                     "docUploadRequired": false,
                     "isStartState": false,

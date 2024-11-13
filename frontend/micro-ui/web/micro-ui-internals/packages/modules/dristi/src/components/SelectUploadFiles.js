@@ -1,14 +1,13 @@
+import { CardLabelError, CloseSvg, UploadIcon } from "@egovernments/digit-ui-react-components";
 import React, { useMemo, useState } from "react";
-import CustomErrorTooltip from "./CustomErrorTooltip";
-
 import { FileUploader } from "react-drag-drop-files";
-import { CloseSvg, UploadIcon } from "@egovernments/digit-ui-react-components";
-import RenderFileCard from "./RenderFileCard";
-import MultiUploadWrapper from "./MultiUploadWrapper";
-import Modal from "./Modal";
 import DocViewerWrapper from "../pages/employee/docViewerWrapper";
+import CustomErrorTooltip from "./CustomErrorTooltip";
+import Modal from "./Modal";
+import MultiUploadWrapper from "./MultiUploadWrapper";
+import RenderFileCard from "./RenderFileCard";
 
-const textAreaJSX = (value, t, input, handleChange) => {
+const textAreaJSX = (value, t, input, handleChange, error, disabled) => {
   return (
     <div className="custom-text-area-main-div" style={input?.style}>
       <div className="custom-text-area-header-div">
@@ -28,12 +27,13 @@ const textAreaJSX = (value, t, input, handleChange) => {
       </div>
 
       <textarea
+        disabled={disabled}
         value={value}
         onChange={(data) => {
           handleChange(data, input);
         }}
         rows={5}
-        className="custom-textarea-style"
+        className={`custom-textarea-style${error ? " alert-error-border" : ""}`}
         placeholder={input?.placeholder}
       ></textarea>
     </div>
@@ -52,7 +52,7 @@ const Heading = (props) => {
   return <h1 className="heading-m">{props.label}</h1>;
 };
 
-function SelectUploadFiles({ t, config, formData = {}, onSelect }) {
+function SelectUploadFiles({ t, config, formData = {}, onSelect, errors, setError }) {
   const checkIfTextPresent = () => {
     if (!formData) {
       return true;
@@ -60,7 +60,7 @@ function SelectUploadFiles({ t, config, formData = {}, onSelect }) {
     if (Object.keys(formData).length === 0) {
       return true;
     }
-    if (Object.keys(formData?.[config.key]).length === 0) {
+    if (Object.keys(formData?.[config.key] || {}).length === 0) {
       return true;
     } else if (formData?.[config.key]?.text) {
       return true;
@@ -93,35 +93,22 @@ function SelectUploadFiles({ t, config, formData = {}, onSelect }) {
         },
         {
           name: "document",
-          documentHeader: "Aadhar",
+          documentHeader: "AADHAR",
           documentSubText: "subtext",
           isOptional: "CS_IS_OPTIONAL",
-          infoTooltipMessage: "Tooltip",
+          infoTooltipMessage: "AADHAR",
           label: "Title",
           type: "DragDropComponent",
           uploadGuidelines: t("UPLOAD_DOC_50"),
           maxFileSize: 50,
           maxFileErrorMessage: "CS_FILE_LIMIT_50_MB",
-          fileTypes: ["JPG", "PNG", "PDF"],
+          fileTypes: ["JPG", "PDF", "PNG", "JPEG"],
+
           isMultipleUpload: true,
         },
       ],
-    [config?.populators?.inputs]
+    [config?.populators?.inputs, t]
   );
-
-  function setValue(value, input) {
-    if (Array.isArray(input)) {
-      onSelect(config.key, {
-        ...formData[config.key],
-        ...input.reduce((res, curr) => {
-          res[curr] = value[curr];
-          return res;
-        }, {}),
-      });
-    } else {
-      onSelect(config.key, { ...formData[config.key], [input]: value });
-    }
-  }
 
   const fileValidator = (file, input) => {
     const maxFileSize = input?.maxFileSize * 1024 * 1024;
@@ -131,18 +118,39 @@ function SelectUploadFiles({ t, config, formData = {}, onSelect }) {
   const handleChange = (file, input, index = Infinity) => {
     let currentValue = (formData && formData[config.key] && formData[config.key][input.name]) || [];
     currentValue.splice(index, 1, file);
-    // setValue(currentValue, input?.name);
-    onSelect(config.key, { ...formData[config.key], [input?.name]: currentValue });
+    currentValue = currentValue.map((item) => {
+      if (item?.name) {
+        const fileNameParts = item?.name.split(".");
+        const extension = fileNameParts.pop().toLowerCase();
+        const fileNameWithoutExtension = fileNameParts.join(".");
+        return new File([item], `${fileNameWithoutExtension}.${extension}`, {
+          type: item?.type,
+          lastModified: item?.lastModified,
+        });
+      } else {
+        return item;
+      }
+    });
+    const maxFileSize = input?.maxFileSize * 1024 * 1024;
+    if (file.size > maxFileSize) {
+      onSelect(config.key, { ...formData[config.key], [input?.name]: currentValue }, { shouldValidate: false });
+      setError(config.key, { message: t(input?.maxFileErrorMessage) });
+    } else {
+      onSelect(config.key, { ...formData[config.key], [input?.name]: currentValue }, { shouldValidate: true });
+    }
   };
 
   const handleDeleteFile = (input, index) => {
-    let currentValue = (formData && formData[config.key] && formData[config.key][input.name]) || [];
+    const dataCopy = structuredClone(formData[config.key]);
+    let currentValue = (dataCopy && dataCopy?.["document"]) || [];
     currentValue.splice(index, 1);
+    let data = { document: currentValue };
     if (currentValue.length === 0) {
       setShowTextArea(true);
       setIsFileAdded(false);
+      data = { text: "" };
     }
-    onSelect(config.key, { ...formData[config.key], [input?.name]: currentValue });
+    onSelect(config.key, data, { shouldValidate: true });
   };
 
   const dragDropJSX = (
@@ -171,7 +179,7 @@ function SelectUploadFiles({ t, config, formData = {}, onSelect }) {
     if ("text" in dataCopy) {
       delete dataCopy.text;
     }
-    onSelect(config.key, dataCopy);
+    onSelect(config.key, dataCopy, { shouldValidate: true });
   };
 
   function getFileStoreData(filesData, input) {
@@ -187,20 +195,27 @@ function SelectUploadFiles({ t, config, formData = {}, onSelect }) {
   const handleTextChange = (data, input) => {
     const formDataCopy = structuredClone(formData);
     delete formDataCopy[config.key]?.document;
-    onSelect(config.key, { ...formDataCopy[config.key], [input.name]: data.target.value });
+    onSelect(config.key, { ...formDataCopy[config.key], [input.name]: data.target.value }, { shouldValidate: true });
     return;
   };
 
   return inputs.map((input) => {
-    const currentDocs = (formData && formData[config.key] && formData?.[config.key]?.["document"]) || [];
     if (input.type === "TextAreaComponent" && showTextArea) {
       return (
         <div className="text-area-and-upload">
-          {textAreaJSX(formData?.[config.key]?.text || "", t, input, handleTextChange)}
+          {textAreaJSX(formData?.[config.key]?.text || "", t, input, handleTextChange, errors[config.key], config?.disable)}
           {!isFileAdded && (
             <div className="text-upload-file-main">
               <p>{t("CS_WANT_TO_UPLOAD")}</p>
-              <span onClick={openModal} style={{ textDecoration: "underline", color: "#007E7E" }}>
+              <span
+                onClick={() => {
+                  if (config?.disable) {
+                    return;
+                  }
+                  openModal();
+                }}
+                style={{ textDecoration: "underline", color: "#007E7E" }}
+              >
                 {t("WBH_BULK_BROWSE_FILES")}
               </span>
             </div>
@@ -223,7 +238,7 @@ function SelectUploadFiles({ t, config, formData = {}, onSelect }) {
                 <div className="drag-drop-heading">
                   <h2 className="card-label">{t(input?.documentHeader)}</h2>
                   {input?.isOptional && <h3>{t(input?.isOptional)}</h3>}
-                  <CustomErrorTooltip message={t(input?.infoTooltipMessage)} showTooltip={Boolean(input?.infoTooltipMessage)} />
+                  <CustomErrorTooltip message={t(input?.infoTooltipMessage)} showTooltip={Boolean(input?.infoTooltipMessage)} icon />
                 </div>
                 {<p>{t(input?.documentSubText)}</p>}
               </div>
@@ -237,12 +252,14 @@ function SelectUploadFiles({ t, config, formData = {}, onSelect }) {
                   t={t}
                   uploadErrorInfo={fileErrors[index]}
                   input={input}
+                  disableUploadDelete={config?.disable}
                 />
               ))}
               {showFileUploader && (
                 <div className={`file-uploader-div-main show-file-uploader select-UploadFiles`}>
                   <div className="file-uploader">
                     <FileUploader
+                      disabled={config?.disable}
                       handleChange={(data) => {
                         handleChange(data, input);
                       }}
@@ -262,7 +279,7 @@ function SelectUploadFiles({ t, config, formData = {}, onSelect }) {
           {showModal && (
             <Modal
               headerBarEnd={<CloseBtn onClick={handleCloseModal} isMobileView={true} />}
-              actionCancelOnSubmit={() => { }}
+              actionCancelOnSubmit={() => {}}
               actionSaveLabel={t("ADD")}
               actionSaveOnSubmit={(data) => handleAddFileInModal(data)}
               // hideSubmit={false}
@@ -280,7 +297,7 @@ function SelectUploadFiles({ t, config, formData = {}, onSelect }) {
                   getFormState={(fileData) => getFileStoreData(fileData, input)}
                   showHintBelow={input?.showHintBelow ? true : false}
                   setuploadedstate={formData?.[config.key]?.[input.name] || []}
-                  allowedMaxSizeInMB={"5"}
+                  allowedMaxSizeInMB={input?.maxFileSize}
                   maxFilesAllowed={input.maxFilesAllowed || "1"}
                   extraStyleName={{ padding: "0.5rem" }}
                   customClass={input?.customClass}
@@ -300,9 +317,11 @@ function SelectUploadFiles({ t, config, formData = {}, onSelect }) {
               </div>
             </Modal>
           )}
+          {errors[config.key] && <CardLabelError>{t(errors[config.key].msg || "CORE_REQUIRED_FIELD_ERROR")}</CardLabelError>}
         </div>
       );
     }
+    return null;
   });
 }
 

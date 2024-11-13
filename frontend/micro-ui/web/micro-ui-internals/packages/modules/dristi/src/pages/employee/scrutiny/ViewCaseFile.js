@@ -1,28 +1,53 @@
-import {
-  BackButton,
-  CheckSvg,
-  CloseButton,
-  CloseSvg,
-  EditIcon,
-  FormComposerV2,
-  Header,
-  Loader,
-  TextInput,
-  Toast,
-} from "@egovernments/digit-ui-react-components";
-import React, { useMemo, useState } from "react";
-import { useLocation, Redirect, useHistory } from "react-router-dom";
-import useSearchCaseService from "../../../hooks/dristi/useSearchCaseService";
-import { CustomArrowDownIcon, FlagIcon } from "../../../icons/svgIndex";
-import { reviewCaseFileFormConfig } from "../../citizen/FileCase/Config/reviewcasefileconfig";
-import SendCaseBackModal from "../../../components/SendCaseBackModal";
-import SuccessModal from "../../../components/SuccessModal";
-import { formatDate } from "../../citizen/FileCase/CaseType";
-import { DRISTIService } from "../../../services";
+import { BackButton, CheckSvg, CloseSvg, EditIcon, FormComposerV2, Header, Loader, TextInput, Toast } from "@egovernments/digit-ui-react-components";
+import React, { useEffect, useMemo, useState } from "react";
+import { Redirect, useHistory, useLocation } from "react-router-dom";
+import ReactTooltip from "react-tooltip";
+import { CaseWorkflowAction } from "../../../Utils/caseWorkflow";
 import CustomCaseInfoDiv from "../../../components/CustomCaseInfoDiv";
 import Modal from "../../../components/Modal";
+import SendCaseBackModal from "../../../components/SendCaseBackModal";
+import SuccessModal from "../../../components/SuccessModal";
+import useSearchCaseService from "../../../hooks/dristi/useSearchCaseService";
+import { CustomArrowDownIcon, FileDownloadIcon, FlagIcon } from "../../../icons/svgIndex";
+import { DRISTIService } from "../../../services";
+import { formatDate } from "../../citizen/FileCase/CaseType";
+import { reviewCaseFileFormConfig } from "../../citizen/FileCase/Config/reviewcasefileconfig";
 
-function ViewCaseFile({ t }) {
+import Button from "../../../components/Button";
+import useDownloadCasePdf from "../../../hooks/dristi/useDownloadCasePdf";
+
+const downloadButtonStyle = {
+  backgroundColor: "white",
+  border: "none",
+  boxShadow: "none",
+  display: "flex",
+  justifyContent: "center",
+  padding: "10px 20px",
+  cursor: "pointer",
+};
+
+const downloadButtonTextStyle = {
+  color: "#007e7e",
+  fontFamily: "Roboto, sans-serif",
+  fontSize: "16px",
+  fontWeight: 700,
+  lineHeight: "18.75px",
+  textAlign: "center",
+  width: "fit-content",
+  margin: "0px",
+};
+
+const downloadSvgStyle = {
+  margin: "0px 12px 0px 0px",
+  height: "16px",
+  width: "16px",
+};
+
+const downloadPathStyle = {
+  fill: "#007e7e",
+};
+
+function ViewCaseFile({ t, inViewCase = false }) {
   const history = useHistory();
   const roles = Digit.UserService.getUser()?.info?.roles;
   const isScrutiny = roles.some((role) => role.code === "CASE_REVIEWER");
@@ -36,6 +61,9 @@ function ViewCaseFile({ t }) {
   const [showEditCaseNameModal, setShowEditCaseNameModal] = useState(false);
   const [newCaseName, setNewCaseName] = useState("");
   const [modalCaseName, setModalCaseName] = useState("");
+  const [highlightChecklist, setHighlightChecklist] = useState(false);
+
+  const { downloadPdf } = useDownloadCasePdf();
 
   const onFormValueChange = (setValue, formData, formState, reset, setError, clearErrors, trigger, getValues) => {
     if (JSON.stringify(formData) !== JSON.stringify(formdata.data)) {
@@ -61,7 +89,7 @@ function ViewCaseFile({ t }) {
         }
         section[key]?.form?.forEach((item) => {
           Object.keys(item)?.forEach((field) => {
-            if (item[field]?.FSOError) {
+            if (item[field]?.FSOError && field != "image" && field != "title") {
               total++;
               inputErrors++;
             }
@@ -73,14 +101,77 @@ function ViewCaseFile({ t }) {
     return { total, inputErrors, sectionErrors };
   };
 
+  const { data: caseFetchResponse, refetch: refetchCaseData, isLoading } = useSearchCaseService(
+    {
+      criteria: [
+        {
+          caseId: caseId,
+        },
+      ],
+      tenantId,
+    },
+    {},
+    "dristi",
+    caseId,
+    Boolean(caseId)
+  );
+  const caseDetails = useMemo(() => caseFetchResponse?.criteria?.[0]?.responseList?.[0] || null, [caseFetchResponse]);
+
+  const defaultScrutinyErrors = useMemo(() => {
+    return caseDetails?.additionalDetails?.scrutiny || {};
+  }, [caseDetails]);
+
+  const isPrevScrutiny = useMemo(() => {
+    return Object.keys(defaultScrutinyErrors).length > 0;
+  }, [defaultScrutinyErrors]);
+
+  function mergeErrors(formdata, defaultScrutinyErrors) {
+    // Helper function to handle the comparison and merging of objects
+    function compareAndReplace(formDataNode, defaultNode) {
+      // Iterate over each key in the formdata node
+      for (let key in formDataNode) {
+        // Check if the key exists in both formdata and defaultScrutinyErrors
+        if (defaultNode?.hasOwnProperty(key)) {
+          // If the value is an object, recursively compare and replace
+          if (typeof formDataNode[key] === "object" && formDataNode[key] !== null) {
+            compareAndReplace(formDataNode[key], defaultNode[key]);
+          } else {
+            // If the value is a string (for FSOError and scrutinyMessage)
+            if (key === "FSOError" || key === "scrutinyMessage") {
+              if (formDataNode[key] === defaultNode[key] && !formDataNode?.markError) {
+                formDataNode[key] = "";
+              } else {
+                formDataNode[key] = formDataNode[key];
+              }
+              formDataNode["markError"] = false;
+            }
+          }
+        }
+      }
+    }
+    // Clone the formdata object to avoid modifying the original one
+    const result = JSON.parse(JSON.stringify(formdata));
+    // Start the comparison and replacement
+    compareAndReplace(result.data, defaultScrutinyErrors.data);
+    return result;
+  }
+
+  const fileStoreId = useMemo(() => {
+    return caseDetails?.documents?.[0]?.fileStore;
+  }, [caseDetails]);
+
+  const newScrutinyData = useMemo(() => {
+    return mergeErrors(formdata, defaultScrutinyErrors);
+  }, [formdata, defaultScrutinyErrors]);
+
   const scrutinyErrors = useMemo(() => {
     const errorCount = {};
-    for (const key in formdata?.data) {
-      if (typeof formdata.data[key] === "object" && formdata.data[key] !== null) {
+    for (const key in newScrutinyData?.data) {
+      if (typeof newScrutinyData.data[key] === "object" && newScrutinyData.data[key] !== null) {
         if (!errorCount[key]) {
           errorCount[key] = { total: 0, sectionErrors: 0, inputErrors: 0 };
         }
-        const temp = countSectionErrors(formdata.data[key]);
+        const temp = countSectionErrors(newScrutinyData.data[key]);
         errorCount[key] = {
           total: errorCount[key].total + temp.total,
           sectionErrors: errorCount[key].sectionErrors + temp.sectionErrors,
@@ -89,7 +180,7 @@ function ViewCaseFile({ t }) {
       }
     }
     return errorCount;
-  }, [formdata]);
+  }, [newScrutinyData]);
 
   const totalErrors = useMemo(() => {
     let total = 0;
@@ -110,49 +201,82 @@ function ViewCaseFile({ t }) {
   }, [scrutinyErrors]);
   const isDisabled = useMemo(() => totalErrors?.total > 0);
 
-  const { data: caseFetchResponse, refetch: refetchCaseData, isLoading } = useSearchCaseService(
-    {
-      criteria: [
-        {
-          caseId: caseId,
-        },
-      ],
-      tenantId,
-    },
-    {},
-    "dristi",
-    caseId,
-    Boolean(caseId)
-  );
-  const caseDetails = useMemo(() => caseFetchResponse?.criteria?.[0]?.responseList?.[0] || null, [caseFetchResponse]);
-  const defaultScrutinyErrors = useMemo(() => caseDetails?.additionalDetails?.scrutiny || {}, [caseDetails]);
-  const state = useMemo(() => caseDetails?.workflow?.action, [caseDetails]);
-
+  const state = useMemo(() => caseDetails?.status, [caseDetails]);
   const formConfig = useMemo(() => {
     if (!caseDetails) return null;
     return [
       ...reviewCaseFileFormConfig.map((form) => {
         return {
           ...form,
-          body: form.body.map((section) => {
-            return {
-              ...section,
-              populators: {
-                ...section.populators,
-                inputs: section.populators.inputs?.map((input) => {
-                  delete input.data;
-                  return {
-                    ...input,
-                    data: caseDetails?.additionalDetails?.[input?.key]?.formdata || caseDetails?.caseDetails?.[input?.key]?.formdata || {},
-                  };
-                }),
-              },
-            };
-          }),
+          body: form.body
+            ?.filter((section) => !(section?.key === "submissionFromAccused" && isScrutiny))
+            .map((section) => {
+              return {
+                ...section,
+                isPrevScrutiny,
+                populators: {
+                  ...section.populators,
+                  inputs: section.populators.inputs?.map((input) => {
+                    delete input.data;
+                    if (input?.key === "submissionFromAccused") {
+                      const responseDocuments = caseDetails?.litigants?.filter((litigant) => litigant?.partyType?.includes("respondent"))?.[0]
+                        ?.documents;
+                      const vakalatnamaDocument = caseDetails?.representatives?.filter((representative) =>
+                        representative?.representing?.some((represent) => represent?.partyType?.includes("respondent"))
+                      )?.[0]?.additionalDetails?.document?.vakalatnamaFileUpload;
+                      return {
+                        ...input,
+                        data: [
+                          {
+                            data: {
+                              infoBoxData: {
+                                data: responseDocuments ? t("RESPONSE_SUBMISSION_MESSAGE") : t("RESPONSE_NOT_SUMISSION_MESSAGE"),
+                                header: responseDocuments ? "ES_COMMON_INFO" : "PLEASE_NOTE",
+                              },
+                              responseDocuments: responseDocuments,
+                              vakalatnamaDocument: vakalatnamaDocument,
+                            },
+                          },
+                        ],
+                      };
+                    } else if (["complainantDetails", "respondentDetails"].includes(input?.key)) {
+                      const isPartyInPerson = (individualId) => {
+                        const representative = caseDetails?.representatives?.find((data) =>
+                          data?.representing?.find((rep) => rep?.individualId === individualId && rep?.isActive === true)
+                        );
+                        return representative ? false : true;
+                      };
+                      const returnData = {
+                        ...input,
+                        data: caseDetails?.additionalDetails?.[input?.key]?.formdata?.map((fData) => ({
+                          ...fData,
+                          data: {
+                            ...fData?.data,
+                            ...(fData?.data?.[input?.key === "complainantDetails" ? "complainantVerification" : "respondentVerification"] &&
+                              isPartyInPerson(
+                                fData?.data?.[input?.key === "complainantDetails" ? "complainantVerification" : "respondentVerification"]
+                                  ?.individualDetails?.individualId
+                              ) && { partyInPerson: true }),
+                          },
+                        })),
+                        prevErrors: defaultScrutinyErrors?.data?.[section.key]?.[input.key] || {},
+                      };
+                      return returnData;
+                    } else
+                      return {
+                        ...input,
+                        data: caseDetails?.additionalDetails?.[input?.key]?.formdata || caseDetails?.caseDetails?.[input?.key]?.formdata || {},
+                        prevErrors: defaultScrutinyErrors?.data?.[section.key]?.[input.key] || {},
+                      };
+                  }),
+                },
+              };
+            }),
         };
       }),
     ];
-  }, [reviewCaseFileFormConfig, caseDetails]);
+  }, [reviewCaseFileFormConfig, caseDetails, defaultScrutinyErrors]);
+
   const primaryButtonLabel = useMemo(() => {
     if (isScrutiny) {
       return "CS_REGISTER_CASE";
@@ -164,22 +288,33 @@ function ViewCaseFile({ t }) {
       return "CS_SEND_BACK";
     }
   }, [isScrutiny]);
-  const updateCaseDetails = async (action, data = {}) => {
+
+  const updateCaseDetails = async (action) => {
+    const scrutinyObj = action === CaseWorkflowAction.VALIDATE ? {} : CaseWorkflowAction.SEND_BACK && isPrevScrutiny ? newScrutinyData : formdata;
     const newcasedetails = {
       ...caseDetails,
-      additionalDetails: { ...caseDetails.additionalDetails, scrutiny: data },
+      additionalDetails: { ...caseDetails.additionalDetails, scrutiny: scrutinyObj },
       caseTitle: newCaseName !== "" ? newCaseName : caseDetails?.caseTitle,
     };
+    const complainantUuid = caseDetails?.litigants?.[0]?.additionalDetails?.uuid;
+    const advocateUuid = caseDetails?.representatives?.[0]?.additionalDetails?.uuid;
+    let assignees = [];
+    if (complainantUuid) {
+      assignees.push(complainantUuid);
+    }
+    if (advocateUuid) {
+      assignees.push(advocateUuid);
+    }
 
     return DRISTIService.caseUpdateService(
       {
         cases: {
           ...newcasedetails,
           linkedCases: caseDetails?.linkedCases ? caseDetails?.linkedCases : [],
-          filingDate: formatDate(new Date()),
           workflow: {
             ...caseDetails?.workflow,
             action,
+            ...(action === CaseWorkflowAction.SEND_BACK && { assignes: assignees }),
           },
         },
         tenantId,
@@ -202,24 +337,66 @@ function ViewCaseFile({ t }) {
     // Write isAdmission condition here
   };
   const handleNextCase = () => {
-    setActionModal(false);
-    history.push("/digit-ui/employee/dristi/cases");
+    DRISTIService.searchCaseService(
+      {
+        criteria: [
+          {
+            status: ["UNDER_SCRUTINY"],
+          },
+        ],
+        tenantId,
+      },
+      {}
+    )
+      .then((res) => {
+        if (res?.criteria?.[0]?.responseList?.[0]?.id) {
+          history.push(`/${window?.contextPath}/employee/dristi/case?caseId=${res?.criteria?.[0]?.responseList?.[0]?.id}`);
+        } else {
+          history.push("/digit-ui/employee/dristi/cases");
+        }
+        setActionModal(false);
+      })
+      .catch(() => {
+        setActionModal(false);
+        history.push("/digit-ui/employee/dristi/cases");
+      });
   };
   const handleAllocationJudge = () => {
-    setActionModal(false);
-    history.push("/digit-ui/employee/dristi/cases");
+    DRISTIService.searchCaseService(
+      {
+        criteria: [
+          {
+            status: ["UNDER_SCRUTINY"],
+          },
+        ],
+        tenantId,
+      },
+      {}
+    )
+      .then((res) => {
+        if (res?.criteria?.[0]?.responseList?.[0]?.id) {
+          history.push(`/${window?.contextPath}/employee/dristi/case?caseId=${res?.criteria?.[0]?.responseList?.[0]?.id}`);
+        } else {
+          history.push("/digit-ui/employee/dristi/cases");
+        }
+        setActionModal(false);
+      })
+      .catch(() => {
+        setActionModal(false);
+        history.push("/digit-ui/employee/dristi/cases");
+      });
   };
   const handleCloseSucessModal = () => {
     setActionModal(false);
     history.push("/digit-ui/employee/dristi/cases");
   };
   const handleRegisterCase = () => {
-    updateCaseDetails("VALIDATE").then((res) => {
+    updateCaseDetails(CaseWorkflowAction.VALIDATE).then((res) => {
       setActionModal("caseRegisterSuccess");
     });
   };
   const handleSendCaseBack = () => {
-    updateCaseDetails("SEND_BACK", formdata).then((res) => {
+    updateCaseDetails(CaseWorkflowAction.SEND_BACK).then((res) => {
       setActionModal("caseSendBackSuccess");
     });
   };
@@ -228,7 +405,19 @@ function ViewCaseFile({ t }) {
   };
   const handleCloseModal = () => {
     setActionModal(false);
+    setHighlightChecklist(true);
+    setTimeout(() => {
+      setHighlightChecklist(false);
+    }, 2000);
   };
+
+  const sidebar = useMemo(
+    () =>
+      ["litigentDetails", "caseSpecificDetails", "additionalDetails", "submissionFromAccused"].filter(
+        (sidebar) => !(sidebar === "submissionFromAccused" && isScrutiny)
+      ),
+    [isScrutiny]
+  );
 
   if (!caseId) {
     return <Redirect to="cases" />;
@@ -237,25 +426,25 @@ function ViewCaseFile({ t }) {
   if (isLoading) {
     return <Loader />;
   }
-  if (isScrutiny && state !== "UNDER_SCRUTINY") {
-    // if state is not under scrutiny, don't allow
-    // history.push("/digit-ui/employee/dristi/cases");
-  }
-  const sidebar = ["litigentDetails", "caseSpecificDetails", "additionalDetails"];
+  // if (isScrutiny && state !== CaseWorkflowState.UNDER_SCRUTINY) {
+  //   history.push("/digit-ui/employee/dristi/cases");
+  // }
   const labels = {
     litigentDetails: "CS_LITIGENT_DETAILS",
     caseSpecificDetails: "CS_CASE_SPECIFIC_DETAILS",
     additionalDetails: "CS_ADDITIONAL_DETAILS",
+    submissionFromAccused: "CS_SUBMISSSIONS_FROM_ACCUSED",
   };
   const checkList = [
-    "CS_SPELLING_MISTAKES",
-    "CS_WRONG_INPUTS",
-    "CS_MISSING_DETAILS",
-    "CS_FIELDS_NO_MATCHUP",
-    "CS_WRONG_DOCUMENT",
-    "CS_POOR_UPLOAD",
+    "CS_SPELLING_CHECK",
+    "CS_VERIFY_REQUIRED_DOCUMENTS",
+    "CS_ENSURE_DOCUMENT_CLARITY",
+    "CS_CONFIRM_JURISDICTION",
+    "CS_VERIFY_SIGNATURES",
+    "CS_VALID_CHEQUE_RETURN_REASON",
     "CS_WRONG_JURISDICTION",
-    "CS_PHOTO_MISMATCH",
+    "CS_CORRECT_DOCUMENT_MAPPING",
+    "CS_CROSSCHECK_FIELD_DETAILS",
   ];
   const caseInfo = [
     {
@@ -268,7 +457,7 @@ function ViewCaseFile({ t }) {
     },
     {
       key: "SUBMITTED_ON",
-      value: caseDetails?.filingDate,
+      value: formatDate(new Date(caseDetails?.filingDate)),
     },
   ];
 
@@ -280,8 +469,17 @@ function ViewCaseFile({ t }) {
     );
   };
 
+  if (caseDetails?.status !== "UNDER_SCRUTINY" && isScrutiny) {
+    history.push(`/${window?.contextPath}/employee/home/home-pending-task`);
+  }
+
   const Heading = (props) => {
     return <h1 className="heading-m">{props.label}</h1>;
+  };
+
+  const scrollToHeading = (heading) => {
+    const scroller = Array.from(document.querySelectorAll(".label-field-pair .accordion-title")).find((el) => el.textContent === heading);
+    scroller.scrollIntoView({ block: "center", behavior: "smooth" });
   };
 
   return (
@@ -292,9 +490,9 @@ function ViewCaseFile({ t }) {
             <div className="file-case-select-form-section">
               {sidebar.map((key, index) => (
                 <div className="accordion-wrapper">
-                  <div key={index} className="accordion-title">
+                  <div key={index} className="accordion-title" onClick={() => scrollToHeading(`${index + 1}. ${t(labels[key])}`)}>
                     <div>{`${index + 1}. ${t(labels[key])}`}</div>
-                    <div>{scrutinyErrors[key]?.total ? `${scrutinyErrors[key].total} ${t("CS_ERRORS")}` : t("CS_NO_ERRORS")}</div>
+                    {!inViewCase && <div>{scrutinyErrors[key]?.total ? `${scrutinyErrors[key].total} ${t("CS_ERRORS")}` : t("CS_NO_ERRORS")}</div>}
                   </div>
                 </div>
               ))}
@@ -302,36 +500,58 @@ function ViewCaseFile({ t }) {
           </div>
           <div className="file-case-form-section">
             <div className="employee-card-wrapper">
-              <div className="back-button-home">
-                <BackButton />
-              </div>
-              <div className="header-content">
-                <div className="header-details">
-                  <div className="header-title-icon">
-                    <Header>
-                      {t("Review Case")}: {newCaseName !== "" ? newCaseName : caseDetails?.caseTitle}
-                    </Header>
-                    <div
-                      className="case-edit-icon"
-                      onClick={() => {
-                        setShowEditCaseNameModal(true);
-                      }}
-                    >
-                      <EditIcon />
+              {!inViewCase && (
+                <div>
+                  <div className="back-button-home" style={{ alignItems: "center" }}>
+                    <div style={{ height: "fit-content" }}>
+                      <BackButton />
                     </div>
+                    <Button
+                      style={downloadButtonStyle}
+                      textStyles={downloadButtonTextStyle}
+                      icon={<FileDownloadIcon svgStyle={downloadSvgStyle} pathStyle={downloadPathStyle} />}
+                      className="download-button"
+                      label={t("CS_COMMON_DOWNLOAD")}
+                      onButtonClick={() => downloadPdf(tenantId, fileStoreId)}
+                    />
                   </div>
-                  <div className="header-icon" onClick={() => {}}>
-                    <CustomArrowDownIcon />
+                  <div className="header-content">
+                    <div className="header-details">
+                      <div className="header-title-icon">
+                        <Header>
+                          {t("CS_REVIEW_CASE")}: {newCaseName !== "" ? newCaseName : caseDetails?.caseTitle}
+                        </Header>
+                        <div
+                          className="case-edit-icon"
+                          onClick={() => {
+                            setShowEditCaseNameModal(true);
+                          }}
+                        >
+                          <React.Fragment>
+                            <span style={{ color: "#77787B", position: "relative" }} data-tip data-for={`Click`}>
+                              {" "}
+                              <EditIcon />
+                            </span>
+                            <ReactTooltip id={`Click`} place="bottom" content={t("CS_CLICK_TO_EDIT") || ""}>
+                              {t("CS_CLICK_TO_EDIT")}
+                            </ReactTooltip>
+                          </React.Fragment>
+                        </div>
+                      </div>
+                      <div className="header-icon" onClick={() => {}}>
+                        <CustomArrowDownIcon />
+                      </div>
+                    </div>
+                    <CustomCaseInfoDiv data={caseInfo} t={t} />
                   </div>
                 </div>
-                <CustomCaseInfoDiv data={caseInfo} t={t} />
-              </div>
+              )}
               <FormComposerV2
                 label={primaryButtonLabel}
                 config={formConfig}
                 onSubmit={handlePrimaryButtonClick}
                 onSecondayActionClick={handleSecondaryButtonClick}
-                defaultValues={defaultScrutinyErrors?.data}
+                defaultValues={structuredClone(defaultScrutinyErrors?.data)}
                 onFormValueChange={onFormValueChange}
                 cardStyle={{ minWidth: "100%" }}
                 isDisabled={isDisabled}
@@ -340,36 +560,52 @@ function ViewCaseFile({ t }) {
                 showSecondaryLabel={totalErrors?.total > 0}
                 actionClassName="e-filing-action-bar"
               />
-
-              <div className="error-flag-class">
-                <FlagIcon isError={totalErrors?.total > 0} />
-                <h3>
-                  {totalErrors.total
-                    ? `${totalErrors.inputErrors} ${t("CS_TOTAL_INPUT_ERRORS")} & ${totalErrors.sectionErrors} ${t("CS_TOTAL_SECTION_ERRORS")}`
-                    : t("CS_NO_ERRORS")}
-                </h3>
-              </div>
-
+              {!inViewCase && (
+                <div className="error-flag-class">
+                  <FlagIcon isError={totalErrors?.total > 0} />
+                  <h3>
+                    {totalErrors.total
+                      ? `${totalErrors.inputErrors} ${t("CS_TOTAL_INPUT_ERRORS")} & ${totalErrors.sectionErrors} ${t("CS_TOTAL_SECTION_ERRORS")}`
+                      : t("CS_NO_ERRORS")}
+                  </h3>
+                </div>
+              )}
               {showErrorToast && (
                 <Toast error={true} label={t("ES_COMMON_PLEASE_ENTER_ALL_MANDATORY_FIELDS")} isDleteBtn={true} onClose={closeToast} />
               )}
             </div>
           </div>
-          <div className="file-case-checklist">
-            <div className="checklist-main">
-              <h3 className="checklist-title">{t("CS_CHECKLIST_HEADER")}</h3>
-              {checkList.map((item, index) => {
-                return (
-                  <div className="checklist-item" key={index}>
-                    <div className="item-logo">
-                      <CheckSvg />
+          {!inViewCase && (
+            <div className={highlightChecklist ? "file-case-checklist-highlight" : "file-case-checklist"}>
+              <div className="checklist-main">
+                <h3 className="checklist-title">{t("CS_CHECKLIST_HEADER")}</h3>
+                {checkList.map((item, index) => {
+                  return (
+                    <div className="checklist-item" key={index}>
+                      <div className="item-logo">
+                        <CheckSvg />
+                      </div>
+                      <h3 className="item-text">{t(item)}</h3>
                     </div>
-                    <h3 className="item-text">{t(item)}</h3>
+                  );
+                })}
+                <div className="checklist-item" key={checkList.length}>
+                  <div className="item-logo">
+                    <CheckSvg />
                   </div>
-                );
-              })}
+                  <h3 className="item-text">
+                    {t("CS_REFERENCE_RELATED_FIELDS")}{" "}
+                    <span
+                      onClick={() => downloadPdf(tenantId, fileStoreId)}
+                      style={{ color: "#007e7e", textDecoration: "underline", cursor: "pointer" }}
+                    >
+                      {t("CS_HERE")}
+                    </span>
+                  </h3>
+                </div>
+              </div>
             </div>
-          </div>
+          )}
 
           {showEditCaseNameModal && (
             <Modal
@@ -388,11 +624,11 @@ function ViewCaseFile({ t }) {
                 setShowEditCaseNameModal(false);
               }}
               formId="modal-action"
-              headerBarMain={<Heading label={t("CS_Change_Case_Name")} />}
+              headerBarMain={<Heading label={t("CS_CHANGE_CASE_NAME")} />}
               className="edit-case-name-modal"
             >
               <h3 className="input-label">{t("CS_CASE_NAME")}</h3>
-              <TextInput defaultValue={caseDetails?.caseTitle} type="text" onChange={(e) => setModalCaseName(e.target.value)} />
+              <TextInput defaultValue={newCaseName || caseDetails?.caseTitle} type="text" onChange={(e) => setModalCaseName(e.target.value)} />
             </Modal>
           )}
           {actionModal == "sendCaseBack" && (
@@ -403,7 +639,7 @@ function ViewCaseFile({ t }) {
               totalErrors={totalErrors?.total || 0}
               onCancel={handleCloseModal}
               onSubmit={handleSendCaseBack}
-              heading={"CS_SEND_CASE_BACK"}
+              heading={"CS_SEND_CASE_BACK_FOR_CORRECTION"}
               type="sendCaseBack"
             />
           )}
@@ -415,7 +651,7 @@ function ViewCaseFile({ t }) {
               totalErrors={totalErrors?.total || 0}
               onCancel={handleCloseModal}
               onSubmit={handleRegisterCase}
-              heading={"CS_REGISTER_CASE"}
+              heading={"CS_REGISTER_CASE_CONFIRMATION"}
               type="registerCase"
             />
           )}
@@ -429,7 +665,7 @@ function ViewCaseFile({ t }) {
               handleCloseModal={handleCloseModal}
               onCancel={handlePotentialConfirm}
               onSubmit={handleSendCaseBack}
-              heading={"CS_SEND_CASE_BACK"}
+              heading={"CS_SEND_CASE_BACK_FOR_CORRECTION"}
               type="sendCaseBackPotential"
             />
           )}
@@ -441,28 +677,14 @@ function ViewCaseFile({ t }) {
               totalErrors={totalErrors?.total || 0}
               onCancel={handleCloseModal}
               onSubmit={handleSendCaseBack}
-              heading={"CS_SEND_CASE_BACK"}
+              heading={"CS_SEND_CASE_BACK_FOR_CORRECTION"}
               type="sendCaseBackPotential"
-            />
-          )}
-
-          {actionModal === "caseSendBackSuccess" && (
-            <SuccessModal
-              header={"Vaibhav"}
-              t={t}
-              actionCancelLabel={"CS_COMMON_CLOSE"}
-              actionSaveLabel={"CS_NEXT_CASE"}
-              bannerMessage={"CS_CASE_SENT_BACK_SUCCESS"}
-              onCancel={handleCloseSucessModal}
-              onSubmit={handleNextCase}
-              type={"caseSendBackSuccess"}
-              data={{ caseId: "KA92327392232", caseName: "Complainant vs. Respondent", errorsMarked: totalErrors.total }}
             />
           )}
 
           {actionModal === "caseRegisterSuccess" && (
             <SuccessModal
-              header={"Vaibhav"}
+              header={t("SUCCESS")}
               t={t}
               actionCancelLabel={"CS_COMMON_CLOSE"}
               actionSaveLabel={"CS_ALLOCATE_JUDGE"}
@@ -470,101 +692,29 @@ function ViewCaseFile({ t }) {
               onCancel={handleCloseSucessModal}
               onSubmit={handleAllocationJudge}
               type={"caseRegisterSuccess"}
-              data={{ caseId: "KA92327392232", caseName: "Complainant vs. Respondent", errorsMarked: totalErrors.total }}
+              data={{
+                caseId: caseDetails?.filingNumber,
+                caseName: newCaseName !== "" ? newCaseName : caseDetails?.caseTitle,
+                errorsMarked: totalErrors.total,
+              }}
             />
           )}
         </div>
-        <div className="file-case-checklist">
-          <div className="checklist-main">
-            <h3 className="checklist-title">{t("CS_CHECKLIST_HEADER")}</h3>
-            {checkList.map((item, index) => {
-              return (
-                <div className="checklist-item" key={index}>
-                  <div className="item-logo">
-                    <CheckSvg />
-                  </div>
-                  <h3 className="item-text">{t(item)}</h3>
-                </div>
-              );
-            })}
-          </div>
-        </div>
-        {actionModal == "sendCaseBack" && (
-          <SendCaseBackModal
-            actionCancelLabel={"CS_COMMON_BACK"}
-            actionSaveLabel={"CS_COMMON_CONFIRM"}
-            t={t}
-            totalErrors={totalErrors?.total || 0}
-            onCancel={handleCloseModal}
-            onSubmit={handleSendCaseBack}
-            heading={"CS_SEND_CASE_BACK"}
-            type="sendCaseBack"
-          />
-        )}
-        {actionModal == "registerCase" && (
-          <SendCaseBackModal
-            actionCancelLabel={"CS_COMMON_BACK"}
-            actionSaveLabel={"CS_COMMON_CONFIRM"}
-            t={t}
-            totalErrors={totalErrors?.total || 0}
-            onCancel={handleCloseModal}
-            onSubmit={handleRegisterCase}
-            heading={"CS_REGISTER_CASE"}
-            type="registerCase"
-          />
-        )}
-
-        {actionModal == "sendCaseBackPotential" && (
-          <SendCaseBackModal
-            actionCancelLabel={"CS_NO_REGISTER_CASE"}
-            actionSaveLabel={"CS_COMMON_CONFIRM"}
-            t={t}
-            totalErrors={totalErrors?.total || 0}
-            handleCloseModal={handleCloseModal}
-            onCancel={handlePotentialConfirm}
-            onSubmit={handleSendCaseBack}
-            heading={"CS_SEND_CASE_BACK"}
-            type="sendCaseBackPotential"
-          />
-        )}
-        {actionModal == "caseRegisterPotential" && (
-          <SendCaseBackModal
-            actionCancelLabel={"CS_SEE_POTENTIAL_ERRORS"}
-            actionSaveLabel={"CS_DELETE_ERRORS_REGISTER"}
-            t={t}
-            totalErrors={totalErrors?.total || 0}
-            onCancel={handleCloseModal}
-            onSubmit={handleSendCaseBack}
-            heading={"CS_SEND_CASE_BACK"}
-            type="sendCaseBackPotential"
-          />
-        )}
-
         {actionModal === "caseSendBackSuccess" && (
           <SuccessModal
-            header={"Vaibhav"}
+            header={t("SUCCESS")}
             t={t}
-            actionCancelLabel={"CS_COMMON_CLOSE"}
-            actionSaveLabel={"CS_NEXT_CASE"}
+            actionCancelLabel={"BACK_TO_HOME"}
+            actionSaveLabel={"NEXT_CASE"}
             bannerMessage={"CS_CASE_SENT_BACK_SUCCESS"}
             onCancel={handleCloseSucessModal}
             onSubmit={handleNextCase}
             type={"caseSendBackSuccess"}
-            data={{ caseId: "KA92327392232", caseName: "Complainant vs. Respondent", errorsMarked: totalErrors.total }}
-          />
-        )}
-
-        {actionModal === "caseRegisterSuccess" && (
-          <SuccessModal
-            header={"Vaibhav"}
-            t={t}
-            actionCancelLabel={"CS_COMMON_CLOSE"}
-            actionSaveLabel={"CS_ALLOCATE_JUDGE"}
-            bannerMessage={"CS_CASE_REGISTERED_SUCCESS"}
-            onCancel={handleCloseSucessModal}
-            onSubmit={handleAllocationJudge}
-            type={"caseRegisterSuccess"}
-            data={{ caseId: "KA92327392232", caseName: "Complainant vs. Respondent", errorsMarked: totalErrors.total }}
+            data={{
+              caseId: caseDetails?.filingNumber,
+              caseName: newCaseName !== "" ? newCaseName : caseDetails?.caseTitle,
+              errorsMarked: totalErrors.total,
+            }}
           />
         )}
       </div>

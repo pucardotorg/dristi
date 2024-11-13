@@ -1,5 +1,15 @@
+import { ArrowDirection } from "@egovernments/digit-ui-react-components";
 import React from "react";
 import { Link } from "react-router-dom";
+import { Evidence } from "../components/Evidence";
+import { OrderName } from "../components/OrderName";
+import { OwnerColumn } from "../components/OwnerColumn";
+import { RenderInstance } from "../components/RenderInstance";
+import OverlayDropdown from "../components/OverlayDropdown";
+import CustomChip from "../components/CustomChip";
+import ReactTooltip from "react-tooltip";
+import { removeInvalidNameParts } from "../Utils";
+import { HearingWorkflowState } from "@egovernments/digit-ui-module-orders/src/utils/hearingWorkflow";
 
 const businessServiceMap = {
   "muster roll": "MR",
@@ -9,12 +19,21 @@ const inboxModuleNameMap = {
   "muster-roll-approval": "muster-roll-service",
 };
 
+const userRoles = Digit.UserService.getUser()?.info?.roles.map((role) => role.code);
+
+const partyTypes = {
+  "complainant.primary": "Complainant",
+  "complainant.additional": "Complainant",
+  "respondent.primary": "Respondent",
+  "respondent.additional": "Respondent",
+};
+
 export const UICustomizations = {
   businessServiceMap,
   updatePayload: (applicationDetails, data, action, businessService) => {
     if (businessService === businessServiceMap.estimate) {
       const workflow = {
-        comment: data.comments,
+        comment: data?.comments,
         documents: data?.documents?.map((document) => {
           return {
             documentType: action?.action + " DOC",
@@ -25,7 +44,7 @@ export const UICustomizations = {
           };
         }),
         assignees: data?.assignees?.uuid ? [data?.assignees?.uuid] : null,
-        action: action.action,
+        action: action?.action,
       };
       //filtering out the data
       Object.keys(workflow).forEach((key, index) => {
@@ -50,7 +69,7 @@ export const UICustomizations = {
           };
         }),
         assignees: data?.assignees?.uuid ? [data?.assignees?.uuid] : null,
-        action: action.action,
+        action: action?.action,
       };
       //filtering out the data
       Object.keys(workflow).forEach((key, index) => {
@@ -75,7 +94,7 @@ export const UICustomizations = {
           };
         }),
         assignees: data?.assignees?.uuid ? [data?.assignees?.uuid] : null,
-        action: action.action,
+        action: action?.action,
       };
       //filtering out the data
       Object.keys(workflow).forEach((key, index) => {
@@ -89,7 +108,7 @@ export const UICustomizations = {
     }
     if (businessService === businessServiceMap?.["works.purchase"]) {
       const workflow = {
-        comment: data.comments,
+        comment: data?.comments,
         documents: data?.documents?.map((document) => {
           return {
             documentType: action?.action + " DOC",
@@ -100,7 +119,7 @@ export const UICustomizations = {
           };
         }),
         assignees: data?.assignees?.uuid ? [data?.assignees?.uuid] : null,
-        action: action.action,
+        action: action?.action,
       };
       //filtering out the data
       Object.keys(workflow).forEach((key, index) => {
@@ -121,7 +140,7 @@ export const UICustomizations = {
     }
   },
   enableModalSubmit: (businessService, action, setModalSubmit, data) => {
-    if (businessService === businessServiceMap?.["muster roll"] && action.action === "APPROVE") {
+    if (businessService === businessServiceMap?.["muster roll"] && action?.action === "APPROVE") {
       setModalSubmit(data?.acceptTerms);
     }
   },
@@ -156,7 +175,7 @@ export const UICustomizations = {
   getAdvocateNameUsingBarRegistrationNumber: {
     getNames: () => {
       return {
-        url: "/advocate/advocate/v1/status/_search",
+        url: "/advocate/v1/status/_search",
         params: { status: "ACTIVE", tenantId: window?.Digit.ULBService.getStateId(), offset: 0, limit: 1000 },
         body: {
           tenantId: window?.Digit.ULBService.getStateId(),
@@ -169,14 +188,16 @@ export const UICustomizations = {
                   <span className="icon" style={{ display: "flex", justifyContent: "space-between" }}>
                     <span className="icon">{adv?.barRegistrationNumber}</span>
                     <span className="icon" style={{ justifyContent: "end" }}>
-                      {adv?.additionalDetails?.username}
+                      {removeInvalidNameParts(adv?.additionalDetails?.username)}
                     </span>
                   </span>
                 ),
-                barRegistrationNumber: `${adv?.barRegistrationNumber} (${adv?.additionalDetails?.username})`,
-                advocateName: adv?.additionalDetails?.username,
+                barRegistrationNumber: `${adv?.barRegistrationNumber} (${removeInvalidNameParts(adv?.additionalDetails?.username)})`,
+                advocateName: removeInvalidNameParts(adv?.additionalDetails?.username),
                 advocateId: adv?.id,
                 barRegistrationNumberOriginal: adv?.barRegistrationNumber,
+                advocateUuid: adv?.auditDetails?.createdBy,
+                individualId: adv?.individualId,
               };
             });
           },
@@ -184,9 +205,45 @@ export const UICustomizations = {
       };
     },
   },
+  getAdvocateNameUsingBarRegistrationNumberJoinCase: {
+    getNames: (props) => {
+      const removeOptions = props?.removeOptions ? props?.removeOptions : [];
+      const removeOptionsKey = props?.removeOptionsKey || "";
+      return {
+        url: "/advocate/v1/status/_search",
+        params: { status: "ACTIVE", tenantId: window?.Digit.ULBService.getStateId(), offset: 0, limit: 1000 },
+        body: {
+          tenantId: window?.Digit.ULBService.getStateId(),
+        },
+        config: {
+          select: (data) => {
+            return data.advocates
+              .filter((adv) => !removeOptions?.includes(adv?.[removeOptionsKey]))
+              .map((adv) => {
+                return {
+                  icon: (
+                    <span className="icon" style={{ display: "flex", justifyContent: "space-between" }}>
+                      <span className="icon">{adv?.barRegistrationNumber}</span>
+                      <span className="icon" style={{ justifyContent: "end" }}>
+                        {removeInvalidNameParts(adv?.additionalDetails?.username)}
+                      </span>
+                    </span>
+                  ),
+                  barRegistrationNumber: `${adv?.barRegistrationNumber}`,
+                  advocateName: removeInvalidNameParts(adv?.additionalDetails?.username),
+                  advocateId: adv?.id,
+                  barRegistrationNumberOriginal: adv?.barRegistrationNumber,
+                  data: adv,
+                };
+              });
+          },
+        },
+      };
+    },
+  },
   registrationRequestsConfig: {
     customValidationCheck: (data) => {
-      return !data?.applicationNumber.trim() ? { label: "Please enter a valid application Number", error: true } : false;
+      return !data?.applicationNumber_WILDCARD.trim() ? { label: "Please enter a valid application Number", error: true } : false;
     },
     preProcess: (requestCriteria, additionalDetails) => {
       // We need to change tenantId "processSearchCriteria" here
@@ -207,6 +264,11 @@ export const UICustomizations = {
             moduleSearchCriteria: {
               ...moduleSearchCriteria,
             },
+            processSearchCriteria: {
+              ...requestCriteria?.body?.inbox?.processSearchCriteria,
+              tenantId: window?.Digit.ULBService.getStateId(),
+            },
+            tenantId: window?.Digit.ULBService.getStateId(),
           },
         },
       };
@@ -219,12 +281,12 @@ export const UICustomizations = {
     MobileDetailsOnClick: (row, tenantId) => {
       let link;
       Object.keys(row).map((key) => {
-        if (key === "Application No") link = ``;
+        if (key === "APPLICATION_NO") link = ``;
       });
       return link;
     },
     additionalCustomizations: (row, key, column, value, t, searchResult) => {
-      const usertype = row?.ProcessInstance?.businessService === "advocateclerk" ? "clerk" : "advocate";
+      const usertype = row?.ProcessInstance?.businessService.includes("clerk") ? "clerk" : "advocate";
       const individualId = row?.businessObject?.individual?.individualId;
       const applicationNumber =
         row?.businessObject?.advocateDetails?.applicationNumber || row?.businessObject?.clerkDetails?.applicationNumber || row?.applicationNumber;
@@ -233,7 +295,7 @@ export const UICustomizations = {
       const formattedToday = new Date(today.getFullYear(), today.getMonth(), today.getDate());
 
       switch (key) {
-        case "Application No":
+        case "APPLICATION_NO":
           return (
             <span className="link">
               <Link
@@ -243,33 +305,30 @@ export const UICustomizations = {
               </Link>
             </span>
           );
-        case "Action":
+        case "ACTION":
           return (
-            <span className="action-link">
-              <Link
-                to={`/digit-ui/employee/dristi/registration-requests/details?applicationNo=${applicationNumber}&individualId=${value}&type=${usertype}`}
-              >
-                {" "}
-                {t("Verify")}
-              </Link>
-            </span>
+            <Link
+              to={`/digit-ui/employee/dristi/registration-requests/details?applicationNo=${applicationNumber}&individualId=${value}&type=${usertype}`}
+            >
+              <span className="action-link"> {t("CS_VERIFY")}</span>
+            </Link>
           );
-        case "User Type":
-          return usertype === "clerk" ? "Advocate Clerk" : "Advocate";
-        case "Date Created":
+        case "USER_TYPE":
+          return usertype === "clerk" ? t("ADVOCATE CLERK") : t("ADVOCATE");
+        case "DATE_CREATED":
           const date = new Date(value);
           const day = date.getDate().toString().padStart(2, "0");
           const month = (date.getMonth() + 1).toString().padStart(2, "0"); // Month is zero-based
           const year = date.getFullYear();
           const formattedDate = `${day}-${month}-${year}`;
           return <span>{formattedDate}</span>;
-        case "Due Since (no of days)":
+        case "DUE_SINCE_IN_DAYS":
           const createdAt = new Date(row?.businessObject?.auditDetails?.createdTime);
           const formattedCreatedAt = new Date(createdAt.getFullYear(), createdAt.getMonth(), createdAt.getDate());
           const differenceInTime = formattedToday.getTime() - formattedCreatedAt.getTime();
           const differenceInDays = Math.ceil(differenceInTime / (1000 * 3600 * 24));
           return <span>{differenceInDays}</span>;
-        case "User Name":
+        case "USER_NAME":
           const displayName = `${value?.givenName || ""} ${value?.familyName || ""} ${value?.otherNames || ""}`;
           return displayName;
         default:
@@ -285,6 +344,10 @@ export const UICustomizations = {
           ...requestCriteria?.body?.criteria[0],
           ...requestCriteria?.state?.searchForm,
           tenantId: window?.Digit.ULBService.getStateId(),
+          pagination: {
+            limit: requestCriteria?.body?.inbox?.limit,
+            offSet: requestCriteria?.body?.inbox?.offset,
+          },
         },
       ];
       if (additionalDetails in criteria[0] && !criteria[0][additionalDetails]) {
@@ -293,6 +356,10 @@ export const UICustomizations = {
           ...requestCriteria?.state?.searchForm,
           [additionalDetails]: "",
           tenantId: window?.Digit.ULBService.getStateId(),
+          pagination: {
+            limit: requestCriteria?.body?.inbox?.limit,
+            offSet: requestCriteria?.body?.inbox?.offset,
+          },
         });
       }
       return {
@@ -301,6 +368,12 @@ export const UICustomizations = {
           ...requestCriteria?.body,
           criteria,
           tenantId: window?.Digit.ULBService.getStateId(),
+          config: {
+            ...requestCriteria?.config,
+            select: (data) => {
+              return { ...data, totalCount: data?.criteria?.[0]?.pagination?.totalCount };
+            },
+          },
         },
       };
     },
@@ -314,7 +387,7 @@ export const UICustomizations = {
     additionalCustomizations: (row, key, column, value, t, searchResult) => {
       switch (key) {
         case "Stage":
-          return <span>{t("CS_UNDER_SCRUTINY")}</span>;
+          return <span>{t("UNDER_SCRUTINY")}</span>;
         case "Case Type":
           return <span>NIA S138</span>;
         case "Days Since Filing":
@@ -334,27 +407,30 @@ export const UICustomizations = {
   paymentInboxConfig: {
     preProcess: (requestCriteria, additionalDetails) => {
       // We need to change tenantId "processSearchCriteria" here
-      const criteria = [
-        {
-          ...requestCriteria?.body?.criteria[0],
-          ...requestCriteria?.state?.searchForm,
-          tenantId: window?.Digit.ULBService.getStateId(),
-        },
-      ];
-      if (additionalDetails in criteria[0] && !criteria[0][additionalDetails]) {
-        criteria.splice(0, 1, {
-          ...requestCriteria?.body?.criteria[0],
-          ...requestCriteria?.state?.searchForm,
-          [additionalDetails]: "",
-          tenantId: window?.Digit.ULBService.getStateId(),
-        });
-      }
+      const tenantId = window?.Digit.ULBService.getStateId();
+      const moduleSearchCriteria = {
+        billStatus: requestCriteria?.body?.inbox?.moduleSearchCriteria?.billStatus,
+        ...requestCriteria?.state?.searchForm,
+        tenantId: tenantId,
+      };
+
       return {
         ...requestCriteria,
         body: {
           ...requestCriteria?.body,
-          criteria,
-          tenantId: window?.Digit.ULBService.getStateId(),
+          inbox: {
+            ...requestCriteria?.body?.inbox,
+            moduleSearchCriteria: {
+              ...moduleSearchCriteria,
+            },
+            processSearchCriteria: {
+              ...requestCriteria?.body?.inbox?.processSearchCriteria,
+              tenantId: tenantId,
+            },
+            limit: requestCriteria?.state?.tableForm?.limit,
+            offset: requestCriteria?.state?.tableForm?.offset,
+            tenantId: tenantId,
+          },
         },
       };
     },
@@ -371,26 +447,56 @@ export const UICustomizations = {
       return link;
     },
     additionalCustomizations: (row, key, column, value, t, searchResult) => {
+      const caseId = row?.businessObject?.billDetails?.caseTitleFilingNumber.split(",")[1];
+      const consumerCode = row?.businessObject?.billDetails?.consumerCode;
+      const service = row?.businessObject?.billDetails?.service;
+      const billStatus = row?.businessObject?.billDetails?.billStatus;
+      const paymentType = row?.businessObject?.billDetails?.paymentType;
       switch (key) {
-        case "Case ID":
-          return (
+        case "CASE_NAME_ID":
+          return billStatus === "ACTIVE" ? (
             <span className="link">
-              <Link to={`/digit-ui/employee/dristi/pending-payment-inbox/pending-payment-details?filingNumber=${value}`}>
-                {String(value ? (column?.translate ? t(column?.prefix ? `${column?.prefix}${value}` : value) : value) : t("ES_COMMON_NA"))}
+              <Link
+                to={`/digit-ui/employee/dristi/pending-payment-inbox/pending-payment-details?filingNumber=${caseId}&businessService=${service}&consumerCode=${consumerCode}&paymentType=${paymentType}`}
+              >
+                {String(value || t("ES_COMMON_NA"))}
               </Link>
             </span>
+          ) : (
+            billStatus === "PAID" && <span>{String(value || t("ES_COMMON_NA"))}</span>
           );
-        case "Case Type":
-          return <span>NIA S138</span>;
-        case "Stage":
-          return <span>E-filing</span>;
-        case "Amount Due":
-          return <span>Rs 2000</span>;
-        case "Action":
-          return (
+        case "AMOUNT_DUE":
+          return <span>{`Rs. ${value}/-`}</span>;
+        case "ACTION":
+          return billStatus === "ACTIVE" ? (
             <span className="action-link">
-              <Link to={`/digit-ui/employee/dristi/pending-payment-inbox/pending-payment-details?caseId=${value}`}> {t("CS_RECORD_PAYMENT")}</Link>
+              <Link
+                style={{ display: "flex", alignItem: "center", color: "#9E400A" }}
+                to={`/digit-ui/employee/dristi/pending-payment-inbox/pending-payment-details?filingNumber=${caseId}&businessService=${service}&consumerCode=${consumerCode}&paymentType=${paymentType}`}
+              >
+                {" "}
+                <span style={{ display: "flex", alignItem: "center", textDecoration: "underline", color: "#9E400A" }}>
+                  {t("CS_RECORD_PAYMENT")}
+                </span>{" "}
+                <ArrowDirection styles={{ height: "20px", width: "20px", fill: "#9E400A" }} />
+              </Link>
             </span>
+          ) : (
+            billStatus === "PAID" && (
+              <span
+                style={{
+                  padding: "5px 10px",
+                  borderRadius: "15px",
+                  display: "inline-block",
+                  fontSize: "0.9rem",
+                  textAlign: "center",
+                  backgroundColor: "rgb(228, 242, 228)",
+                  color: "rgb(0, 112, 60)",
+                }}
+              >
+                {String(t("CS_AMOUNT_PAID") || t("ES_COMMON_NA"))}
+              </span>
+            )
           );
         default:
           return t("ES_COMMON_NA");
@@ -407,6 +513,10 @@ export const UICustomizations = {
           ...requestCriteria?.state?.searchForm,
           tenantId,
           ...additionalDetails,
+          pagination: {
+            limit: requestCriteria?.body?.inbox?.limit,
+            offSet: requestCriteria?.body?.inbox?.offset,
+          },
         },
       ];
       if (additionalDetails?.searchKey in criteria[0] && !criteria[0][additionalDetails?.searchKey]) {
@@ -416,6 +526,10 @@ export const UICustomizations = {
           [additionalDetails.searchKey]: "",
           ...additionalDetails,
           tenantId,
+          pagination: {
+            limit: requestCriteria?.body?.inbox?.limit,
+            offSet: requestCriteria?.body?.inbox?.offset,
+          },
         });
       }
       return {
@@ -425,35 +539,545 @@ export const UICustomizations = {
           criteria,
           tenantId,
         },
+        config: {
+          ...requestCriteria?.config,
+          select: (data) => {
+            return { ...data, totalCount: data?.criteria?.[0]?.pagination?.totalCount };
+          },
+        },
       };
+    },
+    additionalCustomizations: (row, key, column, value, t, searchResult) => {
+      switch (key) {
+        case "Case Type":
+          return <span>NIA S138</span>;
+        case "Stage":
+          return t(row?.status);
+        default:
+          return t("ES_COMMON_NA");
+      }
     },
   },
   judgeInboxConfig: {
     preProcess: (requestCriteria, additionalDetails) => {
+      const tenantId = window?.Digit.ULBService.getStateId();
       // We need to change tenantId "processSearchCriteria" here
-      const criteria = [
-        {
-          ...requestCriteria?.body?.criteria[0],
+      const criteria = requestCriteria?.body?.criteria?.map((item) => {
+        return {
+          ...item,
           ...requestCriteria?.state?.searchForm,
-          tenantId: window?.Digit.ULBService.getStateId(),
-        },
-      ];
-      if (additionalDetails in criteria[0] && !criteria[0][additionalDetails]) {
-        criteria.splice(0, 1, {
-          ...requestCriteria?.body?.criteria[0],
-          ...requestCriteria?.state?.searchForm,
-          [additionalDetails]: "",
-          tenantId: window?.Digit.ULBService.getStateId(),
-        });
-      }
+          tenantId,
+          pagination: {
+            limit: requestCriteria?.body?.inbox?.limit,
+            offSet: requestCriteria?.body?.inbox?.offset,
+          },
+        };
+      });
+
       return {
         ...requestCriteria,
         body: {
           ...requestCriteria?.body,
           criteria,
-          tenantId: window?.Digit.ULBService.getStateId(),
+          tenantId,
+        },
+        config: {
+          ...requestCriteria?.config,
+          select: (data) => {
+            return { ...data, totalCount: data?.criteria?.[0]?.pagination?.totalCount };
+          },
         },
       };
+    },
+    additionalCustomizations: (row, key, column, value, t, searchResult) => {
+      switch (key) {
+        case "Case Type":
+          return <span>NIA S138</span>;
+        case "Stage":
+          return t(row?.status);
+        default:
+          return t("ES_COMMON_NA");
+      }
+    },
+  },
+  SearchIndividualConfig: {
+    preProcess: (requestCriteria, additionalDetails) => {
+      const filterList = Object.keys(requestCriteria.state.searchForm)
+        .map((key) => {
+          if (requestCriteria.state.searchForm[key]?.type) {
+            return { [key]: requestCriteria.state.searchForm[key]?.type };
+          } else if (requestCriteria.state.searchForm[key]?.value) {
+            return { [key]: requestCriteria.state.searchForm[key]?.value };
+          } else if (typeof requestCriteria.state.searchForm[key] === "string") {
+            return { [key]: requestCriteria.state.searchForm[key] };
+          }
+        })
+        ?.filter((filter) => filter)
+        .reduce(
+          (fieldObj, item) => ({
+            ...fieldObj,
+            ...item,
+          }),
+          {}
+        );
+      const tenantId = window?.Digit.ULBService.getStateId();
+      const userRoles = Digit.UserService.getUser()?.info?.roles.map((role) => role.code);
+      const status = !filterList?.status || filterList?.status === "PUBLISHED" ? "PUBLISHED" : "EMPTY";
+      return {
+        ...requestCriteria,
+        body: {
+          ...requestCriteria.body,
+          criteria: {
+            ...requestCriteria.body.criteria,
+            ...filterList,
+            status: userRoles.includes("CITIZEN") && requestCriteria.url.split("/").includes("order") ? status : filterList?.status,
+          },
+          tenantId,
+          pagination: {
+            limit: requestCriteria?.state?.tableForm?.limit,
+            offSet: requestCriteria?.state?.tableForm?.offset,
+          },
+        },
+        config: {
+          ...requestCriteria.config,
+          select: (data) => {
+            // if (requestCriteria.url.split("/").includes("order")) {
+            return userRoles.includes("CITIZEN") && requestCriteria.url.split("/").includes("order")
+              ? { ...data, list: data.list?.filter((order) => order.status !== "DRAFT_IN_PROGRESS") }
+              : userRoles.includes("JUDGE_ROLE") && requestCriteria.url.split("/").includes("application")
+              ? {
+                  ...data,
+                  applicationList: data.applicationList?.filter((application) => !["PENDINGESIGN", "PENDINGPAYMENT"].includes(application.status)),
+                }
+              : data;
+            // }
+          },
+        },
+      };
+    },
+    additionalCustomizations: (row, key, column, value, t) => {
+      const showDocument =
+        userRoles?.includes("APPLICATION_APPROVER") || userRoles?.includes("DEPOSITION_ESIGN") || row.workflow?.action !== "PENDINGREVIEW";
+      switch (key) {
+        case "Document":
+          return showDocument ? <OwnerColumn rowData={row} colData={column} t={t} /> : "";
+        case "File":
+          return showDocument ? <Evidence userRoles={userRoles} rowData={row} colData={column} t={t} /> : "";
+        case "Date Added":
+        case "Date":
+          const date = new Date(value);
+          const day = date.getDate().toString().padStart(2, "0");
+          const month = (date.getMonth() + 1).toString().padStart(2, "0"); // Month is zero-based
+          const year = date.getFullYear();
+          const formattedDate = `${day}-${month}-${year}`;
+          return <span>{formattedDate}</span>;
+        case "Parties":
+          if (value === null || value === undefined || value === "undefined" || value === "null") {
+            return null;
+          }
+          return (
+            <div>
+              {value?.length > 2 && (
+                <ReactTooltip id={`hearing-list`}>{value?.map((party) => party?.partyName || party?.name).join(", ")}</ReactTooltip>
+              )}
+              <span data-tip data-for={`hearing-list`}>{`${value
+                ?.slice(0, 2)
+                ?.map((party) => party?.partyName || party?.name)
+                ?.join(", ")}${value?.length > 2 ? `+${value?.length - 2}` : ""}`}</span>
+            </div>
+          );
+        case "Order Type":
+          return <OrderName rowData={row} colData={column} value={value} />;
+        case "Submission Type":
+          return <OwnerColumn rowData={row} colData={column} t={t} value={value} showAsHeading={true} />;
+        case "Document Type":
+          return <Evidence userRoles={userRoles} rowData={row} colData={column} t={t} value={value} showAsHeading={true} />;
+        case "Hearing Type":
+        case "Source":
+        case "Status":
+          //Need to change the shade as per the value
+          return <CustomChip text={t(value)} shade={value === "PUBLISHED" ? "green" : "orange"} />;
+        case "Owner":
+          return removeInvalidNameParts(value);
+        case "Actions":
+          return (
+            <OverlayDropdown style={{ position: "relative" }} column={column} row={row} master="commonUiConfig" module="SearchIndividualConfig" />
+          );
+        default:
+          break;
+      }
+    },
+    dropDownItems: (row) => {
+      const formatDate = (date) => {
+        const day = String(date.getDate()).padStart(2, "0");
+        const month = String(date.getMonth() + 1).padStart(2, "0");
+        const year = date.getFullYear();
+        return `${day}-${month}-${year}`;
+      };
+      const OrderWorkflowAction = Digit.ComponentRegistryService.getComponent("OrderWorkflowActionEnum") || {};
+      const ordersService = Digit.ComponentRegistryService.getComponent("OrdersService") || {};
+      const userInfo = JSON.parse(window.localStorage.getItem("user-info"));
+      const date = new Date(row.startTime);
+      const future = row.startTime > Date.now();
+      if (row.status === "SCHEDULED" && userInfo.roles.map((role) => role.code).includes("JUDGE_ROLE")) {
+        return [
+          {
+            label: "Reschedule hearing",
+            id: "reschedule",
+            action: (history) => {
+              const requestBody = {
+                order: {
+                  createdDate: null,
+                  tenantId: row.tenantId,
+                  hearingNumber: row?.hearingId,
+                  filingNumber: row.filingNumber[0],
+                  cnrNumber: row.cnrNumbers[0],
+                  statuteSection: {
+                    tenantId: row.tenantId,
+                  },
+                  orderType: "INITIATING_RESCHEDULING_OF_HEARING_DATE",
+                  status: "",
+                  isActive: true,
+                  workflow: {
+                    action: OrderWorkflowAction.SAVE_DRAFT,
+                    comments: "Creating order",
+                    assignes: null,
+                    rating: null,
+                    documents: [{}],
+                  },
+                  documents: [],
+                  additionalDetails: {
+                    formdata: {
+                      orderType: {
+                        type: "INITIATING_RESCHEDULING_OF_HEARING_DATE",
+                        isactive: true,
+                        code: "INITIATING_RESCHEDULING_OF_HEARING_DATE",
+                        name: "ORDER_TYPE_INITIATING_RESCHEDULING_OF_HEARING_DATE",
+                      },
+                      originalHearingDate: `${date.getFullYear()}-${date.getMonth() < 9 ? `0${date.getMonth() + 1}` : date.getMonth() + 1}-${
+                        date.getDate() < 10 ? `0${date.getDate()}` : date.getDate()
+                      }`,
+                    },
+                  },
+                },
+              };
+              ordersService
+                .createOrder(requestBody, { tenantId: Digit.ULBService.getCurrentTenantId() })
+                .then((res) => {
+                  history.push(
+                    `/${window.contextPath}/employee/orders/generate-orders?filingNumber=${row.filingNumber[0]}&orderNumber=${res.order.orderNumber}`,
+                    {
+                      caseId: row.caseId,
+                      tab: "Orders",
+                    }
+                  );
+                })
+                .catch((err) => {});
+            },
+          },
+          {
+            label: "View transcript",
+            id: "view_transcript",
+            hide: true,
+            action: (history) => {
+              alert("Not Yet Implemented");
+            },
+          },
+          {
+            label: "View witness deposition",
+            id: "view_witness",
+            hide: true,
+            action: (history) => {
+              alert("Not Yet Implemented");
+            },
+          },
+          {
+            label: "View pending task",
+            id: "view_pending_tasks",
+            hide: true,
+            action: (history) => {
+              alert("Not Yet Implemented");
+            },
+          },
+        ];
+      }
+      if (row.status === "SCHEDULED" && userInfo?.type === "CITIZEN") {
+        return [
+          {
+            label: "Request for Reschedule hearing",
+            id: "reschedule",
+            action: (history) => {
+              history.push(
+                `/digit-ui/citizen/submissions/submissions-create?filingNumber=${row.filingNumber[0]}&hearingId=${row.hearingId}&applicationType=RE_SCHEDULE`
+              );
+            },
+          },
+          {
+            label: "Request for Checkout Request",
+            id: "reschedule",
+            action: (history) => {
+              history.push(
+                `/digit-ui/citizen/submissions/submissions-create?filingNumber=${row.filingNumber[0]}&hearingId=${row.hearingId}&applicationType=CHECKOUT_REQUEST`
+              );
+            },
+          },
+          {
+            label: "View transcript",
+            id: "view_transcript",
+            hide: true,
+            action: (history) => {
+              alert("Not Yet Implemented");
+            },
+          },
+          {
+            label: "View witness deposition",
+            id: "view_witness",
+            hide: true,
+            action: (history) => {
+              alert("Not Yet Implemented");
+            },
+          },
+          {
+            label: "View pending task",
+            id: "view_pending_tasks",
+            hide: true,
+            action: (history) => {
+              alert("Not Yet Implemented");
+            },
+          },
+        ];
+      }
+
+      if (![HearingWorkflowState?.SCHEDULED, HearingWorkflowState?.ABATED, HearingWorkflowState?.OPTOUT].includes(row.status)) {
+        return [
+          {
+            label: "View transcript",
+            id: "view_transcript",
+            hide: false,
+            disabled: false,
+            action: (history, column, row) => {
+              column.clickFunc(row);
+            },
+          },
+          {
+            label: "View witness deposition",
+            id: "view_witness",
+            hide: false,
+            disabled: true,
+            action: (history) => {
+              alert("Not Yet Implemented");
+            },
+          },
+          {
+            label: "View pending task",
+            id: "view_pending_tasks",
+            hide: true,
+            disabled: true,
+            action: (history) => {
+              alert("Not Yet Implemented");
+            },
+          },
+        ];
+      }
+
+      return [
+        {
+          label: "View transcript",
+          id: "view_transcript",
+          hide: false,
+          disabled: true,
+          action: (history) => {
+            alert("Not Yet Implemented");
+          },
+        },
+        {
+          label: "View witness deposition",
+          id: "view_witness",
+          hide: false,
+          disabled: true,
+          action: (history) => {
+            alert("Not Yet Implemented");
+          },
+        },
+        {
+          label: "View pending task",
+          id: "view_pending_tasks",
+          hide: true,
+          disabled: true,
+          action: (history) => {
+            alert("Not Yet Implemented");
+          },
+        },
+      ];
+    },
+  },
+  HistoryConfig: {
+    preProcess: (requestCriteria, additionalDetails) => {
+      return {
+        ...requestCriteria,
+        config: {
+          ...requestCriteria.config,
+          select: (data) => {
+            const userRoles = Digit.UserService.getUser()?.info?.roles.map((role) => role.code);
+            if (data.caseFiles.length) {
+              const applicationHistory = data.caseFiles[0]?.applications.map((application) => {
+                return {
+                  instance: `APPLICATION_TYPE_${application.applicationType}`,
+                  date: application.auditDetails.createdTime,
+                  status: application.status,
+                };
+              });
+              const evidenceHistory = data.caseFiles[0]?.evidence.map((evidence) => {
+                return {
+                  instance: evidence.artifactType,
+                  date: evidence.auditdetails.createdTime,
+                  status: evidence.status,
+                };
+              });
+              const hearingHistory = data.caseFiles[0]?.hearings.map((hearing) => {
+                return { instance: `HEARING_TYPE_${hearing.hearingType}`, stage: [], date: hearing.startTime, status: hearing.status };
+              });
+              const orderHistory = userRoles.includes("CITIZEN")
+                ? data.caseFiles[0]?.orders
+                    ?.filter((order) => order.order.status !== "DRAFT_IN_PROGRESS")
+                    .map((order) => {
+                      return {
+                        instance: `ORDER_TYPE_${order.order.orderType.toUpperCase()}`,
+                        stage: [],
+                        date: order.order.auditDetails.createdTime,
+                        status: order.order.status,
+                      };
+                    })
+                : data.caseFiles[0]?.orders.map((order) => {
+                    return {
+                      instance: `ORDER_TYPE_${order.order.orderType.toUpperCase()}`,
+                      stage: [],
+                      date: order.order.auditDetails.createdTime,
+                      status: order.order.status,
+                    };
+                  });
+              const historyList = [...hearingHistory, ...applicationHistory, ...orderHistory, ...evidenceHistory];
+              return { ...data, history: historyList };
+            } else {
+              return { ...data, history: [] };
+            }
+          },
+        },
+      };
+    },
+    additionalCustomizations: (row, key, column, value, t) => {
+      switch (key) {
+        case "Instance":
+          return <RenderInstance value={value} t={t} />;
+        case "Date":
+          const date = new Date(value);
+          const day = date.getDate().toString().padStart(2, "0");
+          const month = (date.getMonth() + 1).toString().padStart(2, "0"); // Month is zero-based
+          const year = date.getFullYear();
+          const formattedDate = `${day}-${month}-${year}`;
+          return <span>{formattedDate}</span>;
+        case "Status":
+          return t(value);
+        default:
+          break;
+      }
+    },
+  },
+  PartiesConfig: {
+    preProcess: (requestCriteria, additionalDetails) => {
+      return {
+        ...requestCriteria,
+        config: {
+          ...requestCriteria.config,
+          select: (data) => {
+            const litigants = data.criteria[0].responseList[0].litigants?.length > 0 ? data.criteria[0].responseList[0].litigants : [];
+            const finalLitigantsData = litigants.map((litigant) => {
+              return {
+                ...litigant,
+                name: removeInvalidNameParts(litigant.additionalDetails?.fullName),
+              };
+            });
+            const reps = data.criteria[0].responseList[0].representatives?.length > 0 ? data.criteria[0].responseList[0].representatives : [];
+            const finalRepresentativesData = reps.map((rep) => {
+              return {
+                ...rep,
+                name: rep.additionalDetails?.advocateName,
+                partyType: `Advocate (for ${rep.representing
+                  ?.map((client) => removeInvalidNameParts(client?.additionalDetails?.fullName))
+                  ?.join(", ")})`,
+              };
+            });
+            return {
+              ...data,
+              criteria: {
+                ...data.criteria[0],
+                responseList: {
+                  ...data.criteria[0].responseList[0],
+                  parties: [...finalLitigantsData, ...finalRepresentativesData],
+                },
+              },
+            };
+          },
+        },
+      };
+    },
+    additionalCustomizations: (row, key, column, value, t) => {
+      switch (key) {
+        case "Party Name":
+          return removeInvalidNameParts(value) || "N.A.";
+        case "Date Added":
+          const date = new Date(value);
+          const day = date.getDate().toString().padStart(2, "0");
+          const month = (date.getMonth() + 1).toString().padStart(2, "0"); // Month is zero-based
+          const year = date.getFullYear();
+          const formattedDate = `${day}-${month}-${year}`;
+          return <span>{formattedDate || "N.A."}</span>;
+        case "Party Type":
+          return partyTypes[value] ? partyTypes[value] : value;
+        default:
+          break;
+      }
+    },
+  },
+  patternValidation: (key) => {
+    switch (key) {
+      case "contact":
+        return /^[6-9]\d{9}$/;
+      case "email":
+        return /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
+      case "userName":
+        return /^[^{0-9}^\$\"<>?\\\\~!@#$%^()+={}\[\]*,/_:;“”‘’]{1,}$/i;
+      case "address":
+        return /^[^\$\"<>?\\\\~`!@$%^()={}\[\]*:;“”‘’]{2,256}$/i;
+      default:
+        return;
+    }
+  },
+  maxDateValidation: (key) => {
+    switch (key) {
+      case "date":
+        return new Date().toISOString().split("T")[0];
+      default:
+        return;
+    }
+  },
+  DristiCaseUtils: {
+    getAllCaseRepresentativesUUID: (caseData) => {
+      let representatives = {};
+      let list = [];
+      caseData?.litigants?.forEach((litigant) => {
+        list = caseData?.representatives
+          ?.filter((item) => {
+            return item?.representing?.some((lit) => lit?.individualId === litigant?.individualId) && item?.additionalDetails?.uuid;
+          })
+          .map((item) => item?.additionalDetails?.uuid);
+        if (list?.length > 0) {
+          representatives[litigant?.additionalDetails?.uuid] = list;
+        } else {
+          representatives[litigant?.additionalDetails?.uuid] = [litigant?.additionalDetails?.uuid];
+        }
+      });
+      return representatives;
     },
   },
 };

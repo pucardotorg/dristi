@@ -4,6 +4,7 @@ import org.egov.common.contract.request.RequestInfo;
 import org.egov.tracer.model.CustomException;
 import org.pucar.dristi.util.SummonsOrderPdfUtil;
 import org.pucar.dristi.web.models.PdfRequest;
+import org.pucar.dristi.web.models.PdfSummonsAccusedRequest;
 import org.pucar.dristi.web.models.PdfSummonsRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -40,6 +41,11 @@ public class ServiceUrlMappingPdfService {
             ResponseEntity<Object> taskSearchResponse = taskSearchService.getTaskSearchResponse(referenceId, tenantId, requestInfo);
             PdfSummonsRequest pdfSummonsRequest = summonsOrderPdfUtil.fetchSummonsPdfObjectData(qrCodeImage, taskSearchResponse, requestInfo);
             pdfresponse = pdfSummonsOrderRequestService.createPdf(pdfSummonsRequest, pdfRequestobject);
+        } else if ("summons-accused-qr".equals(refCode)) {
+            String qrCodeImage = qrCodeImageService.getQrCodeImage(pdfRequestobject);
+            ResponseEntity<Object> taskSearchResponse = taskSearchService.getTaskSearchResponse(referenceId, tenantId, requestInfo);
+            PdfSummonsAccusedRequest pdfSummonsAccusedRequest = summonsOrderPdfUtil.fetchSummonsAccusedPdfObjectData(qrCodeImage, taskSearchResponse, requestInfo);
+            pdfresponse = pdfSummonsOrderRequestService.createPdf(pdfSummonsAccusedRequest, pdfRequestobject);
         } else {
             throw new CustomException("INVALID_REFERENCE_CODE", "The reference code " + refCode + " is not recognized.");
         }

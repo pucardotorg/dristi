@@ -3,7 +3,7 @@ import { useTranslation } from "react-i18next";
 import AuditSearchApplication from "../../components/Search";
 const Search = ({ path }) => {
   const { t } = useTranslation();
-  const tenantId = Digit.ULBService.getCitizenCurrentTenant()
+  const tenantId = Digit.ULBService.getCitizenCurrentTenant();
   const [payload, setPayload] = useState({});
   const convertDateToEpoch = (dateString, dayStartOrEnd = "dayend") => {
     //example input format : "2018-10-02"
@@ -28,26 +28,28 @@ const Search = ({ path }) => {
       sortOrder: "DESC",
     });
     const data = {
-        ..._data,
-        fromDate: convertDateToEpoch(_data?.fromDate),
-        toDate: convertDateToEpoch(_data?.toDate),
+      ..._data,
+      fromDate: convertDateToEpoch(_data?.fromDate),
+      toDate: convertDateToEpoch(_data?.toDate),
+    };
+
+    const filteredData = Object.keys(data)
+      .filter((k) => data[k])
+      .reduce((acc, key) => {
+        acc[key] = typeof data[key] === "object" ? data[key] : data[key];
+        return acc;
+      }, {});
+    setPayload(filteredData);
+  }
+  useEffect(() => {
+    const storedPayload = Digit.SessionStorage.get("AUDIT_APPLICATION_DETAIL") || {};
+    if (storedPayload) {
+      const data = {
+        ...storedPayload,
       };
-  
+
       setPayload(
         Object.keys(data)
-          .filter((k) => data[k])
-          .reduce((acc, key) => ({ ...acc, [key]: typeof data[key] === "object" ? data[key] : data[key] }), {})
-      );
-    }
-    useEffect(() => {
-      const storedPayload = Digit.SessionStorage.get("AUDIT_APPLICATION_DETAIL") || {};
-      if (storedPayload) {
-        const data = {
-          ...storedPayload,
-        };
-  
-        setPayload(
-          Object.keys(data)
           .filter((k) => data[k])
           .reduce((acc, key) => ({ ...acc, [key]: typeof data[key] === "object" ? data[key].code : data[key] }), {})
       );
@@ -57,32 +59,23 @@ const Search = ({ path }) => {
     enabled: !!(payload && Object.keys(payload).length > 0),
   };
   const newObj = { ...payload };
- 
-  const {
-    isLoading,
-    data,
-} = Digit.Hooks.useAudit({
+
+  const { isLoading, data } = Digit.Hooks.useAudit({
     tenantId,
     filters: {
-        ...newObj,
-      },
-      config,
-    });
+      ...newObj,
+    },
+    config,
+  });
 
-    return (
-        <AuditSearchApplication
-          t={t}
-          tenantId={tenantId}
-          onSubmit={onSubmit}
-          data={
-            !isLoading
-              ? data?.ElasticSearchData?.length > 0
-                ? data?.ElasticSearchData
-                : { display: "ES_COMMON_NO_DATA" }
-              : ""
-          }
-          count={data?.ElasticSearchData?.length}
-        />
-      );
-    };
-    export default Search;
+  return (
+    <AuditSearchApplication
+      t={t}
+      tenantId={tenantId}
+      onSubmit={onSubmit}
+      data={!isLoading ? (data?.ElasticSearchData?.length > 0 ? data?.ElasticSearchData : { display: "ES_COMMON_NO_DATA" }) : ""}
+      count={data?.ElasticSearchData?.length}
+    />
+  );
+};
+export default Search;

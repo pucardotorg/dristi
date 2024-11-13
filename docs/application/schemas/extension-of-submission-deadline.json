@@ -1,0 +1,31 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "http://dristi.pucar.org/schemas/extension-of-submission-deadline.json",
+  "$comment": "definition of the schema for extension of submission deadline application",
+  "$version": "0.1.0",
+  "applicationDetails":
+  {
+    "benefitOfExtension": {
+      "type" : "string",
+      "description": "benefit of providing extension"
+    },
+    "submissionType": {
+      "type" : "string",
+      "description": "document/submission type"
+    },
+    "originalSubmissionDate": {
+      "type": "integer",
+      "format": "int64",
+      "description": "original submission date"
+    },
+    "requestedExtensionDate": {
+      "type": "integer",
+      "format": "int64",
+      "description": "requested extension date"
+    },
+    "additionalComments": {
+      "type": "string",
+      "description": "additional comments"
+    }
+  }
+}

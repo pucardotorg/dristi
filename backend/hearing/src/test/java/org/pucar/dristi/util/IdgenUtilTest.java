@@ -1,7 +1,6 @@
 package org.pucar.dristi.util;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import org.egov.common.contract.idgen.*;
 import org.egov.common.contract.request.RequestInfo;
 import org.egov.tracer.model.CustomException;
 import org.junit.jupiter.api.BeforeEach;
@@ -9,6 +8,10 @@ import org.junit.jupiter.api.Test;
 import org.mockito.*;
 import org.pucar.dristi.config.Configuration;
 import org.pucar.dristi.repository.ServiceRequestRepository;
+import org.pucar.dristi.web.models.IdGenerationRequest;
+import org.pucar.dristi.web.models.IdGenerationResponse;
+import org.pucar.dristi.web.models.IdRequest;
+import org.pucar.dristi.web.models.IdResponse;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -65,7 +68,7 @@ class IdgenUtilTest {
         when(mapper.convertValue(response, IdGenerationResponse.class)).thenReturn(response);
 
         // Act
-        List<String> result = idgenUtil.getIdList(requestInfo, tenantId, idName, idFormat, count);
+        List<String> result = idgenUtil.getIdList(requestInfo, tenantId, idName, idFormat, count,true);
 
         // Assert
         assertNotNull(result);
@@ -97,7 +100,7 @@ class IdgenUtilTest {
 
         // Act & Assert
         CustomException exception = assertThrows(CustomException.class, () -> {
-            idgenUtil.getIdList(requestInfo, tenantId, idName, idFormat, count);
+            idgenUtil.getIdList(requestInfo, tenantId, idName, idFormat, count,true);
         });
         assertEquals(IDGEN_ERROR, exception.getCode());
         assertEquals(NO_IDS_FOUND_ERROR, exception.getMessage());

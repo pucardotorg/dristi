@@ -13,9 +13,6 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-import org.egov.common.contract.idgen.IdGenerationRequest;
-import org.egov.common.contract.idgen.IdGenerationResponse;
-import org.egov.common.contract.idgen.IdResponse;
 import org.egov.common.contract.request.RequestInfo;
 import org.egov.tracer.model.CustomException;
 import org.junit.jupiter.api.BeforeEach;
@@ -27,6 +24,9 @@ import org.pucar.dristi.config.Configuration;
 import org.pucar.dristi.repository.ServiceRequestRepository;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import org.pucar.dristi.web.models.IdGenerationRequest;
+import org.pucar.dristi.web.models.IdGenerationResponse;
+import org.pucar.dristi.web.models.IdResponse;
 
 public class IdgenUtilTest {
 
@@ -68,7 +68,7 @@ public class IdgenUtilTest {
         doReturn(idGenerationResponse).when(mapper).convertValue(any(), any(Class.class));
 
         // Act
-        List<String> result = idgenUtil.getIdList(requestInfo, tenantId, idName, idformat, count);
+        List<String> result = idgenUtil.getIdList(requestInfo, tenantId, idName, idformat, count,true);
 
         // Assert
         assertNotNull(result);
@@ -95,7 +95,7 @@ public class IdgenUtilTest {
 
         // Act & Assert
         CustomException exception = assertThrows(CustomException.class, () -> {
-            idgenUtil.getIdList(requestInfo, tenantId, idName, idformat, count);
+            idgenUtil.getIdList(requestInfo, tenantId, idName, idformat, count,true);
         });
 
         assertEquals(IDGEN_ERROR, exception.getCode());
@@ -117,7 +117,7 @@ public class IdgenUtilTest {
 
         // Act & Assert
         assertThrows(RuntimeException.class, () -> {
-            idgenUtil.getIdList(requestInfo, tenantId, idName, idformat, count);
+            idgenUtil.getIdList(requestInfo, tenantId, idName, idformat, count,false);
         });
     }
 }

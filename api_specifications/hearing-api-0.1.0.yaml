@@ -199,32 +199,34 @@ components:
         criteria:
           $ref: '#/components/schemas/HearingCriteria'
         pagination:
-          $ref: >-
-            https://raw.githubusercontent.com/egovernments/DIGIT-OSS/master/core-services/docs/common-contract_v1-1.yml#/components/schemas/Pagination            
-      HearingCriteria:
-        type: object
-        description: can send in any one of the values. If multiple parameters are passed, then it will be a logical AND search
-        properties:
-          filingNumber:
-            type: string
-          cnrNumber:
-            type: string
-          applicationNumber:
-            type: string
-          hearingType:
-            type: string
-          hearingId:
-            type: string
-          tenantId:
-            type: string
-          attendeeIndividualId:
-            type: string
-          fromDate:
-            type: integer
-            format: int64
-          toDate:
-            type: integer
-            format: int64
+          $ref: https://raw.githubusercontent.com/egovernments/DIGIT-OSS/master/core-services/docs/common-contract_v1-1.yml#/components/schemas/Pagination
+
+    HearingCriteria:
+      type: object
+      description: can send in any one of the values. If multiple parameters are passed, then it will be a logical AND search
+      properties:
+        filingNumber:
+          type: string
+        cnrNumber:
+          type: string
+        applicationNumber:
+          type: string
+        hearingType:
+          type: string
+        hearingId:
+          type: string
+        tenantId:
+          type: string
+        attendeeIndividualId:
+          type: string
+        courtId:
+          type: string
+        fromDate:
+          type: integer
+          format: int64
+        toDate:
+          type: integer
+          format: int64
 
     HearingRequest:
       type: object
@@ -340,17 +342,20 @@ components:
         status:
           type: string
           description: workflow state being set as hearing status
-          example: scheduled, in progress, in transcription, closed
+          example: scheduled, in progress, in transcription, closed, adjourned
+        adjournmentReason:
+          type: string
+          description: master data for reasons for adjournment
         startTime:
           type: integer
           format: int64
           nullable: true
-          description: This field holds information about start date time of hearing in epoch time in milliseconds.
+          description: This field holds information about start date time of hearing in epoch time.
         endTime:
           type: integer
           format: int64
           nullable: true
-          description: This field holds information about end date time of hearing in epoch time in milliseconds. Optional field.
+          description: This field holds information about end date time of hearing in epoch time. Optional field.
         presidedBy:
           description: A hearing is mostly presided by a Judge, but there is discussion on some hearing being presided by an Admin person. Hence this field will store the ID of the specific person
           type: object

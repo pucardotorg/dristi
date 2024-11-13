@@ -1,5 +1,3 @@
-import { Label } from "@egovernments/digit-ui-react-components";
-
 const respondentFromconfig = [
   {
     head: "CS_RESPONDENT_TYPE",
@@ -17,31 +15,26 @@ const respondentFromconfig = [
           required: false,
           isMandatory: true,
           isDependent: true,
-          clearFields: { stateOfRegistration: "", barRegistrationNumber: "", barCouncilId: [], stateRegnNumber: "" },
-          options: [
-            {
-              code: "INDIVIDUAL",
-              name: "Individual",
-              showCompanyDetails: false,
-              commonFields: true,
-              isEnabled: true,
-            },
-            {
-              code: "REPRESENTATIVE",
-              name: "Representative of an Entity",
-              showCompanyDetails: true,
-              commonFields: true,
-              isVerified: true,
-              hasBarRegistrationNo: true,
-              isEnabled: true,
-            },
-          ],
+          mdmsConfig: {
+            masterName: "ComplainantRespondentType",
+            moduleName: "case",
+            select: "(data) => {return data['case'].ComplainantRespondentType?.map((item) => {return item;});}",
+          },
         },
       },
     ],
   },
   {
     head: "CS_RESPONDENT_NAME",
+    updateLabelOn: "respondentType.showCompanyDetails",
+    updateLabel: {
+      key: "head",
+      value: "CS_COMMON_ENTITY_DETAIL",
+    },
+    defaultLabel: {
+      key: "head",
+      value: "CS_RESPONDENT_NAME",
+    },
     dependentKey: { respondentType: ["commonFields"] },
     body: [
       {
@@ -56,7 +49,7 @@ const respondentFromconfig = [
               message: "CORE_COMMON_APPLICANT_NAME_INVALID",
               value: /^[^{0-9}^\$\"<>?\\\\~!@#$%^()+={}\[\]*,/_:;“”‘’]{1,100}$/i,
             },
-            minLength: 2,
+            minLength: 1,
             // maxLength: 100,
             title: "",
             patternType: "Name",
@@ -67,6 +60,7 @@ const respondentFromconfig = [
         type: "text",
         label: "MIDDLE_NAME",
         labelChildren: "optional",
+        isMandatory: false,
         populators: {
           name: "respondentMiddleName",
           validation: {
@@ -82,16 +76,15 @@ const respondentFromconfig = [
       {
         type: "text",
         label: "LAST_NAME",
-        isMandatory: true,
+        labelChildren: "optional",
+        isMandatory: false,
         populators: {
           name: "respondentLastName",
-          error: "FIRST_LAST_NAME_MANDATORY_MESSAGE",
           validation: {
             pattern: {
               message: "CORE_COMMON_APPLICANT_NAME_INVALID",
               value: /^[^{0-9}^\$\"<>?\\\\~!@#$%^()+={}\[\]*,/_:;“”‘’]{1,100}$/i,
             },
-            minLength: 2,
             // maxLength: 100,
             title: "",
             patternType: "Name",
@@ -124,6 +117,15 @@ const respondentFromconfig = [
   {
     dependentKey: { respondentType: ["commonFields"] },
     head: "CS_RESPONDENT_PHONE",
+    updateLabelOn: "respondentType.showCompanyDetails",
+    updateLabel: {
+      key: "head",
+      value: "CS_REPRESENTATIVE_PHONE",
+    },
+    defaultLabel: {
+      key: "head",
+      value: "CS_RESPONDENT_PHONE",
+    },
     body: [
       {
         type: "component",
@@ -188,6 +190,15 @@ const respondentFromconfig = [
   {
     dependentKey: { respondentType: ["commonFields"] },
     head: "CS_RESPONDENT_EMAIL",
+    updateLabelOn: "respondentType.showCompanyDetails",
+    updateLabel: {
+      key: "head",
+      value: "CS_REPRESENTATIVE_EMAIL",
+    },
+    defaultLabel: {
+      key: "head",
+      value: "CS_RESPONDENT_EMAIL",
+    },
     body: [
       {
         type: "component",
@@ -204,7 +215,12 @@ const respondentFromconfig = [
               error: "ERR_HRMS_INVALID_MOB_NO",
               validation: {
                 required: true,
-                pattern: /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/,
+                maxLength: 150,
+                pattern: {
+                  patternType: "email",
+                  masterName: "commonUiConfig",
+                  moduleName: "patternValidation",
+                },
                 isArray: true,
               },
             },
@@ -251,7 +267,7 @@ const respondentFromconfig = [
     body: [
       {
         type: "text",
-        key: "company_Name",
+        key: "companyName",
         label: "company_Name",
         isMandatory: true,
         populators: {
@@ -269,15 +285,16 @@ const respondentFromconfig = [
         populators: {
           inputs: [
             {
-              isMandatory: true,
+              isMandatory: false,
               name: "document",
               documentHeader: "COMPANY_DOCUMENT_DETAILS",
+              isOptional: "CS_IS_OPTIONAL",
               type: "DragDropComponent",
               uploadGuidelines: "UPLOAD_DOC_50",
               maxFileSize: 50,
               maxFileErrorMessage: "CS_FILE_LIMIT_50_MB",
-              fileTypes: ["JPG", "PDF"],
-              isMultipleUpload: false,
+              fileTypes: ["JPG", "PDF", "PNG"],
+              isMultipleUpload: true,
             },
           ],
         },
@@ -389,15 +406,15 @@ const respondentFromconfig = [
           inputs: [
             {
               name: "document",
-              documentHeader: "CS_202_INQUIRY_AFFIDAVIT",
+              documentHeader: "AFFIDAVIT_UNDER_SECTION_225_BNSS",
               isOptional: "CS_IS_OPTIONAL",
-              infoTooltipMessage: "Tooltip",
+              infoTooltipMessage: "AFFIDAVIT_UNDER_SECTION_225_BNSS_TOOLTIP_MSG",
               type: "DragDropComponent",
               uploadGuidelines: "UPLOAD_DOC_50",
               maxFileSize: 50,
               maxFileErrorMessage: "CS_FILE_LIMIT_50_MB",
-              fileTypes: ["JPG", "PDF"],
-              isMultipleUpload: false,
+              fileTypes: ["JPG", "PDF", "PNG"],
+              isMultipleUpload: true,
             },
           ],
         },

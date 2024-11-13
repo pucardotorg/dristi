@@ -3,7 +3,7 @@ import React, { Fragment, useState } from "react";
 import DocViewer, { DocViewerRenderers } from "@cyntler/react-doc-viewer";
 import { useTranslation } from "react-i18next";
 import { Urls } from "../../hooks";
-
+import { Link } from "react-router-dom";
 const SUPPORTED_FILE_FORMATS = [
   ".pdf",
   ".bmp",
@@ -32,6 +32,7 @@ const DocViewerWrapper = ({
   documentName,
   selectedDocs = [],
   docViewerCardClassName,
+  docViewerStyle,
   showDownloadOption = true,
   docWidth = "262px",
   docHeight = "206px",
@@ -40,23 +41,30 @@ const DocViewerWrapper = ({
   const Digit = window?.Digit || {};
   const { t } = useTranslation();
   const { fileUrl, fileName } = Digit.Hooks.useQueryParams();
+  const token = localStorage.getItem("token");
   // const [selectedDocs, setSelectedDocs] = useState([]);
   const uri = `${window.location.origin}${Urls.FileFetchById}?tenantId=${tenantId}&fileStoreId=${fileStoreId}`;
+  const headers = {
+    "auth-token": `${token}`,
+  };
   const documents = fileStoreId
     ? [{ uri: uri || "", fileName: "fileName" }]
     : selectedDocs.map((file) => ({
         uri: window.URL.createObjectURL(file),
         fileName: file?.name || fileName,
       }));
+
   return (
     <div className="docviewer-wrapper" id="docviewer-id">
-      <Card className={docViewerCardClassName}>
+      <Card className={docViewerCardClassName} style={docViewerStyle}>
         {documents?.length != 0 && (
           <>
             <DocViewer
               className="docViewer-image"
               documents={documents}
               pluginRenderers={DocViewerRenderers}
+              prefetchMethod="GET"
+              requestHeaders={headers}
               style={{ width: docWidth, height: docHeight, ...style }}
               theme={{
                 primary: "#F47738",
@@ -85,14 +93,13 @@ const DocViewerWrapper = ({
         )}
       </Card>
       {showDownloadOption && (
-        <a
-          href={uri}
+        <Link
+          to={{ pathname: uri }}
           target="_blank"
           rel="noreferrer"
           style={{
             display: "flex",
-            color: "#505A5F",
-            textDecoration: "none",
+            color: "#007e7e",
             width: 250,
             whiteSpace: "nowrap",
             overflow: "hidden",
@@ -100,7 +107,7 @@ const DocViewerWrapper = ({
           }}
         >
           {t(displayFilename) || t("CS_CLICK_TO_DOWNLOAD")}
-        </a>
+        </Link>
       )}
       {documentName && (
         <p

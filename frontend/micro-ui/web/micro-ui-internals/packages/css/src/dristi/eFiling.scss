@@ -89,6 +89,7 @@
         text-align: center;
         color: #007e7e;
       }
+
       h2 {
         margin: 0px !important;
       }
@@ -339,9 +340,11 @@
   .card-section-header:first-child {
     margin-bottom: 8px;
   }
+
   .label-field-pair {
     margin-bottom: 20px;
     padding-bottom: 0px !important;
+
     .bolder {
       font-family: Roboto;
       font-size: 16px;
@@ -351,10 +354,12 @@
       color: #0a0a0a !important;
     }
   }
+
   .card-section-header {
     margin-bottom: 20px;
     padding-bottom: 0px !important;
   }
+
   input {
     margin: 0px !important;
   }
@@ -367,6 +372,7 @@
   .select-wrap {
     max-width: 100%;
     margin-bottom: 0px;
+
     .options-card {
       margin-top: 40px;
     }
@@ -377,6 +383,7 @@
   display: flex;
   flex-direction: column;
   gap: 20px;
+
   h2.card-label {
     font-family: Roboto;
     font-size: 16px;
@@ -385,6 +392,7 @@
     text-align: left;
     color: #0a0a0a;
   }
+
   .button-field {
     button {
       width: fit-content !important;
@@ -397,6 +405,7 @@
   .citizen-card-input {
     margin: 0px;
   }
+
   .digit-card-label-error {
     margin: 0px;
     font-family: Roboto;
@@ -408,13 +417,35 @@
   }
 }
 
-.adhaar-verification-info-card {
+.adhaar-verification-info-card,
+.custom-info-card {
   padding: 8px;
   background-color: #ecf3fd;
+
+  &.error {
+    background-color: #fce8e8;
+    svg {
+      transform: rotate(180);
+      path {
+        fill: #bb2c2f;
+      }
+    }
+  }
+
+  &.warning {
+    background-color: #fff6e8;
+    svg {
+      path {
+        fill: #9e400a;
+      }
+    }
+  }
+
   div {
     display: flex;
     align-items: center;
     gap: 8px;
+
     h2 {
       margin: 0px !important;
       font-family: Roboto;
@@ -423,12 +454,15 @@
       line-height: 18.75px;
       text-align: left;
       color: #0a0a0a;
+      width: 100% !important;
     }
   }
+
   p {
     margin: 0px;
     padding-top: 8px;
   }
+
   &.user-verified {
     background-color: #e4f2e4;
   }
@@ -436,6 +470,15 @@
 
 .prayer-and-sworm {
   margin-bottom: 80px;
+
+  .jk-digit-secondary-btn.previous-button {
+    h2 {
+      font-size: inherit;
+      font-weight: inherit !important;
+      font-family: inherit;
+      color: #007e7e;
+    }
+  }
   .custom-sub-header {
     font-family: Roboto;
     font-size: 16px;
@@ -444,9 +487,11 @@
     text-align: left;
     color: #0a0a0a;
   }
+
   .subheader-bold-class {
     font-weight: 700 !important;
   }
+
   h2 {
     font-family: Roboto;
     font-size: 16px;
@@ -455,19 +500,23 @@
     text-align: left;
     color: #0a0a0a;
   }
+
   .custom-text-area-main-div {
     .custom-text-area-header-div {
       gap: 12px !important;
     }
+
     .text-area-upload-sub-header {
       margin-bottom: 5px !important;
     }
   }
+
   .text-upload-file-main {
     display: flex;
     align-items: center;
     gap: 8px;
     padding-top: 8px;
+
     p {
       margin: 0px;
     }
@@ -478,14 +527,17 @@
     display: flex;
     flex-direction: column;
     gap: 24px;
+
     .file-uploader-with-name-sub {
       border: 1px #bbbbbd solid;
+
       .file-uploader-with-name-header {
         padding: 12px 32px;
         display: flex;
         justify-content: space-between;
         align-items: center;
         border-bottom: 1px #bbbbbd solid;
+
         h1 {
           font-family: Roboto;
           font-size: 24px;
@@ -496,8 +548,10 @@
           margin: 0px;
         }
       }
+
       .drag-drop-visible-main-with-custom-name {
         padding: 24px 32px;
+
         .file-name-field {
           h1 {
             font-family: Roboto;
@@ -509,10 +563,12 @@
             margin: 0px;
             margin-bottom: 8px;
           }
+
           .field {
             width: 50% !important;
           }
         }
+
         .document-header {
           font-family: Roboto;
           font-size: 16px;
@@ -539,6 +595,7 @@
           color: #0a0a0a;
         }
       }
+
       .custom-document-sub-header {
         margin: 0px !important;
         margin-top: 20px !important;
@@ -555,6 +612,7 @@
   .label-field-pair:last-child {
     margin-bottom: 0px !important;
   }
+
   .add-new-document {
     display: flex;
     align-items: center;
@@ -578,6 +636,7 @@
       color: #007e7e !important;
       margin: 0px !important;
     }
+
     h2 {
       margin-top: 0px !important;
       margin-bottom: 0px !important;
@@ -691,7 +750,25 @@
   }
 }
 
+.advocate-detail.disable-form,
 .advocate-detail {
+  .label-field-pair {
+    margin-bottom: 40px;
+    .advocate-basic-info {
+      .card-label {
+        margin-bottom: 8px !important;
+      }
+      .label-field-pair {
+        margin-bottom: 16px !important;
+      }
+    }
+  }
+  .user-details-form-style {
+    input {
+      margin: 0px !important;
+    }
+  }
+
   .select-wrap {
     margin: 0px !important;
     max-width: 100%;
@@ -701,6 +778,7 @@
         span {
           display: none;
         }
+
         span.icon {
           width: 100%;
           display: flex !important;
@@ -711,6 +789,7 @@
 
   header {
     margin-bottom: 20px;
+    margin-top: 20px !important;
   }
 
   .label-field-pair:nth-child(2) {
@@ -757,6 +836,11 @@
       }
     }
   }
+  .action-bar-wrap.e-filing-action-bar {
+    header {
+      margin-bottom: 0px !important;
+    }
+  }
 }
 
 .advocate-detail {
@@ -765,6 +849,7 @@
       pointer-events: none;
       background-color: #eee !important;
     }
+
     .radio-wrap {
       pointer-events: none;
     }
@@ -814,9 +899,14 @@
             border-left: 2px #bb2c2f solid;
           }
 
+          &.preverror {
+            border-left: 2px #4d83cf solid;
+          }
+
           .scrutiny-error {
             display: flex !important;
             padding: 5px 16px;
+            margin: 5px 0;
             border-radius: 10px;
             justify-content: flex-start !important;
             gap: 10px !important;
@@ -829,6 +919,10 @@
 
             &.section {
               background: #fce8e8;
+            }
+
+            &.prevsection {
+              background: #ecf3fd;
             }
           }
 
@@ -891,6 +985,19 @@
               &.error {
                 background-color: #fce8e8;
               }
+
+              &.preverror {
+                background-color: #ecf3fd;
+              }
+
+              &.preverrorside {
+                background-color: #ecf3fd;
+                border-left: 2px #4d83cf solid;
+              }
+              &.system-error-class {
+                background-color: #fdf1de;
+                border-left: 2px #9e400a solid;
+              }
             }
 
             .address {
@@ -904,6 +1011,15 @@
 
               &.error {
                 background-color: #fce8e8;
+              }
+
+              &.preverror {
+                background-color: #ecf3fd;
+              }
+
+              &.preverrorside {
+                background-color: #ecf3fd;
+                border-left: 2px #4d83cf solid;
               }
             }
 
@@ -957,9 +1073,8 @@
               }
 
               .value {
-                display: grid;
-                grid-template-columns: 50% 50%;
-                gap: 20px;
+                display: flex !important;
+                gap: 20px !important;
 
                 &.column {
                   display: flex;
@@ -1010,8 +1125,32 @@
 
   &.payment-wrapper {
     padding: 0 !important;
+
     .citizen-form-wrapper {
       margin: 0 !important;
+    }
+  }
+}
+
+.side-stepper-error-count {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+
+  .accordion-wrapper {
+    .total-error-count-judge {
+      padding: 12px 16px 12px 16px;
+      border: 1px #bb2c2f solid;
+      background-color: #fce8e8;
+      color: #bb2c2f;
+      .error-flag-icon-div {
+        color: rgb(187, 44, 47);
+        display: flex;
+        flex-direction: row;
+        align-items: center;
+        gap: 5px;
+        height: 20px;
+      }
     }
   }
 }
@@ -1029,6 +1168,26 @@
     flex-direction: column;
     gap: 10px;
 
+    .total-error-count {
+      padding: 12px 24px;
+      border: 1px #bb2c2f solid;
+      background-color: #fce8e8;
+      color: #bb2c2f;
+    }
+
+    .total-error-note {
+      background-color: #ecf3fd !important;
+
+      svg {
+        g {
+          path {
+            fill: #0f3b8c !important;
+          }
+        }
+      }
+    }
+
+    .total-error-note,
     .side-stepper-info {
       width: 100%;
       padding: 12px 16px 12px 16px;
@@ -1038,7 +1197,7 @@
       background-color: #f7f5f3;
 
       .header {
-        display: flex;
+        display: flex !important;
         align-items: center;
         gap: 12px;
       }
@@ -1120,6 +1279,7 @@
   flex-direction: column;
   justify-content: space-between;
   background-color: #fff;
+
   .e-filing-card-label {
     font-family: Roboto;
     font-size: 19px;
@@ -1128,6 +1288,7 @@
     text-align: center;
     margin: 0;
   }
+
   .e-filing-table-data-style {
     border-left: none;
     padding: 10px;
@@ -1148,24 +1309,48 @@
       }
     }
   }
+
   .button-field {
     display: flex;
     width: 100% !important;
     justify-content: space-between;
+
     .tertiary-button-selector {
       background-color: #007e7e !important;
       box-shadow: none;
       min-width: 44%;
     }
+
     .secondary-button-selector {
       min-width: 44%;
     }
   }
+
   .payment-due-wrapper {
     padding: 16px 0px;
     display: flex !important;
     flex-direction: column !important;
     gap: 16px;
+
+    .payment-calculator-wrapper {
+      width: 100%;
+      height: 100%;
+      max-height: 124px;
+      gap: 12px;
+      display: flex !important;
+      flex-direction: column !important;
+      color: #77787b;
+    }
+  }
+}
+
+.e-filing-payment-breakdown {
+  .payment-due-wrapper {
+    padding: 16px 0px;
+    display: flex !important;
+    flex-direction: column !important;
+    gap: 16px;
+
     .payment-calculator-wrapper {
       width: 100%;
       height: 100%;
@@ -1183,6 +1368,7 @@
   display: flex;
   flex-direction: column;
   gap: 8px;
+
   h3.bulk-input-header {
     margin: 0px !important;
     width: 100%;
@@ -1193,25 +1379,31 @@
     text-align: left;
     color: #0a0a0a;
   }
+
   .bulk-input-main {
     width: 100%;
     display: flex;
     gap: 12px;
+
     .input-main {
       display: flex !important;
       width: calc(100% - 77px);
+
       .citizen-card-input {
         margin-bottom: 0px !important;
       }
+
       .text-input {
         max-width: 100% !important;
       }
     }
+
     button {
       width: 77px;
       box-shadow: none;
       background-color: transparent !important;
       border: 1px #77787b solid !important;
+
       h2 {
         text-align: center !important;
         margin: 0px;
@@ -1228,18 +1420,22 @@
 .signature {
   padding: 0px;
   border: none;
+
   .label-field-pair {
     margin-bottom: 40px;
   }
+
   .upload-signature-modal {
     .upload-signature-modal-main {
       padding: 16px 24px 0px;
     }
   }
+
   .popup-module-action-bar {
     button {
       width: unset !important;
       height: 40px !important;
+
       .e-sign-aadhar-button,
       .upload-signature-button {
         font-family: Roboto;
@@ -1251,9 +1447,11 @@
       }
     }
   }
+
   .e-sign-aadhar-modal {
     .e-sign-aadhar-main {
       padding: 16px 24px 0px;
+
       .e-sign-aadhar-title {
         font-family: Roboto;
         font-size: 16px;
@@ -1263,6 +1461,7 @@
         padding-bottom: 8px;
         margin: 0px;
       }
+
       input {
         margin: 0px;
         margin-bottom: 10px;
@@ -1275,8 +1474,10 @@
   display: flex;
   flex-direction: column;
   gap: 16px;
+
   .select-signature-header {
     width: 100%;
+
     .signature-label {
       font-family: Roboto;
       font-size: 24px;
@@ -1287,6 +1488,7 @@
       margin: 0px;
     }
   }
+
   .select-signature-list {
     width: 100%;
     display: flex;
@@ -1294,22 +1496,40 @@
     gap: 0px;
     border-bottom: 1px #bbbbbd solid;
   }
+
+  span.signed {
+    padding: 5px 0px 5px 0px;
+    border-radius: 15px;
+    width: 59px;
+    height: 28px;
+    font-family: Roboto;
+    font-size: 14px;
+    font-weight: 400;
+    line-height: 16.41px;
+    text-align: center;
+    color: #00703c;
+    background-color: #e4f2e4;
+  }
+
   .signature-body {
     width: 100%;
     border-width: 1px 1px 0px 1px;
     border-color: #bbbbbd;
     border-style: solid;
-    padding: 20px 20px;
+    padding: 20px 24px;
     display: flex;
+    align-items: center;
     justify-content: space-between;
     gap: 16px;
   }
+
   .icon-and-title,
   .signed-button-group {
     display: flex;
     align-items: center;
     gap: 16px;
   }
+
   .icon-and-title {
     .signature-title {
       font-family: Roboto;
@@ -1318,13 +1538,16 @@
       line-height: 18.75px;
       text-align: left;
       color: #0a0a0a;
+      margin: 0px;
     }
   }
+
   .signed-button-group {
     button {
       background-color: #ffffff !important;
       box-shadow: none;
       padding: 8px 24px;
+
       .aadhar-sign-in,
       .upload-signature-label {
         font-family: Roboto;
@@ -1337,8 +1560,10 @@
         margin-top: 4px;
       }
     }
+
     .upload-signature {
       border: none;
+
       svg {
         margin: 0px 12px 0px 0px !important;
       }
@@ -1347,7 +1572,8 @@
 }
 
 .action-bar-wrap.e-filing-action-bar {
-  .submit-bar {
+  .submit-bar,
+  .submit-bar-disabled {
     display: flex;
     gap: 8px;
     justify-content: center;
@@ -1365,21 +1591,26 @@
 
   .view-case-file {
     background-color: #ffffff;
+
     .file-case-side-stepper {
       width: 22.5% !important;
+
       .file-case-select-form-section {
         width: 22.5%;
         position: fixed;
         padding-right: 40px;
       }
     }
+
     .file-case-form-section {
-      width: 60% !important;
+      width: 58% !important;
       max-width: 60% !important;
+
       .employee-card-wrapper {
         .back-button-home {
           position: relative;
           padding: 0px 0px 16px;
+
           .back-btn2 {
             margin: 0px;
           }
@@ -1388,12 +1619,14 @@
             margin: 0px;
           }
         }
+
         .header-content {
           .header-details {
             .header-title-icon {
               display: flex;
               gap: 16px;
               align-items: center;
+
               header.h1 {
                 font-family: Roboto;
                 font-size: 32px;
@@ -1403,13 +1636,16 @@
                 color: #0b0c0c;
                 margin-bottom: 0px;
               }
+
               .case-edit-icon {
                 display: flex;
                 align-items: center;
                 justify-content: center;
                 cursor: pointer;
+
                 svg {
                   display: inline;
+
                   path {
                     fill: #3d3c3c;
                   }
@@ -1417,10 +1653,12 @@
               }
             }
           }
+
           .custom-case-info-div {
             margin: 16px 0px 32px;
           }
         }
+
         .error-flag-class {
           display: flex;
           gap: 8px;
@@ -1430,6 +1668,7 @@
           bottom: 16px;
           z-index: 1001;
           left: 24px;
+
           h3 {
             font-family: Lato;
             font-size: 16px;
@@ -1442,10 +1681,12 @@
         }
       }
     }
+
     .file-case-checklist {
       width: 17.5% !important;
       height: fit-content;
       margin-left: 40px;
+
       .checklist-main {
         width: 17.5%;
         border: 1px #e8e8e8 solid;
@@ -1457,6 +1698,8 @@
         display: flex;
         flex-direction: column;
         gap: 12px;
+        background-color: #f9fafb;
+
         .checklist-title {
           font-family: Roboto;
           font-size: 16px;
@@ -1467,16 +1710,78 @@
           margin: 0px;
           word-wrap: break-word;
         }
+
         .checklist-item {
           display: flex;
           gap: 12px;
+
           .item-logo {
             height: 16px;
             width: 16px;
+
             svg {
               fill: #3d3c3c;
             }
           }
+
+          h3.item-text {
+            width: calc(100% - 28px);
+            font-family: Roboto;
+            font-size: 14px;
+            font-weight: 400;
+            line-height: 16.41px;
+            text-align: left;
+            color: #3d3c3c;
+            margin: 0px;
+            word-wrap: break-word;
+          }
+        }
+      }
+    }
+
+    .file-case-checklist-highlight {
+      width: 17.5% !important;
+      height: fit-content;
+      margin-left: 40px;
+
+      .checklist-main {
+        width: 17.5%;
+        border: 1px #e8e8e8 solid;
+        padding: 16px 20px;
+        border-radius: 4px;
+        position: fixed;
+        bottom: 78px;
+        right: 24px;
+        display: flex;
+        flex-direction: column;
+        gap: 12px;
+        background-color: #b9e2e4;
+        transition: background-color 1s;
+
+        .checklist-title {
+          font-family: Roboto;
+          font-size: 16px;
+          font-weight: 700;
+          line-height: 18.75px;
+          text-align: left;
+          color: #3d3c3c;
+          margin: 0px;
+          word-wrap: break-word;
+        }
+
+        .checklist-item {
+          display: flex;
+          gap: 12px;
+
+          .item-logo {
+            height: 16px;
+            width: 16px;
+
+            svg {
+              fill: #3d3c3c;
+            }
+          }
+
           h3.item-text {
             width: calc(100% - 28px);
             font-family: Roboto;
@@ -1497,37 +1802,107 @@
 .custom-case-info-div {
   background-color: #f7f5f3;
   padding: 0px 24px;
+
   table {
     width: 100%;
     border-spacing: 0px 24px;
+
     tr {
       margin-bottom: 24px;
     }
+
     tr:last-child {
       margin-bottom: 0px;
     }
+
     td {
       border-right: 1px #0000001a solid;
       padding: 0px 16px;
+      vertical-align: top;
+    }
+
+    .column-4 {
+      width: 25%;
+    }
+
+    .column-3 {
+      width: 33.333333%;
     }
 
     td:last-child {
       border-right: none;
       padding-right: 0px;
     }
+
     td:first-child {
       padding-left: 0px;
     }
 
     td {
-      .case-info-title {
-        font-family: Roboto;
-        font-size: 14px;
-        font-weight: 400;
-        line-height: 16.41px;
-        text-align: left;
-        color: #77787b;
-        margin: 0px 0px 8px;
+    }
+  }
+}
+
+.case-info-title {
+  font-family: Roboto;
+  font-size: 14px;
+  font-weight: 400;
+  line-height: 16.41px;
+  text-align: left;
+  color: #77787b;
+  margin: 0px 0px 8px;
+}
+
+.case-info-value {
+  font-family: Roboto;
+  font-size: 16px;
+  font-weight: 700;
+  line-height: 18.75px;
+  text-align: left;
+  color: #231f20;
+}
+
+.case-lock-confirm-modal {
+  .popup-module-main {
+    .popup-module-action-bar {
+      .selector-button-border {
+        background-color: white !important;
+        border: 1px solid #007e7e !important;
+        display: flex;
+        flex-direction: row-reverse;
+        justify-content: center;
+        align-items: center;
+        height: 40px;
+        width: 50%;
+        padding: 8px 24px;
+
+        h2 {
+          width: 65% !important;
+          font-family: Roboto;
+          font-size: 16px;
+          font-weight: 700;
+          line-height: 18.75px;
+          text-align: center;
+          color: #007e7e !important;
+        }
+
+        svg path {
+          fill: #007e7e;
+        }
+      }
+
+      .selector-button-primary {
+        height: 40px;
+        width: 50%;
+        padding: 8px 24px;
+
+        h2 {
+          font-family: Roboto;
+          font-size: 16px;
+          font-weight: 700;
+          line-height: 18.75px;
+          text-align: center;
+        }
       }
     }
   }

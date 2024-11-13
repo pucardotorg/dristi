@@ -1,7 +1,7 @@
 {
   "name": "@egovernments/digit-ui-module-dristi",
   "version": "0.0.1",
-  "license": "MIT",
+  "description": "DRISTI Module UI",
   "main": "dist/index.js",
   "module": "dist/index.modern.js",
   "source": "src/Module.js",
@@ -20,8 +20,8 @@
   "dependencies": {
     "@cyntler/react-doc-viewer": "1.12.0",
     "@egovernments/digit-ui-components": "0.0.1-beta.28",
-    "@egovernments/digit-ui-libraries": "1.8.1-beta.2",
-    "@egovernments/digit-ui-react-components": "1.8.2-beta.5",
+    "@egovernments/digit-ui-libraries": "1.8.1-beta.3",
+    "@egovernments/digit-ui-react-components": "1.8.2-beta.11",
     "@react-pdf/renderer": "^3.4.2",
     "jsonpath": "^1.1.1",
     "lodash": "4.17.21",
@@ -40,11 +40,5 @@
     "recharts": "^2.0.9"
   },
   "author": "JaganKumar <jagan.kumar@egov.org.in>",
-  "keywords": [
-    "digit",
-    "egov",
-    "dpg",
-    "digit-ui",
-    "dristi"
-  ]
+  "license": "MIT"
 }

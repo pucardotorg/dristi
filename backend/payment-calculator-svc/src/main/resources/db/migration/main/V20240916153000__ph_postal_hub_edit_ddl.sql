@@ -1,0 +1,2 @@
+ALTER TABLE POSTAL_HUB
+ADD CONSTRAINT uk_postal_hub_pin UNIQUE (pincode);

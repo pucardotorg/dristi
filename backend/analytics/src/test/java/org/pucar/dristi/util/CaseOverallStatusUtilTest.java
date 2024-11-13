@@ -13,12 +13,17 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.pucar.dristi.config.Configuration;
+import org.pucar.dristi.config.MdmsDataConfig;
 import org.pucar.dristi.kafka.Producer;
 import org.pucar.dristi.web.models.CaseOutcome;
+import org.pucar.dristi.web.models.CaseOutcomeType;
+import org.pucar.dristi.web.models.CaseOverallStatusType;
 import org.pucar.dristi.web.models.CaseStageSubStage;
 import static org.mockito.Mockito.*;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -38,6 +43,9 @@ class CaseOverallStatusUtilTest {
 
     @Mock
     private ObjectMapper mapper;
+
+    @Mock
+    private MdmsDataConfig mdmsDataConfig;
 
     @InjectMocks
     private CaseOverallStatusUtil caseOverallStatusUtil;
@@ -64,10 +72,14 @@ class CaseOverallStatusUtilTest {
 
         JSONObject requestInfoJson = new JSONObject();
 
+        Map<String, List<CaseOverallStatusType>> caseOverallStatusTypeMap = new HashMap<>();
+        caseOverallStatusTypeMap.put("case",List.of(CaseOverallStatusType.builder().action(action).state(status).build()));
+
         // Mock configuration
         when(config.getCaseBusinessServiceList()).thenReturn(List.of("case"));
         when(mapper.readValue(anyString(), eq(RequestInfo.class))).thenReturn(requestInfo);
         when(config.getCaseOverallStatusTopic()).thenReturn("topic");
+        when(mdmsDataConfig.getCaseOverallStatusTypeMap()).thenReturn(caseOverallStatusTypeMap);
         // Call the method
         Object result = caseOverallStatusUtil.checkCaseOverAllStatus(entityType, referenceId, status, action, tenantId, requestInfoJson);
 
@@ -99,11 +111,16 @@ class CaseOverallStatusUtilTest {
         hearingObject.put("filingNumber",filingList);
         hearingObject.put("hearingType","evidence");
 
+        Map<String, List<CaseOverallStatusType>> caseOverallStatusTypeMap = new HashMap<>();
+        caseOverallStatusTypeMap.put("hearing",List.of(CaseOverallStatusType.builder().action(action).typeIdentifier("evidence").state(status).build()));
+
         // Mock configuration
         when(config.getHearingBusinessServiceList()).thenReturn(List.of("hearing"));
         when(hearingUtil.getHearing(any(), any(), any(), eq(referenceId), any())).thenReturn(hearingObject);
         when(mapper.readValue(anyString(), eq(RequestInfo.class))).thenReturn(requestInfo);
         when(config.getCaseOverallStatusTopic()).thenReturn("topic");
+        when(mdmsDataConfig.getCaseOverallStatusTypeMap()).thenReturn(caseOverallStatusTypeMap);
+
 
         // Call the method
         Object result = caseOverallStatusUtil.checkCaseOverAllStatus(entityType, referenceId, status, action, tenantId, requestInfoJson);
@@ -133,11 +150,18 @@ class CaseOverallStatusUtilTest {
         JSONObject orderObject = new JSONObject();
         orderObject.put("filingNumber","filingNumber");
         orderObject.put("orderType","WITHDRAWAL");
+
+        Map<String, List<CaseOverallStatusType>> caseOverallStatusTypeMap = new HashMap<>();
+        caseOverallStatusTypeMap.put("order",List.of(CaseOverallStatusType.builder().action(action).typeIdentifier("WITHDRAWAL").state(status).build()));
+        Map<String, CaseOutcomeType> caseOutcomeTypeMap = new HashMap<>();
+        caseOutcomeTypeMap.put("WITHDRAWAL", CaseOutcomeType.builder().isJudgement(false).build());
         // Mock configuration
         when(config.getOrderBusinessServiceList()).thenReturn(List.of("order"));
         when(orderUtil.getOrder(any(), eq(referenceId), any())).thenReturn(orderObject);
         when(mapper.readValue(anyString(), eq(RequestInfo.class))).thenReturn(requestInfo);
         when(config.getCaseOutcomeTopic()).thenReturn("topic");
+        when(mdmsDataConfig.getCaseOverallStatusTypeMap()).thenReturn(caseOverallStatusTypeMap);
+        when(mdmsDataConfig.getCaseOutcomeTypeMap()).thenReturn(caseOutcomeTypeMap);
 
         // Call the method
         Object result = caseOverallStatusUtil.checkCaseOverAllStatus(entityType, referenceId, status, action, tenantId, requestInfoJson);
@@ -163,6 +187,7 @@ class CaseOverallStatusUtilTest {
         when(config.getCaseBusinessServiceList()).thenReturn(List.of("case"));
         when(config.getHearingBusinessServiceList()).thenReturn(List.of("hearing"));
         when(config.getOrderBusinessServiceList()).thenReturn(List.of("order"));
+        when(mdmsDataConfig.getCaseOverallStatusTypeMap()).thenReturn(new HashMap<>());
 
         // Call the method
         Object result = caseOverallStatusUtil.checkCaseOverAllStatus(entityType, referenceId, status, action, tenantId, requestInfo);

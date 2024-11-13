@@ -1,0 +1,159 @@
+{
+  "BusinessServices": [
+    {
+      "tenantId": "kl",
+      "business": "hearing",
+      "businessService": "hearing-default",
+      "businessServiceSla": null,
+      "states": [
+        {
+          "sla": null,
+          "state": null,
+          "applicationStatus": null,
+          "docUploadRequired": false,
+          "isStartState": true,
+          "isTerminateState": false,
+          "isStateUpdatable": true,
+          "actions": [
+            {
+              "action": "CREATE",
+              "nextState": "SCHEDULED",
+              "roles": [
+                "HEARING_CREATOR"
+              ]
+            }
+          ]
+        },
+        {
+          "sla": null,
+          "state": "SCHEDULED",
+          "applicationStatus": "INWORKFLOW",
+          "docUploadRequired": false,
+          "isStartState": false,
+          "isTerminateState": false,
+          "isStateUpdatable": true,
+          "actions": [
+            {
+              "action": "RESCHEDULE",
+              "nextState": "OPT_OUT",
+              "roles": [
+                "HEARING_EDITOR"
+              ]
+            },
+            {
+              "action": "BULK_RESCHEDULE",
+              "nextState": "SCHEDULED",
+              "roles": [
+                "HEARING_SCHEDULER"
+              ]
+            },
+            {
+              "action": "START",
+              "nextState": "IN_PROGRESS",
+              "roles": [
+                "HEARING_EDITOR"
+              ]
+            },
+            {
+              "action": "ABANDON",
+              "nextState": "ABATED",
+              "roles": [
+                "SYSTEM",
+                "SYSTEM_ADMIN"
+              ]
+            }
+          ]
+        },
+        {
+          "sla": null,
+          "state": "OPT_OUT",
+          "applicationStatus": "INWORKFLOW",
+          "docUploadRequired": false,
+          "isStartState": false,
+          "isTerminateState": false,
+          "isStateUpdatable": true,
+          "actions": [
+            {
+              "action": "SET_DATE",
+              "nextState": "SCHEDULED",
+              "roles": [
+                "HEARING_EDITOR",
+                "SYSTEM",
+                "SYSTEM_ADMIN",
+                "AUTO_ESCALATE"
+              ]
+            },
+            {
+              "action": "ABANDON",
+              "nextState": "ABATED",
+              "roles": [
+                "SYSTEM",
+                "SYSTEM_ADMIN"
+              ]
+            }
+          ]
+        },
+        {
+          "sla": 86400000,
+          "state": "IN_PROGRESS",
+          "applicationStatus": "INWORKFLOW",
+          "docUploadRequired": false,
+          "isStartState": false,
+          "isTerminateState": false,
+          "isStateUpdatable": true,
+          "actions": [
+            {
+              "action": "CLOSE",
+              "nextState": "HEARD",
+              "roles": [
+                "HEARING_EDITOR"
+              ]
+            },
+            {
+              "action": "ADJOURN",
+              "nextState": "ADJOURNED",
+              "roles": [
+                "HEARING_EDITOR"
+              ]
+            },
+            {
+              "action": "ABANDON",
+              "nextState": "ABATED",
+              "roles": [
+                "SYSTEM",
+                "SYSTEM_ADMIN"
+              ]
+            }
+          ]
+        },
+        {
+          "sla": null,
+          "state": "HEARD",
+          "applicationStatus": "ACTIVE",
+          "isStateUpdatable": false,
+          "docUploadRequired": false,
+          "isStartState": false,
+          "isTerminateState": true
+        },
+        {
+          "sla": null,
+          "state": "ADJOURNED",
+          "applicationStatus": "ACTIVE",
+          "isStateUpdatable": false,
+          "docUploadRequired": false,
+          "isStartState": false,
+          "isTerminateState": true
+        },
+        {
+          "sla": null,
+          "state": "ABATED",
+          "applicationStatus": "INACTIVE",
+          "isStateUpdatable": false,
+          "docUploadRequired": false,
+          "isStartState": false,
+          "isTerminateState": true
+        }
+      ]
+    }
+  ]
+}

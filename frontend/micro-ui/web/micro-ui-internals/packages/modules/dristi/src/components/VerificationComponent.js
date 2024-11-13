@@ -50,6 +50,8 @@ function VerificationComponent({ t, config, onSelect, formData = {}, errors, set
     modalData: {},
     isAadharVerified: false,
   });
+  const roles = Digit.UserService.getUser()?.info?.roles;
+  const isAdvocateFilingCase = roles?.some((role) => role.code === "ADVOCATE_ROLE");
   const [isDisabled, setIsDisabled] = useState(false);
   const toast = useToast();
   const inputs = useMemo(
@@ -126,7 +128,7 @@ function VerificationComponent({ t, config, onSelect, formData = {}, errors, set
   };
 
   const handleDeleteFile = (input, index) => {
-    onSelect(config.key, { ...formData[config.key], [input?.name]: undefined });
+    onSelect(config.key, { ...formData[config.key], [input?.name]: undefined }, { shouldValidate: true });
   };
 
   return (
@@ -134,66 +136,79 @@ function VerificationComponent({ t, config, onSelect, formData = {}, errors, set
       {inputs?.map((input, index) => {
         let currentValue = (formData && formData[config.key] && formData[config.key][input.name]) || "";
         let fileErrors =
-          currentValue?.[input.name]?.["ID_Proof"]?.[0]?.[1]?.["file"] &&
-          [currentValue?.[input.name]?.["ID_Proof"]?.[0]?.[1]?.["file"]].map((file) =>
+          currentValue?.["ID_Proof"]?.[0]?.[1]?.["file"] &&
+          [currentValue?.["ID_Proof"]?.[0]?.[1]?.["file"]].map((file) =>
             fileValidator(file, idProofVerificationConfig?.[0].body[0]?.populators?.inputs?.[1])
           );
-        const isUserVerified =
-          (input?.verificationOn && extractValue(formData, input?.verificationOn)) ||
-          isAadharVerified ||
-          (formData?.[config.key]?.[config.key] && formData?.[config.key]?.["verificationType"]);
+        const isUserVerified = isAadharVerified || (!config?.isScrutiny && formData?.[config.key]?.[config.key]);
         return (
           <React.Fragment key={index}>
             <CardLabel className="card-label-smaller">{t(input.label)}</CardLabel>
-            {!currentValue?.[input.name]?.["ID_Proof"] ? (
+            {!currentValue?.["ID_Proof"] ? (
               <React.Fragment>
                 {!isUserVerified && (
-                  <div className="button-field">
-                    <Button
-                      variation={"secondary"}
-                      className={"secondary-button-selector"}
-                      label={t("VERIFY_AADHAR")}
-                      labelClassName={"secondary-label-selector"}
-                      onButtonClick={() => {
-                        setState((prev) => ({
-                          ...prev,
-                          isAadharVerified: true,
-                        }));
-                        onSelect(config.key, {
-                          ...formData[config.key],
-                          [config.key]: generateAadhaar(),
-                          verificationType: "AADHAR",
-                          isFirstRender: true,
-                        });
-                      }}
-                    />
-                    <Button
-                      className={"tertiary-button-selector"}
-                      label={t("VERIFY_ID_PROOF")}
-                      labelClassName={"tertiary-label-selector"}
-                      onButtonClick={() => {
-                        setState((prev) => ({
-                          ...prev,
-                          showModal: true,
-                          verificationType: "uploadIdProof",
-                        }));
-                      }}
-                    />
-                  </div>
+                  <React.Fragment>
+                    <div className="button-field">
+                      {/* <Button
+                        variation={"secondary"}
+                        className={"secondary-button-selector"}
+                        label={t("VERIFY_AADHAR")}
+                        labelClassName={"secondary-label-selector"}
+                        onButtonClick={() => {
+                          setState((prev) => ({
+                            ...prev,
+                            isAadharVerified: true,
+                          }));
+                          onSelect(
+                            config.key,
+                            {
+                              ...formData[config.key],
+                              [config.key]: generateAadhaar(),
+                              verificationType: "AADHAR",
+                              isFirstRender: true,
+                            },
+                            { shouldValidate: true }
+                          );
+                        }}
+                      /> */}
+                      <Button
+                        className={"secondary-button-selector"}
+                        variation={"secondary"}
+                        label={t("VERIFY_ID_PROOF")}
+                        labelClassName={"secondary-label-selector"}
+                        onButtonClick={() => {
+                          setState((prev) => ({
+                            ...prev,
+                            showModal: true,
+                            verificationType: "uploadIdProof",
+                          }));
+                        }}
+                      />
+                    </div>
+                    {errors?.[config.key] && <span className="alert-error">{t(errors?.[config.key].msg || "CORE_REQUIRED_FIELD_ERROR")}</span>}
+                  </React.Fragment>
                 )}
 
-                <InfoCard
-                  variant={isUserVerified ? "success" : "default"}
-                  label={isUserVerified ? t("CS_AADHAR_VERIFIED") : t("CS_COMMON_NOTE")}
-                  additionalElements={{}}
-                  inline
-                  text={isUserVerified ? t("CS_ID_VERIFIED_NOTE") : t("CS_AADHAR_VERIFICATION_NOTE")}
-                  textStyle={{}}
-                  className={`adhaar-verification-info-card ${isUserVerified && "user-verified"}`}
-                />
+                {isUserVerified && (
+                  <InfoCard
+                    variant={isUserVerified ? "success" : "default"}
+                    label={isUserVerified ? t("CS_AADHAR_VERIFIED") : t("CS_COMMON_NOTE")}
+                    additionalElements={{}}
+                    inline
+                    text={
+                      isUserVerified
+                        ? isAdvocateFilingCase
+                          ? t("CS_ADVOCATE_VERIFY_COMPLAINANT_ID")
+                          : t("CS_ID_VERIFIED_NOTE")
+                        : t("CS_AADHAR_VERIFICATION_NOTE")
+                    }
+                    textStyle={{}}
+                    className={`adhaar-verification-info-card ${isUserVerified && "user-verified"}`}
+                  />
+                )}
               </React.Fragment>
             ) : (
-              [currentValue?.[input.name]?.["ID_Proof"]?.[0]?.[1]?.["file"]].map((file, index) => (
+              [currentValue?.["ID_Proof"]?.[0]?.[1]?.["file"]].map((file, index) => (
                 <RenderFileCard
                   key={`${input?.name}${index}`}
                   index={index}
@@ -215,7 +230,7 @@ function VerificationComponent({ t, config, onSelect, formData = {}, errors, set
                 isDisabled={isDisabled}
                 actionSaveLabel={t("ADD")}
                 actionSaveOnSubmit={() => {
-                  onSelect(config.key, { ...formData[config.key], [input.name]: { verificationType, [input.name]: modalData } });
+                  onSelect(config.key, { ...formData[config.key], [input.name]: { verificationType, ...modalData } }, { shouldValidate: true });
                   setState((prev) => ({
                     ...prev,
                     showModal: false,

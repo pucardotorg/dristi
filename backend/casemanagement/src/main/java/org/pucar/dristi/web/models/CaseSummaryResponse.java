@@ -29,7 +29,6 @@ public class CaseSummaryResponse {
 
 	@JsonProperty("criteria")
 	@Valid
-<<<<<<<< HEAD:backend/casemanagement/src/main/java/org/pucar/dristi/web/models/CaseSummaryResponse.java
 	private List<CaseSummary> criteria = null;
 
 
@@ -37,11 +36,6 @@ public class CaseSummaryResponse {
 		if (this.criteria == null) {
 			this.criteria = new ArrayList<>();
 		}
-========
-	private List<AdvocateClerkSearchCriteria> criteria = new ArrayList<>();
-
-	public AdvocateClerkSearchRequest addCriteriaItem(AdvocateClerkSearchCriteria criteriaItem) {
->>>>>>>> main:backend/advocate/src/main/java/org/pucar/web/models/AdvocateClerkSearchRequest.java
 		this.criteria.add(criteriaItem);
 		return this;
 	}

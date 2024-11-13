@@ -12,7 +12,7 @@ export const chequeDetailsFormConfig = [
               value: /^[^{0-9}^\$\"<>?\\\\~!@#$%^()+={}\[\]*,/_:;“”‘’]{1,100}$/i,
             },
             patternType: "Name",
-            minLength: 2,
+            minLength: 1,
           },
           error: "FIRST_LAST_NAME_MANDATORY_MESSAGE",
           name: "chequeSignatoryName",
@@ -36,8 +36,8 @@ export const chequeDetailsFormConfig = [
               uploadGuidelines: "UPLOAD_DOC_50",
               maxFileSize: 50,
               maxFileErrorMessage: "CS_FILE_LIMIT_50_MB",
-              fileTypes: ["JPG", "PDF"],
-              isMultipleUpload: false,
+              fileTypes: ["JPG", "PDF", "PNG"],
+              isMultipleUpload: true,
             },
           ],
         },
@@ -57,7 +57,7 @@ export const chequeDetailsFormConfig = [
               value: /^[^{0-9}^\$\"<>?\\\\~!@#$%^()+={}\[\]*,/_:;“”‘’]{1,50}$/i,
             },
             patternType: "Name",
-            minLength: 2,
+            minLength: 1,
           },
           error: "FIRST_LAST_NAME_MANDATORY_MESSAGE",
           name: "name",
@@ -72,6 +72,10 @@ export const chequeDetailsFormConfig = [
         label: "CS_CHEQUE_NUMBER",
         isMandatory: true,
         populators: {
+          error: "CORE_REQUIRED_FIELD_ERROR",
+          validation: {
+            minLength: 6,
+          },
           name: "chequeNumber",
         },
       },
@@ -85,9 +89,14 @@ export const chequeDetailsFormConfig = [
         isMandatory: true,
         populators: {
           name: "issuanceDate",
+          error: "CORE_REQUIRED_FIELD_ERROR",
           validation: {
-            max: new Date().toISOString().split('T')[0],
-          }
+            max: {
+              patternType: "date",
+              masterName: "commonUiConfig",
+              moduleName: "maxDateValidation",
+            },
+          },
         },
       },
     ],
@@ -112,11 +121,14 @@ export const chequeDetailsFormConfig = [
         label: "CS_IFSC_CODE",
         isMandatory: true,
         populators: {
+          error: "CORE_REQUIRED_FIELD_ERROR",
           validation: {
             pattern: {
-              message: "CORE_COMMON_IFSC_INVALID",
-              value: /^[A-Z]{4}0[A-Z0-9]{6}$/,
+              patternType: "ifsc",
+              masterName: "commonUiConfig",
+              moduleName: "patternValidation",
             },
+            minLength: 11,
           },
           name: "ifsc",
         },
@@ -130,6 +142,7 @@ export const chequeDetailsFormConfig = [
         label: "CS_CHEQUE_AMOUNT",
         isMandatory: true,
         populators: {
+          error: "CORE_REQUIRED_FIELD_ERROR",
           componentInFront: "₹",
           name: "chequeAmount",
           prefix: "",
@@ -145,9 +158,14 @@ export const chequeDetailsFormConfig = [
         isMandatory: true,
         populators: {
           name: "depositDate",
+          error: "CORE_REQUIRED_FIELD_ERROR",
           validation: {
-            max: new Date().toISOString().split('T')[0],
-          }
+            max: {
+              patternType: "date",
+              masterName: "commonUiConfig",
+              moduleName: "maxDateValidation",
+            },
+          },
         },
       },
     ],
@@ -164,13 +182,13 @@ export const chequeDetailsFormConfig = [
             {
               name: "document",
               documentHeader: "CS_PROOF_DEPOSIT_CHEQUE",
-              infoTooltipMessage: "Tooltip",
+              infoTooltipMessage: "CS_PROOF_DEPOSIT_CHEQUE",
               type: "DragDropComponent",
               uploadGuidelines: "UPLOAD_DOC_50",
               maxFileSize: 50,
               maxFileErrorMessage: "CS_FILE_LIMIT_50_MB",
-              fileTypes: ["JPG", "PDF"],
-              isMultipleUpload: false,
+              fileTypes: ["JPG", "PDF", "PNG"],
+              isMultipleUpload: true,
             },
           ],
         },
@@ -189,13 +207,13 @@ export const chequeDetailsFormConfig = [
             {
               name: "document",
               documentHeader: "CS_CHEQUE_RETURN_MEMO",
-              infoTooltipMessage: "Tooltip",
+              infoTooltipMessage: "CS_CHEQUE_RETURN_MEMO",
               type: "DragDropComponent",
               uploadGuidelines: "UPLOAD_DOC_50",
               maxFileSize: 50,
               maxFileErrorMessage: "CS_FILE_LIMIT_50_MB",
-              fileTypes: ["JPG", "PDF"],
-              isMultipleUpload: false,
+              fileTypes: ["JPG", "PDF", "PNG"],
+              isMultipleUpload: true,
             },
           ],
         },

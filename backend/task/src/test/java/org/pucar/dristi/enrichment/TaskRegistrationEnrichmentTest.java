@@ -6,10 +6,9 @@ import org.egov.common.contract.request.User;
 import org.egov.tracer.model.CustomException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.junit.jupiter.MockitoExtension;
+import org.mockito.MockitoAnnotations;
 import org.pucar.dristi.config.Configuration;
 import org.pucar.dristi.util.IdgenUtil;
 import org.pucar.dristi.web.models.Amount;
@@ -17,81 +16,141 @@ import org.pucar.dristi.web.models.Task;
 import org.pucar.dristi.web.models.TaskRequest;
 
 import java.util.Collections;
+import java.util.UUID;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.*;
-import static org.pucar.dristi.config.ServiceConstants.ENRICHMENT_EXCEPTION;
 
-@ExtendWith(MockitoExtension.class)
-public class TaskRegistrationEnrichmentTest {
+class TaskRegistrationEnrichmentTest {
+
+    @InjectMocks
+    private TaskRegistrationEnrichment taskRegistrationEnrichment;
 
     @Mock
     private IdgenUtil idgenUtil;
 
     @Mock
-    private Configuration config;
-
-    @InjectMocks
-    private TaskRegistrationEnrichment taskRegistrationEnrichment;
-
-    private TaskRequest taskRequest;
-    private Task task;
-    private RequestInfo requestInfo;
-    private User userInfo;
+    private Configuration configuration;
 
     @BeforeEach
     void setUp() {
-        userInfo = User.builder().uuid("user-uuid").build();
-        requestInfo = RequestInfo.builder().userInfo(userInfo).build();
-        task = new Task();
-        task.setTenantId("tenant-id");
+        MockitoAnnotations.openMocks(this);
+    }
+
+    // Helper method to create a mock TaskRequest
+    private TaskRequest createMockTaskRequest() {
+        Task task = new Task();
         task.setAmount(new Amount());
-        taskRequest = new TaskRequest();
-        taskRequest.setRequestInfo(requestInfo);
+        task.setAuditDetails(new AuditDetails());
+        task.setFilingNumber("FIL-123");
+
+        RequestInfo requestInfo = new RequestInfo();
+        User userInfo = new User();
+        userInfo.setUuid(UUID.randomUUID().toString());
+        requestInfo.setUserInfo(userInfo);
+
+        TaskRequest taskRequest = new TaskRequest();
         taskRequest.setTask(task);
+        taskRequest.setRequestInfo(requestInfo);
+
+        return taskRequest;
     }
 
     @Test
-    void testEnrichTaskRegistrationSuccess() {
-        when(idgenUtil.getIdList(any(), any(), any(), any(), anyInt())).thenReturn(Collections.singletonList("task-id"));
-        when(config.getTaskNumber()).thenReturn("task-number");
+    void testEnrichTaskRegistration_Success() {
+        // Given
+        TaskRequest taskRequest = createMockTaskRequest();
+        String mockTenantId = "FIL123";
+        String mockTaskId = "TASK123";
+        String mockTaskNumber = "FIL-123" + "-" + mockTaskId;
 
+        when(configuration.getTaskConfig()).thenReturn("taskConfigValue");
+        when(configuration.getTaskFormat()).thenReturn("taskFormatValue");
+        when(idgenUtil.getIdList(any(), any(),any(),any(), eq(1), eq(false)))
+                .thenReturn(Collections.singletonList(mockTaskId));
+
+        // When
         taskRegistrationEnrichment.enrichTaskRegistration(taskRequest);
 
-        assertNotNull(task.getId());
-        assertNotNull(task.getAuditDetails());
-        assertEquals("task-id", task.getTaskNumber());
-        verify(idgenUtil, times(1)).getIdList(any(), any(), any(), any(), anyInt());
+        // Then
+        assertNotNull(taskRequest.getTask().getAuditDetails());
+        assertNotNull(taskRequest.getTask().getId());
+        assertEquals(mockTaskNumber, taskRequest.getTask().getTaskNumber());
+        verify(idgenUtil).getIdList(any(), eq(mockTenantId), eq("taskConfigValue"), eq("taskFormatValue"), eq(1), eq(false));
     }
 
     @Test
-    void testEnrichTaskRegistrationException() {
-        when(idgenUtil.getIdList(any(), any(), any(), any(), anyInt())).thenThrow(new RuntimeException("Error"));
+    void testEnrichCaseApplicationUponUpdate_Success() {
+        // Given
+        TaskRequest taskRequest = createMockTaskRequest();
+        taskRequest.getTask().setAuditDetails(new AuditDetails());
 
-        CustomException exception = assertThrows(CustomException.class, () -> taskRegistrationEnrichment.enrichTaskRegistration(taskRequest));
-        assertEquals(ENRICHMENT_EXCEPTION, exception.getCode());
-        assertEquals("Error", exception.getMessage());
-        verify(idgenUtil, times(1)).getIdList(any(), any(), any(), any(), anyInt());
-    }
 
-    @Test
-    void testEnrichCaseApplicationUponUpdateSuccess() {
-        AuditDetails auditDetails = AuditDetails.builder().build();
-        task.setAuditDetails(auditDetails);
-
+        // When
         taskRegistrationEnrichment.enrichCaseApplicationUponUpdate(taskRequest);
 
-        assertEquals("user-uuid", task.getAuditDetails().getLastModifiedBy());
-        assertNotNull(task.getAuditDetails().getLastModifiedTime());
+        // Then
+        assertNotNull(taskRequest.getTask().getAuditDetails().getLastModifiedTime());
+        assertNotNull(taskRequest.getTask().getAuditDetails().getLastModifiedBy());
     }
 
     @Test
-    void testEnrichCaseApplicationUponUpdateException() {
-        task.setAuditDetails(null); // This will cause NullPointerException
+    void testEnrichCaseApplicationUponUpdate_NoDocuments() {
+        // Given
+        TaskRequest taskRequest = createMockTaskRequest();
+        taskRequest.getTask().setDocuments(null); // No documents
 
-        CustomException exception = assertThrows(CustomException.class, () -> taskRegistrationEnrichment.enrichCaseApplicationUponUpdate(taskRequest));
-        assertEquals(ENRICHMENT_EXCEPTION, exception.getCode());
-        assertTrue(exception.getMessage().contains("Exception in task enrichment service during task update process"));
+        // When
+        taskRegistrationEnrichment.enrichCaseApplicationUponUpdate(taskRequest);
+
+        // Then
+        assertNotNull(taskRequest.getTask().getAuditDetails().getLastModifiedTime());
+        assertNotNull(taskRequest.getTask().getAuditDetails().getLastModifiedBy());
+        // Ensure no exception is thrown when documents are null
+    }
+
+    @Test
+    void testEnrichCaseApplicationUponUpdate_NonNullDocumentIds() {
+        // Given
+        TaskRequest taskRequest = createMockTaskRequest();
+        taskRequest.getTask().getDocuments().forEach(document -> document.setId(UUID.randomUUID().toString()));
+
+        // When
+        taskRegistrationEnrichment.enrichCaseApplicationUponUpdate(taskRequest);
+
+        // Then
+        // Ensure no document is updated since all documents already have an ID
+        taskRequest.getTask().getDocuments().forEach(document -> assertNotNull(document.getId()));
+    }
+
+    @Test
+    void testEnrichCaseApplicationUponUpdate_NullDocumentIds() {
+        // Given
+        TaskRequest taskRequest = createMockTaskRequest();
+        taskRequest.getTask().getDocuments().forEach(document -> document.setId(null));
+
+        // When
+        taskRegistrationEnrichment.enrichCaseApplicationUponUpdate(taskRequest);
+
+        // Then
+        // Ensure all documents without IDs are assigned new UUIDs
+        taskRequest.getTask().getDocuments().forEach(document -> {
+            assertNotNull(document.getId());
+            assertEquals(document.getId(), document.getDocumentUid());
+        });
+    }
+
+    @Test
+    void testEnrichCaseApplicationUponUpdate_ExceptionThrown() {
+        // Given
+        TaskRequest taskRequest = createMockTaskRequest();
+
+        taskRequest.setTask(null);
+        // When & Then
+        assertThrows(CustomException.class, () -> {
+            taskRegistrationEnrichment.enrichCaseApplicationUponUpdate(taskRequest);
+        });
     }
 }

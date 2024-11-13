@@ -5,10 +5,6 @@
   "$version": "0.1.0",
   "orderDetails":
   {
-    "refApplicationId": {
-      "type" : "string",
-      "description": "alphanumeric string representing the reference application ID"
-    },
     "hearingDate": {
       "type": "integer",
       "format": "int64",

@@ -1,0 +1,103 @@
+serviceMaps:
+  serviceName: scheduler-services
+  mappings:
+    - version: 1.0
+      description: Persists Reschedule request in tables
+      fromTopic: reschedule-hearing
+      isTransaction: true
+      queryMaps:
+        - query: INSERT INTO hearing_booking_reschedule_request (hearing_booking_id,reschedule_request_id,requester_id,reason,status,created_by,last_modified_by,created_time, last_modified_time ,row_version ,tenant_id ,judge_id ,case_id ,representatives, litigants ,suggested_days, available_days) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ? ,? ,? ,? ,?, ?, ?, ?, ?);
+          basePath: $.*
+          jsonMaps:
+            - jsonPath: $.*.hearingBookingId
+
+            - jsonPath: $.*.rescheduledRequestId
+
+            - jsonPath: $.*.requesterId
+
+            - jsonPath: $.*.reason
+
+            - jsonPath: $.*.status
+
+            - jsonPath: $.*.auditDetails.createdBy
+
+            - jsonPath: $.*.auditDetails.lastModifiedBy
+
+            - jsonPath: $.*.auditDetails.createdTime
+
+            - jsonPath: $.*.auditDetails.lastModifiedTime
+
+            - jsonPath: $.*.rowVersion
+
+            - jsonPath: $.*.tenantId
+
+            - jsonPath: $.*.judgeId
+
+            - jsonPath: $.*.caseId
+
+            - jsonPath: $.*.representatives
+              type: JSON
+              dbType: JSONB
+
+            - jsonPath: $.*.litigants
+              type: JSON
+              dbType: JSONB
+
+            - jsonPath: $.*.suggestedDates
+              type: JSON
+              dbType: JSONB
+
+            - jsonPath: $.*.availableDates
+              type: JSON
+              dbType: JSONB
+
+    - version: 1.0
+      description: Update Reschedule request in table
+      fromTopic: update-reschedule-hearing
+      isTransaction: true
+      queryMaps:
+
+        - query: UPDATE hearing_booking_reschedule_request SET hearing_booking_id =?,requester_id =?,reason =?, status=?,created_by =?,last_modified_by =?,created_time =?, last_modified_time =? ,suggested_days =?,available_days =? , litigants=?, representatives=?, row_version =? ,tenant_id =?,judge_id =? ,case_id =? WHERE reschedule_request_id=?;
+          basePath: $.*
+          jsonMaps:
+            - jsonPath: $.*.hearingBookingId
+
+            - jsonPath: $.*.requesterId
+
+            - jsonPath: $.*.reason
+
+            - jsonPath: $.*.status
+
+            - jsonPath: $.*.auditDetails.createdBy
+
+            - jsonPath: $.*.auditDetails.lastModifiedBy
+
+            - jsonPath: $.*.auditDetails.createdTime
+
+            - jsonPath: $.*.auditDetails.lastModifiedTime
+
+            - jsonPath: $.*.suggestedDates
+              type: JSON
+              dbType: JSONB
+
+            - jsonPath: $.*.availableDates
+              type: JSON
+              dbType: JSONB
+
+            - jsonPath: $.*.litigants
+              type: JSON
+              dbType: JSONB
+
+            - jsonPath: $.*.representatives
+              type: JSON
+              dbType: JSONB
+
+            - jsonPath: $.*.rowVersion
+
+            - jsonPath: $.*.tenantId
+
+            - jsonPath: $.*.judgeId
+
+            - jsonPath: $.*.caseId
+
+            - jsonPath: $.*.rescheduledRequestId

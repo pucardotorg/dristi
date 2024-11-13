@@ -1,0 +1,21 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "http://dristi.pucar.org/schemas/order-case-transfer.json",
+  "$comment": "definition of the schema for issuing case transfer order",
+  "$version": "0.1.0",
+  "applicationDetails":
+  {
+    "selectRequestedCourt": {
+      "type": "string",
+      "description": "select requested court"
+    },
+    "groundsForSeekingTransfer": {
+      "type": "string",
+      "description": "grounds for seeking transfer"
+    },
+    "additionalComments": {
+      "type": "string",
+      "description": "additional comments"
+    }
+  }
+}

@@ -122,7 +122,7 @@ import static org.mockito.Mockito.*;
 
         // Act
         advocateClerkService.searchAdvocateClerkApplications(requestInfo, advocateClerkSearchCriteria, tenantId, limit, offset);
-        verify(advocateClerkRepository, times(1)).getApplications(advocateClerkSearchCriteria, "testTenantId",   10, 0);
+        verify(advocateClerkRepository, times(1)).getClerks(advocateClerkSearchCriteria, "testTenantId",   10, 0);
     }
 
     @Test
@@ -141,7 +141,7 @@ import static org.mockito.Mockito.*;
         Integer limit = 10;
         Integer offset = 0;
 
-        when(advocateClerkRepository.getApplications(any(), any(), any(), any())).thenThrow(new RuntimeException());
+        when(advocateClerkRepository.getClerks(any(), any(), any(), any())).thenThrow(new RuntimeException());
 
         assertThrows(Exception.class, () -> {
             advocateClerkService.searchAdvocateClerkApplications(requestInfo, advocateClerkSearchCriteria, tenantId, limit, offset);
@@ -164,7 +164,7 @@ import static org.mockito.Mockito.*;
         Integer limit = 10;
         Integer offset = 0;
 
-        when(advocateClerkRepository.getApplications(any(), any(), any(), any())).thenThrow(new CustomException());
+        when(advocateClerkRepository.getClerks(any(), any(), any(), any())).thenThrow(new CustomException());
 
         assertThrows(CustomException.class, () -> {
             advocateClerkService.searchAdvocateClerkApplications(requestInfo, advocateClerkSearchCriteria, tenantId, limit, offset);
@@ -193,7 +193,7 @@ import static org.mockito.Mockito.*;
         // Act
         advocateClerkService.searchAdvocateClerkApplications(requestInfo, advocateClerkSearchCriteria, tenantId, limit, offset);
 
-        verify(advocateClerkRepository, times(1)).getApplications(advocateClerkSearchCriteria, "testTenantId",   10, 0);
+        verify(advocateClerkRepository, times(1)).getClerks(advocateClerkSearchCriteria, "testTenantId",   10, 0);
 
     }
     @Test

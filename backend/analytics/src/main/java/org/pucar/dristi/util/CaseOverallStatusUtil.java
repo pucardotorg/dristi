@@ -2,16 +2,15 @@ package org.pucar.dristi.util;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.jayway.jsonpath.JsonPath;
+import com.jayway.jsonpath.PathNotFoundException;
 import lombok.extern.slf4j.Slf4j;
 import org.egov.common.contract.models.AuditDetails;
 import org.egov.common.contract.request.RequestInfo;
 import org.json.JSONObject;
 import org.pucar.dristi.config.Configuration;
+import org.pucar.dristi.config.MdmsDataConfig;
 import org.pucar.dristi.kafka.Producer;
-import org.pucar.dristi.web.models.CaseOverallStatus;
-import org.pucar.dristi.web.models.CaseStageSubStage;
-import org.pucar.dristi.web.models.CaseOutcome;
-import org.pucar.dristi.web.models.Outcome;
+import org.pucar.dristi.web.models.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -28,23 +27,29 @@ public class CaseOverallStatusUtil {
 	private final OrderUtil orderUtil;
 	private final Producer producer;
 	private final ObjectMapper mapper;
+	private final MdmsDataConfig mdmsDataConfig;
+	private List<CaseOverallStatusType> caseOverallStatusTypeList;
 
 
 	@Autowired
-	public CaseOverallStatusUtil(Configuration config, HearingUtil hearingUtil, OrderUtil orderUtil, Producer producer, ObjectMapper mapper) {
+	public CaseOverallStatusUtil(Configuration config, HearingUtil hearingUtil, OrderUtil orderUtil, Producer producer, ObjectMapper mapper, MdmsDataConfig mdmsDataConfig) {
 		this.config = config;
         this.hearingUtil = hearingUtil;
         this.orderUtil = orderUtil;
         this.producer = producer;
 		this.mapper = mapper;
+        this.mdmsDataConfig = mdmsDataConfig;
     }
 
 	public Object checkCaseOverAllStatus(String entityType, String referenceId, String status, String action, String tenantId, JSONObject requestInfo) {
 		try {
 			JSONObject request = new JSONObject();
 			request.put("RequestInfo", requestInfo);
+			caseOverallStatusTypeList = mdmsDataConfig.getCaseOverallStatusTypeMap().get(entityType);
 			if(config.getCaseBusinessServiceList().contains(entityType)){
-				return processCaseOverallStatus(request, referenceId, action, tenantId);
+				//Due to two actions with same name case stage is not updating correctly. So added check for status along with actions
+				//Currently only implemented this logic for case, might have to for other modules in case of similar issue
+				return processCaseOverallStatus(request, referenceId, status, action, tenantId);
 			} else if (config.getHearingBusinessServiceList().contains(entityType)) {
 				return processHearingCaseOverallStatus(request, referenceId, action, tenantId);
 			} else if (config.getOrderBusinessServiceList().contains(entityType)) {
@@ -69,8 +74,8 @@ public class CaseOverallStatusUtil {
 		return orderObject;
 	}
 
-	private Object processCaseOverallStatus(JSONObject request, String referenceId, String action, String tenantId) {
-		publishToCaseOverallStatus(determineCaseStage(referenceId,tenantId,action), request);
+	private Object processCaseOverallStatus(JSONObject request, String referenceId, String status, String action, String tenantId) {
+		publishToCaseOverallStatus(determineCaseStage(referenceId,tenantId,status,action), request);
 		return null;
 	}
 
@@ -91,42 +96,29 @@ public class CaseOverallStatusUtil {
 		return hearingObject;
 	}
 
-	private CaseOverallStatus determineCaseStage(String filingNumber, String tenantId, String action) {
-		return switch (action.toLowerCase()) {
-			case "send_back", "submit_case" ->new CaseOverallStatus(filingNumber, tenantId, "Pre-Trial", "Filing");
-			case "validate" -> new CaseOverallStatus(filingNumber, tenantId, "Pre-Trial", "Cognizance");
-			case "admit" -> new CaseOverallStatus(filingNumber, tenantId, "Pre-Trial", "Appearance");
-			case "save_draft" -> new CaseOverallStatus(filingNumber, tenantId, "Pre-Trial", "Draft");
-			default -> null;
-		};
+	private CaseOverallStatus determineCaseStage(String filingNumber, String tenantId, String status, String action) {
+		for (CaseOverallStatusType statusType : caseOverallStatusTypeList) {
+			log.info("CaseOverallStatusType MDMS action ::{} and status :: {}",statusType.getAction(),statusType.getState());
+			if (statusType.getAction().equalsIgnoreCase(action) && statusType.getState().equalsIgnoreCase(status)){
+				log.info("Creating CaseOverallStatus for action ::{} and status :: {}",statusType.getAction(),statusType.getState());
+				return new CaseOverallStatus(filingNumber, tenantId, statusType.getStage(), statusType.getSubstage());
+			}
+		}
+		return null;
 	}
 
 	private CaseOverallStatus determineHearingStage(String filingNumber, String tenantId, String hearingType, String action) {
-
-		switch (hearingType.toLowerCase()) {
-			case "evidence":
-				if (action.equalsIgnoreCase("create")) {
-					return new CaseOverallStatus(filingNumber, tenantId, "Trial", "Evidence");
-				}
-				break;
-			case "arguments":
-				if (action.equalsIgnoreCase("create")) {
-					return new CaseOverallStatus(filingNumber, tenantId, "Trial", "Arguments");
-				}
-				break;
-			case "judgement":
-				if (action.equalsIgnoreCase("create")) {
-					return new CaseOverallStatus(filingNumber, tenantId, "Post-Trial", "Judgment");
-				}
-				break;
+		for (CaseOverallStatusType statusType : caseOverallStatusTypeList) {
+			if (statusType.getAction().equalsIgnoreCase(action) && statusType.getTypeIdentifier().equalsIgnoreCase(hearingType))
+                return new CaseOverallStatus(filingNumber, tenantId, statusType.getStage(), statusType.getSubstage());
 		}
 		return null;
 	}
 
 	private CaseOverallStatus determineOrderStage(String filingNumber, String tenantId, String orderType, String status) {
-
-		if (orderType.equalsIgnoreCase("judgement") && status.equalsIgnoreCase("published")) {
-			return new CaseOverallStatus(filingNumber, tenantId, "Post-Trial", "Post-Judgement");
+		for (CaseOverallStatusType statusType : caseOverallStatusTypeList){
+			if(statusType.getTypeIdentifier().equalsIgnoreCase(orderType) && statusType.getState().equalsIgnoreCase(status))
+                return new CaseOverallStatus(filingNumber, tenantId, statusType.getStage(), statusType.getSubstage());
 		}
 		return null;
 	}
@@ -155,26 +147,39 @@ public class CaseOverallStatusUtil {
 	}
 
 	private Outcome determineCaseOutcome(String filingNumber, String tenantId, String orderType, String status, Object orderObject) {
+		if (!"published".equalsIgnoreCase(status)) return null;
 
-		if (!status.equalsIgnoreCase("published"))
+		CaseOutcomeType caseOutcomeType = mdmsDataConfig.getCaseOutcomeTypeMap().get(orderType);
+		if (caseOutcomeType == null) {
+			log.info("CaseOutcomeType not found for orderType: {}", orderType);
 			return null;
+		}
 
-		if (orderType.equalsIgnoreCase("WITHDRAWAL"))
-			return new Outcome(filingNumber, tenantId, "Withdrawn");
+		try {
+			if (caseOutcomeType.getIsJudgement()) {
+				return handleJudgementCase(filingNumber, tenantId, caseOutcomeType, orderObject);
+			} else {
+				return new Outcome(filingNumber, tenantId, caseOutcomeType.getOutcome());
+			}
+		} catch (Exception e) {
+			log.error("Error determining case outcome for filingNumber: {} and orderType: {}", filingNumber, orderType, e);
+			return null;
+		}
+	}
 
-		if (orderType.equalsIgnoreCase("SETTLEMENT"))
-			return new Outcome(filingNumber, tenantId, "Settled");
-
-		if (orderType.equalsIgnoreCase("CASE_TRANSFER"))
-			return new Outcome(filingNumber, tenantId, "Transferred");
-
-		if (orderType.equalsIgnoreCase("Abated"))
-			return new Outcome(filingNumber, tenantId, "Abated");
-
-		if (orderType.equalsIgnoreCase("JUDGEMENT"))
-            return new Outcome(filingNumber, tenantId, JsonPath.read(orderObject.toString(), ORDER_FINDINGS_PATH));
-
-		return null;
+	private Outcome handleJudgementCase(String filingNumber, String tenantId, CaseOutcomeType caseOutcomeType, Object orderObject) {
+		try {
+			String outcome = JsonPath.read(orderObject.toString(), ORDER_FINDINGS_PATH);
+			if (caseOutcomeType.getJudgementList().contains(outcome)) {
+				return new Outcome(filingNumber, tenantId, outcome);
+			} else {
+				log.info("Outcome not in judgement list for orderType: {}", caseOutcomeType.getOrderType());
+				return null;
+			}
+		} catch (PathNotFoundException e) {
+			log.error("JSON path not found: {}", ORDER_FINDINGS_PATH, e);
+			return null;
+		}
 	}
 
 	private void publishToCaseOutcome(Outcome outcome, JSONObject request) {

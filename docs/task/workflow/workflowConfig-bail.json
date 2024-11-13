@@ -2,9 +2,9 @@
   "BusinessServices": [
     {
       "tenantId": "kl",
+      "business": "task",
       "businessService": "task-bail",
-      "business": "task-bail-services",
-      "businessServiceSla": 30,
+      "businessServiceSla": 518400000,
       "states": [
         {
           "sla": null,
@@ -17,7 +17,7 @@
           "actions": [
             {
               "action": "CREATE",
-              "nextState": "PAYMENT_PENDING",
+              "nextState": "PENDING_PAYMENT",
               "roles": [
                 "TASK_CREATOR"
               ]
@@ -25,33 +25,8 @@
           ]
         },
         {
-          "sla": null,
-          "state": "PAYMENT_PENDING",
-          "applicationStatus": "INWORKFLOW",
-          "docUploadRequired": true,
-          "isStartState": true,
-          "isTerminateState": false,
-          "isStateUpdatable": true,
-          "actions": [
-            {
-              "action": "MAKE PAYMENT",
-              "nextState": "BAILDOCUMENTUPLOAD",
-              "roles": [
-                "TASK_UPDATOR"
-              ]
-            },
-            {
-              "action": "ABANDON",
-              "nextState": "ABATED",
-              "roles": [
-                "WORKFLOW_ABANDON"
-              ]
-            }
-          ]
-        },
-        {
-          "sla": 5,
-          "state": "BAILDOCUMENTUPLOAD",
+          "sla": 172800000,
+          "state": "PENDING_PAYMENT",
           "applicationStatus": "INWORKFLOW",
           "docUploadRequired": false,
           "isStartState": false,
@@ -59,24 +34,53 @@
           "isStateUpdatable": true,
           "actions": [
             {
-              "action": "UPLOAD",
-              "nextState": "PENDINGREVIEW",
+              "action": "MAKE_PAYMENT",
+              "nextState": "BAIL_DOCUMENT_UPLOAD",
               "roles": [
-                "TASK_UPDATOR"
+                "TASK_CREATOR",
+                "SYSTEM",
+                "SYSTEM_ADMIN"
               ]
             },
             {
               "action": "ABANDON",
               "nextState": "ABATED",
               "roles": [
-                "WORKFLOW_ABANDON"
+                "SYSTEM",
+                "SYSTEM_ADMIN"
               ]
             }
           ]
         },
         {
-          "sla": 10,
-          "state": "PENDINGREVIEW",
+          "sla": 172800000,
+          "state": "BAIL_DOCUMENT_UPLOAD",
+          "applicationStatus": "INWORKFLOW",
+          "docUploadRequired": true,
+          "isStartState": false,
+          "isTerminateState": false,
+          "isStateUpdatable": true,
+          "actions": [
+            {
+              "action": "UPLOAD",
+              "nextState": "PENDING_REVIEW",
+              "roles": [
+                "TASK_CREATOR"
+              ]
+            },
+            {
+              "action": "ABANDON",
+              "nextState": "ABATED",
+              "roles": [
+                "SYSTEM",
+                "SYSTEM_ADMIN"
+              ]
+            }
+          ]
+        },
+        {
+          "sla": 172800000,
+          "state": "PENDING_REVIEW",
           "applicationStatus": "INWORKFLOW",
           "docUploadRequired": true,
           "isStartState": false,
@@ -85,30 +89,31 @@
           "actions": [
             {
               "action": "APPROVE",
-              "nextState": "BAILGRANTED",
+              "nextState": "BAIL_GRANTED",
               "roles": [
-                "TASK_APPROVER"
+                "TASK_EDITOR"
               ]
             },
             {
-              "action": "SEND BACK",
-              "nextState": "BAILDOCUMENTUPLOAD",
+              "action": "SEND_BACK",
+              "nextState": "BAIL_DOCUMENT_UPLOAD",
               "roles": [
-                "TASK_APPROVER"
+                "TASK_EDITOR"
               ]
             },
             {
               "action": "ABANDON",
               "nextState": "ABATED",
               "roles": [
-                "WORKFLOW_ABANDON"
+                "SYSTEM",
+                "SYSTEM_ADMIN"
               ]
             }
           ]
         },
         {
-          "sla": 5,
-          "state": "BAILGRANTED",
+          "sla": null,
+          "state": "BAIL_GRANTED",
           "applicationStatus": "ACTIVE",
           "isStateUpdatable": false,
           "docUploadRequired": false,
@@ -116,7 +121,7 @@
           "isTerminateState": true
         },
         {
-          "sla": 5,
+          "sla": null,
           "state": "ABATED",
           "applicationStatus": "INACTIVE",
           "isStateUpdatable": false,

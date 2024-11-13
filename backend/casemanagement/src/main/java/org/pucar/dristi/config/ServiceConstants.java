@@ -74,4 +74,6 @@ public class ServiceConstants {
     //JSON Path
     public static final String ES_HITS_PATH = "$.hits.hits.*._source";
 
+    public static final String TIME_ZONE = "Asia/Kolkata";
+
 }

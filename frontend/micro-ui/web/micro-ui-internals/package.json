@@ -29,12 +29,14 @@
     "dev:orders": "cd packages/modules/orders && yarn start",
     "dev:hearings": "cd packages/modules/hearings && yarn start",
     "dev:cases": "cd packages/modules/cases && yarn start",
+    "dev:home": "cd packages/modules/home && yarn start",
     "build": "run-p build:**",
     "build:dristi": "cd packages/modules/dristi && yarn build",
     "build:submissions": "cd packages/modules/submissions && yarn build",
     "build:orders": "cd packages/modules/orders && yarn build",
     "build:hearings": "cd packages/modules/hearings && yarn build",
     "build:cases": "cd packages/modules/cases && yarn build",
+    "build:home": "cd packages/modules/home && yarn build",
     "build:core": "cd packages/modules/core && yarn build",
     "deploy:jenkins": "./scripts/jenkins.sh",
     "clean": "rm -rf node_modules"
@@ -54,10 +56,11 @@
     "*.{js,css,md}": "prettier --write"
   },
   "dependencies": {
+    "@egovernments/digit-ui-components": "0.0.1-beta.28",
+    "@egovernments/digit-ui-react-components": "1.8.2-beta.11",
+    "@egovernments/dristi-ui-css": "0.0.1-dristi-kerala.2",
     "lodash": "4.17.21",
     "microbundle-crl": "0.13.11",
-    "@egovernments/digit-ui-react-components": "1.8.2-beta.5",
-    "@egovernments/digit-ui-components": "0.0.1-beta.28",
     "react": "17.0.2",
     "react-dom": "17.0.2",
     "react-hook-form": "6.15.8",

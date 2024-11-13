@@ -4,15 +4,21 @@ import { generateUUID } from "../Utils";
 import { ReactComponent as CrossIcon } from "../images/cross.svg";
 import Button from "./Button";
 import LocationComponent from "./LocationComponent";
+import { CaseWorkflowState } from "../Utils/caseWorkflow";
 
 const selectCompMultiConfig = {
   type: "component",
-  component: "SelectComponents",
   key: "addressDetails",
   withoutLabel: true,
   populators: {
     inputs: [
-      { label: "CS_COMMON_LOCATION", type: "LocationSearch", name: ["pincode", "state", "district", "city", "coordinates", "locality"] },
+      {
+        label: "CS_TYPE_OF_ADDRESS",
+        showOptional: true,
+        type: "Radio",
+        name: "typeOfAddress",
+        options: [],
+      },
       {
         label: "PINCODE",
         type: "text",
@@ -61,6 +67,8 @@ const selectCompMultiConfig = {
         name: "city",
         validation: {
           isRequired: true,
+          patternType: "Name",
+          errMsg: "CORE_COMMON_APPLICANT_CITY_INVALID",
         },
         isMandatory: true,
       },
@@ -70,6 +78,10 @@ const selectCompMultiConfig = {
         name: "locality",
         validation: {
           isRequired: true,
+          minlength: 2,
+          maxlength: 256,
+          pattern: /^[^\$\"<>?\\\\~`!@$%^()={}\[\]*:;“”‘’]{2,256}$/i,
+          errMsg: "CORE_COMMON_APPLICANT_ADDRESS_INVALID",
         },
         isMandatory: true,
       },
@@ -78,8 +90,9 @@ const selectCompMultiConfig = {
   },
 };
 
-const SelectComponentsMulti = ({ t, config, onSelect, formData, errors }) => {
+const SelectComponentsMulti = ({ t, config, onSelect, formData, errors, setError, clearErrors }) => {
   const [locationData, setLocationData] = useState([formData?.[config?.key] ? formData?.[config?.key] : { id: generateUUID() }]);
+  console.log("formData", formData, errors);
 
   useEffect(() => {
     if (
@@ -93,6 +106,27 @@ const SelectComponentsMulti = ({ t, config, onSelect, formData, errors }) => {
       setLocationData(locationData);
     }
   }, [formData]);
+
+  const { isLoading: isTypeOfAddressData, data: typeOfAddressData } = Digit.Hooks.useCustomMDMS(
+    Digit.ULBService.getStateId(),
+    "case",
+    [{ name: "TypeOfAddress" }],
+    {
+      cacheTime: 0,
+      select: (data) => {
+        return data?.case?.TypeOfAddress || [];
+      },
+    }
+  );
+
+  const modifiedSelectCompMultiConfig = useMemo(() => {
+    const config = { ...selectCompMultiConfig };
+    const typeOfAddressField = config.populators.inputs.find((input) => input.name === "typeOfAddress");
+    if (typeOfAddressField) {
+      typeOfAddressField.options = typeOfAddressData;
+    }
+    return config;
+  }, [typeOfAddressData]);
 
   const addressLabel = useMemo(() => {
     return formData?.respondentType?.code;
@@ -142,30 +176,44 @@ const SelectComponentsMulti = ({ t, config, onSelect, formData, errors }) => {
                     : t("CS_COMMON_ADDRESS_DETAIL")
                 } ${index + 1}`}</h1>
               </b>
-              <span onClick={() => handleDeleteLocation(data.id)} style={locationData.length === 1 ? { display: "none" } : {}}>
+              <span
+                onClick={() => {
+                  if (!config?.disable) {
+                    handleDeleteLocation(data.id);
+                  }
+                }}
+                style={locationData.length === 1 ? { display: "none" } : {}}
+              >
                 <CrossIcon></CrossIcon>
               </span>
             </div>
             <LocationComponent
               t={t}
-              config={selectCompMultiConfig}
+              config={modifiedSelectCompMultiConfig}
               locationFormData={data}
               onLocationSelect={(key, value) => {
                 onChange(key, value, data.id);
               }}
-              errors={{}}
+              errors={errors}
+              setError={setError}
+              clearErrors={clearErrors}
               mapIndex={data.id}
+              disable={config?.disable}
+              isAutoFilledDisabled={true}
             ></LocationComponent>
           </div>
         ))}
-      <Button
-        className={"add-location-btn"}
-        label={"Add Location"}
-        style={{ alignItems: "center", margin: "10px 0px" }}
-        onButtonClick={() => {
-          handleAdd();
-        }}
-      />
+      {!(config?.removeAddLocationButton === true) && (
+        <Button
+          isDisabled={config?.disable || (config?.state && config?.state !== CaseWorkflowState.DRAFT_IN_PROGRESS)}
+          className={"add-location-btn"}
+          label={"Add Location"}
+          style={{ alignItems: "center", margin: "10px 0px" }}
+          onButtonClick={() => {
+            handleAdd();
+          }}
+        />
+      )}
     </div>
   );
 };

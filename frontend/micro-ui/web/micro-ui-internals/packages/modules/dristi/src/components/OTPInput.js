@@ -3,7 +3,7 @@ import PropTypes from "prop-types";
 
 const BACKSPACE = 8;
 
-const SingleInput = ({ isFocus, onChange, onFocus, value, ...rest }) => {
+const SingleInput = ({ isFocus, onChange, onFocus, value, inputStyle, ...rest }) => {
   const inputRef = useRef();
   useEffect(() => {
     if (isFocus) {
@@ -13,7 +13,7 @@ const SingleInput = ({ isFocus, onChange, onFocus, value, ...rest }) => {
 
   return (
     <input
-      style={{ width: "70px" }}
+      style={{ width: "70px", ...(inputStyle ? inputStyle : {}) }}
       className="input-otp"
       maxLength={1}
       onChange={onChange}
@@ -30,7 +30,7 @@ const SingleInput = ({ isFocus, onChange, onFocus, value, ...rest }) => {
   );
 };
 
-const OTPInput = (props) => {
+const OTPInput = ({ inputStyle, ...props }) => {
   const [activeInput, setActiveInput] = useState(0);
 
   const isInputValueValid = (value) => {
@@ -76,6 +76,7 @@ const OTPInput = (props) => {
   for (let i = 0; i < props.length; i++) {
     OTPStack.push(
       <SingleInput
+        inputStyle={inputStyle}
         key={i}
         isFocus={activeInput === i}
         onChange={inputChange}

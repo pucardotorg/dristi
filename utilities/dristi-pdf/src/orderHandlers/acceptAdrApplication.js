@@ -151,14 +151,14 @@ async function acceptAdrApplication(req, res, qrCode) {
         } catch (error) {
             console.error("Cannot convert epoch time to date");
         }
-
+        const caseNumber = courtCase?.courtCaseNumber || courtCase?.cmpNumber || "";
         const data = {
             "Data": [
                 {
                     "courtName": mdmsCourtRoom.name,
                     "place": mdmsCourtEstablishment.boundaryName,
                     "state": mdmsCourtEstablishment.rootBoundaryName,
-                    "caseNumber": courtCase.cnrNumber,
+                    "caseNumber": caseNumber,
                     "year": year,
                     "caseName": courtCase.caseTitle,
                     "date": stringDate,

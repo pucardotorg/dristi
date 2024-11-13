@@ -11,7 +11,7 @@ const Vakalath = () => {
   const selectedCase = window.Digit.SessionStorage.get("PUCAR_CASE_DATA");
 
   const reqCreate = {
-    url: `/case/case/v1/_update`,
+    url: `/case/v1/_update`,
     params: {},
     body: {},
     config: {
@@ -31,7 +31,7 @@ const Vakalath = () => {
   const onSubmit = async (data) => {
     await mutation.mutate(
       {
-        url: `/case/case/v1/_update`,
+        url: `/case/v1/_update`,
         params: { tenantId: "pg" },
         body: transformCreateData(data),
         config: {
