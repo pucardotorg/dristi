@@ -3,8 +3,7 @@ on:
   push:
     branches:
       - develop
-      - release/0.4
-      - release/0.5
+      - release/**
     tags:
       - 'v*'
     paths:
@@ -12,8 +11,7 @@ on:
   pull_request:
     branches:
       - develop
-      - release/0.4
-      - release/0.5
+      - release/**
     paths:
       - 'backend/task/**'
   workflow_dispatch:
@@ -23,7 +21,7 @@ permissions:
   contents: read
 jobs:
   docker_image-build:
-    if: (github.event_name == 'push' && (github.ref == 'refs/heads/develop' || github.ref == 'refs/heads/release/0.4' || github.ref == 'refs/heads/release/0.5')) || github.event_name == 'workflow_dispatch'
+    if: (github.event_name == 'push' && (startsWith(github.ref, 'refs/heads/develop') || startsWith(github.ref, 'refs/heads/release/') || startsWith(github.ref, 'refs/tags/v'))) || github.event_name == 'workflow_dispatch'
     runs-on: ubuntu-latest
     steps:
       - name: Checkout repository
@@ -79,7 +77,7 @@ jobs:
         working-directory: backend/task/src/main/resources/db
 
   Workflow_Trigger:
-    if: (github.event_name == 'push' && (github.ref == 'refs/heads/develop' || github.ref == 'refs/heads/release/0.4' || github.ref == 'refs/heads/release/0.5')) || github.event_name == 'workflow_dispatch'
+    if: (github.event_name == 'push' && (startsWith(github.ref, 'refs/heads/develop') || startsWith(github.ref, 'refs/heads/release/') || startsWith(github.ref, 'refs/tags/v'))) || github.event_name == 'workflow_dispatch'
     runs-on: ubuntu-latest
     needs: docker_image-build
     steps:
