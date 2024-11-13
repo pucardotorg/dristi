@@ -65,4 +65,6 @@ public class ServiceConstants {
     public static final String INVALID_FILESTORE_ID = "INVALID_FILESTORE_ID";
     public static final String INVALID_DOCUMENT_DETAILS = "Invalid document details";
 
+    public static final String PUBLISHED = "PUBLISHED";
+
 }

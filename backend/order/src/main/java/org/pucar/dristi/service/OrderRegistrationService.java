@@ -135,5 +135,7 @@ public class OrderRegistrationService {
         String status = workflowUtil.updateWorkflowStatus(requestInfo, tenantId, orderNumber, config.getOrderBusinessServiceName(),
                     workflow, config.getOrderBusinessName());
         order.setStatus(status);
+        if (PUBLISHED.equalsIgnoreCase(status))
+            order.setCreatedDate(System.currentTimeMillis());
     }
 }
