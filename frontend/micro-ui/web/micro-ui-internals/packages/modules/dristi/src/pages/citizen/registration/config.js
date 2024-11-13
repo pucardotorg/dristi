@@ -20,6 +20,7 @@ export const userTypeOptions = [
       "TASK_VIEWER",
       "CASE_RESPONDER",
       "HEARING_ACCEPTOR",
+      "ADVOCATE_VIEWER",
     ],
     subText: "LITIGANT_SUB_TEXT",
   },
@@ -47,6 +48,7 @@ export const userTypeOptions = [
       "CASE_RESPONDER",
       "HEARING_ACCEPTOR",
       "ADVOCATE_VIEWER",
+      "ADVOCATE_APPLICATION_VIEWER",
     ],
     apiDetails: {
       serviceName: "/advocate/v1/_create",
@@ -78,6 +80,7 @@ export const userTypeOptions = [
       "TASK_VIEWER",
       "CASE_RESPONDER",
       "HEARING_ACCEPTOR",
+      "ADVOCATE_VIEWER",
     ],
     apiDetails: {
       serviceName: "/advocate/clerk/v1/_create",
