@@ -5,6 +5,8 @@ on:
       - develop
       - release/0.4
       - release/0.5
+    tags:
+      - 'v*'
     paths:
       - 'common/egov-notification-mail/**'
   pull_request:
@@ -48,6 +50,18 @@ jobs:
       # Login to Azure Container Registry
       - name: Login to Azure Container Registry
         run: docker login -u pucarsolutionsdev -p ${{ secrets.ACR_PASSWORD }} pucarsolutionsdev.azurecr.io
+      - name: Set Version from Tag or Branch
+        id: set_version
+        run: |
+          if [[ "${GITHUB_REF}" == refs/tags/* ]]; then
+            VERSION=${GITHUB_REF#refs/tags/}  # Use tag name for version
+          elif [[ "${GITHUB_REF}" == refs/heads/* ]]; then
+            # Use branch name as version if it's a branch push
+            VERSION=${GITHUB_REF#refs/heads/}
+          else
+            VERSION="latest"  # Default version if not a tag or branch
+          fi
+          echo "VERSION=$VERSION" >> $GITHUB_ENV
       - name: Git commit_hash for service
         run: |
           commit_hash=$(git log -1 --pretty=format:%H -- common/egov-notification-mail)
@@ -55,8 +69,8 @@ jobs:
 
       - name: Build and Push Docker image for notification-mail
         run: |
-          docker build --build-arg WORK_DIR="common/egov-notification-mail" -t pucarsolutionsdev.azurecr.io/egov-notification-mail:v1.0.0-${{ env.commit_hash }} -f build/maven/Dockerfile .
-          docker push pucarsolutionsdev.azurecr.io/egov-notification-mail:v1.0.0-${{ env.commit_hash }}
+          docker build --build-arg WORK_DIR="common/egov-notification-mail" -t pucarsolutionsdev.azurecr.io/egov-notification-mail:${{ env.VERSION }}-${{ env.commit_hash }} -f build/maven/Dockerfile .
+          docker push pucarsolutionsdev.azurecr.io/egov-notification-mail:${{ env.VERSION }}-${{ env.commit_hash }}
 
 
   Workflow_Trigger:

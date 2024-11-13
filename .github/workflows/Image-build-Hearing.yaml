@@ -5,6 +5,8 @@ on:
       - develop
       - release/0.4
       - release/0.5
+    tags:
+      - 'v*'
     paths:
       - 'backend/hearing/**'
   pull_request:
@@ -44,6 +46,18 @@ jobs:
         with:
           sarif_file: reports/dependency-check-report.sarif
         if: always()
+      - name: Set Version from Tag or Branch
+        id: set_version
+        run: |
+          if [[ "${GITHUB_REF}" == refs/tags/* ]]; then
+            VERSION=${GITHUB_REF#refs/tags/}  # Use tag name for version
+          elif [[ "${GITHUB_REF}" == refs/heads/* ]]; then
+            # Use branch name as version if it's a branch push
+            VERSION=${GITHUB_REF#refs/heads/}
+          else
+            VERSION="latest"  # Default version if not a tag or branch
+          fi
+          echo "VERSION=$VERSION" >> $GITHUB_ENV
       - name: Git commit_hash for service
         run: |
           commit_hash=$(git log -1 --pretty=format:%H -- backend/hearing)
@@ -54,13 +68,13 @@ jobs:
 
       - name: Build and Push Docker image for Hearing
         run: |
-          docker build --build-arg WORK_DIR="backend/hearing" -t pucarsolutionsdev.azurecr.io/pucar_hearing:v1.0.0-${{ env.commit_hash }} -f build/maven/Dockerfile .
-          docker push pucarsolutionsdev.azurecr.io/pucar_hearing:v1.0.0-${{ env.commit_hash }}
+          docker build --build-arg WORK_DIR="backend/hearing" -t pucarsolutionsdev.azurecr.io/pucar_hearing:${{ env.VERSION }}-${{ env.commit_hash }} -f build/maven/Dockerfile .
+          docker push pucarsolutionsdev.azurecr.io/pucar_hearing:${{ env.VERSION }}-${{ env.commit_hash }}
 
       - name: Build and Push Docker image for Hearing_DB
         run: |
-          docker build  -t pucarsolutionsdev.azurecr.io/pucar_hearing_db:v1.0.0-${{ env.commit_hash }} -f  Dockerfile .
-          docker push pucarsolutionsdev.azurecr.io/pucar_hearing_db:v1.0.0-${{ env.commit_hash }}
+          docker build  -t pucarsolutionsdev.azurecr.io/pucar_hearing_db:${{ env.VERSION }}-${{ env.commit_hash }} -f  Dockerfile .
+          docker push pucarsolutionsdev.azurecr.io/pucar_hearing_db:${{ env.VERSION }}-${{ env.commit_hash }}
         working-directory: backend/hearing/src/main/resources/db
 
   Workflow_Trigger:
