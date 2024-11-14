@@ -2132,8 +2132,15 @@ function EFilingCases({ path }) {
     }
   };
 
+  const customStyles = `
+  .action-bar-wrap.e-filing-action-bar header {
+    margin-top:0 !important;
+  }
+`;
+
   return (
     <div className="file-case">
+      <style>{customStyles}</style>
       <div className="file-case-side-stepper">
         {isDraftInProgress && (
           <div className="side-stepper-info">
