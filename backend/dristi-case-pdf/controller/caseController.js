@@ -2,6 +2,7 @@ const caseService = require("../service/caseService");
 const pdfService = require("../service/pdfService");
 const fileService = require("../service/fileService");
 const config = require("../config/config");
+const { DocumentError } = require("../util/errorUtils");
 
 /**
  * Generates a PDF document for a case.
@@ -61,6 +62,8 @@ exports.generateCasePdf = async (req, res, next) => {
     };
 
     console.log("Pdf Request: {}", pdfRequest);
+    await fileService.validateDocuments(cases?.documents || []);
+
     const pdf = await pdfService.generatePDF(pdfRequest);
 
     let finalPdf = await fileService.appendComplainantFilesToPDF(
@@ -103,6 +106,9 @@ exports.generateCasePdf = async (req, res, next) => {
     );
     res.send(finalPdfBuffer);
   } catch (error) {
+    if (error instanceof DocumentError) {
+      return res.status(400).send({ documentType: error?.documentType || "" });
+    }
     next(error);
   }
 };
