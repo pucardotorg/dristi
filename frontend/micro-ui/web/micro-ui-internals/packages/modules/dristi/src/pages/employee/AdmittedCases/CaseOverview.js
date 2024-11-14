@@ -147,7 +147,7 @@ const CaseOverview = ({
                   gap: "16px",
                 }}
               >
-                {userRoles.includes("HEARING_SCHEDULER") && (
+                {userRoles.includes("HEARING_CREATOR") && (
                   <Button variation={"outlined"} label={t("SCHEDULE_HEARING")} onButtonClick={openHearingModule} />
                 )}
                 {userRoles.includes("ORDER_CREATOR") && (
