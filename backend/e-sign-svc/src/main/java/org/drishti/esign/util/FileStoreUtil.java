@@ -19,6 +19,9 @@ import org.springframework.web.multipart.MultipartFile;
 import java.util.ArrayList;
 import java.util.List;
 
+import static org.drishti.esign.config.ServiceConstants.FILE_STORE_SERVICE_EXCEPTION_CODE;
+import static org.drishti.esign.config.ServiceConstants.FILE_STORE_SERVICE_EXCEPTION_MESSAGE;
+
 @Component
 public class FileStoreUtil {
 
@@ -38,7 +41,9 @@ public class FileStoreUtil {
 
 
     public Resource fetchFileStoreObjectById(String fileStoreId, String tenantId) {
-
+        if (!isValidFileStoreId(fileStoreId) || !isValidTenantId(tenantId)) {
+            throw new CustomException("INVALID_INPUT", "Invalid fileStoreId or tenantId");
+        }
         StringBuilder uri = new StringBuilder();
         uri.append(configs.getFilestoreHost()).append(configs.getFilestoreSearchEndPoint());
         uri = appendQueryParams(uri, "fileStoreId", fileStoreId, "tenantId", tenantId);
@@ -48,7 +53,7 @@ public class FileStoreUtil {
             return object;
 
         } catch (Exception e) {
-            throw new CustomException("FILESTORE_SERVICE_EXCEPTION", "exception occurred while calling filestore service");
+            throw new CustomException(FILE_STORE_SERVICE_EXCEPTION_CODE, FILE_STORE_SERVICE_EXCEPTION_MESSAGE);
 
         }
 
@@ -96,6 +101,13 @@ public class FileStoreUtil {
         return fileObject.getString("fileStoreId");
 
 
+    }
+    private boolean isValidFileStoreId(String fileStoreId) {
+        return fileStoreId != null && fileStoreId.matches("[a-zA-Z0-9_-]+");
+    }
+
+    private boolean isValidTenantId(String tenantId) {
+        return tenantId != null && tenantId.matches("[a-zA-Z0-9_-]+");
     }
 
 

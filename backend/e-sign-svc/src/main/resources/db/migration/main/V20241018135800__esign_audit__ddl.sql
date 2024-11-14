@@ -1,0 +1,5 @@
+ALTER TABLE dristi_esign_pdf
+ADD COLUMN createdBy VARCHAR(64) NULL,
+ADD COLUMN lastModifiedBy VARCHAR(64) NULL,
+ADD COLUMN createdTime INT8 NULL,
+ADD COLUMN lastModifiedTime INT8 NULL;

@@ -2,7 +2,6 @@ package com.pucar.drishti.service;
 
 import com.pucar.drishti.config.Configuration;
 import com.pucar.drishti.repository.ServiceRequestRepository;
-import com.pucar.drishti.util.FileStoreUtil;
 import com.pucar.drishti.web.models.SignDocRequest;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -11,14 +10,13 @@ import org.mockito.MockitoAnnotations;
 
 import java.util.LinkedHashMap;
 
-import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.ArgumentMatchers.*;
-import static org.mockito.Mockito.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
 class InterceptorServiceTest {
 
-    @Mock
-    private FileStoreUtil fileStoreUtil;
 
     @Mock
     private ServiceRequestRepository serviceRequestRepository;
@@ -31,7 +29,7 @@ class InterceptorServiceTest {
     @BeforeEach
     void setUp() {
         MockitoAnnotations.openMocks(this);
-        interceptorService = new InterceptorService(fileStoreUtil, serviceRequestRepository, configuration);
+        interceptorService = new InterceptorService(serviceRequestRepository, configuration);
     }
 
     @Test
@@ -67,7 +65,6 @@ class InterceptorServiceTest {
 
         // Assert
         assertEquals(signedFileStoreId, result);
-        verify(fileStoreUtil).fetchFileStoreObjectById(fileStoreId, tenantId);
         verify(serviceRequestRepository).fetchResult(any(), any()); // Verify OAuth call
         verify(serviceRequestRepository).callESign(any(), any(SignDocRequest.class));
     }

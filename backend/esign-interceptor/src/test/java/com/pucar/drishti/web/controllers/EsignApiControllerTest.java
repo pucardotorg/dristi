@@ -16,7 +16,7 @@ import org.springframework.web.servlet.ModelAndView;
 import java.net.URI;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.mockito.Mockito.*;
+import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
 public class EsignApiControllerTest {
@@ -52,6 +52,7 @@ public class EsignApiControllerTest {
         assertEquals(HttpStatus.TEMPORARY_REDIRECT, responseEntity.getStatusCode());
         assertEquals(expectedHeaders.getLocation(), responseEntity.getHeaders().getLocation());
     }
+
     @Test
     public void testESignV1Interceptor_Success() throws Exception {
         String response = "someResponse";
@@ -65,10 +66,6 @@ public class EsignApiControllerTest {
 
         ModelAndView modelAndView = interceptorApiController.eSignV1Interceptor(response, espTxnID);
 
-        // Debug logs
-        System.out.println("ModelAndView: " + modelAndView.getViewName());
-        System.out.println("ModelAndView Model: " + modelAndView.getModel());
-
         assertEquals("redirect:/v1/redirect", modelAndView.getViewName());
         assertEquals("success", modelAndView.getModel().get("result"));
         assertEquals(filestoreId, modelAndView.getModel().get("filestoreId"));
@@ -80,16 +77,11 @@ public class EsignApiControllerTest {
         String response = "someResponse";
         String espTxnID = "tenantId-en-fileStoreId"; // Ensure espTxnID is in the expected format
         String tenantId = "tenantId";
-        String pageModule = "en";
         String fileStoreId = "fileStoreId";
 
         when(interceptorService.process(response, espTxnID, tenantId, fileStoreId)).thenThrow(new RuntimeException("Error"));
 
         ModelAndView modelAndView = interceptorApiController.eSignV1Interceptor(response, espTxnID);
-
-        // Debug logs
-        System.out.println("ModelAndView: " + modelAndView.getViewName());
-        System.out.println("ModelAndView Model: " + modelAndView.getModel());
 
         assertEquals("redirect:/v1/redirect", modelAndView.getViewName());
         assertEquals("error", modelAndView.getModel().get("result"));

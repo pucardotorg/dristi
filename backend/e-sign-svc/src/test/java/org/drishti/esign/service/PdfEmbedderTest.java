@@ -49,7 +49,7 @@ public class PdfEmbedderTest {
 
         // Act & Assert
         assertThrows(RuntimeException.class, () -> {
-            pdfEmbedder.signPdfWithDSAndReturnMultipartFile(resource, sampleResponse);
+            pdfEmbedder.signPdfWithDSAndReturnMultipartFile(resource, sampleResponse,"field Name");
         });
     }
 

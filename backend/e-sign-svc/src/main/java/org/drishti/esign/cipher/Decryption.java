@@ -15,6 +15,8 @@ import java.security.cert.CertificateFactory;
 import java.security.cert.X509Certificate;
 import java.security.spec.PKCS8EncodedKeySpec;
 
+import static org.drishti.esign.config.ServiceConstants.*;
+
 @Component
 @Slf4j
 public class Decryption {
@@ -37,7 +39,7 @@ public class Decryption {
         InputStream inStream = null;
         inStream = new FileInputStream(filename);
         try {
-            CertificateFactory cf = CertificateFactory.getInstance("X.509");
+            CertificateFactory cf = CertificateFactory.getInstance(X_509);
             X509Certificate cert = (X509Certificate) cf.generateCertificate(inStream);
             return cert.getPublicKey();
         } catch (Exception e) {
@@ -97,7 +99,7 @@ public class Decryption {
         byte[] encoded = Base64.decodeBase64(privateKeyPEM);
         PKCS8EncodedKeySpec spec =
                 new PKCS8EncodedKeySpec(encoded);
-        KeyFactory kf = KeyFactory.getInstance("RSA");
+        KeyFactory kf = KeyFactory.getInstance(RSA);
         return kf.generatePrivate(spec);
     }
 
@@ -129,13 +131,13 @@ public class Decryption {
 
         byte[] certificateData = Base64.decodeBase64(key);
 
-        CertificateFactory certificateFactory = CertificateFactory.getInstance("X.509");
+        CertificateFactory certificateFactory = CertificateFactory.getInstance(X_509);
         X509Certificate certificate = (X509Certificate) certificateFactory.generateCertificate(
                 new ByteArrayInputStream(certificateData)
         );
         return certificate.getPublicKey();
     }
-    String charSetName = "UTF-8";
+    String charSetName = UTF_8;
     /**
      * @param privateKey
      * @param message
@@ -146,7 +148,7 @@ public class Decryption {
      * @throws UnsupportedEncodingException
      */
     public String sign(PrivateKey privateKey, String message) throws NoSuchAlgorithmException, InvalidKeyException, SignatureException, UnsupportedEncodingException {
-        Signature sign = Signature.getInstance("SHA1withRSA");
+        Signature sign = Signature.getInstance(SHA1_WITH_RSA);
         sign.initSign(privateKey);
         sign.update(message.getBytes(charSetName));
         return new String(Base64.encodeBase64(sign.sign()), charSetName);
@@ -163,7 +165,7 @@ public class Decryption {
      * @throws InvalidKeyException
      */
     public boolean verify(PublicKey publicKey, String message, String signature) throws SignatureException, NoSuchAlgorithmException, UnsupportedEncodingException, InvalidKeyException {
-        Signature sign = Signature.getInstance("SHA1withRSA");
+        Signature sign = Signature.getInstance(SHA1_WITH_RSA);
         sign.initVerify(publicKey);
         sign.update(message.getBytes(charSetName));
         return sign.verify(Base64.decodeBase64(signature.getBytes(charSetName)));
@@ -179,7 +181,7 @@ public class Decryption {
      * @throws GeneralSecurityException
      */
     public String encrypt(String rawText, PrivateKey privateKey) throws IOException, GeneralSecurityException {
-        Cipher cipher = Cipher.getInstance("RSA");
+        Cipher cipher = Cipher.getInstance(RSA);
         cipher.init(Cipher.ENCRYPT_MODE, privateKey);
         return Base64.encodeBase64String(cipher.doFinal(rawText.getBytes(charSetName)));
     }
@@ -194,7 +196,7 @@ public class Decryption {
      * @throws GeneralSecurityException
      */
     public String decrypt(String cipherText, PublicKey publicKey) throws IOException, GeneralSecurityException {
-        Cipher cipher = Cipher.getInstance("RSA");
+        Cipher cipher = Cipher.getInstance(RSA);
         cipher.init(Cipher.DECRYPT_MODE, publicKey);
         return new String(cipher.doFinal(Base64.decodeBase64(cipherText)), charSetName);
     }

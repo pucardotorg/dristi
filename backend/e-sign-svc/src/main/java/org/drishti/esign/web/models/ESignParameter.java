@@ -1,10 +1,12 @@
 package org.drishti.esign.web.models;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.egov.common.contract.models.AuditDetails;
 
 
 @Data
@@ -13,8 +15,8 @@ import lombok.NoArgsConstructor;
 @Builder
 public class ESignParameter {
 
-    @JsonProperty("uidToken")
-    private String uidToken;
+    @JsonProperty("id")
+    private String id;
 
     @JsonProperty("consent")
     private String consent;  // user consent
@@ -25,10 +27,20 @@ public class ESignParameter {
     @JsonProperty("fileStoreId")
     private String fileStoreId;
 
+    @JsonProperty("signedFileStoreId")
+    private String signedFileStoreId;
+
     @JsonProperty("tenantId")
     private String tenantId;
 
     @JsonProperty("pageModule")
     private String pageModule;
+
+    @JsonProperty("signPlaceHolder")
+    private String signPlaceHolder;
+
+    @JsonProperty("auditDetails")
+    @Valid
+    private AuditDetails auditDetails ;
 
 }

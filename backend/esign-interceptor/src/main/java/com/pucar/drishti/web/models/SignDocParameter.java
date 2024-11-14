@@ -16,8 +16,8 @@ public class SignDocParameter {
     @JsonProperty("response")
     private String response;
 
-    @JsonProperty("fileStoreId")
-    private String fileStoreId;
+    @JsonProperty("txnId")
+    private String txnId;
 
     @JsonProperty("tenantId")
     private String tenantId;
