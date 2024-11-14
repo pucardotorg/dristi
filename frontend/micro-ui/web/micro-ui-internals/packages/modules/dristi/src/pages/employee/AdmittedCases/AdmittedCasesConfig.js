@@ -7,7 +7,7 @@ const defaultSearchValues = {
   status: {},
   orderNumber: "",
   applicationType: {},
-  applicationNumber: "",
+  applicationCMPNumber: "",
   artifactType: {},
   artifactNumber: "",
 };
@@ -365,10 +365,10 @@ export const TabSearchconfig = {
               {
                 label: "Search Submission Id",
                 isMandatory: false,
-                key: "applicationNumber",
+                key: "applicationCMPNumber",
                 type: "text",
                 populators: {
-                  name: "applicationNumber",
+                  name: "applicationCMPNumber",
                 },
               },
             ],
@@ -387,7 +387,8 @@ export const TabSearchconfig = {
               },
               {
                 label: "Submission Id",
-                jsonPath: "applicationNumber",
+                jsonPath: "applicationCMPNumber",
+                additionalCustomization : true,
               },
               // {
               //   label: "Stage",

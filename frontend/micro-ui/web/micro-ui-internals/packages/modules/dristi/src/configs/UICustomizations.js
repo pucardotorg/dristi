@@ -699,6 +699,8 @@ export const UICustomizations = {
           return <CustomChip text={t(value)} shade={value === "PUBLISHED" ? "green" : "orange"} />;
         case "Owner":
           return removeInvalidNameParts(value);
+        case "Submission Id":
+          return value ? value : "-";
         case "Actions":
           return (
             <OverlayDropdown style={{ position: "relative" }} column={column} row={row} master="commonUiConfig" module="SearchIndividualConfig" />
