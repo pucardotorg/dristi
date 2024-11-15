@@ -473,7 +473,7 @@ const AdmittedCases = () => {
                 uiConfig: {
                   ...tabConfig.sections.searchResult.uiConfig,
                   columns: tabConfig.sections.searchResult.uiConfig.columns.map((column) => {
-                    return column.label === "Order Type"
+                    return column.label === "ORDER_TYPE"
                       ? {
                           ...column,
                           clickFunc: orderSetFunc,
@@ -526,7 +526,7 @@ const AdmittedCases = () => {
                 uiConfig: {
                   ...tabConfig.sections.searchResult.uiConfig,
                   columns: tabConfig.sections.searchResult.uiConfig.columns.map((column) => {
-                    return column.label === "Actions"
+                    return column.label === "CS_ACTIONS"
                       ? {
                           ...column,
                           clickFunc: takeActionFunc,
@@ -592,7 +592,7 @@ const AdmittedCases = () => {
                 uiConfig: {
                   ...tabConfig.sections.searchResult.uiConfig,
                   columns: tabConfig.sections.searchResult.uiConfig.columns.map((column) => {
-                    return column.label === "File" || column.label === "Document Type"
+                    return column.label === "FILE" || column.label === "DOCUMENT_TYPE"
                       ? {
                           ...column,
                           clickFunc: docSetFunc,
@@ -649,12 +649,12 @@ const AdmittedCases = () => {
                 uiConfig: {
                   ...tabConfig.sections.searchResult.uiConfig,
                   columns: tabConfig.sections.searchResult.uiConfig.columns.map((column) => {
-                    return column.label === "Document" || column.label === "Submission Type"
+                    return column.label === "DOCUMENT_TEXT" || column.label === "SUBMISSION_TYPE"
                       ? {
                           ...column,
                           clickFunc: docSetFunc,
                         }
-                      : column.label === "Owner"
+                      : column.label === "OWNER"
                       ? {
                           ...column,
                           parties: caseRelatedData.parties,
