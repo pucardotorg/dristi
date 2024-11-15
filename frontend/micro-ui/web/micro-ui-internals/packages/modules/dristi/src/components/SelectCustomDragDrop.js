@@ -102,6 +102,8 @@ function SelectCustomDragDrop({ t, config, formData = {}, onSelect, errors, setE
     const maxFileSize = input?.maxFileSize * 1024 * 1024;
     if (file.size > maxFileSize) {
       setError(config.key, { message: `${t("CS_YOUR_FILE_EXCEEDED_THE")} ${input?.maxFileSize}${t("CS_COMMON_LIMIT_MB")}` });
+    }else if(clearErrors){
+      clearErrors(config.key)
     }
     setValue(currentValue, input?.name, file.size > maxFileSize);
   };
