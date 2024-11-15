@@ -406,7 +406,7 @@ export const TabSearchconfig = {
               },
               {
                 label: "OWNER",
-                jsonPath: "owner",
+                jsonPath: "additionalDetails.owner",
                 additionalCustomization: true,
               },
               {

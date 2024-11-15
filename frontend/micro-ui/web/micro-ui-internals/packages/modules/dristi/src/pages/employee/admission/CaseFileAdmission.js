@@ -80,6 +80,10 @@ function CaseFileAdmission({ t, path }) {
     Boolean(caseId)
   );
   const caseDetails = useMemo(() => caseFetchResponse?.criteria?.[0]?.responseList?.[0] || null, [caseFetchResponse]);
+  const complainantPrimaryUUId = useMemo(
+    () => caseDetails?.litigants?.find((item) => item?.partyType === "complainant.primary").additionalDetails?.uuid || "",
+    [caseDetails]
+  );
 
   const { isLoading: isWorkFlowLoading, data: workFlowDetails, revalidate } = window?.Digit.Hooks.useWorkflowDetailsV2({
     tenantId,
@@ -717,7 +721,10 @@ function CaseFileAdmission({ t, path }) {
           fileStore: item?.fileStore,
           additionalDetails: { name: item?.fileName },
         })),
-        onBehalfOf: [],
+        additionalDetails: {
+          owner: caseDetails?.additionalDetails?.payerName || "",
+        },
+        onBehalfOf: [complainantPrimaryUUId],
         comment: [],
         workflow: {
           id: "workflow123",
