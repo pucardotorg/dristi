@@ -435,7 +435,7 @@ const CustomReviewCardRow = ({
             }
           });
         }
-        if (typeof dataError === "object") {
+        if (typeof dataError === "object" && FSOErrors?.length === 0 && !isPrevScrutiny) {
           value?.forEach((val) => {
             if (getNestedValue(dataError, val)) {
               systemErrors.push(getNestedValue(dataError, val));
