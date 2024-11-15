@@ -167,7 +167,7 @@ const TaskComponentCalander = ({ isLitigant, uuid, filingNumber, inCase = false 
     <React.Fragment>
       <div style={{ width: "100%", borderBottom: "1px solid #E8E8E8", padding: "24px" }}>
         <div style={{ fontWeight: 700, fontSize: "24px", color: "#231F20" }}>{todayDate}</div>
-        <div style={{marginTop: "10px"}}>
+        <div style={{ marginTop: "10px" }}>
           <SelectCustomNote
             t={t}
             config={{
@@ -200,7 +200,7 @@ const TaskComponentCalander = ({ isLitigant, uuid, filingNumber, inCase = false 
           onClick={handleDownload}
         >
           <DownloadIcon />
-          <div style={{ fontWeight: 700, fontSize: "16px", marginLeft: "10px" }}>Download Cause List</div>
+          <div style={{ fontWeight: 700, fontSize: "16px", marginLeft: "10px" }}>{t("DOWNLOAD_CAUSE_LIST")}</div>
         </button>
       </div>
       <div style={{ width: "100%", padding: "24px" }}>

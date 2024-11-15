@@ -174,10 +174,11 @@ export const TabFSOSearchConfig = {
                 disable: false,
                 populators: {
                   name: "substage",
+                  optionsKey: "code",
                   mdmsConfig: {
                     masterName: "SubStage",
                     moduleName: "case",
-                    select: "(data) => {return data['case'].SubStage?.map((item) => {return item.subStage;});}",
+                    select: "(data) => {return data['case'].SubStage?.map((item) => {return item});}",
                   },
                   styles: {
                     maxWidth: "250px",
@@ -321,10 +322,11 @@ export const TabFSOSearchConfig = {
                 disable: false,
                 populators: {
                   name: "substage",
+                  optionsKey: "code",
                   mdmsConfig: {
                     masterName: "SubStage",
                     moduleName: "case",
-                    select: "(data) => {return data['case'].SubStage?.map((item) => {return item.subStage;});}",
+                    select: "(data) => {return data['case'].SubStage?.map((item) => {return item});}",
                   },
                   styles: {
                     maxWidth: "250px",

@@ -199,14 +199,14 @@ export const rolesToConfigMapping = [
 export const caseTypes = [{ name: "NIA S138", code: "NIA S138" }];
 
 export const taskTypes = [
-  { code: "case-default", name: "Case" },
-  { code: "hearing-default", name: "Hearing" },
-  { code: "order-default", name: "Order" },
-  { code: "application-voluntary-submission", name: "Voluntary Submission" },
-  { code: "application-order-submission-feedback", name: "Order Submission Feedback" },
-  { code: "application-order-submission-default", name: "Order Submission" },
-  { code: "artifact-default", name: "Evidence" },
-  { code: "task-summons", name: "Task Summons" },
+  { code: "case-default", name: "WBH_MDMS_MASTER_CASE" },
+  { code: "hearing-default", name: "CS_HEARING" },
+  { code: "order-default", name: "CS_ORDER" },
+  { code: "application-voluntary-submission", name: "VOLUNTARY_SUBMISSION" },
+  { code: "application-order-submission-feedback", name: "ORDER_SUBMISSION_FEEDBACK" },
+  { code: "application-order-submission-default", name: "ORDER_SUBMISSION" },
+  { code: "artifact-default", name: "EVIDENCE" },
+  { code: "task-summons", name: "TASK_SUMMONS" },
 ];
 export const pendingTaskCaseActions = {
   PENDING_PAYMENT: {

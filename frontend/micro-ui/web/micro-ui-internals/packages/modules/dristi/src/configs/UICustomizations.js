@@ -659,19 +659,19 @@ export const UICustomizations = {
       const showDocument =
         userRoles?.includes("APPLICATION_APPROVER") || userRoles?.includes("DEPOSITION_ESIGN") || row.workflow?.action !== "PENDINGREVIEW";
       switch (key) {
-        case "Document":
+        case "DOCUMENT_TEXT":
           return showDocument ? <OwnerColumn rowData={row} colData={column} t={t} /> : "";
-        case "File":
+        case "FILE":
           return showDocument ? <Evidence userRoles={userRoles} rowData={row} colData={column} t={t} /> : "";
-        case "Date Added":
-        case "Date":
+        case "DATE_ADDED":
+        case "DATE":
           const date = new Date(value);
           const day = date.getDate().toString().padStart(2, "0");
           const month = (date.getMonth() + 1).toString().padStart(2, "0"); // Month is zero-based
           const year = date.getFullYear();
           const formattedDate = `${day}-${month}-${year}`;
           return <span>{value && value !== "0" ? formattedDate : ""}</span>;
-        case "Parties":
+        case "PARTIES":
           if (value === null || value === undefined || value === "undefined" || value === "null") {
             return null;
           }
@@ -686,22 +686,22 @@ export const UICustomizations = {
                 ?.join(", ")}${value?.length > 2 ? `+${value?.length - 2}` : ""}`}</span>
             </div>
           );
-        case "Order Type":
+        case "ORDER_TYPE":
           return <OrderName rowData={row} colData={column} value={value} />;
-        case "Submission Type":
+        case "SUBMISSION_TYPE":
           return <OwnerColumn rowData={row} colData={column} t={t} value={value} showAsHeading={true} />;
-        case "Document Type":
+        case "DOCUMENT_TYPE":
           return <Evidence userRoles={userRoles} rowData={row} colData={column} t={t} value={value} showAsHeading={true} />;
-        case "Hearing Type":
-        case "Source":
-        case "Status":
+        case "HEARING_TYPE":
+        case "SOURCE":
+        case "STATUS":
           //Need to change the shade as per the value
           return <CustomChip text={t(value)} shade={value === "PUBLISHED" ? "green" : "orange"} />;
-        case "Owner":
+        case "OWNER":
           return removeInvalidNameParts(value);
-        case "Submission Id":
+        case "SUBMISSION_ID":
           return value ? value : "-";
-        case "Actions":
+        case "CS_ACTIONS":
           return (
             <OverlayDropdown style={{ position: "relative" }} column={column} row={row} master="commonUiConfig" module="SearchIndividualConfig" />
           );
@@ -1025,16 +1025,16 @@ export const UICustomizations = {
     },
     additionalCustomizations: (row, key, column, value, t) => {
       switch (key) {
-        case "Party Name":
+        case "PARTY_NAME":
           return removeInvalidNameParts(value) || "N.A.";
-        case "Date Added":
+        case "DATE_ADDED":
           const date = new Date(value);
           const day = date.getDate().toString().padStart(2, "0");
           const month = (date.getMonth() + 1).toString().padStart(2, "0"); // Month is zero-based
           const year = date.getFullYear();
           const formattedDate = `${day}-${month}-${year}`;
           return <span>{formattedDate || "N.A."}</span>;
-        case "Party Type":
+        case "PARTY_TYPE":
           return partyTypes[value] ? partyTypes[value] : value;
         default:
           break;

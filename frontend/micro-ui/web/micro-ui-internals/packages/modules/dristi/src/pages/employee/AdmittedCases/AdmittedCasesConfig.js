@@ -20,14 +20,17 @@ export const TabSearchconfig = {
   TabSearchconfig: [
     {
       label: "Overview",
+      displayLabel: "OVERVIEW_TAB",
       type: "search",
     },
     {
       label: "Complaint",
+      displayLabel: "COMPLAINT_TAB",
       type: "search",
     },
     {
       label: "Hearings",
+      displayLabel: "HEARINGS_TAB",
       type: "search",
       apiDetails: {
         serviceName: "/hearing/v1/search",
@@ -57,7 +60,7 @@ export const TabSearchconfig = {
             defaultValues: defaultSearchValues,
             fields: [
               {
-                label: "Type",
+                label: "TYPE",
                 isMandatory: false,
                 key: "hearingType",
                 type: "dropdown",
@@ -113,7 +116,7 @@ export const TabSearchconfig = {
           uiConfig: {
             columns: [
               {
-                label: "Hearing Type",
+                label: "HEARING_TYPE",
                 jsonPath: "hearingType",
                 additionalCustomization: true,
               },
@@ -122,17 +125,17 @@ export const TabSearchconfig = {
               //   jsonPath: "",
               // },
               {
-                label: "Parties",
+                label: "PARTIES",
                 jsonPath: "attendees",
                 additionalCustomization: true,
               },
               {
-                label: "Status",
+                label: "STATUS",
                 jsonPath: "status",
                 additionalCustomization: true,
               },
               {
-                label: "Date",
+                label: "DATE",
                 jsonPath: "startTime",
                 additionalCustomization: true,
               },
@@ -142,7 +145,7 @@ export const TabSearchconfig = {
               //   additionalCustomization: true,
               // },
               {
-                label: "Actions",
+                label: "CS_ACTIONS",
                 additionalCustomization: true,
               },
             ],
@@ -155,6 +158,7 @@ export const TabSearchconfig = {
     },
     {
       label: "Orders",
+      displayLabel: "ORDERS_TAB",
       type: "search",
       apiDetails: {
         serviceName: "/order/v1/search",
@@ -184,7 +188,7 @@ export const TabSearchconfig = {
             defaultValues: defaultSearchValues,
             fields: [
               {
-                label: "Type",
+                label: "TYPE",
                 isMandatory: false,
                 key: "orderType",
                 type: "dropdown",
@@ -214,7 +218,7 @@ export const TabSearchconfig = {
               //   },
               // },
               {
-                label: "Status",
+                label: "STATUS",
                 isMandatory: false,
                 key: "status",
                 type: "dropdown",
@@ -229,7 +233,7 @@ export const TabSearchconfig = {
                 },
               },
               {
-                label: "Search Order Id",
+                label: "SEARCH_ORDER_ID",
                 isMandatory: false,
                 key: "orderNumber",
                 type: "text",
@@ -247,12 +251,12 @@ export const TabSearchconfig = {
           uiConfig: {
             columns: [
               {
-                label: "Order Type",
+                label: "ORDER_TYPE",
                 jsonPath: "orderType",
                 additionalCustomization: true,
               },
               {
-                label: "Order Id",
+                label: "ORDER_ID",
                 jsonPath: "orderNumber",
               },
               // {
@@ -260,17 +264,17 @@ export const TabSearchconfig = {
               //   jsonPath: "",
               // },
               {
-                label: "Parties",
+                label: "PARTIES",
                 jsonPath: "orderDetails.parties",
                 additionalCustomization: true,
               },
               {
-                label: "Status",
+                label: "STATUS",
                 jsonPath: "status",
                 additionalCustomization: true,
               },
               {
-                label: "Date Added",
+                label: "DATE_ADDED",
                 jsonPath: "createdDate",
                 additionalCustomization: true,
               },
@@ -285,6 +289,7 @@ export const TabSearchconfig = {
     },
     {
       label: "Submissions",
+      displayLabel: "SUBMISSIONS_TAB",
       type: "search",
       customHookName: "dristi.useApplicationDetails",
       apiDetails: {
@@ -318,7 +323,7 @@ export const TabSearchconfig = {
             defaultValues: defaultSearchValues,
             fields: [
               {
-                label: "Type",
+                label: "TYPE",
                 isMandatory: false,
                 key: "applicationType",
                 type: "dropdown",
@@ -348,7 +353,7 @@ export const TabSearchconfig = {
               //   },
               // },
               {
-                label: "Status",
+                label: "STATUS",
                 isMandatory: false,
                 key: "status",
                 type: "dropdown",
@@ -363,7 +368,7 @@ export const TabSearchconfig = {
                 },
               },
               {
-                label: "Search Submission Id",
+                label: "SEARCH_SUBMISSION_ID",
                 isMandatory: false,
                 key: "applicationCMPNumber",
                 type: "text",
@@ -381,36 +386,36 @@ export const TabSearchconfig = {
           uiConfig: {
             columns: [
               {
-                label: "Submission Type",
+                label: "SUBMISSION_TYPE",
                 jsonPath: "applicationType",
                 additionalCustomization: true,
               },
               {
-                label: "Submission Id",
+                label: "SUBMISSION_ID",
                 jsonPath: "applicationCMPNumber",
-                additionalCustomization : true,
+                additionalCustomization: true,
               },
               // {
               //   label: "Stage",
               //   jsonPath: "",
               // },
               {
-                label: "Status",
+                label: "STATUS",
                 jsonPath: "status",
                 additionalCustomization: true,
               },
               {
-                label: "Owner",
+                label: "OWNER",
                 jsonPath: "owner",
                 additionalCustomization: true,
               },
               {
-                label: "Date Added",
+                label: "DATE_ADDED",
                 jsonPath: "auditDetails.createdTime",
                 additionalCustomization: true,
               },
               {
-                label: "Document",
+                label: "DOCUMENT_TEXT",
                 jsonPath: "documents",
                 additionalCustomization: true,
               },
@@ -425,6 +430,7 @@ export const TabSearchconfig = {
     },
     {
       label: "Documents",
+      displayLabel: "DOCUMENTS_TAB",
       type: "search",
       customHookName: "dristi.useEvidenceDetails",
       apiDetails: {
@@ -458,7 +464,7 @@ export const TabSearchconfig = {
             defaultValues: defaultSearchValues,
             fields: [
               {
-                label: "Type",
+                label: "TYPE",
                 isMandatory: false,
                 key: "artifactType",
                 type: "dropdown",
@@ -470,7 +476,7 @@ export const TabSearchconfig = {
                     moduleName: "Evidence",
                     localePrefix: "EVIDENCE_TYPE",
                     select:
-                      "(data) => {return data['Evidence'].EvidenceType?.map((item) => {return { ...item, name: item.subtype && item.subtype !== '' ? `${item.type} (${item.subtype})` : item.type };});}",
+                      "(data) => {return data['Evidence'].EvidenceType?.map((item) => {return { ...item, name: item.subtype && item.subtype !== '' ? `${item.type}_${item.subtype}` : item.type };});}",
                     // localePrefix: "SUBMISSION_TYPE",
                   },
                 },
@@ -514,7 +520,7 @@ export const TabSearchconfig = {
               //   },
               // },
               {
-                label: "Search Artifact Number",
+                label: "SEARCH_ARTIFACT_NUMBER",
                 isMandatory: false,
                 key: "artifactNumber",
                 type: "text",
@@ -532,34 +538,34 @@ export const TabSearchconfig = {
           uiConfig: {
             columns: [
               {
-                label: "Document Type",
+                label: "DOCUMENT_TYPE",
                 jsonPath: "artifactType",
                 additionalCustomization: true,
               },
               {
-                label: "Artifact Number",
+                label: "ARTIFACT_NUMBER",
                 jsonPath: "artifactNumber",
               },
               {
-                label: "Evidence Number",
+                label: "EVIDENCE_NUMBER",
                 jsonPath: "evidenceNumber",
               },
               {
-                label: "Source",
+                label: "SOURCE",
                 jsonPath: "sourceType",
                 additionalCustomization: true,
               },
               {
-                label: "Owner",
+                label: "OWNER",
                 jsonPath: "owner",
               },
               {
-                label: "Date Added",
+                label: "DATE_ADDED",
                 jsonPath: "auditdetails.createdTime",
                 additionalCustomization: true,
               },
               {
-                label: "File",
+                label: "FILE",
                 jsonPath: "file",
                 additionalCustomization: true,
               },
@@ -662,6 +668,7 @@ export const TabSearchconfig = {
     // },
     {
       label: "Parties",
+      displayLabel: "PARTIES_TAB",
       type: "search",
       apiDetails: {
         serviceName: "/case/v1/_search",
@@ -691,17 +698,17 @@ export const TabSearchconfig = {
           uiConfig: {
             columns: [
               {
-                label: "Party Name",
+                label: "PARTY_NAME",
                 jsonPath: "name",
                 additionalCustomization: true,
               },
               {
-                label: "Party Type",
+                label: "PARTY_TYPE",
                 jsonPath: "partyType",
                 additionalCustomization: true,
               },
               {
-                label: "Date Added",
+                label: "DATE_ADDED",
                 jsonPath: "auditDetails.createdTime",
                 additionalCustomization: true,
               },

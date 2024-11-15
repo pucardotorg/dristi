@@ -518,7 +518,7 @@ const TasksComponent = ({
     <div className="tasks-component">
       {!hideTaskComponent && (
         <React.Fragment>
-          <h2>{!isLitigant ? "Your Tasks" : t("ALL_PENDING_TASK_TEXT")}</h2>
+          <h2>{!isLitigant ? t("YOUR_TASK") : t("ALL_PENDING_TASK_TEXT")}</h2>
           {totalPendingTask !== undefined && totalPendingTask > 0 ? (
             <React.Fragment>
               <div className="task-filters">
@@ -541,6 +541,7 @@ const TasksComponent = ({
                     {t("CS_TASK_TYPE")}
                   </CardLabel>
                   <Dropdown
+                    t={t}
                     option={taskTypes}
                     optionKey={"name"}
                     selected={taskType}

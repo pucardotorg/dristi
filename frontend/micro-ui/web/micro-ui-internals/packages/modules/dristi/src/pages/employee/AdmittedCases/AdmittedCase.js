@@ -452,7 +452,7 @@ const AdmittedCases = () => {
                   ...tabConfig.sections.search.uiConfig,
                   fields: [
                     {
-                      label: "Parties",
+                      label: "PARTIES",
                       isMandatory: false,
                       key: "parties",
                       type: "dropdown",
@@ -505,7 +505,7 @@ const AdmittedCases = () => {
                   ...tabConfig.sections.search.uiConfig,
                   fields: [
                     {
-                      label: "Parties",
+                      label: "PARTIES",
                       isMandatory: false,
                       key: "parties",
                       type: "dropdown",
@@ -571,7 +571,7 @@ const AdmittedCases = () => {
                   ...tabConfig.sections.search.uiConfig,
                   fields: [
                     {
-                      label: "Owner",
+                      label: "OWNER",
                       isMandatory: false,
                       key: "owner",
                       type: "dropdown",
@@ -624,7 +624,7 @@ const AdmittedCases = () => {
                   ...tabConfig.sections.search.uiConfig,
                   fields: [
                     {
-                      label: "Owner",
+                      label: "OWNER",
                       isMandatory: false,
                       key: "owner",
                       type: "dropdown",
@@ -697,6 +697,7 @@ const AdmittedCases = () => {
       key: index,
       label: configItem.label,
       active: index === indexOfActiveTab ? true : false,
+      displayLabel: configItem?.displayLabel,
     }));
   }, [indexOfActiveTab, newTabSearchConfig?.TabSearchconfig]); // setting number of tab component and making first index enable as default
   const [updateCounter, setUpdateCounter] = useState(0);
@@ -865,27 +866,27 @@ const AdmittedCases = () => {
   const caseBasicDetails = useMemo(() => {
     return [
       {
-        key: "Filing No.",
+        key: "CS_FILING_NO",
         value: getDefaultValue(caseDetails?.filingNumber),
       },
       {
-        key: "Complaint / CMP No.",
+        key: "CS_COMPLAINT_NO",
         value: getDefaultValue(caseDetails?.cmpNumber),
       },
       {
-        key: "CNR No.",
+        key: "CS_CNR",
         value: getDefaultValue(caseDetails?.cnrNumber),
       },
       {
-        key: "CCST No.",
+        key: "CS_CCST",
         value: getDefaultValue(caseDetails?.courtCaseNumber),
       },
       {
-        key: "Submitted on",
+        key: "SUBMITTED_ON",
         value: formatDateOrDefault(caseDetails?.filingDate),
       },
       {
-        key: "Registered on",
+        key: "REGISTERED_ON",
         value: formatDateOrDefault(caseDetails?.registrationDate),
       },
     ];
@@ -1748,7 +1749,7 @@ const AdmittedCases = () => {
                 }}
                 disabled={["Complaint", "Overview"].includes(i?.label) ? false : isTabDisabled}
               >
-                {t(i?.label)}
+                {t(i?.displayLabel)}
               </button>
             ))}
           </div>
