@@ -441,10 +441,6 @@ exports.getRespondentsDetailsForComplaint = async (cases) => {
 };
 
 exports.getDocumentList = async (cases) => {
-    if (!cases.documents) {
-        return [];
-    }
-
     const newDocumentList = [];
 
     const chequeDetails = this.getChequeDetails(cases);
@@ -530,6 +526,9 @@ exports.generateProofDepositDescriptions = async (chequeDetailsList) => {
 }
 
 exports.generateOptionalDocDescriptions = async (documentList) => {
+    if (!documentList) {
+        return [];
+    }
     return documentList.map((document) => {
         switch (document.documentType) {
             case "AUTHORIZED_COMPLAINANT_COMPANY_REPRESENTATIVE":
