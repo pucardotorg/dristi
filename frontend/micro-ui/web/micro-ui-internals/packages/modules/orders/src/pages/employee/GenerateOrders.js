@@ -2133,7 +2133,7 @@ const GenerateOrders = () => {
         },
         OrderWorkflowAction.ESIGN
       );
-      createPendingTask({
+      await createPendingTask({
         order: {
           ...currentOrder,
           ...((newhearingId || hearingNumber || hearingDetails?.hearingId) && {
