@@ -270,6 +270,9 @@ export const UICustomizations = {
         {
           ...requestCriteria?.body?.criteria[0],
           ...requestCriteria?.state?.searchForm,
+          ...(requestCriteria?.state?.searchForm?.substage && {
+            substage: requestCriteria?.state?.searchForm?.substage?.subStage,
+          }),
           tenantId,
           ...additionalDetails,
           ...("sortBy" in additionalDetails && {
