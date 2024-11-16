@@ -35,6 +35,8 @@ public class UserService {
 
     public String internalMicroserviceRoleUuid = null;
 
+    public List<Role> internalMicroserviceRoles = null;
+
     @Autowired
     private MultiStateInstanceUtil multiStateInstanceUtil;
 
@@ -60,6 +62,7 @@ public class UserService {
                 createInternalMicroserviceUser(requestInfo);
             } else {
                 internalMicroserviceRoleUuid = (String) users.get(0).get("uuid");
+                internalMicroserviceRoles = (List<Role>) users.get(0).get("roles");
             }
         }catch (Exception e) {
             throw new CustomException("EG_USER_SEARCH_ERROR", "Service returned null while fetching user");
@@ -88,6 +91,7 @@ public class UserService {
             LinkedHashMap<String, Object> responseMap = (LinkedHashMap<String, Object>) requestRepository.fetchResult(uri, userCreateRequest);
             List<LinkedHashMap<String, Object>> users = (List<LinkedHashMap<String, Object>>) responseMap.get("user");
             internalMicroserviceRoleUuid = (String) users.get(0).get("uuid");
+            internalMicroserviceRoles = (List<Role>) users.get(0).get("roles");
         }catch (Exception e) {
             throw new CustomException("EG_USER_CREATE_ERROR", "Service threw error while creating user");
         }

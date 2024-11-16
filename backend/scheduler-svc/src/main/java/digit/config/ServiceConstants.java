@@ -24,7 +24,9 @@ public class ServiceConstants {
     public static final String BUSINESS_SERVICES = "&businessServices=";
     public static final String FILE_STORE_UTILITY_EXCEPTION = "FILE_STORE_UTILITY_EXCEPTION";
     public static final String OPT_OUT_DUE = "OPT_OUT_DUE";
-    public final String APPLICATION_STATE = "PENDINGREVIEW";
+    public final String APPLICATION_STATE = "PENDINGAPPROVAL";
+    public static final String DELAY_CONDONATION = "DELAY_CONDONATION";
+
     public static final String OPT_OUT_SELECTION_LIMIT = "OPT_OUT_SELECTION_LIMIT";
     public final String COMPLAINANT= "complainant.primary";
     public final String RESPONDENT= "respondent.primary";
@@ -61,5 +63,9 @@ public class ServiceConstants {
     public static final String INTERNALMICROSERVICEUSER_MOBILENO = "9999999999";
 
     public static final String INTERNALMICROSERVICEUSER_TYPE = "SYSTEM";
+
+    public static final String FLOW_JAC = "flow_jac";
+
+    public static final String msgId = "1730882648558|en_IN";
 
 }

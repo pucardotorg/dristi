@@ -6,6 +6,7 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.pucar.dristi.annotation.CombineRequiredFields;
 import org.springframework.validation.annotation.Validated;
 
 import java.util.UUID;
@@ -19,6 +20,7 @@ import java.util.UUID;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
+@CombineRequiredFields(fields = {"referenceId", "state"}, message = "combination of referenceId and state is required.")
 public class TaskExists {
 
     @JsonProperty("taskId")
@@ -30,6 +32,12 @@ public class TaskExists {
 
     @JsonProperty("cnrNumber")
     private String cnrNumber = null;
+
+    @JsonProperty("referenceId")
+    private String referenceId;
+
+    @JsonProperty("state")
+    private String state;
 
     @JsonProperty("exists")
     private Boolean exists = null;

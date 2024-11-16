@@ -4,7 +4,7 @@ export const paymentTabInboxConfig = {
   showTab: true,
   TabSearchConfig: [
     {
-      label: "Pending",
+      label: "PENDING",
       type: "search",
       apiDetails: {
         serviceName: "/inbox/v2/index/_search",
@@ -44,18 +44,18 @@ export const paymentTabInboxConfig = {
                 component: "CustomSortComponent",
                 isMandatory: false,
                 disable: false,
-                name: "Sort by",
+                name: "SORT_BY",
                 key: "sortOrder",
                 paymentInbox: true,
-                ascText: "Oldest to Newest",
-                descText: "Newest to Oldest",
+                ascText: "OLDEST_TO_NEWEST",
+                descText: "NEWEST_TO_OLDEST",
                 showAdditionalText: true,
                 showIcon: true,
                 icon: "UpDownArrowIcon",
                 populators: {},
               },
               {
-                label: "Case Type",
+                label: "CASE_TYPE",
                 isMandatory: false,
                 key: "caseType",
                 type: "dropdown",
@@ -73,7 +73,7 @@ export const paymentTabInboxConfig = {
                 },
               },
               {
-                label: "Payment Type",
+                label: "NYAY_PAYMENT_TYPE",
                 isMandatory: false,
                 key: "paymentType",
                 type: "dropdown",
@@ -96,13 +96,13 @@ export const paymentTabInboxConfig = {
                 },
               },
               {
-                label: "Case ID and Title",
+                label: "CASE_ID_TITLE",
                 type: "text",
                 isMandatory: false,
                 disable: false,
                 populators: {
                   name: "caseTitleFilingNumber",
-                  placeholder: "Case ID and Title",
+                  // placeholder: "CASE_ID_TITLE",
                   error: "BR_PATTERN_ERR_MSG",
                   validation: {
                     pattern: {},
@@ -121,29 +121,29 @@ export const paymentTabInboxConfig = {
           uiConfig: {
             columns: [
               {
-                label: "Case Name & ID",
+                label: "CASE_NAME_ID",
                 jsonPath: "businessObject.billDetails.caseTitleFilingNumber",
                 additionalCustomization: true,
               },
               {
-                label: "Amount Due",
+                label: "AMOUNT_DUE",
                 jsonPath: "businessObject.billDetails.amount",
                 additionalCustomization: true,
               },
               {
-                label: "Stage",
+                label: "CS_STAGE",
                 jsonPath: "businessObject.billDetails.stage",
               },
               {
-                label: "Case Type",
+                label: "CASE_TYPE",
                 jsonPath: "businessObject.billDetails.caseType",
               },
               {
-                label: "Payment Type",
+                label: "NYAY_PAYMENT_TYPE",
                 jsonPath: "businessObject.billDetails.paymentType",
               },
               {
-                label: "Action",
+                label: "ACTION",
                 jsonPath: "businessObject.billDetails.id",
                 additionalCustomization: true,
               },
@@ -156,7 +156,7 @@ export const paymentTabInboxConfig = {
       },
     },
     {
-      label: "Completed",
+      label: "COMPLETED",
       type: "search",
       apiDetails: {
         serviceName: "/inbox/v2/index/_search",
@@ -196,18 +196,18 @@ export const paymentTabInboxConfig = {
                 component: "CustomSortComponent",
                 isMandatory: false,
                 disable: false,
-                name: "Sort by",
+                name: "SORT_BY",
                 key: "sortOrder",
                 paymentInbox: true,
-                ascText: "Oldest to Newest",
-                descText: "Newest to Oldest",
+                ascText: "OLDEST_TO_NEWEST",
+                descText: "NEWEST_TO_OLDEST",
                 showAdditionalText: true,
                 showIcon: true,
                 icon: "UpDownArrowIcon",
                 populators: {},
               },
               {
-                label: "Case Type",
+                label: "CASE_TYPE",
                 isMandatory: false,
                 key: "caseType",
                 type: "dropdown",
@@ -225,7 +225,7 @@ export const paymentTabInboxConfig = {
                 },
               },
               {
-                label: "Payment Type",
+                label: "NYAY_PAYMENT_TYPE",
                 isMandatory: false,
                 key: "paymentType",
                 type: "dropdown",
@@ -247,13 +247,13 @@ export const paymentTabInboxConfig = {
                 },
               },
               {
-                label: "Case ID and Title",
+                label: "CASE_ID_TITLE",
                 type: "text",
                 isMandatory: false,
                 disable: false,
                 populators: {
                   name: "caseTitleFilingNumber",
-                  placeholder: "Case ID and Title",
+                  // placeholder: "CASE_ID_TITLE",
                   error: "BR_PATTERN_ERR_MSG",
                   validation: {
                     pattern: {},
@@ -272,29 +272,29 @@ export const paymentTabInboxConfig = {
           uiConfig: {
             columns: [
               {
-                label: "Case Name & ID",
+                label: "CASE_NAME_ID",
                 jsonPath: "businessObject.billDetails.caseTitleFilingNumber",
                 additionalCustomization: true,
               },
               {
-                label: "Amount Due",
+                label: "AMOUNT_DUE",
                 jsonPath: "businessObject.billDetails.amount",
                 additionalCustomization: true,
               },
               {
-                label: "Stage",
+                label: "CS_STAGE",
                 jsonPath: "businessObject.billDetails.stage",
               },
               {
-                label: "Case Type",
+                label: "CASE_TYPE",
                 jsonPath: "businessObject.billDetails.caseType",
               },
               {
-                label: "Payment Type",
+                label: "NYAY_PAYMENT_TYPE",
                 jsonPath: "businessObject.billDetails.paymentType",
               },
               {
-                label: "Action",
+                label: "ACTION",
                 jsonPath: "businessObject.billDetails.id",
                 additionalCustomization: true,
               },

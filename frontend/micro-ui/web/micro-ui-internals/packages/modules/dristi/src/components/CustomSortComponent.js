@@ -54,11 +54,11 @@ function CustomSortComponent({ t, config, onSelect, formData = {}, errors }) {
             )
           }
         >
-          <span className="custom-sort-name">{config.name} </span>
+          <span className="custom-sort-name">{t(config.name)} </span>
           {config?.showAdditionalText ? (
             <span className="custom-sort-text">
               &nbsp;
-              {formData?.[config.key]?.order === "desc" || formData?.[config.key] === "DESC" ? config?.descText : config?.ascText}
+              {formData?.[config.key]?.order === "desc" || formData?.[config.key] === "DESC" ? t(config?.descText) : t(config?.ascText)}
             </span>
           ) : (
             ""

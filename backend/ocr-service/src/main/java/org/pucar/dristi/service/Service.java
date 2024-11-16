@@ -104,7 +104,7 @@ public class Service {
             ocrPersist.setRequestInfo(ocrRequest.getRequestInfo());
             String message = objectMapper.writeValueAsString(ocrPersist);
             log.info(message);
-            producer.push(properties.getOcrTopic(), ocrPersist);
+            producer.push(properties.getOcrTopic(), message);
         } catch (Exception e) {
             log.error("error in pushing to kafka");
         }

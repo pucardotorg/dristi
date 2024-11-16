@@ -116,7 +116,7 @@ public class TaskRepositoryTest {
         taskExists.setExists(null); // Initial state
 
         // Mock query builder method
-        when(queryBuilder.checkTaskExistQuery(eq("123"), isNull(), isNull(), anyList()))
+        when(queryBuilder.checkTaskExistQuery(eq("123"), isNull(), isNull(),isNull(),isNull(), anyList()))
                 .thenReturn("SELECT COUNT(*) FROM tasks WHERE cnrnumber = ?");
 
         // Mock JDBC template queryForObject method to return zero count
@@ -131,7 +131,7 @@ public class TaskRepositoryTest {
         assertFalse(result.getExists());
 
         // Verify method calls
-        verify(queryBuilder, times(1)).checkTaskExistQuery(eq("123"), isNull(), isNull(), anyList());
+        verify(queryBuilder, times(1)).checkTaskExistQuery(eq("123"), isNull(), isNull(),isNull(),isNull(), anyList());
         verify(jdbcTemplate, times(1)).queryForObject(anyString(), eq(Integer.class), any(Object[].class));
     }
 
@@ -143,7 +143,7 @@ public class TaskRepositoryTest {
         taskExists.setExists(null); // Initial state
 
         // Mock query builder method
-        when(queryBuilder.checkTaskExistQuery(eq("123"), isNull(), isNull(), anyList()))
+        when(queryBuilder.checkTaskExistQuery(eq("123"), isNull(), isNull(),isNull(),isNull(), anyList()))
                 .thenReturn("SELECT COUNT(*) FROM tasks WHERE cnrnumber = ?");
 
         // Mock JDBC template queryForObject method to return count > 0
@@ -158,7 +158,7 @@ public class TaskRepositoryTest {
         assertTrue(result.getExists());
 
         // Verify method calls
-        verify(queryBuilder, times(1)).checkTaskExistQuery(eq("123"), isNull(), isNull(), anyList());
+        verify(queryBuilder, times(1)).checkTaskExistQuery(eq("123"), isNull(), isNull(),isNull(),isNull(), anyList());
         verify(jdbcTemplate, times(1)).queryForObject(anyString(), eq(Integer.class), any(Object[].class));
     }
 
@@ -170,7 +170,7 @@ public class TaskRepositoryTest {
         taskExists.setExists(null); // Initial state
 
         // Mock query builder method
-        when(queryBuilder.checkTaskExistQuery(eq("123"), isNull(), isNull(), anyList()))
+        when(queryBuilder.checkTaskExistQuery(eq("123"), isNull(), isNull(),isNull(),isNull(), anyList()))
                 .thenReturn("SELECT COUNT(*) FROM tasks WHERE cnrnumber = ?");
 
         // Mock JDBC template queryForObject method to throw exception
@@ -181,7 +181,7 @@ public class TaskRepositoryTest {
         assertThrows(CustomException.class, () -> taskRepository.checkTaskExists(taskExists));
 
         // Verify method calls
-        verify(queryBuilder, times(1)).checkTaskExistQuery(eq("123"), isNull(), isNull(), anyList());
+        verify(queryBuilder, times(1)).checkTaskExistQuery(eq("123"), isNull(), isNull(), isNull(),isNull(),anyList());
         verify(jdbcTemplate, times(1)).queryForObject(anyString(), eq(Integer.class), any(Object[].class));
     }
 

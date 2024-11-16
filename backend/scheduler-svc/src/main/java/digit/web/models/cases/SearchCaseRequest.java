@@ -28,4 +28,7 @@ public class SearchCaseRequest {
     @Valid
     private String tenantId;
 
+    @JsonProperty("flow")
+    private String flow;
+
 }

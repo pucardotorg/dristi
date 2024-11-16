@@ -263,6 +263,8 @@ public class CaseService {
                 updateCourtCaseInRedis(addWitnessRequest.getRequestInfo().getUserInfo().getTenantId(), courtCase);
             }
 
+            publishToJoinCaseIndexer(addWitnessRequest.getRequestInfo(), courtCase);
+
             caseObj = encryptionDecryptionUtil.decryptObject(caseObj, config.getCaseDecryptSelf(),CourtCase.class,addWitnessRequest.getRequestInfo());
             addWitnessRequest.setAdditionalDetails(caseObj.getAdditionalDetails());
 
@@ -317,6 +319,8 @@ public class CaseService {
             CourtCase encryptedCourtCase = encryptionDecryptionUtil.encryptObject(courtCase, config.getCourtCaseEncrypt(), CourtCase.class);
             updateCourtCaseInRedis(tenantId, encryptedCourtCase);
         }
+
+        publishToJoinCaseIndexer(joinCaseRequest.getRequestInfo(), courtCase);
     }
 
     private void verifyAndEnrichRepresentative(JoinCaseRequest joinCaseRequest, CourtCase courtCase, CourtCase caseObj, AuditDetails auditDetails) {
@@ -354,6 +358,8 @@ public class CaseService {
             CourtCase encryptedCourtCase = encryptionDecryptionUtil.encryptObject(courtCase, config.getCourtCaseEncrypt(), CourtCase.class);
             updateCourtCaseInRedis(tenantId, encryptedCourtCase);
         }
+
+        publishToJoinCaseIndexer(joinCaseRequest.getRequestInfo(), courtCase);
     }
 
     public JoinCaseResponse verifyJoinCaseRequest(JoinCaseRequest joinCaseRequest) {
@@ -485,6 +491,8 @@ public class CaseService {
                         JoinCaseRequest caseRequest = JoinCaseRequest.builder().requestInfo(requestInfo)
                                 .representative(representative).build();
                         producer.push(config.getUpdateRepresentativeJoinCaseTopic(), caseRequest);
+
+                        publishToJoinCaseIndexer(requestInfo, courtCase);
                     }
                 })
         );
@@ -675,5 +683,13 @@ public class CaseService {
         List<CaseSummary> caseSummary = caseRepository.getCaseSummary(request);
 
         return caseSummary;
+    }
+
+    private void publishToJoinCaseIndexer(RequestInfo requestInfo, CourtCase courtCase) {
+        CaseRequest caseRequest = CaseRequest.builder()
+                .requestInfo(requestInfo)
+                .cases(courtCase)
+                .build();
+        producer.push(config.getJoinCaseTopicIndexer(), caseRequest);
     }
 }

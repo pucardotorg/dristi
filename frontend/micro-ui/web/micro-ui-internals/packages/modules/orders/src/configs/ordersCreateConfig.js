@@ -1815,6 +1815,7 @@ export const configsInitiateRescheduleHearingDate = [
         isMandatory: true,
         key: "reasonForRescheduling",
         type: "text",
+        schemaKeyPath: "orderDetails.reasonForReschedule",
         populators: {
           name: "reasonForRescheduling",
           error: "CS_ALPHANUMERIC_ALLOWED",

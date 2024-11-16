@@ -46,7 +46,10 @@ public class FileStoreConfig {
 	
 	@Value("#{'${image.formats}'.split(',')}") 
 	private List<String> imageFormats;
-	
+
+	@Value("${max.file.size}")
+	private Long fileSizeMax;
+
 	@PostConstruct
 	private void enrichKeysetForFormats() {
 		allowedKeySet = allowedFormatsMap.keySet();

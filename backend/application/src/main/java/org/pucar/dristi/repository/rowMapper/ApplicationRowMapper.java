@@ -60,6 +60,7 @@ public class ApplicationRowMapper implements ResultSetExtractor<List<Application
                             .createdDate(rs.getLong("createddate"))
                             .createdBy(toUUID(rs.getString("applicationcreatedby")))
                             .tenantId(rs.getString("tenantid"))
+                            .applicationCMPNumber(rs.getString("applicationcmpnumber"))
                             .reasonForApplication(rs.getString("reason_for_application"))
                             .id(toUUID(rs.getString("id")))
                             .isActive(rs.getBoolean("isactive"))

@@ -264,4 +264,7 @@ public class Configuration {
 	@Value("${egov.idgen.cmpFormat}")
 	private String cmpFormat;
 
+	//Indexer
+	@Value("${indexer.join.case.kafka.topic}")
+	private String joinCaseTopicIndexer;
 }

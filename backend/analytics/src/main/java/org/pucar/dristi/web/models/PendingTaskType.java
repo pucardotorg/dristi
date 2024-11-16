@@ -33,6 +33,10 @@ public class PendingTaskType {
     @Valid
     private String actor = null;
 
+    @JsonProperty("isgeneric")
+    @Valid
+    private Boolean isgeneric = null;
+
     @JsonProperty("triggerAction")
     @Valid
     private List<String> triggerAction = null;

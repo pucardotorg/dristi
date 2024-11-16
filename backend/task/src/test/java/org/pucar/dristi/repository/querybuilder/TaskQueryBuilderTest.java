@@ -4,7 +4,6 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.MockitoAnnotations;
-import org.pucar.dristi.web.models.Order;
 import org.pucar.dristi.web.models.Pagination;
 import org.pucar.dristi.web.models.TaskCriteria;
 
@@ -14,7 +13,8 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.UUID;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 class TaskQueryBuilderTest {
 
@@ -68,21 +68,26 @@ class TaskQueryBuilderTest {
         String cnrNumber = "CNR123";
         String filingNumber = "FL123";
         UUID taskId = UUID.randomUUID();
+        String referenceId = "APP-001";
+        String state = "PENDING";
 
-        String result = taskQueryBuilder.checkTaskExistQuery(cnrNumber, filingNumber, taskId, preparedStmtList);
+        String result = taskQueryBuilder.checkTaskExistQuery(cnrNumber, filingNumber, taskId, referenceId, state, preparedStmtList);
 
         assertTrue(result.contains("task.cnrnumber = ?"));
         assertTrue(result.contains("task.filingnumber = ?"));
         assertTrue(result.contains("task.id = ?"));
-        assertEquals(3, preparedStmtList.size());
+        assertEquals(5, preparedStmtList.size());
         assertEquals(cnrNumber, preparedStmtList.get(0));
         assertEquals(filingNumber, preparedStmtList.get(1));
-        assertEquals(taskId.toString(), preparedStmtList.get(2));
+        assertEquals(referenceId, preparedStmtList.get(2));
+        assertEquals(state, preparedStmtList.get(3));
+        assertEquals(taskId.toString(), preparedStmtList.get(4));
+
     }
 
     @Test
     void testGetTaskSearchQuery() {
-        TaskCriteria criteria =  TaskCriteria.builder()
+        TaskCriteria criteria = TaskCriteria.builder()
                 .taskNumber("TN123")
                 .cnrNumber("CNR123")
                 .tenantId("tenant123")

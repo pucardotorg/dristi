@@ -44,6 +44,17 @@ public class ApplicationConsumer {
         publishApplication(payload, transformerProperties.getUpdateApplicationTopic());
     }
 
+    @KafkaListener(topics = {"${transformer.consumer.application.status.update.topic}"})
+    public void updateApplicationStatus(ConsumerRecord<String, Object> payload,
+                                  @Header(KafkaHeaders.RECEIVED_TOPIC) String topic) {
+        publishApplication(payload, transformerProperties.getUpdateApplicationTopic());
+    }
+
+    @KafkaListener(topics = {"${transformer.consumer.application.comments.update.topic}"})
+    public void updateApplicationComments(ConsumerRecord<String, Object> payload,
+                                        @Header(KafkaHeaders.RECEIVED_TOPIC) String topic) {
+        publishApplication(payload, transformerProperties.getUpdateApplicationTopic());
+    }
 
     private void publishApplication(ConsumerRecord<String, Object> payload,
                                     @Header(KafkaHeaders.RECEIVED_TOPIC) String topic) {

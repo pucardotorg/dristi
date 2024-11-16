@@ -52,7 +52,7 @@ function PaymentInbox() {
           const totalCount = response?.totalCount;
           return {
             key: index,
-            label: totalCount ? `${configItem.label} (${totalCount})` : `${configItem.label} (0)`,
+            label: totalCount ? `${t(configItem.label)} (${totalCount})` : `${t(configItem.label)} (0)`,
             active: index === 0 ? true : false,
           };
         }) || []

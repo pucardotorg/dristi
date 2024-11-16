@@ -14,8 +14,7 @@ import org.springframework.stereotype.Component;
 import java.util.List;
 import java.util.UUID;
 
-import static org.pucar.dristi.config.ServiceConstants.*;
-import static org.pucar.dristi.config.ServiceConstants.WARRANT;
+import static org.pucar.dristi.config.ServiceConstants.ENRICHMENT_EXCEPTION;
 
 @Component
 @Slf4j
@@ -33,12 +32,12 @@ public class TaskRegistrationEnrichment {
     public void enrichTaskRegistration(TaskRequest taskRequest) {
         try {
             Task task = taskRequest.getTask();
-            String tenantId = task.getFilingNumber().replace("-","");
+            String tenantId = task.getFilingNumber().replace("-", "");
 
             String idName = config.getTaskConfig();
             String idFormat = config.getTaskFormat();
 
-            List<String> taskRegistrationIdList = idgenUtil.getIdList(taskRequest.getRequestInfo(), tenantId, idName, idFormat, 1,false);
+            List<String> taskRegistrationIdList = idgenUtil.getIdList(taskRequest.getRequestInfo(), tenantId, idName, idFormat, 1, false);
             log.info("Task Registration Id List :: {}", taskRegistrationIdList);
 
 //            if(SUMMON.equalsIgnoreCase(task.getTaskType())){
@@ -73,9 +72,9 @@ public class TaskRegistrationEnrichment {
                     document.setDocumentUid(document.getId());
                 });
             }
-            task.getAmount().setId(UUID.randomUUID());
+            if (task.getAmount() != null) task.getAmount().setId(UUID.randomUUID());
             task.setCreatedDate(System.currentTimeMillis());
-            task.setTaskNumber(taskRequest.getTask().getFilingNumber() +"-"+taskRegistrationIdList.get(0));
+            task.setTaskNumber(taskRequest.getTask().getFilingNumber() + "-" + taskRegistrationIdList.get(0));
 
         } catch (Exception e) {
             log.error("Error enriching task application :: {}", e.toString());

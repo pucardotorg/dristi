@@ -127,7 +127,7 @@ async function acceptReschedulingRequest(req, res, qrCode) {
     }
     const partyName = application?.additionalDetails?.onBehalOfName || "";
     const reasonForRescheduling =
-      application?.applicationDetails?.reasonForApplication || "";
+      order?.orderDetails?.reasonForReschedule || "";
     const originalHearingDate = application?.applicationDetails
       ?.initialHearingDate
       ? formatDate(
