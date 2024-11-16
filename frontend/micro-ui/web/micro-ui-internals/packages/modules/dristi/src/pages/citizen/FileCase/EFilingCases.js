@@ -1648,7 +1648,7 @@ function EFilingCases({ path }) {
             {
               cases: {
                 id: caseObject?.id,
-                tenantId: tenantId
+                tenantId: tenantId,
               },
               RequestInfo: {
                 authToken: Digit.UserService.getUser().access_token,
@@ -1664,7 +1664,7 @@ function EFilingCases({ path }) {
           const pdfFile = new File([response?.data], filename, { type: "application/pdf" });
           const document = await onDocumentUpload(pdfFile, pdfFile.name);
           const fileStoreId = document?.file?.files?.[0]?.fileStoreId;
-  
+
           if (fileStoreId) {
             caseComplaintDocument = {
               documentType: "CASE_COMPLAINT_PDF",

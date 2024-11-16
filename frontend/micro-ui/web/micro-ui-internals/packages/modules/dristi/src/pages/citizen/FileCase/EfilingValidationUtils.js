@@ -2149,8 +2149,7 @@ export const updateCaseDetails = async ({
         formdata: updatedFormData,
         isCompleted: isCompleted === "PAGE_CHANGE" ? caseDetails.caseDetails?.[selected]?.isCompleted : isCompleted,
       },
-      // ...(fileStoreId && { signedCaseDocument: fileStoreId }),
-      ...(caseComplaintDocument && caseComplaintDocument?.fileStore && { signedCaseDocument: caseComplaintDocument?.fileStore }),
+      ...(fileStoreId && { signedCaseDocument: fileStoreId }),
     };
   }
   const caseTitle = ["DRAFT_IN_PROGRESS", "CASE_REASSIGNED"].includes(caseDetails?.status)
