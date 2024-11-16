@@ -2,10 +2,12 @@ import React from "react";
 import Modal from "../../../components/Modal";
 import { CloseSvg } from "@egovernments/digit-ui-react-components";
 import { useHistory } from "react-router-dom";
+import { DRISTIService } from "../../../services";
 
 const ViewAllSubmissions = ({ t, setShow, submissionList, filingNumber, openEvidenceModal }) => {
   const userInfo = Digit.UserService.getUser()?.info;
   const userRoles = userInfo?.roles?.map((role) => role.code);
+  const tenantId = window?.Digit.ULBService.getCurrentTenantId();
   const history = useHistory();
   const CloseBtn = (props) => {
     return (
@@ -21,6 +23,15 @@ const ViewAllSubmissions = ({ t, setShow, submissionList, filingNumber, openEvid
         <h1 className="heading-m">{props.label}</h1>
       </div>
     );
+  };
+
+  const getApplication = async (applicationNumber) => {
+    try {
+      const response = await DRISTIService.searchSubmissions({ criteria: { filingNumber, applicationNumber, tenantId }, tenantId }, {}, "", true);
+      return response?.applicationList?.[0];
+    } catch (error) {
+      console.error("error :>> ", error);
+    }
   };
 
   const handleMakeSubmission = (app) => {
@@ -55,10 +66,14 @@ const ViewAllSubmissions = ({ t, setShow, submissionList, filingNumber, openEvid
             </div>
           </div>
           <div
-            onClick={() => {
+            onClick={async () => {
               setShow(false);
               if (userRoles.includes("CITIZEN")) {
-                handleMakeSubmission(application);
+                if (application.status === "PENDINGRESPONSE") {
+                  const applicationData = await getApplication(application?.referenceId);
+                  setShow(false);
+                  openEvidenceModal(applicationData);
+                } else handleMakeSubmission(application);
               } else {
                 setShow(false);
                 openEvidenceModal(application);

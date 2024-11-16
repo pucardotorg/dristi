@@ -614,7 +614,7 @@ export const pendingTaskSubmissionWithResponseActions = {
       ],
     },
   },
-  RESPOND_TO_PRODUCTION_DOCUMENTS: {
+  PENDINGRESPONSE: {
     actorName: ["LITIGANT/ADVOCATE"],
     actionName: "Review the submission",
     customFunction: "handleReviewSubmission",

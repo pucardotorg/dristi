@@ -587,7 +587,7 @@ export const uploadResponseDocumentConfig = [
               name: "ID_Proof",
               validation: {},
               clearFields: { aadharNumber: "" },
-              allowedFileTypes: /(.*?)(png|jpg|pdf)$/i,
+              allowedFileTypes: /(.*?)(png|jpg|jpeg|pdf)$/i,
               isMandatory: true,
               disableMandatoryFieldFor: ["aadharNumber"],
               errorMessage: "CUSTOM_DOCUMENT_ERROR_MSG",
