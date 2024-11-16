@@ -6,6 +6,7 @@ import CustomCopyTextDiv from "@egovernments/digit-ui-module-dristi/src/componen
 import SelectCustomNote from "@egovernments/digit-ui-module-dristi/src/components/SelectCustomNote";
 import { Urls } from "@egovernments/digit-ui-module-dristi/src/hooks";
 import { useTranslation } from "react-i18next";
+import useDownloadCasePdf from "@egovernments/digit-ui-module-dristi/src/hooks/dristi/useDownloadCasePdf";
 
 const customNoteConfig = {
   populators: {
@@ -49,8 +50,7 @@ function EFilingPaymentResponse({ setShowModal, header, subHeader, submitModalIn
   const tenantId = Digit.ULBService.getCurrentTenantId();
   const caseId = location.state.state.caseId;
   const { t } = useTranslation();
-
-  const uri = `${window.location.origin}${Urls.FileFetchById}?tenantId=${tenantId}&fileStoreId=${fileStoreId}`;
+  const { downloadPdf } = useDownloadCasePdf();
   const commonProps = {
     whichSvg: "tick",
     headerStyles: { fontSize: "32px" },
@@ -98,10 +98,7 @@ function EFilingPaymentResponse({ setShowModal, header, subHeader, submitModalIn
               }}
             />
           ) : (
-            <a
-              href={uri}
-              target="_blank"
-              rel="noreferrer"
+            <Button
               style={{
                 display: "flex",
                 color: "#505A5F",
@@ -111,15 +108,14 @@ function EFilingPaymentResponse({ setShowModal, header, subHeader, submitModalIn
                 overflow: "hidden",
                 textOverflow: "ellipsis",
               }}
-            >
-              <Button
-                variation={"secondary"}
-                className={"secondary-button-selector"}
-                label={t("CS_PRINT_RECEIPT")}
-                labelClassName={"secondary-label-selector"}
-                onButtonClick={() => {}}
-              />
-            </a>
+              variation={"secondary"}
+              className={"secondary-button-selector"}
+              label={t("CS_PRINT_RECEIPT")}
+              labelClassName={"secondary-label-selector"}
+              onButtonClick={() => {
+                downloadPdf(tenantId, fileStoreId);
+              }}
+            />
           )}
 
           <Button
