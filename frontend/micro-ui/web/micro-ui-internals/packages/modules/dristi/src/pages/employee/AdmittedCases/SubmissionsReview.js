@@ -163,10 +163,16 @@ const SubmissionReview = ({ caseData, setUpdateCounter, openSubmissionsViewModal
       ),
       pendingTaskDetailsWithout.data?.map((app) =>
         app.fields.reduce(
-          (fieldObj, item) => ({
-            ...fieldObj,
-            [item.key]: item.value,
-          }),
+          (fieldObj, item) =>
+            item.key === "name"
+              ? {
+                  ...fieldObj,
+                  applicationType: item.value,
+                }
+              : {
+                  ...fieldObj,
+                  [item.key]: item.value,
+                },
           {}
         )
       ),
@@ -215,7 +221,9 @@ const SubmissionReview = ({ caseData, setUpdateCounter, openSubmissionsViewModal
               onClick={() => {
                 userRoles.includes("CITIZEN")
                   ? history.push(
-                      `/digit-ui/citizen/submissions/submissions-create?filingNumber=${filingNumber}&orderNumber=${app.referenceId.split("_").pop()}`
+                      `/digit-ui/citizen/submissions/submissions-create?filingNumber=${filingNumber}&${
+                        app.status === "CREATE_SUBMISSION" ? "orderNumber" : "applicationNumber"
+                      }=${app.referenceId.split("_").pop()}`
                     )
                   : docSetFunc(app);
               }}

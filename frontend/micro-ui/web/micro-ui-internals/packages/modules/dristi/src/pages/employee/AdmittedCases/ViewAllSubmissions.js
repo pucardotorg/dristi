@@ -24,7 +24,11 @@ const ViewAllSubmissions = ({ t, setShow, submissionList, filingNumber, openEvid
   };
 
   const handleMakeSubmission = (app) => {
-    history.push(`/digit-ui/citizen/submissions/submissions-create?filingNumber=${filingNumber}&orderNumber=${app.referenceId.split("_").pop()}`);
+    history.push(
+      `/digit-ui/citizen/submissions/submissions-create?filingNumber=${filingNumber}&${
+        app.status === "CREATE_SUBMISSION" ? "orderNumber" : "applicationNumber"
+      }=${app.referenceId.split("_").pop()}`
+    );
   };
 
   return (
