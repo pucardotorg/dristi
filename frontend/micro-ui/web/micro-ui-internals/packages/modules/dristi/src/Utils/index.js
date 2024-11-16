@@ -159,9 +159,8 @@ export const documentsTypeMapping = {
   vakalatnamaFileUpload: "VAKALATNAMA_DOC",
 };
 
-const token = localStorage.getItem("token");
-
 export const getFileByFileStoreId = async (uri) => {
+  const token = localStorage.getItem("token");
   try {
     const response = await axios.get(uri, {
       responseType: "blob", // To treat the response as a binary Blob
@@ -202,6 +201,7 @@ export const combineMultipleFiles = async (pdfFilesArray, finalFileName = "combi
   });
 
   try {
+    const token = localStorage.getItem("token");
     // ${Urls.CombineDocuments} // check- Should use this but it is causing circular dependency, need to relocate Urls
     const combineDocumentsUrl = `${window.location.origin}/egov-pdf/dristi-pdf/combine-documents?tenantId=${tenantId}`;
     const response = await axios.post(combineDocumentsUrl, formData, {
