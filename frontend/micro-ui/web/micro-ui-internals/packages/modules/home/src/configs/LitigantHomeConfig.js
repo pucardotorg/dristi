@@ -208,6 +208,7 @@ export const TabLitigantSearchConfig = {
               {
                 label: "CS_STAGE",
                 jsonPath: "substage",
+                additionalCustomization: true,
               },
               {
                 label: "CS_CASE_ID",

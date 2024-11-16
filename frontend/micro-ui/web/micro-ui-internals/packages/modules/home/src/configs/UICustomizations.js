@@ -228,7 +228,7 @@ export const UICustomizations = {
         case "CS_OUTCOME":
           return t(value);
         case "CS_STAGE":
-          return t(row?.status);
+          return t(value);
         case "CS_FILING_DATE":
           return <span>{formatDate(new Date(value))}</span>;
         case "CS_LAST_EDITED":
@@ -410,7 +410,7 @@ export const UICustomizations = {
         case "CD_OUTCOME":
           return t(value);
         case "CS_STAGE":
-          return t(row?.status);
+          return t(value);
         default:
           return t("ES_COMMON_NA");
       }

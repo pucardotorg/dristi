@@ -211,6 +211,7 @@ export const TabBenchSearchConfig = {
               {
                 label: "CS_STAGE",
                 jsonPath: "substage",
+                additionalCustomization: true,
               },
               {
                 label: "CS_CASE_ID",
@@ -345,6 +346,7 @@ export const TabBenchSearchConfig = {
               {
                 label: "CS_STAGE",
                 jsonPath: "substage",
+                additionalCustomization: true,
               },
               {
                 label: "CS_CASE_ID",
@@ -492,6 +494,7 @@ export const TabBenchSearchConfig = {
               {
                 label: "CS_STAGE",
                 jsonPath: "substage",
+                additionalCustomization: true,
               },
 
               {
