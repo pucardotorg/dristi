@@ -2,9 +2,11 @@ import { FileIcon, PrintIcon } from "@egovernments/digit-ui-react-components";
 import React from "react";
 import { Urls } from "../hooks/services/Urls";
 import AuthenticatedLink from "@egovernments/digit-ui-module-dristi/src/Utils/authenticatedLink";
+import { useTranslation } from "react-i18next";
 
 const DocumentPrintComponent = ({ documents }) => {
   const tenantId = window?.Digit.ULBService.getCurrentTenantId();
+  const { t } = useTranslation();
 
   return (
     <div className="print-documents-container" style={{ gap: 4, display: "flex", flexDirection: "column" }}>
