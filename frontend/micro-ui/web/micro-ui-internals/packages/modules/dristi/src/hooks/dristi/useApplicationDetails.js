@@ -29,7 +29,6 @@ const useApplicationDetails = ({ url, params, body, config = {}, plainAccessRequ
             true
           )
         : [];
-    console.log(owners, owenrList);
     return {
       ...res,
       applicationList: res.applicationList.map((application) => {
