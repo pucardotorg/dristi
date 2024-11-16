@@ -77,7 +77,7 @@ function SelectCustomTextArea({ t, config, formData = {}, onSelect, errors }) {
             <span>
               <p className={`custom-sub-header ${input?.subHeaderClassName}`} style={{ margin: "0px 0px 8px" }}>
                 {`${t(input?.textAreaSubHeader)}`}
-                {input?.isOptional && <span style={{ color: "#77787B" }}>&nbsp;(optional)</span>}
+                {input?.isOptional && <span style={{ color: "#77787B" }}>&nbsp;{t("CS_IS_OPTIONAL")}</span>}
               </p>
             </span>
           )}

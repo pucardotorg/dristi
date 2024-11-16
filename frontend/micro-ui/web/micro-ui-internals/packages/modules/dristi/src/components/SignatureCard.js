@@ -15,7 +15,7 @@ function SignatureCard({ input, data, t, index, onSelect, formData, configKey, h
         inputs: [
           {
             name: name,
-            documentHeader: "Signature",
+            documentHeader: "CS_ADD_SIGNATURE",
             type: "DragDropComponent",
             uploadGuidelines: "Ensure the image is not blurry and under 5MB.",
             maxFileSize: 5,

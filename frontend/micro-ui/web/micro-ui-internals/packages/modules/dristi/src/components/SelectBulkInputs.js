@@ -93,7 +93,7 @@ function SelectBulkInputs({ t, config, onSelect, formData = {}, errors }) {
             />
           </div>
           <Button
-            label={"Add"}
+            label={t("CS_ADD")}
             style={{ alignItems: "center" }}
             isDisabled={!enableAdd || errors?.[config?.key]?.[input.name]}
             onButtonClick={() => {

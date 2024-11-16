@@ -207,7 +207,7 @@ const SelectComponentsMulti = ({ t, config, onSelect, formData, errors, setError
         <Button
           isDisabled={config?.disable || (config?.state && config?.state !== CaseWorkflowState.DRAFT_IN_PROGRESS)}
           className={"add-location-btn"}
-          label={"Add Location"}
+          label={t("ADD_LOCATION")}
           style={{ alignItems: "center", margin: "10px 0px" }}
           onButtonClick={() => {
             handleAdd();
