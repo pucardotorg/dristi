@@ -1639,45 +1639,48 @@ function EFilingCases({ path }) {
     else {
       let res;
       let caseComplaintDocument = {};
-      if (isCaseLocked) {
-        setIsDisabled(true);
-        const caseObject = isCaseReAssigned && errorCaseDetails ? errorCaseDetails : caseDetails;
-        const response = await axios.post(
-          "/dristi-case-pdf/v1/fetchCaseComplaintPdf",
-          {
-            cases: caseObject,
-            RequestInfo: {
-              authToken: Digit.UserService.getUser().access_token,
-              userInfo: Digit.UserService.getUser()?.info,
-              msgId: `${Date.now()}|${Digit.StoreData.getCurrentLanguage()}`,
-              apiId: "Rainmaker",
-            },
-          },
-          { responseType: "blob" } // Important: Set responseType to handle binary data
-        );
-        const contentDisposition = response.headers["content-disposition"];
-        const filename = contentDisposition ? contentDisposition.split("filename=")[1]?.replace(/['"]/g, "") : "caseCompliantDetails.pdf";
-        const pdfFile = new File([response?.data], filename, { type: "application/pdf" });
-        const document = await onDocumentUpload(pdfFile, pdfFile.name);
-        const fileStoreId = document?.file?.files?.[0]?.fileStoreId;
-
-        if (fileStoreId) {
-          caseComplaintDocument = {
-            documentType: document?.fileType,
-            fileStore: fileStoreId,
-            fileName: filename,
-          };
-        } else {
-          throw new Error("FILE_STORE_ID_MISSING");
-        }
-        res = await refetchCasePDfGeneration();
-        if (res?.status === "error") {
-          setIsDisabled(false);
-          toast.error(t("CASE_PDF_ERROR"));
-          throw new Error("CASE_PDF_ERROR");
-        }
-      }
       try {
+        if (isCaseLocked) {
+          setIsDisabled(true);
+          const caseObject = isCaseReAssigned && errorCaseDetails ? errorCaseDetails : caseDetails;
+          const response = await axios.post(
+            "/dristi-case-pdf/v1/fetchCaseComplaintPdf",
+            {
+              cases: {
+                id: caseObject?.id,
+                tenantId: tenantId
+              },
+              RequestInfo: {
+                authToken: Digit.UserService.getUser().access_token,
+                userInfo: Digit.UserService.getUser()?.info,
+                msgId: `${Date.now()}|${Digit.StoreData.getCurrentLanguage()}`,
+                apiId: "Rainmaker",
+              },
+            },
+            { responseType: "blob" } // Important: Set responseType to handle binary data
+          );
+          const contentDisposition = response.headers["content-disposition"];
+          const filename = contentDisposition ? contentDisposition.split("filename=")[1]?.replace(/['"]/g, "") : "caseCompliantDetails.pdf";
+          const pdfFile = new File([response?.data], filename, { type: "application/pdf" });
+          const document = await onDocumentUpload(pdfFile, pdfFile.name);
+          const fileStoreId = document?.file?.files?.[0]?.fileStoreId;
+  
+          if (fileStoreId) {
+            caseComplaintDocument = {
+              documentType: "CASE_COMPLAINT_PDF",
+              fileStore: fileStoreId,
+              fileName: filename,
+            };
+          } else {
+            throw new Error("FILE_STORE_ID_MISSING");
+          }
+          res = await refetchCasePDfGeneration();
+          if (res?.status === "error") {
+            setIsDisabled(false);
+            toast.error(t("CASE_PDF_ERROR"));
+            throw new Error("CASE_PDF_ERROR");
+          }
+        }
         // Await the result of updateCaseDetails
         await updateCaseDetails({
           t,

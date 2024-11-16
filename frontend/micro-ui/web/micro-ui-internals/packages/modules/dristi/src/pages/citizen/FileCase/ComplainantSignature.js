@@ -173,6 +173,8 @@ const ComplainantSignature = ({ path }) => {
   const { handleEsign } = Digit.Hooks.orders.useESign();
   const { uploadDocuments } = Digit.Hooks.orders.useDocumentUpload();
   const name = "Signature";
+  const complainantPlaceholder = "Complainant Signature";
+  const advocatePlaceholder = "Advocate Signature";
 
   const uploadModalConfig = useMemo(() => {
     return {
@@ -318,7 +320,8 @@ const ComplainantSignature = ({ path }) => {
   };
 
   const handleEsignAction = () => {
-    handleEsign(name, "ci", DocumentFileStoreId);
+    const signPlaceHolder = isLitigantPartyInPerson || !isLitigantEsignCompleted ? complainantPlaceholder : advocatePlaceholder;
+    handleEsign(name, "ci", DocumentFileStoreId, signPlaceHolder);
   };
 
   const handleUploadFile = () => {
