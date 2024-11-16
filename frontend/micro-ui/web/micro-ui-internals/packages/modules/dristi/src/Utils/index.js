@@ -1,6 +1,7 @@
 import { Request } from "@egovernments/digit-ui-libraries";
 import isEmpty from "lodash/isEmpty";
 import axios from "axios";
+import { DocumentUploadError } from "./errorUtil";
 
 export const ServiceRequest = async ({
   serviceName,
@@ -139,10 +140,34 @@ export const extractFeeMedium = (feeName) => {
   return feeMediums?.[feeName?.toLowerCase()] || "";
 };
 
+export const documentsTypeMapping = {
+  complainantId: "COMPLAINANT_ID_PROOF",
+  complainantCompanyDetailsUpload: "AUTHORIZED_COMPLAINANT_COMPANY_REPRESENTATIVE",
+  inquiryAffidavitFileUpload: "case.affidavit.223bnss",
+  AccusedCompanyDetailsUpload: "AUTHORIZED_ACCUSED_COMPANY_REPRESENTATIVE",
+  bouncedChequeFileUpload: "case.cheque",
+  depositChequeFileUpload: "case.cheque.depositslip",
+  returnMemoFileUpload: "case.cheque.returnmemo",
+  legalDemandNoticeFileUpload: "case.demandnotice",
+  proofOfDispatchFileUpload: "case.demandnotice.proof",
+  proofOfAcknowledgmentFileUpload: "case.demandnotice.serviceproof",
+  proofOfReplyFileUpload: "case.replynotice",
+  debtLiabilityFileUpload: "case.liabilityproof",
+  condonationFileUpload: "CONDONATION_DOC",
+  swornStatement: "case.affidavit.225bnss",
+  SelectUploadDocWithName: "case.docs",
+  vakalatnamaFileUpload: "VAKALATNAMA_DOC",
+};
+
+const token = localStorage.getItem("token");
+
 export const getFileByFileStoreId = async (uri) => {
   try {
     const response = await axios.get(uri, {
       responseType: "blob", // To treat the response as a binary Blob
+      headers: {
+        "auth-token": `${token}`,
+      },
     });
     // Create a file object from the response Blob
     const file = new File([response.data], "downloaded-file.pdf", {
@@ -155,7 +180,7 @@ export const getFileByFileStoreId = async (uri) => {
   }
 };
 
-export const combineMultipleFiles = async (pdfFilesArray, finalFileName = "combined-document.pdf") => {
+export const combineMultipleFiles = async (pdfFilesArray, finalFileName = "combined-document.pdf", key) => {
   const tenantId = Digit.ULBService.getCurrentTenantId();
   const formData = new FormData();
 
@@ -178,17 +203,17 @@ export const combineMultipleFiles = async (pdfFilesArray, finalFileName = "combi
 
   try {
     // ${Urls.CombineDocuments} // check- Should use this but it is causing circular dependency, need to relocate Urls
-    const combineDocumentsUrl = `${window.location.origin}/egov-pdf/dristi-pdf/combine-documents`;
+    const combineDocumentsUrl = `${window.location.origin}/egov-pdf/dristi-pdf/combine-documents?tenantId=${tenantId}`;
     const response = await axios.post(combineDocumentsUrl, formData, {
       headers: {
-        // "Content-Type": "multipart/form-data",
+        "auth-token": `${token}`,
       },
-      responseType: "blob", // To handle the response as a Blob
+      responseType: "blob",
     });
     const file = new File([response.data], finalFileName, { type: response.data.type });
     return [file];
   } catch (error) {
     console.error("Error:", error);
-    throw error;
+    throw new DocumentUploadError(`Document upload failed: ${error.message}`, documentsTypeMapping[key]);
   }
 };
