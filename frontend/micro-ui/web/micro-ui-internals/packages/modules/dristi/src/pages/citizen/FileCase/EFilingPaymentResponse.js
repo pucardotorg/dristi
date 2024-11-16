@@ -5,6 +5,7 @@ import { useHistory, useLocation } from "react-router-dom/cjs/react-router-dom.m
 import CustomCopyTextDiv from "../../../components/CustomCopyTextDiv";
 import SelectCustomNote from "../../../components/SelectCustomNote";
 import { Urls } from "../../../hooks";
+import useDownloadCasePdf from "../../../hooks/dristi/useDownloadCasePdf";
 
 const customNoteConfig = {
   populators: {
@@ -48,7 +49,6 @@ function EFilingPaymentResponse({ t, setShowModal, header, subHeader, submitModa
   const tenantId = Digit.ULBService.getCurrentTenantId();
   const caseId = location.state.state.caseId;
 
-  const uri = `${window.location.origin}${Urls.FileFetchById}?tenantId=${tenantId}&fileStoreId=${fileStoreId}`;
   const commonProps = {
     whichSvg: "tick",
     headerStyles: { fontSize: "32px" },
@@ -66,7 +66,7 @@ function EFilingPaymentResponse({ t, setShowModal, header, subHeader, submitModa
         successful: false,
         message: t("CS_PAYMENT_FAILED"),
       };
-
+  const { downloadPdf } = useDownloadCasePdf();
   return (
     <div className=" user-registration">
       <div className="e-filing-payment" style={{ minHeight: "100%", height: "100%" }}>
@@ -96,10 +96,7 @@ function EFilingPaymentResponse({ t, setShowModal, header, subHeader, submitModa
               }}
             />
           ) : (
-            <a
-              href={uri}
-              target="_blank"
-              rel="noreferrer"
+            <Button
               style={{
                 display: "flex",
                 color: "#505A5F",
@@ -109,15 +106,14 @@ function EFilingPaymentResponse({ t, setShowModal, header, subHeader, submitModa
                 overflow: "hidden",
                 textOverflow: "ellipsis",
               }}
-            >
-              <Button
-                variation={"secondary"}
-                className={"secondary-button-selector"}
-                label={t("CS_PRINT_RECEIPT")}
-                labelClassName={"secondary-label-selector"}
-                onButtonClick={() => {}}
-              />
-            </a>
+              variation={"secondary"}
+              className={"secondary-button-selector"}
+              label={t("CS_PRINT_RECEIPT")}
+              labelClassName={"secondary-label-selector"}
+              onButtonClick={() => {
+                downloadPdf(tenantId, fileStoreId);
+              }}
+            />
           )}
 
           <Button

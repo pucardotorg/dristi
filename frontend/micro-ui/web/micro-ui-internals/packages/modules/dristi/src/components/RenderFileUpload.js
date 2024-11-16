@@ -1,13 +1,13 @@
 import React, { useEffect, useState } from "react";
 import { CloseIcon, FileIcon } from "../icons/svgIndex";
 import { Urls } from "../hooks";
+import useDownloadCasePdf from "../hooks/dristi/useDownloadCasePdf";
 
 function RenderFileUpload({ handleDeleteFile, fileData, index, disableUploadDelete = false, displayName, fileStoreId }) {
   console.log(fileStoreId);
   const [file, setFile] = useState(null);
   const tenantId = window?.Digit.ULBService.getCurrentTenantId();
-  const uri = `${window.location.origin}${Urls.FileFetchById}?tenantId=${tenantId}&fileStoreId=${fileStoreId?.fileStoreId}`;
-
+  const { downloadPdf } = useDownloadCasePdf();
   useEffect(() => {
     if (fileData?.fileStore) {
       const draftFile = new File(["draft content"], fileData.documentName || "Unnamed File", {
@@ -22,9 +22,9 @@ function RenderFileUpload({ handleDeleteFile, fileData, index, disableUploadDele
       <div className={`uploaded-file-div-sub ${fileData?.uploadErrorInfo ? "error" : ""}`}>
         <div className="uploaded-file-div-icon-area">
           <div className="uploaded-file-icon">
-            <a href={uri} target="_blank" rel="noreferrer">
+            <button onClick={() => downloadPdf(tenantId, fileStoreId?.fileStoreId)} style={{background :"black"}}>
               <FileIcon />
-            </a>
+            </button>
           </div>
           <span style={{ margin: "2px", color: "#505A5F", fontSize: "14px" }}>
             {displayName || (fileData?.fileStore ? file?.name : fileData?.name) || "Unnamed File"}

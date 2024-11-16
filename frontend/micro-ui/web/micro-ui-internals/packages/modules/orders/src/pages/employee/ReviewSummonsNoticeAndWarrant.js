@@ -69,12 +69,28 @@ const ReviewSummonsNoticeAndWarrant = () => {
 
   const handleDownload = useCallback(() => {
     const fileStoreId = rowData?.documents?.filter((data) => data?.documentType === "SIGNED")?.[0]?.fileStore;
-    const url = `${window.location.origin}${Urls.FileFetchById}?tenantId=${tenantId}&fileStoreId=${fileStoreId}`;
-    const link = document.createElement("a");
-    link.href = url;
-    document.body.appendChild(link);
-    link.click();
-    document.body.removeChild(link);
+    const uri = `${window.location.origin}${Urls.FileFetchById}?tenantId=${tenantId}&fileStoreId=${fileStoreId}`;
+    const authToken = localStorage.getItem("token");
+    axios
+      .get(uri, {
+        headers: {
+          "auth-token": `${authToken}`,
+        },
+        responseType: "blob",
+      })
+      .then((response) => {
+        if (response.status === 200) {
+          const blob = new Blob([response.data], { type: "application/octet-stream" });
+          const blobUrl = URL.createObjectURL(blob);
+
+          window.open(blobUrl, "_blank");
+        } else {
+          console.error("Failed to fetch the PDF:", response.statusText);
+        }
+      })
+      .catch((error) => {
+        console.error("Error during the API request:", error);
+      });
   }, [rowData, tenantId]);
 
   const { data: fetchedTasksData, refetch } = Digit.Hooks.hearings.useGetTaskList(

@@ -5,6 +5,7 @@ import React, { useEffect, useMemo, useState } from "react";
 import useESign from "../hooks/orders/useESign";
 import { Urls } from "../hooks/services/Urls";
 import useDocumentUpload from "../hooks/orders/useDocumentUpload";
+import AuthenticatedLink from "@egovernments/digit-ui-module-dristi/src/Utils/authenticatedLink";
 
 const AddSignatureComponent = ({ t, isSigned, setIsSigned, handleSigned, rowData, setSignatureId, deliveryChannel }) => {
   const { handleEsign, checkSignStatus } = useESign();
@@ -146,9 +147,12 @@ const AddSignatureComponent = ({ t, isSigned, setIsSigned, handleSigned, rowData
               </div>
               <div style={{ display: "flex", gap: "8px" }}>
                 <h2 style={{ margin: 0 }}>{t("WANT_TO_DOWNLOAD")}</h2>
-                <a href={uri} target="_blank" rel="noreferrer" style={{ color: "#007E7E", cursor: "pointer", textDecoration: "underline" }}>
-                  {t("CLICK_HERE")}
-                </a>
+                <AuthenticatedLink
+                  uri={uri}
+                  style={{ color: "#007E7E", cursor: "pointer", textDecoration: "underline" }}
+                  t={t}
+                  displayFilename={"CLICK_HERE"}
+                />
               </div>
             </div>
           ) : (

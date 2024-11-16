@@ -3,6 +3,7 @@ import { Banner, Button, DownloadIcon } from "@egovernments/digit-ui-react-compo
 import { FileIcon, PrintIcon } from "@egovernments/digit-ui-react-components";
 import React, { useMemo } from "react";
 import { Urls } from "../hooks/services/Urls";
+import AuthenticatedLink from "@egovernments/digit-ui-module-dristi/src/Utils/authenticatedLink";
 
 const submitButtonStyle = {
   fontFamily: "Roboto",
@@ -70,14 +71,12 @@ const CustomStepperSuccess = ({
           <button className="print-button" disabled={!fileStore}>
             <PrintIcon />
             {fileStore ? (
-              <a
-                href={`${window.location.origin}${Urls.FileFetchById}?tenantId=${tenantId}&fileStoreId=${fileStore}`}
-                target="_blank"
-                rel="noreferrer"
+              <AuthenticatedLink
+                uri={`${window.location.origin}${Urls.FileFetchById}?tenantId=${tenantId}&fileStoreId=${fileStore}`}
+                t={t}
                 style={{ marginLeft: "0.5rem", color: "#007E7E" }}
-              >
-                Print
-              </a>
+                displayFilename={"PRINT"}
+              />
             ) : (
               <span style={{ marginLeft: "0.5rem", color: "grey" }}>Print</span>
             )}
