@@ -41,7 +41,7 @@ function PublishedOrderModal({
     const submissionParty = order?.additionalDetails?.formdata?.submissionParty?.map((item) => item.uuid).flat();
     return (
       submissionParty?.includes(userInfo?.uuid) &&
-      userRoles.includes("APPLICATION_CREATOR") &&
+      userRoles.includes("SUBMISSION_CREATOR") &&
       [
         CaseWorkflowState.PENDING_ADMISSION_HEARING,
         CaseWorkflowState.ADMISSION_HEARING_SCHEDULED,

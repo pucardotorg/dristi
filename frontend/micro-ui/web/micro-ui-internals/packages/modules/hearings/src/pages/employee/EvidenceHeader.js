@@ -55,7 +55,7 @@ const EvidenceHearingHeader = ({ hearing, caseData, filingNumber, setActiveTab, 
   );
 
   const showMakeSubmission = useMemo(() => {
-    return isAdvocatePresent && userRoles?.includes("APPLICATION_CREATOR");
+    return isAdvocatePresent && userRoles?.includes("SUBMISSION_CREATOR");
   }, [userRoles, isAdvocatePresent]);
 
   return (
