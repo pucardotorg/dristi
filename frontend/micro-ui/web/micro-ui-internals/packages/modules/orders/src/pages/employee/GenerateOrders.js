@@ -199,9 +199,9 @@ const GenerateOrders = () => {
       tenantId,
     },
     {},
-    "dristi",
+    `case-details-${filingNumber}`,
     filingNumber,
-    filingNumber
+    Boolean(filingNumber)
   );
   const userInfo = Digit.UserService.getUser()?.info;
 

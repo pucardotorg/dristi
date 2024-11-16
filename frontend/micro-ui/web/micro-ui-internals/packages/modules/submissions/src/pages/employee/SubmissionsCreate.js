@@ -276,9 +276,9 @@ const SubmissionsCreate = ({ path }) => {
       tenantId,
     },
     {},
-    "dristi",
+    `case-details-${filingNumber}`,
     filingNumber,
-    filingNumber
+    Boolean(filingNumber)
   );
 
   const caseDetails = useMemo(() => {
