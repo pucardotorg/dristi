@@ -82,6 +82,7 @@ export const userTypeOptions = [
       "TASK_VIEWER",
       "CASE_RESPONDER",
       "HEARING_ACCEPTOR",
+      "USER_REGISTER",
       "ADVOCATE_VIEWER",
       "PENDING_TASK_CREATOR",
     ],

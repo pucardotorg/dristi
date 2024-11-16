@@ -39,14 +39,14 @@ export const UICustomizations = {
       const userType = userInfo?.type === "CITIZEN" ? "citizen" : "employee";
       const searchParams = new URLSearchParams();
       const showAction =
-        (row.hearing.status === "SCHEDULED" && userInfo?.roles.map((role) => role.code).includes("HEARING_START")) ||
+        (row.hearing.status === "SCHEDULED" && userInfo?.roles.map((role) => role.code).includes("HEARING_EDITOR")) ||
         row.hearing.status === HearingWorkflowState?.INPROGRESS;
       searchParams.set("hearingId", row.hearingId);
       switch (key) {
         case "Actions":
           return (
             <div style={{ display: "flex", justifyContent: "flex-end  ", alignItems: "center" }}>
-              {row.hearing.status === "SCHEDULED" && userInfo?.roles.map((role) => role.code).includes("HEARING_START") && (
+              {row.hearing.status === "SCHEDULED" && userInfo?.roles.map((role) => role.code).includes("HEARING_EDITOR") && (
                 <Button
                   variation={"secondary"}
                   label={t(`START_HEARING`)}
@@ -65,10 +65,10 @@ export const UICustomizations = {
                   }}
                 />
               )}
-              {row.hearing.status === "SCHEDULED" && !userInfo.roles.map((role) => role.code).includes("HEARING_START") && (
+              {row.hearing.status === "SCHEDULED" && !userInfo.roles.map((role) => role.code).includes("HEARING_EDITOR") && (
                 <span style={{ color: "#007E7E" }}>{t("HEARING_AWAITING_START")}</span>
               )}
-              {row.hearing.status === HearingWorkflowState?.INPROGRESS && userInfo.roles.map((role) => role.code).includes("HEARING_START") && (
+              {row.hearing.status === HearingWorkflowState?.INPROGRESS && userInfo.roles.map((role) => role.code).includes("HEARING_EDITOR") && (
                 <Button
                   variation={"secondary"}
                   label={t("JOIN_HEARING")}

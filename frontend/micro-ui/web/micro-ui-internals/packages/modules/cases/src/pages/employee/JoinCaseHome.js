@@ -2337,6 +2337,9 @@ const JoinCaseHome = ({ refreshInbox, setShowSubmitResponseModal, setResponsePen
                     "SUBMISSION_DELETE",
                     "TASK_VIEWER",
                     "PENDING_TASK_CREATOR",
+                    "ADVOCATE_VIEWER",
+                    "CASE_RESPONDER",
+                    "HEARING_ACCEPTOR",
                   ]?.map((role) => ({
                     code: role,
                     name: role,
