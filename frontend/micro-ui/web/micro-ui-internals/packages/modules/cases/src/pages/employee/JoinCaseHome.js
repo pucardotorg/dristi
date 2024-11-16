@@ -313,8 +313,9 @@ const JoinCaseHome = ({ refreshInbox, setShowSubmitResponseModal, setResponsePen
   };
 
   function findNextHearings(objectsList) {
-    const now = Date.now();
-    const futureStartTimes = objectsList.filter((obj) => obj.startTime > now);
+    const now = new Date();
+    now?.setHours(0, 0, 0, 0);
+    const futureStartTimes = objectsList.filter((obj) => obj.startTime >= now);
     futureStartTimes.sort((a, b) => a.startTime - b.startTime);
     return futureStartTimes.length > 0 ? futureStartTimes[0] : null;
   }
