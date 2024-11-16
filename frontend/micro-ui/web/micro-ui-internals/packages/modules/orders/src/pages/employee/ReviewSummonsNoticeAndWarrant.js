@@ -522,7 +522,7 @@ const ReviewSummonsNoticeAndWarrant = () => {
         ></InboxSearchComposer>
         {showActionModal && (
           <DocumentModal
-            config={config?.label === "Pending" ? (actionModalType !== "SIGN_PENDING" ? signedModalConfig : unsignedModalConfig) : sentModalConfig}
+            config={config?.label === "PENDING" ? (actionModalType !== "SIGN_PENDING" ? signedModalConfig : unsignedModalConfig) : sentModalConfig}
             currentStep={step}
           />
         )}
