@@ -2248,7 +2248,7 @@ export const updateCaseDetails = async ({
   }
   if (selected === "reviewCaseFile") {
     if (caseComplaintDocument) {
-      data.documents = [...(data.documents || []), caseComplaintDocument];
+      tempDocList = [...tempDocList, caseComplaintDocument];
     }
 
     data.additionalDetails = {
