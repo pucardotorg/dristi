@@ -533,17 +533,17 @@ exports.generateOptionalDocDescriptions = async (documentList) => {
         switch (document.documentType) {
             case "AUTHORIZED_COMPLAINANT_COMPANY_REPRESENTATIVE":
                 return `Digital record of proof of authorized representative of the company in complainant`;
-            case "INQUIRY_AFFIDAVIT_S225":
+            case "case.affidavit.225bnss":
                 return `Digital record of Affidavit in-lieu-of inquiry under section 225, Bharatiya Nagarik Suraksha Sanhita, 2024`;
             case "AUTHORIZED_ACCUSED_COMPANY_REPRESENTATIVE":
                 return `Digital record of proof of authorized representative of the company in accused`;
-            case "DEBT_LIABILITY":
+            case "case.liabilityproof":
                 return `Digital record of proof of Debt/Liability`;
             case "COMPLAINANT_ID_PROOF":
                 return `Digital record of proof of Complainant ID Proof`;
             case "CONDONATION_DOC":
                 return `Digital record of proof of Delay Condonation`;
-            case "COMPLAINT_ADDITIONAL_DOCUMENTS":
+            case "case.docs":
                 return `Digital record of proof of Complaint Additional Documents`;
             case "VAKALATNAMA_DOC":
                 return `Digital record of proof of Advocate Vakalatnama`;
