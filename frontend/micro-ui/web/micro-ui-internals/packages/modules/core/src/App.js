@@ -1,12 +1,30 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { Redirect, Route, Switch, useHistory, useLocation } from "react-router-dom";
 import CitizenApp from "./pages/citizen";
 import EmployeeApp from "./pages/employee";
+import { useTranslation } from "react-i18next";
+import TopBarSideBar from "./components/TopBarSideBar";
+const styles = {
+  container: {
+    display: "flex",
+    justifyContent: "center",
+    alignItems: "center",
+    height: "100vh",
+    width: "100vw",
+    padding: "0 20px",
+    boxSizing: "border-box",
+  },
+  text: {
+    fontSize: "24px",
+    color: "#333",
+  },
+};
 
 export const DigitApp = ({ stateCode, modules, appTenants, logoUrl, initData ,defaultLanding="citizen"}) => {
   const history = useHistory();
   const { pathname } = useLocation();
   const innerWidth = window.innerWidth;
+  const [isMobileView, setIsMobileView] = useState(window.innerWidth < 900);
   const cityDetails = Digit.ULBService.getCurrentUlb();
   const userDetails = Digit.UserService.getUser();
   const { data: storeData } = Digit.Hooks.useStore.getInitData();
@@ -38,6 +56,15 @@ export const DigitApp = ({ stateCode, modules, appTenants, logoUrl, initData ,de
     }
   }, [pathname]);
 
+  useEffect(() => {
+    const handleResize = () => {
+      setIsMobileView(window.innerWidth < 900);
+    };
+
+    window.addEventListener("resize", handleResize);
+    return () => window.removeEventListener("resize", handleResize);
+  }, []);
+
   history.listen(() => {
     window?.scrollTo({ top: 0, left: 0, behavior: "smooth" });
   });
@@ -64,6 +91,27 @@ export const DigitApp = ({ stateCode, modules, appTenants, logoUrl, initData ,de
     pathname,
     initData,
   };
+
+  const {t}= useTranslation()
+
+  if (isMobileView) {
+    return  (
+      <div style={styles.container}>
+         <TopBarSideBar
+        t={t}
+        stateInfo={stateInfo}
+        userDetails={userDetails}
+        cityDetails={cityDetails}
+        mobileView={false}
+        handleUserDropdownSelection={handleUserDropdownSelection}
+        logoUrl={logoUrl}
+        showSidebar={true}
+      />
+       <h1 style={styles.text}>{t("MOBILE_VIEW_ERROR")}</h1>
+      </div>
+    );
+  }
+
   return (
     <Switch>
       <Route path={`/${window?.contextPath}/employee`}>

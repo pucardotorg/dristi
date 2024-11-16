@@ -276,9 +276,9 @@ const SubmissionsCreate = ({ path }) => {
       tenantId,
     },
     {},
-    "dristi",
+    `case-details-${filingNumber}`,
     filingNumber,
-    filingNumber
+    Boolean(filingNumber)
   );
 
   const caseDetails = useMemo(() => {
@@ -328,7 +328,7 @@ const SubmissionsCreate = ({ path }) => {
   const latestExtensionOrder = useMemo(() => extensionOrders?.[0], [extensionOrders]);
 
   const { entityType, taxHeadMasterCode } = useMemo(() => {
-    const isResponseRequired = orderDetails?.additionalDetails?.formdata?.responseInfo?.isResponseRequired?.code === true;
+    const isResponseRequired = orderDetails?.orderDetails.isResponseRequired?.code === true;
     if ((orderNumber || orderRefNumber) && referenceId) {
       return {
         entityType: isResponseRequired ? "application-order-submission-feedback" : "application-order-submission-default",
@@ -616,11 +616,10 @@ const SubmissionsCreate = ({ path }) => {
             onBehalOfName: onBehalfOfLitigent?.additionalDetails?.fullName,
             partyType: "complainant.primary",
             ...(orderDetails &&
-              orderDetails?.additionalDetails?.formdata?.responseInfo?.isResponseRequired?.code === true && {
+              orderDetails?.orderDetails.isResponseRequired?.code === true && {
                 respondingParty: orderDetails?.additionalDetails?.formdata?.responseInfo?.respondingParty,
               }),
-            isResponseRequired:
-              orderDetails && !isExtension ? orderDetails?.additionalDetails?.formdata?.responseInfo?.isResponseRequired?.code === true : true,
+            isResponseRequired: orderDetails && !isExtension ? orderDetails?.orderDetails.isResponseRequired?.code === true : true,
             ...(hearingId && { hearingId }),
             owner: caseDetails?.additionalDetails?.payerName,
           },
@@ -668,7 +667,7 @@ const SubmissionsCreate = ({ path }) => {
         tenantId,
       };
 
-      await submissionService.updateApplication(reqBody, { tenantId });
+      const submissionResponse = await submissionService.updateApplication(reqBody, { tenantId });
       if (isCitizen) {
         await createPendingTask({ name: t("ESIGN_THE_SUBMISSION"), status: "ESIGN_THE_SUBMISSION", isCompleted: true });
         await createPendingTask({
@@ -694,6 +693,7 @@ const SubmissionsCreate = ({ path }) => {
       }
       applicationRefetch();
       setShowPaymentModal(true);
+      return submissionResponse;
     } catch (error) {
       setShowReviewModal(true);
     }
@@ -748,10 +748,31 @@ const SubmissionsCreate = ({ path }) => {
     setLoader(true);
     try {
       await createDemand();
-      await updateSubmission(SubmissionWorkflowAction.ESIGN);
+      const response = await updateSubmission(SubmissionWorkflowAction.ESIGN);
+      if (response && response?.application?.additionalDetails?.isResponseRequired) {
+        await submissionService.customApiService(Urls.application.taskCreate, {
+          task: {
+            workflow: {
+              action: "CREATE",
+            },
+            filingNumber: response?.application?.filingNumber,
+            assignedTo: response?.application?.additionalDetails?.respondingParty
+              ?.flatMap((item) => item?.uuid?.map((u) => ({ uuid: u })))
+              ?.filter((item) => item?.uuid !== userInfo?.uuid),
+            state: "PENDINGRESPONSE",
+            referenceId: response?.application?.applicationNumber,
+            taskType: "PENDING_TASK",
+            tenantId,
+            status: "INPROGRESS",
+            dueDate: orderDetails?.orderDetails?.dates?.submissionDeadlineDate,
+          },
+          tenantId,
+        });
+      }
     } catch (error) {
       setLoader(false);
     }
+    setLoader(false);
   };
 
   const handleCloseSignaturePopup = () => {
@@ -809,6 +830,12 @@ const SubmissionsCreate = ({ path }) => {
                 collectionAmount: 0,
               },
             ],
+            additionalDetails: {
+              filingNumber: caseDetails?.filingNumber,
+              cnrNumber: caseDetails?.cnrNumber,
+              payer: caseDetails?.litigants?.[0]?.additionalDetails?.fullName,
+              payerMobileNo: caseDetails?.additionalDetails?.payerMobileNo,
+            },
           },
         ],
       });

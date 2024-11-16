@@ -100,7 +100,7 @@ const NextHearingCard = ({ caseData, width }) => {
           color: "#231F20",
         }}
       >
-        Next Hearing
+        {t("NEXT_HEARING")}
       </div>
       <hr style={{ border: "1px solid #FFF6E880" }} />
       <div style={{ display: "flex", justifyContent: "space-between", padding: "10px" }}>

@@ -15,7 +15,8 @@ import org.pucar.dristi.repository.ServiceRequestRepository;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.*;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 import static org.pucar.dristi.config.ServiceConstants.TASK_PATH;
 
 @ExtendWith(MockitoExtension.class)
@@ -61,7 +62,7 @@ class TaskUtilTest {
         when(util.constructArray(response, TASK_PATH)).thenReturn(taskArray);
 
         // Call the method
-        Object result = taskUtil.getTask(request, tenantId, taskNumber);
+        Object result = taskUtil.getTask(request, tenantId, taskNumber, null, null);
 
         // Verify
         assertEquals(taskArray.get(0), result);
@@ -94,7 +95,7 @@ class TaskUtilTest {
         when(util.constructArray(response, TASK_PATH)).thenReturn(taskArray);
 
         // Call the method
-        Object result = taskUtil.getTask(request, tenantId, taskNumber);
+        Object result = taskUtil.getTask(request, tenantId, taskNumber, null, null);
 
         // Verify
         assertNull(result);
@@ -108,7 +109,7 @@ class TaskUtilTest {
 
         // Call the method and expect exception
         try {
-            taskUtil.getTask(request, tenantId, taskNumber);
+            taskUtil.getTask(request, tenantId, taskNumber, null, null);
         } catch (RuntimeException e) {
             assertEquals("Error while fetching or processing the task response", e.getMessage());
         }

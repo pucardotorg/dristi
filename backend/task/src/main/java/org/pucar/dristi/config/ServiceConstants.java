@@ -88,6 +88,11 @@ public class ServiceConstants {
     public static final String FILTER_PAYMENT_TYPE_DELIVERY_CHANNEL = "$[?(@.deliveryChannel == '%s' && @.businessService[?(@.businessCode == '%s')])]";
 
     public static final String UPLOAD_TASK_DOCUMENT_ERROR = "UPLOAD_TASK_DOCUMENT_ERROR";
+    public static final String PENDING_TASK_CREATOR = "PENDING_TASK_CREATOR";
+    public static final String PENDING_TASK = "PENDING_TASK";
 
+    public static final String ERROR_WHILE_FETCHING_FROM_CASE ="ERROR_WHILE_FETCHING_FROM_CASE";
+
+    public static final String REQUEST_INFO = "RequestInfo";
 
 }

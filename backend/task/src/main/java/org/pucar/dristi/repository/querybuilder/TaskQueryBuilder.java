@@ -20,7 +20,7 @@ public class TaskQueryBuilder {
     private static final String BASE_CASE_QUERY = "SELECT task.id as id, task.tenantid as tenantid, task.orderid as orderid, task.createddate as createddate," +
             " task.filingnumber as filingnumber, task.tasknumber as tasknumber, task.datecloseby as datecloseby, task.dateclosed as dateclosed, task.taskdescription as taskdescription, task.cnrnumber as cnrnumber," +
             " task.taskdetails as taskdetails, task.assignedto as assignedto, task.tasktype as tasktype, task.assignedto as assignedto, task.status as status, task.isactive as isactive,task.additionaldetails as additionaldetails, task.createdby as createdby," +
-            " task.lastmodifiedby as lastmodifiedby, task.createdtime as createdtime, task.lastmodifiedtime as lastmodifiedtime";
+            " task.lastmodifiedby as lastmodifiedby, task.createdtime as createdtime, task.lastmodifiedtime as lastmodifiedtime ,task.referenceid as referenceid , task.state as state";
     private static final String FROM_TASK_TABLE = " FROM dristi_task task";
 
     private static final String DOCUMENT_SELECT_QUERY_CASE = "SELECT doc.id as id, doc.documenttype as documenttype, doc.filestore as filestore," +
@@ -35,7 +35,7 @@ public class TaskQueryBuilder {
 
     private static final String DEFAULT_ORDERBY_CLAUSE = " ORDER BY task.createdtime DESC ";
     private static final String ORDERBY_CLAUSE = " ORDER BY task.{orderBy} {sortingOrder} ";
-    private  static  final String TOTAL_COUNT_QUERY = "SELECT COUNT(*) FROM ({baseQuery}) total_result";
+    private static final String TOTAL_COUNT_QUERY = "SELECT COUNT(*) FROM ({baseQuery}) total_result";
 
 
     public String getTotalCountQuery(String baseQuery) {
@@ -64,13 +64,15 @@ public class TaskQueryBuilder {
         return pagination == null || pagination.getSortBy() == null || pagination.getOrder() == null;
     }
 
-    public String checkTaskExistQuery(String cnrNumber, String filingNumber, UUID taskId, List<Object> preparedStmtList) {
+    public String checkTaskExistQuery(String cnrNumber, String filingNumber, UUID taskId, String referenceId, String state, List<Object> preparedStmtList) {
         try {
             StringBuilder query = new StringBuilder(BASE_CASE_EXIST_QUERY);
             boolean firstCriteria = true;
-            firstCriteria = addTaskCriteriaExist(cnrNumber, query, firstCriteria, "task.cnrnumber = ?" ,preparedStmtList);
-            firstCriteria = addTaskCriteriaExist(filingNumber, query, firstCriteria, "task.filingnumber = ?",preparedStmtList);
-            addTaskCriteriaExist(taskId != null ? taskId.toString() : null, query, firstCriteria, "task.id = ?",preparedStmtList);
+            firstCriteria = addTaskCriteriaExist(cnrNumber, query, firstCriteria, "task.cnrnumber = ?", preparedStmtList);
+            firstCriteria = addTaskCriteriaExist(filingNumber, query, firstCriteria, "task.filingnumber = ?", preparedStmtList);
+            firstCriteria = addTaskCriteriaExist(referenceId, query, firstCriteria, "task.referenceid = ?", preparedStmtList);
+            firstCriteria = addTaskCriteriaExist(state, query, firstCriteria, "task.state = ?", preparedStmtList);
+            addTaskCriteriaExist(taskId != null ? taskId.toString() : null, query, firstCriteria, "task.id = ?", preparedStmtList);
 
             return query.toString();
         } catch (Exception e) {
@@ -88,17 +90,21 @@ public class TaskQueryBuilder {
             String id = criteria.getId();
             String status = criteria.getStatus();
             UUID orderId = criteria.getOrderId();
+            String referenceId = criteria.getReferenceId();
+            String state = criteria.getState();
 
             StringBuilder query = new StringBuilder(BASE_CASE_QUERY);
             query.append(FROM_TASK_TABLE);
             boolean firstCriteria = true; // To check if it's the first criteria
 
-            firstCriteria = addTaskCriteria(id, query, firstCriteria, "task.id = ?", preparedStmtList,preparedStmtArgList);
-            firstCriteria = addTaskCriteria(tenantId, query, firstCriteria, "task.tenantid = ?", preparedStmtList,preparedStmtArgList);
-            firstCriteria = addTaskCriteria(status, query, firstCriteria, "task.status = ?", preparedStmtList,preparedStmtArgList);
-            firstCriteria = addTaskCriteria(orderId != null ? orderId.toString() : null, query, firstCriteria, "task.orderid = ?", preparedStmtList,preparedStmtArgList);
-            firstCriteria = addTaskCriteria(cnrNumber, query, firstCriteria, "task.cnrnumber = ?", preparedStmtList,preparedStmtArgList);
-            addTaskCriteria(taskNumber, query, firstCriteria, "task.tasknumber = ?", preparedStmtList,preparedStmtArgList);
+            firstCriteria = addTaskCriteria(id, query, firstCriteria, "task.id = ?", preparedStmtList, preparedStmtArgList);
+            firstCriteria = addTaskCriteria(tenantId, query, firstCriteria, "task.tenantid = ?", preparedStmtList, preparedStmtArgList);
+            firstCriteria = addTaskCriteria(status, query, firstCriteria, "task.status = ?", preparedStmtList, preparedStmtArgList);
+            firstCriteria = addTaskCriteria(orderId != null ? orderId.toString() : null, query, firstCriteria, "task.orderid = ?", preparedStmtList, preparedStmtArgList);
+            firstCriteria = addTaskCriteria(cnrNumber, query, firstCriteria, "task.cnrnumber = ?", preparedStmtList, preparedStmtArgList);
+            firstCriteria = addTaskCriteria(referenceId, query, firstCriteria, "task.referenceid = ?", preparedStmtList,preparedStmtArgList);
+            firstCriteria = addTaskCriteria(state, query, firstCriteria, "task.state = ?", preparedStmtList,preparedStmtArgList);
+            addTaskCriteria(taskNumber, query, firstCriteria, "task.tasknumber = ?", preparedStmtList, preparedStmtArgList);
 
             return query.toString();
         } catch (Exception e) {
@@ -106,6 +112,7 @@ public class TaskQueryBuilder {
             throw new CustomException(TASK_SEARCH_QUERY_EXCEPTION, "Exception occurred while building the task search query: " + e.getMessage());
         }
     }
+
     private boolean addTaskCriteriaExist(String criteria, StringBuilder query, boolean firstCriteria, String str, List<Object> preparedStmtList) {
         if (criteria != null && !criteria.isEmpty()) {
             addClauseIfRequired(query, firstCriteria);
@@ -117,7 +124,7 @@ public class TaskQueryBuilder {
     }
 
 
-    private boolean addTaskCriteria(String criteria, StringBuilder query, boolean firstCriteria, String str, List<Object> preparedStmtList,List<Integer> preparedStmtArgList) {
+    private boolean addTaskCriteria(String criteria, StringBuilder query, boolean firstCriteria, String str, List<Object> preparedStmtList, List<Integer> preparedStmtArgList) {
         if (criteria != null && !criteria.isEmpty()) {
             addClauseIfRequired(query, firstCriteria);
             query.append(str);
@@ -138,14 +145,14 @@ public class TaskQueryBuilder {
                         .append(ids.stream().map(id -> "?").collect(Collectors.joining(",")))
                         .append(")");
                 preparedStmtList.addAll(ids);
-                ids.forEach(i->preparedStmtArgListDoc.add(Types.VARCHAR));
+                ids.forEach(i -> preparedStmtArgListDoc.add(Types.VARCHAR));
             }
 
             return query.toString();
         } catch (CustomException e) {
             throw e;
         } catch (Exception e) {
-            log.error("Error while building document search query :: {}",e.toString());
+            log.error("Error while building document search query :: {}", e.toString());
             throw new CustomException(DOCUMENT_SEARCH_QUERY_EXCEPTION, "Exception occurred while building the query for task document search: " + e.getMessage());
         }
     }
@@ -159,14 +166,14 @@ public class TaskQueryBuilder {
                         .append(ids.stream().map(id -> "?").collect(Collectors.joining(",")))
                         .append(")");
                 preparedStmtList.addAll(ids);
-                ids.forEach(i->preparedStmtArgListAm.add(Types.VARCHAR));
+                ids.forEach(i -> preparedStmtArgListAm.add(Types.VARCHAR));
             }
 
             return query.toString();
         } catch (CustomException e) {
             throw e;
         } catch (Exception e) {
-            log.error("Error while building amount search query :: {}",e.toString());
+            log.error("Error while building amount search query :: {}", e.toString());
             throw new CustomException(AMOUNT_SEARCH_QUERY_EXCEPTION, "Exception occurred while building the query for amount: " + e.getMessage());
         }
     }

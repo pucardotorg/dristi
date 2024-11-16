@@ -35,9 +35,14 @@ public class ApplicationEnrichment {
         try {
             if (applicationRequest.getRequestInfo().getUserInfo() != null) {
 
-                enrichApplicationNumberByCMPNumber(applicationRequest);
+                String idName = configuration.getApplicationConfig();
+                String idFormat = configuration.getApplicationFormat();
+                String tenantId = applicationRequest.getApplication().getFilingNumber().replace("-","");
+                List<String> applicationIdList = idgenUtil.getIdList(applicationRequest.getRequestInfo(), tenantId, idName, idFormat, 1, false);
 
                 Application application = applicationRequest.getApplication();
+                application.setApplicationNumber(applicationRequest.getApplication().getFilingNumber() + "-" + applicationIdList.get(0));
+
                 AuditDetails auditDetails = AuditDetails
                         .builder()
                         .createdBy(applicationRequest.getRequestInfo().getUserInfo().getUuid())
@@ -86,7 +91,7 @@ public class ApplicationEnrichment {
             String idName = configuration.getCmpConfig();
             String idFormat = configuration.getCmpFormat();
             List<String> cmpNumberIdList = idgenUtil.getIdList(applicationRequest.getRequestInfo(), courtId, idName, idFormat, 1, false);
-            applicationRequest.getApplication().setApplicationNumber(cmpNumberIdList.get(0));
+            applicationRequest.getApplication().setApplicationCMPNumber(cmpNumberIdList.get(0));
         } catch (CustomException e) {
             log.error("Custom Exception while enriching application number by CMP number: {}", e.toString());
             throw new CustomException(ENRICHMENT_EXCEPTION, "Custom Exception in case enrichment service while enriching application number: " + e);

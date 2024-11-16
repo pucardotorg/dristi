@@ -199,9 +199,9 @@ const GenerateOrders = () => {
       tenantId,
     },
     {},
-    "dristi",
+    `case-details-${filingNumber}`,
     filingNumber,
-    filingNumber
+    Boolean(filingNumber)
   );
   const userInfo = Digit.UserService.getUser()?.info;
 
@@ -2133,7 +2133,7 @@ const GenerateOrders = () => {
         },
         OrderWorkflowAction.ESIGN
       );
-      createPendingTask({
+      await createPendingTask({
         order: {
           ...currentOrder,
           ...((newhearingId || hearingNumber || hearingDetails?.hearingId) && {

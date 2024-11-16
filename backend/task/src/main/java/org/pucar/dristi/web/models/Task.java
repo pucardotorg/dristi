@@ -1,6 +1,5 @@
 package org.pucar.dristi.web.models;
 
-import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.Valid;
@@ -14,7 +13,6 @@ import org.egov.common.contract.models.Document;
 import org.egov.common.contract.models.Workflow;
 import org.springframework.validation.annotation.Validated;
 
-import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
@@ -40,11 +38,10 @@ public class Task {
     private String tenantId = null;
 
     @JsonProperty("orderId")
-    @NotNull
-    @Valid
     private UUID orderId = null;
 
     @JsonProperty("filingNumber")
+    @NotNull (message = "filing number is required to create a task")
     private String filingNumber = null;
 
     @JsonProperty("taskNumber")
@@ -84,7 +81,7 @@ public class Task {
     private String status = null;
 
     @JsonProperty("assignedTo")
-    private AssignedTo assignedTo = null;
+    private List<AssignedTo> assignedTo = null;
 
     @JsonProperty("isActive")
     private Boolean isActive = null;
@@ -103,6 +100,12 @@ public class Task {
     @JsonProperty("workflow")
     @Valid
     private Workflow workflow = null;
+
+    @JsonProperty("referenceId")
+    private String referenceId;
+
+    @JsonProperty("state")
+    private String state;
 
 
     public Task addDocumentsItem(Document documentsItem) {

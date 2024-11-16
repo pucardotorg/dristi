@@ -74,25 +74,6 @@ const ViewPaymentDetails = ({ location, match }) => {
   const consumerCodeWithoutSuffix = consumerCode.split("_")[0];
   const [tasksData, setTasksData] = useState(null);
 
-  const { data: caseData, isLoading: isCaseSearchLoading } = useSearchCaseService(
-    {
-      criteria: [
-        caseId
-          ? {
-              caseId,
-            }
-          : {
-              filingNumber,
-            },
-      ],
-      tenantId,
-    },
-    {},
-    "dristi",
-    caseId || filingNumber,
-    caseId || filingNumber
-  );
-
   useEffect(() => {
     const fetchTaskData = async () => {
       const { tasksData = {} } = await handleTaskSearch(businessService, consumerCodeWithoutSuffix, tenantId);
@@ -103,12 +84,6 @@ const ViewPaymentDetails = ({ location, match }) => {
   const summonsPincode = useMemo(() => tasksData?.taskDetails?.respondentDetails?.address?.pincode, [tasksData]);
   const channelId = useMemo(() => extractFeeMedium(tasksData?.taskDetails?.deliveryChannels?.channelName || ""), [tasksData]);
 
-  const caseDetails = useMemo(
-    () => ({
-      ...caseData?.criteria?.[0]?.responseList?.[0],
-    }),
-    [caseData]
-  );
   const { data: paymentDetails, isLoading: isFetchBillLoading } = Digit.Hooks.useFetchBillsForBuissnessService(
     {
       tenantId: tenantId,
@@ -116,7 +91,7 @@ const ViewPaymentDetails = ({ location, match }) => {
       businessService: businessService,
     },
     {
-      enabled: Boolean(tenantId && caseDetails?.filingNumber),
+      enabled: Boolean(tenantId && consumerCode),
     }
   );
   const { data: BillResponse, isLoading: isBillLoading } = Digit.Hooks.dristi.useBillSearch(
@@ -126,9 +101,12 @@ const ViewPaymentDetails = ({ location, match }) => {
       consumerCode,
       service: businessService,
     },
-    `summons-warrant-notice-bill-${consumerCodeWithoutSuffix}`,
-    Boolean(businessService && consumerCodeWithoutSuffix)
+    `summons-warrant-notice-bill-${consumerCodeWithoutSuffix}-${paymentDetails?.Bill[0].billNumber}`,
+    Boolean(businessService && consumerCode)
   );
+
+  const demandBill = useMemo(() => BillResponse?.Bill?.[0]?.billDetails?.[0], [BillResponse]);
+
   const currentBillDetails = useMemo(() => BillResponse?.Bill?.[0], [BillResponse]);
 
   const { data: ePostBillResponse, isLoading: isEPOSTBillLoading } = Digit.Hooks.dristi.useBillSearch(
@@ -146,46 +124,25 @@ const ViewPaymentDetails = ({ location, match }) => {
     ePostBillResponse,
   ]);
 
-  const delayCondonation = useMemo(() => {
-    const today = new Date();
-    if (!caseDetails?.caseDetails?.["demandNoticeDetails"]?.formdata) {
-      return null;
-    }
-    const dateOfAccrual = new Date(caseDetails?.caseDetails["demandNoticeDetails"]?.formdata[0]?.data?.dateOfAccrual);
-    return today?.getTime() - dateOfAccrual?.getTime();
-  }, [caseDetails]);
-  const chequeDetails = useMemo(() => {
-    const debtLiability = caseDetails?.caseDetails?.debtLiabilityDetails?.formdata?.[0]?.data;
-    if (debtLiability?.liabilityType?.code === "PARTIAL_LIABILITY") {
-      return {
-        totalAmount: debtLiability?.totalAmount,
-      };
-    } else {
-      const chequeData = caseDetails?.caseDetails?.chequeDetails?.formdata || [];
-      const totalAmount = chequeData.reduce((sum, item) => {
-        return sum + parseFloat(item.data.chequeAmount);
-      }, 0);
-      return {
-        totalAmount: totalAmount.toString(),
-      };
-    }
-  }, [caseDetails]);
-
   const { data: calculationResponse, isLoading: isPaymentLoading } = Digit.Hooks.dristi.usePaymentCalculator(
     {
       EFillingCalculationCriteria: [
         {
-          checkAmount: chequeDetails?.totalAmount,
+          checkAmount: demandBill?.additionalDetails?.chequeDetails?.totalAmount,
           numberOfApplication: 1,
           tenantId: tenantId,
           caseId: caseId,
-          delayCondonation: delayCondonation,
+          delayCondonation: demandBill?.additionalDetails?.delayCondonation,
         },
       ],
     },
     {},
     "dristi",
-    Boolean(chequeDetails?.totalAmount && chequeDetails.totalAmount !== "0" && paymentType?.toLowerCase()?.includes("case"))
+    Boolean(
+      demandBill?.additionalDetails?.chequeDetails?.totalAmount &&
+        demandBill?.additionalDetails?.chequeDetails.totalAmount !== "0" &&
+        paymentType?.toLowerCase()?.includes("case")
+    )
   );
 
   const { data: breakupResponse, isLoading: isSummonsBreakUpLoading } = Digit.Hooks.dristi.useSummonsPaymentBreakUp(
@@ -229,7 +186,7 @@ const ViewPaymentDetails = ({ location, match }) => {
 
     return updatedCalculation;
   }, [calculationResponse?.Calculation, courtFeeBreakup, totalAmount]);
-  const payerName = useMemo(() => caseDetails?.additionalDetails?.payerName, [caseDetails?.additionalDetails?.payerName]);
+  const payerName = useMemo(() => demandBill?.additionalDetails?.payer, [demandBill?.additionalDetails?.payer]);
   const bill = paymentDetails?.Bill ? paymentDetails?.Bill[0] : null;
 
   const onSubmitCase = async () => {
@@ -248,7 +205,7 @@ const ViewPaymentDetails = ({ location, match }) => {
       });
       taskHearingNumber = hearingNumber || "";
       taskOrderType = orderType || "";
-      taskFilingNumber = tasksData?.filingNumber || caseDetails?.filingNumber;
+      taskFilingNumber = tasksData?.filingNumber || demandBill?.additionalDetails?.filingNumber;
     }
 
     const referenceId = consumerCodeWithoutSuffix;
@@ -274,7 +231,7 @@ const ViewPaymentDetails = ({ location, match }) => {
           tenantId,
           paymentMode: modeOfPayment.code,
           paidBy: "PAY_BY_OWNER",
-          mobileNumber: caseDetails?.additionalDetails?.payerMobileNo || "",
+          mobileNumber: demandBill?.additionalDetails?.payerMobileNo || "",
           payerName: payer || payerName,
           totalAmountPaid: billFetched.totalAmount || totalAmount,
           instrumentNumber: additionDetails,
@@ -289,7 +246,7 @@ const ViewPaymentDetails = ({ location, match }) => {
             referenceId: `MANUAL_${referenceId}`,
             status: "PENDING_PAYMENT",
             cnrNumber: null,
-            filingNumber: caseDetails?.filingNumber || taskFilingNumber,
+            filingNumber: demandBill?.additionalDetails?.filingNumber || taskFilingNumber,
             isCompleted: true,
             stateSla: null,
             additionalDetails: {},
@@ -307,7 +264,7 @@ const ViewPaymentDetails = ({ location, match }) => {
             status: taskOrderType === "SUMMONS" ? paymentTaskType.SUMMON_WARRANT_STATUS : paymentTaskType.NOTICE_STATUS,
             assignedTo: [],
             assignedRole: ["JUDGE_ROLE"],
-            cnrNumber: caseDetails?.cnrNumber,
+            cnrNumber: demandBill?.additionalDetails?.cnrNumber,
             filingNumber: filingNumber,
             isCompleted: false,
             stateSla: 3 * dayInMillisecond + todayDate,
@@ -361,7 +318,7 @@ const ViewPaymentDetails = ({ location, match }) => {
       caseInfo: [
         {
           key: t("CS_CASE_ID"),
-          value: caseDetails?.filingNumber,
+          value: demandBill?.additionalDetails?.filingNumber,
           copyData: false,
         },
         {
@@ -371,10 +328,10 @@ const ViewPaymentDetails = ({ location, match }) => {
         },
       ],
     }),
-    [caseDetails?.filingNumber, paymentType, t]
+    [demandBill?.additionalDetails?.filingNumber, paymentType, t]
   );
 
-  if (isCaseSearchLoading || isFetchBillLoading || isPaymentLoading || isBillLoading || isEPOSTBillLoading || isSummonsBreakUpLoading) {
+  if (isFetchBillLoading || isPaymentLoading || isBillLoading || isEPOSTBillLoading || isSummonsBreakUpLoading) {
     return <Loader />;
   }
   return (

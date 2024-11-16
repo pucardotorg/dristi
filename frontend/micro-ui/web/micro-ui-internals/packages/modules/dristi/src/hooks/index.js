@@ -58,6 +58,7 @@ export const Urls = {
     addEvidenceComment: "/evidence/v1/addcomment",
     pendingTask: "/analytics/pending_task/v1/create",
     getPendingTaskFields: "/inbox/v2/_getFields",
+    applicationCreate: "/application/v1/create",
 
     //Solutions
     billFileStoreId: "/etreasury/payment/v1/_getPaymentReceipt",

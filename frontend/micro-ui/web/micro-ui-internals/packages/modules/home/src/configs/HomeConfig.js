@@ -33,6 +33,7 @@ export const userTypeOptions = [
       "SUBMISSION_DELETE",
       "TASK_VIEWER",
       "ADVOCATE_VIEWER",
+      "PENDING_TASK_CREATOR",
     ],
     subText: "LITIGANT_SUB_TEXT",
   },
@@ -59,6 +60,7 @@ export const userTypeOptions = [
       "TASK_VIEWER",
       "ADVOCATE_VIEWER",
       "ADVOCATE_APPLICATION_VIEWER",
+      "PENDING_TASK_CREATOR",
     ],
     apiDetails: {
       serviceName: "/advocate/v1/_create",
@@ -89,6 +91,7 @@ export const userTypeOptions = [
       "SUBMISSION_DELETE",
       "TASK_VIEWER",
       "ADVOCATE_VIEWER",
+      "PENDING_TASK_CREATOR",
     ],
     apiDetails: {
       serviceName: "/advocate/clerk/v1/_create",
@@ -199,14 +202,14 @@ export const rolesToConfigMapping = [
 export const caseTypes = [{ name: "NIA S138", code: "NIA S138" }];
 
 export const taskTypes = [
-  { code: "case-default", name: "Case" },
-  { code: "hearing-default", name: "Hearing" },
-  { code: "order-default", name: "Order" },
-  { code: "application-voluntary-submission", name: "Voluntary Submission" },
-  { code: "application-order-submission-feedback", name: "Order Submission Feedback" },
-  { code: "application-order-submission-default", name: "Order Submission" },
-  { code: "artifact-default", name: "Evidence" },
-  { code: "task-summons", name: "Task Summons" },
+  { code: "case-default", name: "WBH_MDMS_MASTER_CASE" },
+  { code: "hearing-default", name: "CS_HEARING" },
+  { code: "order-default", name: "CS_ORDER" },
+  { code: "application-voluntary-submission", name: "VOLUNTARY_SUBMISSION" },
+  { code: "application-order-submission-feedback", name: "ORDER_SUBMISSION_FEEDBACK" },
+  { code: "application-order-submission-default", name: "ORDER_SUBMISSION" },
+  { code: "artifact-default", name: "EVIDENCE" },
+  { code: "task-summons", name: "TASK_SUMMONS" },
 ];
 export const pendingTaskCaseActions = {
   PENDING_PAYMENT: {
@@ -601,6 +604,18 @@ export const pendingTaskSubmissionWithResponseActions = {
   ESIGN_THE_SUBMISSION: {
     actorName: ["LITIGANT/ADVOCATE"],
     actionName: "Esign the Submission",
+    redirectDetails: {
+      url: "/submissions/submissions-create",
+      params: [
+        { key: "filingNumber", value: "filingNumber" },
+        { key: "applicationNumber", value: "referenceId" },
+      ],
+    },
+  },
+  PENDINGRESPONSE: {
+    actorName: ["LITIGANT/ADVOCATE"],
+    actionName: "Review the submission",
+    customFunction: "handleReviewSubmission",
     redirectDetails: {
       url: "/submissions/submissions-create",
       params: [

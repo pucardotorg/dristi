@@ -181,7 +181,7 @@ const ComplainantSignature = ({ path }) => {
         inputs: [
           {
             name: name,
-            documentHeader: "Signature",
+            documentHeader: "CS_ADD_SIGNATURE",
             type: "DragDropComponent",
             uploadGuidelines: "Ensure the image is not blurry and under 5MB.",
             maxFileSize: 5,
@@ -333,6 +333,7 @@ const ComplainantSignature = ({ path }) => {
     const dateOfAccrual = new Date(caseDetails?.caseDetails["demandNoticeDetails"]?.formdata[0]?.data?.dateOfAccrual);
     return today?.getTime() - dateOfAccrual?.getTime();
   }, [caseDetails]);
+
   const chequeDetails = useMemo(() => {
     const debtLiability = caseDetails?.caseDetails?.debtLiabilityDetails?.formdata?.[0]?.data;
     if (debtLiability?.liabilityType?.code === "PARTIAL_LIABILITY") {
@@ -409,6 +410,14 @@ const ComplainantSignature = ({ path }) => {
               delayCondonation: delayCondonation,
             },
           ],
+          additionalDetails: {
+            filingNumber: caseDetails?.filingNumber,
+            chequeDetails: chequeDetails,
+            cnrNumber: caseDetails?.cnrNumber,
+            payer: caseDetails?.litigants?.[0]?.additionalDetails?.fullName,
+            payerMobileNo: caseDetails?.additionalDetails?.payerMobileNo,
+            delayCondonation: delayCondonation,
+          },
         },
       ],
     });

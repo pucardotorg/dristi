@@ -4,6 +4,7 @@ import DocViewer, { DocViewerRenderers } from "@cyntler/react-doc-viewer";
 import { useTranslation } from "react-i18next";
 import { Urls } from "../../hooks";
 import { Link } from "react-router-dom";
+import AuthenticatedLink from "../../Utils/authenticatedLink";
 const SUPPORTED_FILE_FORMATS = [
   ".pdf",
   ".bmp",
@@ -92,23 +93,7 @@ const DocViewerWrapper = ({
           </>
         )}
       </Card>
-      {showDownloadOption && (
-        <Link
-          to={{ pathname: uri }}
-          target="_blank"
-          rel="noreferrer"
-          style={{
-            display: "flex",
-            color: "#007e7e",
-            width: 250,
-            whiteSpace: "nowrap",
-            overflow: "hidden",
-            textOverflow: "ellipsis",
-          }}
-        >
-          {t(displayFilename) || t("CS_CLICK_TO_DOWNLOAD")}
-        </Link>
-      )}
+      {showDownloadOption && <AuthenticatedLink t={t} uri={uri} displayFilename={displayFilename}></AuthenticatedLink>}
       {documentName && (
         <p
           style={{

@@ -10,7 +10,7 @@ export const SummonsTabsConfig = {
   showTab: true,
   SummonsTabsConfig: [
     {
-      label: "Pending",
+      label: "PENDING",
       type: "search",
       apiDetails: {
         serviceName: "/task/v1/table/search",
@@ -54,14 +54,14 @@ export const SummonsTabsConfig = {
                 populators: {},
               },
               {
-                label: "Order Type",
+                label: "ORDER_TYPE",
                 isMandatory: false,
                 key: "orderType",
                 type: "dropdown",
                 disable: false,
                 populators: {
                   name: "orderType",
-                  optionsKey: "name",
+                  optionsKey: "code",
                   mdmsConfig: {
                     moduleName: "Order",
                     masterName: "CourtStaffOrderType",
@@ -77,14 +77,14 @@ export const SummonsTabsConfig = {
                 },
               },
               {
-                label: "E-Sign Status",
+                label: "E_SIGN_STATUS",
                 isMandatory: false,
                 key: "applicationStatus",
                 type: "dropdown",
                 disable: false,
                 populators: {
                   name: "applicationStatus",
-                  optionsKey: "name",
+                  optionsKey: "code",
                   mdmsConfig: {
                     moduleName: "Order",
                     masterName: "ESignPendingStatus",
@@ -100,7 +100,7 @@ export const SummonsTabsConfig = {
                 },
               },
               {
-                label: "Search E-process",
+                label: "SEARCH_E_PROCESS",
                 isMandatory: false,
                 type: "text",
                 key: "searchText", // seach text
@@ -119,31 +119,31 @@ export const SummonsTabsConfig = {
           uiConfig: {
             columns: [
               {
-                label: "E-process ID",
+                label: "E_PROCESS_ID",
                 jsonPath: "taskNumber",
               },
               {
-                label: "Status",
+                label: "STATUS",
                 jsonPath: "documentStatus",
                 additionalCustomization: true,
               },
               {
-                label: "Case Name & ID",
+                label: "CASE_NAME_ID",
                 jsonPath: "filingNumber",
                 additionalCustomization: true,
               },
               {
-                label: "Order Type",
+                label: "ORDER_TYPE",
                 jsonPath: "taskType",
                 additionalCustomization: true,
               },
               {
-                label: "Delivery Channel",
+                label: "DELIEVERY_CHANNEL",
                 jsonPath: "taskDetails",
                 additionalCustomization: true,
               },
               {
-                label: "Issued",
+                label: "ISSUED",
                 jsonPath: "createdDate",
                 additionalCustomization: true,
               },
@@ -159,7 +159,7 @@ export const SummonsTabsConfig = {
       },
     },
     {
-      label: "Sent",
+      label: "SENT",
       type: "search",
       apiDetails: {
         serviceName: "/task/v1/table/search",
@@ -200,14 +200,14 @@ export const SummonsTabsConfig = {
                 populators: {},
               },
               {
-                label: "Order Type",
+                label: "ORDER_TYPE",
                 isMandatory: false,
                 key: "orderType",
                 type: "dropdown",
                 disable: false,
                 populators: {
                   name: "orderType",
-                  optionsKey: "name",
+                  optionsKey: "code",
                   mdmsConfig: {
                     moduleName: "Order",
                     masterName: "CourtStaffOrderType",
@@ -223,14 +223,14 @@ export const SummonsTabsConfig = {
                 },
               },
               {
-                label: "Status",
+                label: "STATUS",
                 isMandatory: false,
                 key: "completeStatus",
                 type: "dropdown",
                 disable: false,
                 populators: {
                   name: "completeStatus",
-                  optionsKey: "name",
+                  optionsKey: "code",
                   mdmsConfig: {
                     moduleName: "Order",
                     masterName: "SentStatus",
@@ -246,7 +246,7 @@ export const SummonsTabsConfig = {
                 },
               },
               {
-                label: "Search E-process",
+                label: "SEARCH_E_PROCESS",
                 isMandatory: false,
                 type: "text",
                 key: "searchText", // seach text
@@ -265,31 +265,31 @@ export const SummonsTabsConfig = {
           uiConfig: {
             columns: [
               {
-                label: "E-process ID",
+                label: "E_PROCESS_ID",
                 jsonPath: "taskNumber",
               },
               {
-                label: "Status",
+                label: "STATUS",
                 jsonPath: "status",
                 additionalCustomization: true,
               },
               {
-                label: "Case Name & ID",
+                label: "CASE_NAME_ID",
                 jsonPath: "filingNumber",
                 additionalCustomization: true,
               },
               {
-                label: "Order Type",
+                label: "ORDER_TYPE",
                 jsonPath: "taskType",
                 additionalCustomization: true,
               },
               {
-                label: "Delivery Channel",
+                label: "DELIEVERY_CHANNEL",
                 jsonPath: "taskDetails",
                 additionalCustomization: true,
               },
               {
-                label: "Issued",
+                label: "ISSUED",
                 jsonPath: "createdDate",
                 additionalCustomization: true,
               },

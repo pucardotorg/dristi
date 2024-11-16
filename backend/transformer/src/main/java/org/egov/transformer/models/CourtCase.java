@@ -159,6 +159,9 @@ public class CourtCase {
     @JsonProperty("judgementOrderDetails")
     private Order judgementOrderDetails = null;
 
+    @JsonProperty("outcome")
+    private String outcome = null;
+
     @JsonProperty("auditDetails")
     @Valid
     private AuditDetails auditdetails = null;

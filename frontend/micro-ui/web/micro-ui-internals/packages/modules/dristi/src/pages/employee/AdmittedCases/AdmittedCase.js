@@ -165,6 +165,7 @@ const AdmittedCases = () => {
   const [createAdmissionOrder, setCreateAdmissionOrder] = useState(false);
   const [updatedCaseDetails, setUpdatedCaseDetails] = useState({});
   const [showDismissCaseConfirmation, setShowDismissCaseConfirmation] = useState(false);
+  const [showPendingDelayApplication, setShowPendingDelayApplication] = useState(false);
   const [toastStatus, setToastStatus] = useState({ alreadyShown: false });
   const history = useHistory();
   const isCitizen = userRoles.includes("CITIZEN");
@@ -309,6 +310,16 @@ const AdmittedCases = () => {
     [applicationData, onBehalfOfuuid]
   );
 
+  const isDelayApplicationPending = useMemo(
+    () =>
+      Boolean(
+        applicationData?.applicationList?.some(
+          (item) => item?.applicationType === "DELAY_CONDONATION" && item?.status === SubmissionWorkflowState.PENDINGAPPROVAL
+        )
+      ),
+    [applicationData]
+  );
+
   const caseRelatedData = useMemo(
     () => ({
       caseId,
@@ -327,7 +338,7 @@ const AdmittedCases = () => {
   const showMakeSubmission = useMemo(() => {
     return (
       isAdvocatePresent &&
-      userRoles?.includes("APPLICATION_CREATOR") &&
+      userRoles?.includes("SUBMISSION_CREATOR") &&
       [
         CaseWorkflowState.PENDING_ADMISSION_HEARING,
         CaseWorkflowState.ADMISSION_HEARING_SCHEDULED,
@@ -441,7 +452,7 @@ const AdmittedCases = () => {
                   ...tabConfig.sections.search.uiConfig,
                   fields: [
                     {
-                      label: "Parties",
+                      label: "PARTIES",
                       isMandatory: false,
                       key: "parties",
                       type: "dropdown",
@@ -462,7 +473,7 @@ const AdmittedCases = () => {
                 uiConfig: {
                   ...tabConfig.sections.searchResult.uiConfig,
                   columns: tabConfig.sections.searchResult.uiConfig.columns.map((column) => {
-                    return column.label === "Order Type"
+                    return column.label === "ORDER_TYPE"
                       ? {
                           ...column,
                           clickFunc: orderSetFunc,
@@ -494,7 +505,7 @@ const AdmittedCases = () => {
                   ...tabConfig.sections.search.uiConfig,
                   fields: [
                     {
-                      label: "Parties",
+                      label: "PARTIES",
                       isMandatory: false,
                       key: "parties",
                       type: "dropdown",
@@ -515,7 +526,7 @@ const AdmittedCases = () => {
                 uiConfig: {
                   ...tabConfig.sections.searchResult.uiConfig,
                   columns: tabConfig.sections.searchResult.uiConfig.columns.map((column) => {
-                    return column.label === "Actions"
+                    return column.label === "CS_ACTIONS"
                       ? {
                           ...column,
                           clickFunc: takeActionFunc,
@@ -560,7 +571,7 @@ const AdmittedCases = () => {
                   ...tabConfig.sections.search.uiConfig,
                   fields: [
                     {
-                      label: "Owner",
+                      label: "OWNER",
                       isMandatory: false,
                       key: "owner",
                       type: "dropdown",
@@ -581,7 +592,7 @@ const AdmittedCases = () => {
                 uiConfig: {
                   ...tabConfig.sections.searchResult.uiConfig,
                   columns: tabConfig.sections.searchResult.uiConfig.columns.map((column) => {
-                    return column.label === "File" || column.label === "Document Type"
+                    return column.label === "FILE" || column.label === "DOCUMENT_TYPE"
                       ? {
                           ...column,
                           clickFunc: docSetFunc,
@@ -613,7 +624,7 @@ const AdmittedCases = () => {
                   ...tabConfig.sections.search.uiConfig,
                   fields: [
                     {
-                      label: "Owner",
+                      label: "OWNER",
                       isMandatory: false,
                       key: "owner",
                       type: "dropdown",
@@ -638,12 +649,12 @@ const AdmittedCases = () => {
                 uiConfig: {
                   ...tabConfig.sections.searchResult.uiConfig,
                   columns: tabConfig.sections.searchResult.uiConfig.columns.map((column) => {
-                    return column.label === "Document" || column.label === "Submission Type"
+                    return column.label === "DOCUMENT_TEXT" || column.label === "SUBMISSION_TYPE"
                       ? {
                           ...column,
                           clickFunc: docSetFunc,
                         }
-                      : column.label === "Owner"
+                      : column.label === "OWNER"
                       ? {
                           ...column,
                           parties: caseRelatedData.parties,
@@ -686,6 +697,7 @@ const AdmittedCases = () => {
       key: index,
       label: configItem.label,
       active: index === indexOfActiveTab ? true : false,
+      displayLabel: configItem?.displayLabel,
     }));
   }, [indexOfActiveTab, newTabSearchConfig?.TabSearchconfig]); // setting number of tab component and making first index enable as default
   const [updateCounter, setUpdateCounter] = useState(0);
@@ -854,27 +866,27 @@ const AdmittedCases = () => {
   const caseBasicDetails = useMemo(() => {
     return [
       {
-        key: "Filing No.",
+        key: "CS_FILING_NO",
         value: getDefaultValue(caseDetails?.filingNumber),
       },
       {
-        key: "Complaint / CMP No.",
+        key: "CS_COMPLAINT_NO",
         value: getDefaultValue(caseDetails?.cmpNumber),
       },
       {
-        key: "CNR No.",
+        key: "CS_CNR",
         value: getDefaultValue(caseDetails?.cnrNumber),
       },
       {
-        key: "CCST No.",
+        key: "CS_CCST",
         value: getDefaultValue(caseDetails?.courtCaseNumber),
       },
       {
-        key: "Submitted on",
+        key: "SUBMITTED_ON",
         value: formatDateOrDefault(caseDetails?.filingDate),
       },
       {
-        key: "Registered on",
+        key: "REGISTERED_ON",
         value: formatDateOrDefault(caseDetails?.registrationDate),
       },
     ];
@@ -1217,6 +1229,10 @@ const AdmittedCases = () => {
       case "REGISTER":
         break;
       case "ADMIT":
+        if (isDelayApplicationPending) {
+          setShowPendingDelayApplication(true);
+          break;
+        }
         if (caseDetails?.status === "ADMISSION_HEARING_SCHEDULED") {
           const { hearingDate, hearingNumber } = await getHearingData();
           if (hearingNumber) {
@@ -1586,7 +1602,7 @@ const AdmittedCases = () => {
   };
   const takeActionOptions = useMemo(
     () => [
-      ...(userRoles?.includes("SUBMISSION_CREATOR") || userRoles?.includes("APPLICATION_CREATOR") ? [t("MAKE_SUBMISSION")] : []),
+      ...(userRoles?.includes("SUBMISSION_CREATOR") ? [t("MAKE_SUBMISSION")] : []),
       t("GENERATE_ORDER_HOME"),
       t("SCHEDULE_HEARING"),
       t("REFER_TO_ADR"),
@@ -1733,7 +1749,7 @@ const AdmittedCases = () => {
                 }}
                 disabled={["Complaint", "Overview"].includes(i?.label) ? false : isTabDisabled}
               >
-                {t(i?.label)}
+                {t(i?.displayLabel)}
               </button>
             ))}
           </div>
@@ -1986,6 +2002,23 @@ const AdmittedCases = () => {
           children={<div style={{ margin: "16px 0px" }}>{t("DISMISS_CASE_CONFIRMATION_TEXT")}</div>}
           actionSaveOnSubmit={() => {
             handleActionModal();
+          }}
+        ></Modal>
+      )}
+      {showPendingDelayApplication && (
+        <Modal
+          headerBarMain={<Heading label={t("PENDING_DELAY_CONDONATION_HEADER")} />}
+          headerBarEnd={
+            <CloseBtn
+              onClick={() => {
+                setShowPendingDelayApplication(false);
+              }}
+            />
+          }
+          actionSaveLabel={t("CS_CLOSE")}
+          children={<div style={{ margin: "16px 0px" }}>{t("PENDING_DELAY_CONDONATION_APPLICATION_TEXT")}</div>}
+          actionSaveOnSubmit={() => {
+            setShowPendingDelayApplication(false);
           }}
         ></Modal>
       )}

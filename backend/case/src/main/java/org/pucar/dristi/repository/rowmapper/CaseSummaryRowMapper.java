@@ -31,6 +31,8 @@ public class CaseSummaryRowMapper implements ResultSetExtractor<List<CaseSummary
 
 
         Map<String, CaseSummary> caseMap = new HashMap<>();
+        Set<String> mappedKey = new HashSet<>();
+
 
         while (rs.next()) {
             String caseId = rs.getString("id");
@@ -40,13 +42,13 @@ public class CaseSummaryRowMapper implements ResultSetExtractor<List<CaseSummary
                         .id(caseId)
                         .tenantId(rs.getString("tenantid"))
                         .caseTitle(rs.getString("casetitle"))
-                        .filingDate(rs.getLong("filingdate"))
+                        .filingDate(parseDateToLong(rs.getString("filingdate")))
                         .statutesAndSections(null)
                         .stage(rs.getString("stage"))
                         .subStage(rs.getString("substage"))
                         .outcome(rs.getString("outcome"))
                         .courtId(rs.getString("courtid"))
-                        .registrationDate(rs.getLong("registrationdate"))
+                        .registrationDate(parseDateToLong(rs.getString("registrationdate")))
                         .registrationNumber(rs.getString("cmpnumber"))
                         .litigants(new ArrayList<>())
                         .representatives(new ArrayList<>())
@@ -57,7 +59,7 @@ public class CaseSummaryRowMapper implements ResultSetExtractor<List<CaseSummary
             }
 
             String statuteId = rs.getString("statute_section_id");
-            if (statuteId != null) {
+            if (statuteId != null && !mappedKey.contains(statuteId)) {
                 StatuteSection statuteSection = StatuteSection.builder()
                         .id(UUID.fromString(rs.getString("statute_section_id")))
                         .tenantId(rs.getString("statute_section_tenantid"))
@@ -70,10 +72,12 @@ public class CaseSummaryRowMapper implements ResultSetExtractor<List<CaseSummary
                 String statuteAndSectionsString = getStatuteAndSectionsString(existingStatues, statuteSection.getStatute(), statuteSection.getSections());
                 caseSummary.setStatutesAndSections(statuteAndSectionsString);
 
+                mappedKey.add(statuteId);
+
             }
 
             String partyId = rs.getString("litigant_id");
-            if (partyId != null) {
+            if (partyId != null && !mappedKey.contains(partyId)) {
                 PartySummary party = PartySummary.builder()
                         .partyCategory(rs.getString("litigant_partycategory"))
                         .partyType(rs.getString("litigant_partytype"))
@@ -83,10 +87,11 @@ public class CaseSummaryRowMapper implements ResultSetExtractor<List<CaseSummary
 //                        .isPartyInPerson(rs.getBoolean("isPartyInPerson"))
                         .build();
                 caseSummary.getLitigants().add(party);
+                mappedKey.add(partyId);
             }
 
             String representativeId = rs.getString("representative_id");
-            if (representativeId != null) {
+            if (representativeId != null && !mappedKey.contains(representativeId)) {
                 RepresentativeSummary representative = RepresentativeSummary.builder()
                         .partyId(rs.getString("representative_case_id"))
 //                        .advocateType(rs.getString("advocateType"))
@@ -94,6 +99,7 @@ public class CaseSummaryRowMapper implements ResultSetExtractor<List<CaseSummary
                         .build();
 
                 caseSummary.getRepresentatives().add(representative);
+                mappedKey.add(representativeId);
             }
         }
 
@@ -103,7 +109,7 @@ public class CaseSummaryRowMapper implements ResultSetExtractor<List<CaseSummary
 
     //todo: this is temporary method once the db schema is updated we need to remove this table
     private String getNameForLitigant(ResultSet rs) {
-        String additionalDetails ;
+        String additionalDetails;
         String fullName = null;
         try {
             additionalDetails = rs.getString("litigant_additionaldetails");
@@ -166,5 +172,18 @@ public class CaseSummaryRowMapper implements ResultSetExtractor<List<CaseSummary
 //        }
 
         return statueAndSections.toString();
+    }
+
+    private Long parseDateToLong(String dateStr) {
+        if (dateStr == null || dateStr.trim().isEmpty()) {
+            return null;
+        }
+        try {
+            return Long.valueOf(dateStr);
+        } catch (NumberFormatException e) {
+            log.error("Invalid date format: {}", dateStr);
+            throw new CustomException("INVALID_DATE_FORMAT",
+                    "Date must be a valid timestamp: " + dateStr);
+        }
     }
 }

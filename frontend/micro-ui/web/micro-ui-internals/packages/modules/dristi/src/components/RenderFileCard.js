@@ -104,7 +104,7 @@ function RenderFileCard({
               </div>
             }
             className="delete-button"
-            label={t("Delete")}
+            label={t("CS_COMMON_DELETE")}
           />
         </div>
       </div>

@@ -30,7 +30,7 @@ const SingleInput = ({ isFocus, onChange, onFocus, value, inputStyle, ...rest })
   );
 };
 
-const OTPInput = ({ inputStyle, ...props }) => {
+const OTPInput = ({ inputStyle, otpInputStyles, ...props }) => {
   const [activeInput, setActiveInput] = useState(0);
 
   const isInputValueValid = (value) => {
@@ -91,7 +91,7 @@ const OTPInput = ({ inputStyle, ...props }) => {
   }
 
   return (
-    <div style={{ backgroundColor: "none" }} className="input-otp-wrap">
+    <div style={{ backgroundColor: "none", ...otpInputStyles }} className="input-otp-wrap">
       {OTPStack}
     </div>
   );

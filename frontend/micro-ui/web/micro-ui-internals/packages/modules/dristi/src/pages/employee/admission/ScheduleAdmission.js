@@ -187,7 +187,7 @@ function ScheduleAdmission({
             modalInfo?.showCustomDate ? setModalInfo({ ...modalInfo, page: 0, showDate: false, showCustomDate: false }) : setShowModal(false);
           }}
           className="primary-label-btn back-from-schedule"
-          label={"Back"}
+          label={t("DOWNLOAD_CS_BACK")}
         ></Button>
         <SubmitBar
           variation="primary"

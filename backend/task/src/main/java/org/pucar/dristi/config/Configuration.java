@@ -173,4 +173,7 @@ public class Configuration {
 
     @Value("${role.system.admin}")
     private String systemAdmin;
+
+    @Value("${egov.case.search.endpoint}")
+    private String caseSearchPath;
 }

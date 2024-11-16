@@ -273,8 +273,8 @@ const ReviewSummonsNoticeAndWarrant = () => {
     if (rowData?.taskDetails || nextHearingDate) {
       const caseDetails = handleTaskDetails(rowData?.taskDetails);
       return [
-        { key: "Issued to", value: caseDetails?.respondentDetails?.name },
-        { key: "Issued Date", value: convertToDateInputFormat(rowData?.createdDate) },
+        { key: "ISSUE_TO", value: caseDetails?.respondentDetails?.name },
+        { key: "ISSUE_DATE", value: convertToDateInputFormat(rowData?.createdDate) },
         // { key: "Next Hearing Date", value: nextHearingDate?.startTime ? formatDate(nextHearingDate?.startTime) : "N/A" },
         { key: "AMOUNT_PAID_TEXT", value: `Rs. ${caseDetails?.deliveryChannels?.fees || 100}` },
         { key: "CHANNEL_DETAILS_TEXT", value: caseDetails?.deliveryChannels?.channelName },

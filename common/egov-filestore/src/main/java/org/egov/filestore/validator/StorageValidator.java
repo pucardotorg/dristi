@@ -2,6 +2,8 @@ package org.egov.filestore.validator;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.HashMap;
+import java.util.Map;
 
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.io.IOUtils;
@@ -25,6 +27,17 @@ public class StorageValidator {
 		this.fileStoreConfig = fileStoreConfig;
 	}
 
+	private static final Map<String, byte[]> MAGIC_NUMBERS = new HashMap<>();
+
+	static {
+		MAGIC_NUMBERS.put("pdf", new byte[]{0x25, 0x50, 0x44, 0x46});
+		MAGIC_NUMBERS.put("jpeg", new byte[]{(byte) 0xFF, (byte) 0xD8, (byte) 0xFF, (byte) 0xE0});
+		MAGIC_NUMBERS.put("png", new byte[]{(byte) 0x89, 0x50, 0x4E, 0x47});
+		MAGIC_NUMBERS.put("gif", new byte[]{0x47, 0x49, 0x46, 0x38});
+		MAGIC_NUMBERS.put("zip", new byte[]{0x50, 0x4B, 0x03, 0x04});
+		MAGIC_NUMBERS.put("mp4", new byte[]{0x00, 0x00, 0x00, 0x18, 0x66, 0x74, 0x79, 0x70, 0x6D, 0x70, 0x34, 0x32});
+		MAGIC_NUMBERS.put("mov", new byte[]{0x00, 0x00, 0x00, 0x14, 0x66, 0x74, 0x79, 0x70, 0x71, 0x74});
+	}
 
 	public void validate(Artifact artifact) {
 			
@@ -32,6 +45,8 @@ public class StorageValidator {
 		validateFileExtention(extension);
 		validateContentType(artifact.getFileContentInString(), extension);
 		validateInputContentType(artifact);
+		validateMagicNumber(artifact.getMultipartFile(), extension);
+		validateFileSize(artifact.getMultipartFile());
 	}
 	
 	private void validateFileExtention(String extension) {
@@ -70,13 +85,34 @@ public class StorageValidator {
 			throw new CustomException("EG_FILESTORE_INVALID_INPUT", "Invalid Content Type");
 		}
 	}
-
-	
 	/*private void validateFilesToUpload(List<MultipartFile> filesToStore, String module, String tag, String tenantId) {
 		if (CollectionUtils.isEmpty(filesToStore)) {
 			throw new EmptyFileUploadRequestException(module, tag, tenantId);
 		}
 	}*/
-	
-	
+	private void validateMagicNumber(MultipartFile file, String extension) {
+		byte[] magicNumber = MAGIC_NUMBERS.get(extension);
+		if (magicNumber == null) {
+			return;
+		}
+		try (InputStream is = file.getInputStream()) {
+			byte[] fileHeader = new byte[magicNumber.length];
+			if (is.read(fileHeader) != fileHeader.length) {
+				throw new CustomException("EG_FILESTORE_INVALID_INPUT", "File content does not match the expected format for " + extension);
+			}
+			for(int i=0; i<magicNumber.length; i++) {
+				if(fileHeader[i] != magicNumber[i]) {
+					throw new CustomException("EG_FILESTORE_INVALID_INPUT", "File content does not match the expected format for " + extension);
+				}
+			}
+		} catch (IOException e) {
+			throw new CustomException("EG_FILESTORE_IO_ERROR", "Error reading file: " + e.getMessage());
+		}
+	}
+
+	private void validateFileSize(MultipartFile file) {
+		if (file.getSize() > fileStoreConfig.getFileSizeMax()) {
+			throw new CustomException("EG_FILESTORE_INVALID_INPUT", "File size exceeds the maximum allowed size of " + fileStoreConfig.getFileSizeMax() + " bytes");
+		}
+	}
 }

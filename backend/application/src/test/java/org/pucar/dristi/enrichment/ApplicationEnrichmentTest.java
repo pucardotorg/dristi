@@ -62,17 +62,11 @@ class ApplicationEnrichmentTest {
     @Test
     void enrichApplication() {
         String mockedTenantId = "KL123";
-        String mockedAppNumber = "CMP123";
+        String mockedAppNumber = "KL-123-CMP123";
         when(idgenUtil.getIdList(any(), any(), any(), any(), anyInt(),any()))
                 .thenReturn(Collections.singletonList("CMP123"));
-        JsonNode caseDetails = mock(JsonNode.class);
-        when(caseDetails.has("courtId")).thenReturn(true);
-        when(caseDetails.get("courtId")).thenReturn(mock(JsonNode.class));
-        when(caseDetails.get("courtId").asText()).thenReturn("court123");
-
-        when(caseUtil.searchCaseDetails(any())).thenReturn(caseDetails);
-        when(configuration.getCmpConfig()).thenReturn("config");
-        when(configuration.getCmpFormat()).thenReturn("format");
+        when(configuration.getApplicationConfig()).thenReturn("config");
+        when(configuration.getApplicationFormat()).thenReturn("format");
         applicationEnrichment.enrichApplication(applicationRequest);
 
         Application application = applicationRequest.getApplication();

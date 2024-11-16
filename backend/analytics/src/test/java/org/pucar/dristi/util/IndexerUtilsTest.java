@@ -212,7 +212,7 @@ public class IndexerUtilsTest {
                 "index", "referenceId", "id", "name", "entityType", "referenceId", "status", "[\"user1\"]", "[\"role\"]", "null", "null", false, 123L, 456L, "{\"key\":\"value\"}"
         );
 
-        PendingTaskType pendingTaskType = PendingTaskType.builder().pendingTask("name").state("status").triggerAction(List.of("action")).build();
+        PendingTaskType pendingTaskType = PendingTaskType.builder().isgeneric(false).pendingTask("name").state("status").triggerAction(List.of("action")).build();
         Map<String,List<PendingTaskType>> map = new HashMap<>();
         map.put("entityType",List.of(pendingTaskType));
         when(mdmsDataConfig.getPendingTaskTypeMap()).thenReturn(map);

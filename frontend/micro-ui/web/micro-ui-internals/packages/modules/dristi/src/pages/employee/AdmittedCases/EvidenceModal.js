@@ -681,6 +681,21 @@ const EvidenceModal = ({ caseData, documentSubmission = [], setShow, userRoles, 
         try {
         } catch (error) {}
         await handleRespondApplication();
+        try {
+          DRISTIService.customApiService(Urls.dristi.pendingTask, {
+            pendingTask: {
+              entityType: "application-order-submission-feedback",
+              status: "RESPOND_TO_PRODUCTION_DOCUMENTS",
+              referenceId: `MANUAL_${signedSubmission?.applicationList?.applicationNumber}`,
+              cnrNumber,
+              filingNumber,
+              isCompleted: true,
+              tenantId,
+            },
+          });
+        } catch (error) {
+          console.error("error :>> ", error);
+        }
       }
       ///show a toast message
       counterUpdate();

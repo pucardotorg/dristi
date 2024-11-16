@@ -1,11 +1,12 @@
 import { Card } from "@egovernments/digit-ui-react-components";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import useGetSubmissions from "../../../hooks/dristi/useGetSubmissions";
 import { CustomArrowOut } from "../../../icons/svgIndex";
 import EvidenceModal from "./EvidenceModal";
 import { useGetPendingTask } from "../../../../../home/src/hooks/useGetPendingTask";
 import { useHistory } from "react-router-dom";
+import { DRISTIService } from "../../../services";
 
 const SubmissionReview = ({ caseData, setUpdateCounter, openSubmissionsViewModal }) => {
   const { t } = useTranslation();
@@ -163,10 +164,16 @@ const SubmissionReview = ({ caseData, setUpdateCounter, openSubmissionsViewModal
       ),
       pendingTaskDetailsWithout.data?.map((app) =>
         app.fields.reduce(
-          (fieldObj, item) => ({
-            ...fieldObj,
-            [item.key]: item.value,
-          }),
+          (fieldObj, item) =>
+            item.key === "name"
+              ? {
+                  ...fieldObj,
+                  applicationType: item.value,
+                }
+              : {
+                  ...fieldObj,
+                  [item.key]: item.value,
+                },
           {}
         )
       ),
@@ -175,6 +182,20 @@ const SubmissionReview = ({ caseData, setUpdateCounter, openSubmissionsViewModal
   const applicationListToShow = userRoles.includes("CITIZEN")
     ? applicationsPending
     : applicationRes?.applicationList?.filter((application) => application.status === "PENDINGREVIEW");
+
+  const getApplication = async (applicationNumber) => {
+    try {
+      const response = await DRISTIService.searchSubmissions({ criteria: { filingNumber, applicationNumber, tenantId }, tenantId }, {}, "", true);
+      return response?.applicationList?.[0];
+    } catch (error) {
+      console.error("error :>> ", error);
+    }
+  };
+
+  const openResponseModal = async (applicationNumber) => {
+    const applicationData = await getApplication(applicationNumber);
+    docSetFunc(applicationData);
+  };
 
   return (
     <React.Fragment>
@@ -212,11 +233,15 @@ const SubmissionReview = ({ caseData, setUpdateCounter, openSubmissionsViewModal
                 cursor: "pointer",
                 background: "#ECF3FD66",
               }}
-              onClick={() => {
+              onClick={async () => {
                 userRoles.includes("CITIZEN")
-                  ? history.push(
-                      `/digit-ui/citizen/submissions/submissions-create?filingNumber=${filingNumber}&orderNumber=${app.referenceId.split("_").pop()}`
-                    )
+                  ? app.status === "PENDINGRESPONSE"
+                    ? await openResponseModal(app.referenceId)
+                    : history.push(
+                        `/digit-ui/citizen/submissions/submissions-create?filingNumber=${filingNumber}&${
+                          app.status === "CREATE_SUBMISSION" ? "orderNumber" : "applicationNumber"
+                        }=${app.referenceId.split("_").pop()}`
+                      )
                   : docSetFunc(app);
               }}
             >

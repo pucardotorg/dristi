@@ -21,9 +21,22 @@ let externalHost = envVariables.EGOV_EXTERNAL_HOST;
  * @param {*} requestInfo - request info from request body
  */
 
-function escapeRegex(string) {
-  if (typeof string == "string") return string.replace(/[\\"]/g, "\\$&");
-  else return string;
+function escapeRegex(input) {
+  if (typeof input === "string") {
+    return input.replace(/[\\"]/g, "\\$&");
+  } else if (typeof input === "object" && input !== null) {
+    const escapedObject = {};
+    for (const key in input) {
+      if (typeof input[key] === "string") {
+        escapedObject[key] = input[key].replace(/[\\"]/g, "\\$&");
+      } else {
+        escapedObject[key] = input[key];
+      }
+    }
+    return escapedObject;
+  } else {
+    return input;
+  }
 }
 
 export const directMapping = async (

@@ -430,6 +430,7 @@ const TasksComponent = ({
     return {
       handleClose: () => {
         setShowSubmitResponseModal(false);
+        setJoinCaseShowSubmitResponseModal(false);
       },
       heading: { label: "" },
       actionSaveLabel: "",
@@ -517,12 +518,14 @@ const TasksComponent = ({
     <div className="tasks-component">
       {!hideTaskComponent && (
         <React.Fragment>
-          <h2>{!isLitigant ? "Your Tasks" : t("ALL_PENDING_TASK_TEXT")}</h2>
+          <h2>{!isLitigant ? t("YOUR_TASK") : t("ALL_PENDING_TASK_TEXT")}</h2>
           {totalPendingTask !== undefined && totalPendingTask > 0 ? (
             <React.Fragment>
               <div className="task-filters">
                 <LabelFieldPair>
-                  <CardLabel style={{ fontSize: "16px" }} className={"card-label"}>{`Case Type`}</CardLabel>
+                  <CardLabel style={{ fontSize: "16px" }} className={"card-label"}>
+                    {t("CASE_TYPE")}
+                  </CardLabel>
                   <Dropdown
                     option={caseTypes}
                     selected={caseType}
@@ -534,8 +537,11 @@ const TasksComponent = ({
                   />
                 </LabelFieldPair>
                 <LabelFieldPair>
-                  <CardLabel style={{ fontSize: "16px" }} className={"card-label"}>{`Task Type`}</CardLabel>
+                  <CardLabel style={{ fontSize: "16px" }} className={"card-label"}>
+                    {t("CS_TASK_TYPE")}
+                  </CardLabel>
                   <Dropdown
+                    t={t}
                     option={taskTypes}
                     optionKey={"name"}
                     selected={taskType}

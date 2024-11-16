@@ -69,6 +69,7 @@ public class ServiceConstants {
     public static final Long TAX_PERIOD_TO = 1711909799000l;
     public static final BigDecimal TAX_AMOUNT = BigDecimal.valueOf(2000.00);
     public static final String CREATE_DEMAND_STATUS = "PENDINGPAYMENT";
+    public static final String PENDINGAPPROVAL = "PENDINGAPPROVAL";
 
     public static final String TAX_HEADMASTER_CODE = "APPLICATION_ADVANCE_CARRYFORWARD";
     public static final String VALIDATION_ERR = "VALIDATION_ERR";

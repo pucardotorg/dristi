@@ -116,9 +116,9 @@ const InsideHearingMainPage = () => {
       tenantId,
     },
     {},
-    "dristi",
+    `case-details-${filingNumber}`,
     filingNumber,
-    filingNumber
+    Boolean(filingNumber)
   );
 
   useEffect(() => {

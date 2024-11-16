@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;
+import org.pucar.dristi.annotation.CombineRequiredFields;
 import org.springframework.validation.annotation.Validated;
 
 import java.util.UUID;
@@ -13,6 +14,7 @@ import java.util.UUID;
 @Getter
 @Setter
 @Builder
+@CombineRequiredFields(fields = {"referenceId", "state"}, message = "combination of referenceId and state is required.")
 public class TaskCriteria {
 
     @JsonProperty("id")
@@ -32,5 +34,12 @@ public class TaskCriteria {
 
     @JsonProperty("status")
     private String status = null;
+
+    @JsonProperty("referenceId")
+    private String referenceId;
+
+    @JsonProperty("state")
+    private String state;
+
 
 }

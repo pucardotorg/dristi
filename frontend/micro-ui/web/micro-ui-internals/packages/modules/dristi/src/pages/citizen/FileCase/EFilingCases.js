@@ -58,6 +58,7 @@ import useDownloadCasePdf from "../../../hooks/dristi/useDownloadCasePdf";
 import DocViewerWrapper from "../../employee/docViewerWrapper";
 import CaseLockModal from "./CaseLockModal";
 import ConfirmCaseDetailsModal from "./ConfirmCaseDetailsModal";
+import { DocumentUploadError } from "../../../Utils/errorUtil";
 
 const OutlinedInfoIcon = () => (
   <svg width="19" height="19" viewBox="0 0 19 19" fill="none" xmlns="http://www.w3.org/2000/svg" style={{ position: "absolute", right: -22, top: 0 }}>
@@ -1678,7 +1679,6 @@ function EFilingCases({ path }) {
         }
       }
       try {
-        // Await the result of updateCaseDetails
         await updateCaseDetails({
           t,
           isCompleted: true,
@@ -1700,7 +1700,6 @@ function EFilingCases({ path }) {
           scrutinyObj,
         });
 
-        // After successful update, reset form and refetch case data
         if (resetFormData.current) {
           resetFormData.current();
           setIsDisabled(false);
@@ -1720,15 +1719,15 @@ function EFilingCases({ path }) {
           history.push(`?caseId=${caseId}&selected=${nextSelected}`);
         }
       } catch (error) {
-        // If any error occurs in updateCaseDetails or refetching, handle it here
-        if (extractCodeFromErrorMsg(error) === 413) {
+        if (error instanceof DocumentUploadError) {
+          toast.error(`${t("DOCUMENT_FORMAT_DOES_NOT_MATCH")} : ${error?.documentType}`);
+        } else if (extractCodeFromErrorMsg(error) === 413) {
           toast.error(t("FAILED_TO_UPLOAD_FILE"));
         } else {
           toast.error(t("SOMETHING_WENT_WRONG"));
         }
         setIsDisabled(false);
         console.error("An error occurred:", error);
-        throw error; // Re-throw the error to propagate it further if needed
       }
     }
   };
@@ -1760,10 +1759,13 @@ function EFilingCases({ path }) {
       .then(() => {
         toast.success(t("CS_SUCCESSFULLY_SAVED_DRAFT"));
       })
-      .catch((error) => {
-        if (extractCodeFromErrorMsg(error) === 413) {
+      .catch(async (error) => {
+        if (error instanceof DocumentUploadError) {
+          toast.error(`${t("DOCUMENT_FORMAT_DOES_NOT_MATCH")} : ${error?.documentType}`);
+        } else if (extractCodeFromErrorMsg(error) === 413) {
           toast.error(t("FAILED_TO_UPLOAD_FILE"));
         } else {
+          console.error("Error:", error);
           toast.error(t("SOMETHING_WENT_WRONG"));
         }
         setIsDisabled(false);
@@ -1834,7 +1836,15 @@ function EFilingCases({ path }) {
           setIsDisabled(false);
         }
       })
-      .catch(() => {
+      .catch(async (error) => {
+        if (error instanceof DocumentUploadError) {
+          toast.error(`${t("DOCUMENT_FORMAT_DOES_NOT_MATCH")} : ${error?.documentType}`);
+        } else if (extractCodeFromErrorMsg(error) === 413) {
+          toast.error(t("FAILED_TO_UPLOAD_FILE"));
+        } else {
+          console.error("Error:", error);
+          toast.error(t("SOMETHING_WENT_WRONG"));
+        }
         setIsDisabled(false);
       });
     setPrevSelected(selected);
@@ -1923,6 +1933,14 @@ function EFilingCases({ path }) {
               delayCondonation: delayCondonation,
             },
           ],
+          additionalDetails: {
+            filingNumber: caseDetails?.filingNumber,
+            chequeDetails: chequeDetails,
+            cnrNumber: caseDetails?.cnrNumber,
+            payer: caseDetails?.litigants?.[0]?.additionalDetails?.fullName,
+            payerMobileNo: caseDetails?.additionalDetails?.payerMobileNo,
+            delayCondonation: delayCondonation,
+          },
         },
       ],
     });
@@ -2124,8 +2142,15 @@ function EFilingCases({ path }) {
     }
   };
 
+  const customStyles = `
+  .action-bar-wrap.e-filing-action-bar header {
+    margin-top:0 !important;
+  }
+`;
+
   return (
     <div className="file-case">
+      <style>{customStyles}</style>
       <div className="file-case-side-stepper">
         {isDraftInProgress && (
           <div className="side-stepper-info">
@@ -2233,7 +2258,12 @@ function EFilingCases({ path }) {
                 {`${t(pageConfig.header)}`}
                 {pageConfig?.showOptionalInHeader && <span style={{ color: "#77787B", fontWeight: 100 }}>&nbsp;(optional)</span>}
                 {selected === "reviewCaseFile" && (
-                  <Button className="border-none dristi-font-bold" onButtonClick={handleViewCasePdf} label={t("View PDF")} variation={"secondary"} />
+                  <Button
+                    className="border-none dristi-font-bold"
+                    onButtonClick={handleViewCasePdf}
+                    label={t("CS_VIEW_PDF")}
+                    variation={"secondary"}
+                  />
                 )}
               </Header>
               <div

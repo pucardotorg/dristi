@@ -187,7 +187,7 @@ function AdmissionActionModal({
   const handleIssueNotice = async (hearingDate, hearingNumber) => {
     try {
       const orderBody = {
-        createdDate: new Date().getTime(),
+        createdDate: null,
         tenantId,
         cnrNumber: caseDetails?.cnrNumber,
         filingNumber,

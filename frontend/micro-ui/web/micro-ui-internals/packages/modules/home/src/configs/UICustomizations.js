@@ -79,13 +79,13 @@ export const UICustomizations = {
       };
     },
     additionalCustomizations: (row, key, column, value, t, searchResult) => {
-      switch(key){
+      switch (key) {
         case "Delivery Status":
-          return t(value)
+          return t(value);
         default:
-            return t("ES_COMMON_NA");
+          return t("ES_COMMON_NA");
       }
-    }
+    },
   },
   SearchHearingsConfig: {
     customValidationCheck: (data) => {
@@ -182,6 +182,9 @@ export const UICustomizations = {
           ...(requestCriteria?.state?.searchForm?.outcome && {
             outcome: [requestCriteria?.state?.searchForm?.outcome?.outcome],
           }),
+          ...(requestCriteria?.state?.searchForm?.substage && {
+            substage: requestCriteria?.state?.searchForm?.substage?.subStage,
+          }),
           pagination: {
             limit: requestCriteria?.state?.tableForm?.limit,
             offSet: requestCriteria?.state?.tableForm?.offset,
@@ -195,6 +198,9 @@ export const UICustomizations = {
         ...requestCriteria,
         body: {
           ...requestCriteria?.body,
+          ...(requestCriteria?.state?.searchForm?.substage && {
+            substage: requestCriteria?.state?.searchForm?.substage?.subStage,
+          }),
           criteria,
           tenantId,
         },
@@ -211,21 +217,21 @@ export const UICustomizations = {
       const formattedToday = new Date(today.getFullYear(), today.getMonth(), today.getDate());
       switch (key) {
         case "Draft Name":
-        case "Case Name":
+        case "CS_CASE_NAME":
           return (
             <span className="case-name-on-hover">
               {row?.caseTitle ? (row?.caseTitle?.trim().endsWith("vs") ? `${row?.caseTitle} _______` : row?.caseTitle) : t("CASE_UNTITLED")}
             </span>
           );
-        case "Case Type":
+        case "CASE_TYPE":
           return <span>NIA S138</span>;
-        case "Outcome":
+        case "CS_OUTCOME":
           return t(value);
-        case "Stage":
-          return t(row?.status);
-        case "Filing Date":
+        case "CS_STAGE":
+          return t(value);
+        case "CS_FILING_DATE":
           return <span>{formatDate(new Date(value))}</span>;
-        case "Last Edited":
+        case "CS_LAST_EDITED":
           const createdAt = new Date(value);
           const formattedCreatedAt = new Date(createdAt.getFullYear(), createdAt.getMonth(), createdAt.getDate());
           const differenceInTime = formattedToday.getTime() - formattedCreatedAt.getTime();
@@ -264,6 +270,9 @@ export const UICustomizations = {
         {
           ...requestCriteria?.body?.criteria[0],
           ...requestCriteria?.state?.searchForm,
+          ...(requestCriteria?.state?.searchForm?.substage && {
+            substage: requestCriteria?.state?.searchForm?.substage?.subStage,
+          }),
           tenantId,
           ...additionalDetails,
           ...("sortBy" in additionalDetails && {
@@ -283,6 +292,9 @@ export const UICustomizations = {
         ...requestCriteria,
         body: {
           ...requestCriteria?.body,
+          ...(requestCriteria?.state?.searchForm?.substage && {
+            substage: requestCriteria?.state?.searchForm?.substage?.subStage,
+          }),
           criteria,
           tenantId,
         },
@@ -298,11 +310,13 @@ export const UICustomizations = {
       const today = new Date();
       const formattedToday = new Date(today.getFullYear(), today.getMonth(), today.getDate());
       switch (key) {
-        case "Case Type":
+        case "CASE_TYPE":
           return <span>NIA S138</span>;
-        case "Scrutiny Status":
+        case "CS_STAGE":
+          return t(value);
+        case "CS_SCRUTINY_STATUS":
           return t(row?.status === "UNDER_SCRUTINY" ? "IN_PROGRESS" : "NOT_STARTED");
-        case "Days Since Filing":
+        case "CS_DAYS_FILING":
           const createdAt = new Date(value);
           const formattedCreatedAt = new Date(createdAt.getFullYear(), createdAt.getMonth(), createdAt.getDate());
           const differenceInTime = formattedToday.getTime() - formattedCreatedAt.getTime();
@@ -359,6 +373,9 @@ export const UICustomizations = {
           ...(requestCriteria?.state?.searchForm?.outcome && {
             outcome: [requestCriteria?.state?.searchForm?.outcome?.outcome],
           }),
+          ...(requestCriteria?.state?.searchForm?.substage && {
+            substage: requestCriteria?.state?.searchForm?.substage?.subStage,
+          }),
           pagination: {
             limit: requestCriteria?.state?.tableForm?.limit,
             offSet: requestCriteria?.state?.tableForm?.offset,
@@ -372,6 +389,9 @@ export const UICustomizations = {
         ...requestCriteria,
         body: {
           ...requestCriteria?.body,
+          ...(requestCriteria?.state?.searchForm?.substage && {
+            substage: requestCriteria?.state?.searchForm?.substage?.subStage,
+          }),
           criteria,
           tenantId,
         },
@@ -385,14 +405,14 @@ export const UICustomizations = {
     },
     additionalCustomizations: (row, key, column, value, t, searchResult) => {
       switch (key) {
-        case "Case Type":
+        case "CASE_TYPE":
           return <span>NIA S138</span>;
-        case "Filing Date":
+        case "CS_FILING_DATE":
           return <span>{formatDate(new Date(value))}</span>;
-        case "Outcome":
+        case "CD_OUTCOME":
           return t(value);
-        case "Stage":
-          return t(row?.status);
+        case "CS_STAGE":
+          return t(value);
         default:
           return t("ES_COMMON_NA");
       }
@@ -468,15 +488,15 @@ export const UICustomizations = {
     additionalCustomizations: (row, key, column, value, t, searchResult) => {
       const caseDetails = handleTaskDetails(row?.taskDetails);
       switch (key) {
-        case "Case Name & ID":
+        case "CASE_NAME_ID":
           return `${row?.caseName}, ${value}`;
-        case "Status":
+        case "STATUS":
           return t(value); // document status
-        case "Issued":
+        case "ISSUED":
           return `${formatDateDifference(value)} days ago`;
-        case "Order Type":
+        case "ORDER_TYPE":
           return t(value);
-        case "Delivery Channel":
+        case "DELIEVERY_CHANNEL":
           return caseDetails?.deliveryChannels?.channelName || "N/A";
         default:
           return t("ES_COMMON_NA");

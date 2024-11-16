@@ -78,6 +78,10 @@ const CustomReviewCardRow = ({
   } = config;
   const tenantId = window?.Digit.ULBService.getCurrentTenantId();
 
+  function getNestedValue(obj, path) {
+    return path.split(".").reduce((acc, key) => acc?.[key], obj);
+  }
+
   const extractValue = (data, key) => {
     if (!key?.includes(".")) {
       return data[key];
@@ -431,10 +435,10 @@ const CustomReviewCardRow = ({
             }
           });
         }
-        if (typeof dataError === "object") {
+        if (typeof dataError === "object" && FSOErrors?.length === 0 && !isPrevScrutiny) {
           value?.forEach((val) => {
-            if (dataError?.[val]?.systemError) {
-              systemErrors.push(dataError?.[val]);
+            if (getNestedValue(dataError, val)) {
+              systemErrors.push(getNestedValue(dataError, val));
             }
           });
         }

@@ -14,9 +14,6 @@ import org.springframework.stereotype.Component;
 
 import java.io.IOException;
 import java.sql.ResultSet;
-import java.time.LocalDate;
-import java.time.format.DateTimeFormatter;
-import java.time.format.DateTimeParseException;
 import java.util.*;
 
 import static org.pucar.dristi.config.ServiceConstants.ROW_MAPPER_EXCEPTION;
@@ -56,7 +53,7 @@ public class TaskRowMapper implements ResultSetExtractor<List<Task>> {
                     task = Task.builder()
                             .id(UUID.fromString(rs.getString("id")))
                             .tenantId(rs.getString("tenantid"))
-                            .orderId(UUID.fromString(rs.getString("orderid")))
+                            .orderId(rs.getString("orderid")==null? null:UUID.fromString(rs.getString("orderid")))
                             .filingNumber(rs.getString("filingnumber"))
                             .taskNumber(rs.getString("tasknumber"))
                             .cnrNumber(rs.getString("cnrnumber"))
@@ -67,8 +64,9 @@ public class TaskRowMapper implements ResultSetExtractor<List<Task>> {
                             .taskDetails(objectMapper.readValue(rs.getString("taskdetails"), Object.class))
                             .taskType(rs.getString("tasktype"))
                             .status(rs.getString("status"))
-                            .assignedTo(getObjectFromJson(rs.getString("assignedto"), new TypeReference<AssignedTo>() {
-                            }))
+                            .referenceId(rs.getString("referenceId"))
+                            .state(rs.getString("state"))
+                            .assignedTo(getListFromJson(rs.getString("assignedto"), new TypeReference<List<AssignedTo>>(){}))
                             .isActive(Boolean.valueOf(rs.getString("isactive")))
                             .auditDetails(auditdetails)
                             .build();
@@ -101,6 +99,18 @@ public class TaskRowMapper implements ResultSetExtractor<List<Task>> {
             return objectMapper.readValue(json, typeRef);
         } catch (Exception e) {
             throw new CustomException("Failed to convert JSON to " + typeRef.getType(), e.getMessage());
+        }
+    }
+
+    public <T> List<T> getListFromJson(String jsonString, TypeReference<List<T>> typeReference) {
+
+        if (jsonString == null || jsonString.trim().isEmpty()) {
+            return Collections.emptyList(); // Return an empty list if the input is null or empty
+        }
+        try {
+            return objectMapper.readValue(jsonString, typeReference);
+        } catch (Exception e) {
+            throw new CustomException("Failed to convert JSON to " + typeReference.getType(), e.getMessage());
         }
     }
 }

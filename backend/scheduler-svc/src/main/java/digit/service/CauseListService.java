@@ -36,7 +36,7 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
-import static digit.models.coremodels.user.enums.UserType.CITIZEN;
+import static digit.config.ServiceConstants.*;
 
 @Service
 @Slf4j
@@ -516,6 +516,7 @@ public class CauseListService {
                     .RequestInfo(createInternalRequestInfo())
                     .tenantId(config.getEgovStateTenantId())
                     .criteria(Collections.singletonList(criteria))
+                    .flow(FLOW_JAC)
                     .build();
 
             JsonNode caseList = caseUtil.getCases(searchCaseRequest);
@@ -615,7 +616,8 @@ public class CauseListService {
             if(applicationList != null) {
                 List<String> applicationNumbers = new ArrayList<>();
                 for (JsonNode application : applicationList) {
-                    applicationNumbers.add(application.get("applicationNumber").asText());
+                    if(!DELAY_CONDONATION.equalsIgnoreCase(application.get("applicationType").asText()))
+                     applicationNumbers.add(application.get("applicationNumber").asText());
                 }
                 causeList.setApplicationNumbers(applicationNumbers);
             }
@@ -651,6 +653,8 @@ public class CauseListService {
     private RequestInfo createInternalRequestInfo() {
         User userInfo = new User();
         userInfo.setUuid(userService.internalMicroserviceRoleUuid);
-        return RequestInfo.builder().userInfo(userInfo).build();
+        userInfo.setRoles(userService.internalMicroserviceRoles);
+        userInfo.setTenantId(config.getEgovStateTenantId());
+        return RequestInfo.builder().userInfo(userInfo).msgId(msgId).build();
     }
 }

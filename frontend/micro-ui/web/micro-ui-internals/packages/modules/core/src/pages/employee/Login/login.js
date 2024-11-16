@@ -129,7 +129,7 @@ const Login = ({ config: propsConfig, t, isDisabled }) => {
         submitInForm
         config={config}
         label={propsConfig.texts.submitButtonLabel}
-        secondaryActionLabel={propsConfig.texts.secondaryButtonLabel}
+        // secondaryActionLabel={propsConfig.texts.secondaryButtonLabel}
         onSecondayActionClick={onForgotPassword}
         heading={propsConfig.texts.header}
         className="loginFormStyleEmployee"

@@ -34,6 +34,9 @@ public class ApplicationCriteria {
     @Valid
     private String applicationNumber = null;
 
+    @JsonProperty("applicationCMPNumber")
+    private String applicationCMPNumber = null;
+
     @JsonProperty("owner")
     @Valid
     private UUID owner = null;

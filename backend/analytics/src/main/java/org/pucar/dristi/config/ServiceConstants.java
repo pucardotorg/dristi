@@ -190,4 +190,7 @@ public class ServiceConstants {
     public static final String NO_PAYMENT_TYPE_FOUND_CODE = "NO_PAYMENT_TYPE_FOUND";
 
     public static final String NO_PAYMENT_TYPE_FOUND_MSG = "No payment type found for the given service code.";
+
+    public static final String ASSIGN_TO_PATH="$.assignedTo";
+
 }
