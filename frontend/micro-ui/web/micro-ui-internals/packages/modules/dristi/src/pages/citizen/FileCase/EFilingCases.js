@@ -1640,6 +1640,7 @@ function EFilingCases({ path }) {
     else {
       let res;
       let caseComplaintDocument = {};
+      let casePdfDocument = [];
       try {
         if (isCaseLocked) {
           setIsDisabled(true);
@@ -1676,6 +1677,11 @@ function EFilingCases({ path }) {
             throw new Error("FILE_STORE_ID_MISSING");
           }
           res = await refetchCasePDfGeneration();
+          casePdfDocument = res?.data?.cases?.[0]?.documents
+            .filter((doc) =>
+              doc.additionalDetails?.fields?.some((field) => field.key === "FILE_CATEGORY" && field.value === "CASE_GENERATED_DOCUMENT")
+            )
+            .map((doc) => doc.fileStore);
           if (res?.status === "error") {
             setIsDisabled(false);
             toast.error(t("CASE_PDF_ERROR"));
@@ -1698,7 +1704,7 @@ function EFilingCases({ path }) {
           setErrorCaseDetails,
           isCaseSignedState: isPendingESign || isPendingReESign,
           isSaveDraftEnabled: isCaseReAssigned || isPendingReESign || isPendingESign,
-          ...(res && { fileStoreId: res?.data?.cases?.[0]?.documents?.[0]?.fileStore }),
+          ...(res && { fileStoreId: casePdfDocument?.[0] }),
           ...(caseComplaintDocument && { caseComplaintDocument: caseComplaintDocument }),
           multiUploadList,
           scrutinyObj,
