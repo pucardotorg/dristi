@@ -127,6 +127,7 @@ function SubmissionSignatureModal({ t, handleProceed, handleCloseSignaturePopup,
                 uri={uri}
                 t={t}
                 displayFilename={"CLICK_HERE"}
+                pdf = { true }
               />
             </div>
           </div>

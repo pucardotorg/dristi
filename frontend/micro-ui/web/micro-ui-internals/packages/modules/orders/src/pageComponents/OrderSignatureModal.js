@@ -151,6 +151,7 @@ function OrderSignatureModal({
                 uri={uri}
                 t={t}
                 displayFilename={"CLICK_HERE"}
+                pdf = {true}
               />
             </div>
           </div>

@@ -1,7 +1,7 @@
 import React from "react";
 import axios from "axios";
 
-const AuthenticatedLink = ({ t, uri, displayFilename = false }) => {
+const AuthenticatedLink = ({ t, uri, displayFilename = false, pdf = false }) => {
   const handleClick = (e) => {
     e.preventDefault();
 
@@ -15,7 +15,7 @@ const AuthenticatedLink = ({ t, uri, displayFilename = false }) => {
       })
       .then((response) => {
         if (response.status === 200) {
-          const blob = new Blob([response.data], { type: "application/octet-stream" });
+          const blob = new Blob([response.data], { type: pdf ? "application/pdf" : "application/octet-stream" });
           const blobUrl = URL.createObjectURL(blob);
 
           window.open(blobUrl, "_blank");
