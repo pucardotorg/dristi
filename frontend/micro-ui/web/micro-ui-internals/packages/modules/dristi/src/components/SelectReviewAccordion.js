@@ -343,7 +343,8 @@ function SelectReviewAccordion({ t, config, onSelect, formData = {}, errors, for
       formDataLoad &&
       ocrDataList &&
       ocrDataList?.length > 0 &&
-      groupedByDocumentType
+      groupedByDocumentType &&
+      !isPrevScrutiny
     ) {
       setFormDataLoad(false);
       let clonedFormData = structuredClone(formData);
