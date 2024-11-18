@@ -23,6 +23,7 @@ const DocumentPrintComponent = ({ documents }) => {
               uri={`${window.location.origin}${Urls.FileFetchById}?tenantId=${tenantId}&fileStoreId=${document?.fileStore}`}
               t={t}
               displayFilename={"PRINT"}
+              pdf = { true }
             />
           </button>
         </div>

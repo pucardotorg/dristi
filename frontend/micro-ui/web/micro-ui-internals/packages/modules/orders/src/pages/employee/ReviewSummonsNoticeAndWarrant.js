@@ -14,7 +14,7 @@ import { convertToDateInputFormat } from "../../utils/index";
 import { DRISTIService } from "@egovernments/digit-ui-module-dristi/src/services";
 import { useHistory } from "react-router-dom";
 import isEqual from "lodash/isEqual";
-
+import axios from "axios";
 const defaultSearchValues = {
   eprocess: "",
   caseId: "",
@@ -82,8 +82,15 @@ const ReviewSummonsNoticeAndWarrant = () => {
         if (response.status === 200) {
           const blob = new Blob([response.data], { type: "application/octet-stream" });
           const blobUrl = URL.createObjectURL(blob);
-
-          window.open(blobUrl, "_blank");
+          const mimeType = response.data.type || "application/octet-stream";
+          const extension = mimeType.includes("/") ? mimeType.split("/")[1] : "bin";
+          const link = document.createElement("a");
+          link.href = blobUrl;
+          link.download = `downloadedFile.${extension}`;
+          document.body.appendChild(link);
+          link.click();
+          document.body.removeChild(link);
+          URL.revokeObjectURL(blobUrl);
         } else {
           console.error("Failed to fetch the PDF:", response.statusText);
         }

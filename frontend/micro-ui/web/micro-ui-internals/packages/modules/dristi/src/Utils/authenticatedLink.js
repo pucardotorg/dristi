@@ -16,9 +16,16 @@ const AuthenticatedLink = ({ t, uri, displayFilename = false, pdf = false }) => 
       .then((response) => {
         if (response.status === 200) {
           const blob = new Blob([response.data], { type: pdf ? "application/pdf" : "application/octet-stream" });
+          const mimeType = response.data.type || "application/octet-stream";
+          const extension = mimeType.includes("/") ? mimeType.split("/")[1] : "bin";
           const blobUrl = URL.createObjectURL(blob);
-
-          window.open(blobUrl, "_blank");
+          const link = document.createElement("a");
+          link.href = blobUrl;
+          link.download = `downloadedFile.${extension}`;
+          document.body.appendChild(link);
+          link.click();
+          document.body.removeChild(link);
+          URL.revokeObjectURL(blobUrl);
         } else {
           console.error("Failed to fetch the PDF:", response.statusText);
         }
@@ -34,7 +41,8 @@ const AuthenticatedLink = ({ t, uri, displayFilename = false, pdf = false }) => 
       style={{
         display: "flex",
         color: "#007e7e",
-        width: 250,
+        // width: 250,
+        maxWidth: "250px",
         whiteSpace: "nowrap",
         overflow: "hidden",
         textOverflow: "ellipsis",

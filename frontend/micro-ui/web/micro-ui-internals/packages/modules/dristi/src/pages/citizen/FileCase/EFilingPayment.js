@@ -10,6 +10,7 @@ import { DRISTIService } from "../../../services";
 import { Urls } from "../../../hooks";
 import usePaymentProcess from "../../../../../home/src/hooks/usePaymentProcess";
 import { getSuffixByBusinessCode } from "../../../Utils";
+import useDownloadCasePdf from "../../../hooks/dristi/useDownloadCasePdf";
 
 const mockSubmitModalInfo = {
   header: "CS_HEADER_FOR_E_FILING_PAYMENT",
@@ -147,6 +148,8 @@ function EFilingPayment({ t, submitModalInfo = mockSubmitModalInfo, path }) {
     mockSubmitModalInfo,
     scenario,
   });
+  const { downloadPdf } = useDownloadCasePdf();
+
   const onSubmitCase = async () => {
     try {
       const bill = await fetchBill(caseDetails?.filingNumber + `_${suffix}`, tenantId, "case-default");
@@ -284,31 +287,16 @@ function EFilingPayment({ t, submitModalInfo = mockSubmitModalInfo, path }) {
               history.push(`/${window?.contextPath}/citizen/dristi/home`);
             }}
           />
-          <a
-            href={uri}
-            target="_blank"
-            rel="noreferrer"
-            style={{
-              display: "flex",
-              color: "#505A5F",
-              textDecoration: "none",
-              // width: 250,
-              whiteSpace: "nowrap",
-              overflow: "hidden",
-              textOverflow: "ellipsis",
+          <Button
+            variation={"secondary"}
+            className={"secondary-button-selector"}
+            label={t("CS_PRINT_CASE_FILE")}
+            labelClassName={"secondary-label-selector"}
+            onButtonClick={() => {
+              downloadPdf(tenantId, fileStoreIdToUse);
+              localStorage.removeItem("fileStoreId");
             }}
-          >
-            <Button
-              variation={"secondary"}
-              isDisabled = { true }
-              className={"secondary-button-selector"}
-              label={t("CS_PRINT_CASE_FILE")}
-              labelClassName={"secondary-label-selector"}
-              onButtonClick={() => {
-                localStorage.removeItem("fileStoreId");
-              }}
-            />
-          </a>
+          />
           <Button
             className={"tertiary-button-selector"}
             label={t("CS_MAKE_PAYMENT")}
