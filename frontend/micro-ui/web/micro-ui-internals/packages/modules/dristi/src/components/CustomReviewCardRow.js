@@ -128,7 +128,7 @@ const CustomReviewCardRow = ({
               const [year, month, day] = dateValue.split("-");
               return `${day}-${month}-${year}`;
             })()
-          : "Invalid date";
+          : t(notAvailable || "DATE_NOT_AVAILABLE");
 
         const dateDependentOnValue = extractValue(data, textDependentOn);
         if (showFlagIcon && dateDependentOnValue && t(textDependentValue)) {

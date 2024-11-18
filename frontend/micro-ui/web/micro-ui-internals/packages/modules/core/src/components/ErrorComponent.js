@@ -4,14 +4,13 @@ import { useTranslation } from "react-i18next";
 const getStyles = () => ({
   errorBoundary: {
     width: "100vw",
-    height: "100vh",
+    height: "calc(100vh - 84px)",
     fontSize: "16px",
     fontFamily: "sans-serif",
     display: "flex",
     justifyContent: "flex-start",
     alignItems: "center",
     flexDirection: "column",
-    paddingTop: "60px",
   },
   errorContainer: {
     display: "flex",
@@ -23,7 +22,7 @@ const getStyles = () => ({
     marginTop: "20px",
   },
   image: {
-    width: "40vw",
+    height: "50vh",
     marginBottom: "30px",
   },
   heading: {
@@ -45,18 +44,36 @@ const getStyles = () => ({
     cursor: "pointer",
   },
   button: {
-    marginTop: "10px",
-    height: "40px",
-    width: "153px",
-    borderRadius: "0px",
-    padding: "8px 24px",
-    color: "white",
-    cursor: "pointer",
-    backgroundColor: "#00796b",
+    boxShadow: "none",
+    backgroundColor: "transparent",
     border: "none",
-    fontSize: "16px",
+    borderBottom: "3px solid black",
+  },
+  buttonTextStyle: {
+    fontFamily: "Raleway",
+    fontSize: "29.71px",
+    fontWeight: 400,
+    lineHeight: "34.88px",
+    color: "#3A3A3A",
   },
 });
+
+const LeftBackArrow = () => (
+  <svg width="33" height="20" viewBox="0 0 33 20" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <path
+      d="M3.05469 6.50713L25.8915 6.50713C28.7354 6.50713 31.0408 8.81253 31.0408 11.6564L31.0408 13.5453C31.0408 16.3892 28.7354 18.6946 25.8915 18.6946L8.01997 18.6946"
+      stroke="#3A3A3A"
+      stroke-width="2.5769"
+      stroke-linejoin="round"
+    />
+    <path
+      d="M7.57031 1.09025C5.45497 3.20559 4.26899 4.39158 2.15365 6.50692L7.57031 11.9236"
+      stroke="#3A3A3A"
+      stroke-width="2.5769"
+      stroke-linejoin="round"
+    />
+  </svg>
+);
 
 const ErrorConfig = {
   error: {
@@ -82,6 +99,8 @@ const errorData = {
 };
 
 const ErrorComponent = (props) => {
+  const CustomButton = window?.Digit?.ComponentRegistryService?.getComponent("CustomButton");
+
   const { type = "error" } = Digit.Hooks.useQueryParams();
   const config = ErrorConfig[type];
   const { t } = useTranslation();
@@ -120,14 +139,15 @@ const ErrorComponent = (props) => {
             </span>
           </p>
         )}
-        <button
-          onClick={() => {
+        <CustomButton
+          onButtonClick={() => {
             props.goToHome();
           }}
+          icon={<LeftBackArrow />}
+          label={t(config.buttonInfo)}
           style={styles.button}
-        >
-          {t(config.buttonInfo)}
-        </button>
+          textStyles={styles.buttonTextStyle}
+        />
       </div>
     </div>
   );

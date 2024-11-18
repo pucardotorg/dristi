@@ -312,6 +312,8 @@ export const UICustomizations = {
       switch (key) {
         case "CASE_TYPE":
           return <span>NIA S138</span>;
+        case "CS_STAGE":
+          return t(value);
         case "CS_SCRUTINY_STATUS":
           return t(row?.status === "UNDER_SCRUTINY" ? "IN_PROGRESS" : "NOT_STARTED");
         case "CS_DAYS_FILING":

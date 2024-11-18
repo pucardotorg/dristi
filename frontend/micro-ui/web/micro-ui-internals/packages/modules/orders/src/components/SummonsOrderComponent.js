@@ -273,8 +273,8 @@ const SummonsOrderComponent = ({ t, config, formData, onSelect, clearErrors }) =
       const ePostAddresses = addressList?.filter((item) => Boolean(item));
       setDeliveryChannels(
         [
-          { label: "SMS", type: "SMS", code: "SMS", values: phone_numbers || [] },
-          { label: "EMAIL", type: "E-mail", code: "EMAIL", values: email || [] },
+          { label: "SMS", type: "SMS", code: "SMS", values: [...new Set(phone_numbers || [])] },
+          { label: "EMAIL", type: "E-mail", code: "EMAIL", values: [...new Set(email || [])] },
           {
             label: "EPOST",
             type: "e-Post",

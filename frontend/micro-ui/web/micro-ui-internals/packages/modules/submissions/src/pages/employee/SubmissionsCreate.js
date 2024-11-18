@@ -756,12 +756,15 @@ const SubmissionsCreate = ({ path }) => {
               action: "CREATE",
             },
             filingNumber: response?.application?.filingNumber,
-            assignedTo: response?.application?.additionalDetails?.respondingParty?.flatMap((item) => item?.uuid?.map((u) => ({ uuid: u }))),
+            assignedTo: response?.application?.additionalDetails?.respondingParty
+              ?.flatMap((item) => item?.uuid?.map((u) => ({ uuid: u })))
+              ?.filter((item) => item?.uuid !== userInfo?.uuid),
             state: "PENDINGRESPONSE",
             referenceId: response?.application?.applicationNumber,
             taskType: "PENDING_TASK",
-            tenantId: "kl",
+            tenantId,
             status: "INPROGRESS",
+            dueDate: orderDetails?.orderDetails?.dates?.submissionDeadlineDate,
           },
           tenantId,
         });

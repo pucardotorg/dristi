@@ -9,7 +9,7 @@ const Redircter = () => {
     process.env.NODE_ENV === "development"
   ) {
     //do nothing
-  }else{
+  } else {
     window.location.href = path;
   }
   return <span></span>;
@@ -38,7 +38,7 @@ class ErrorBoundary extends React.Component {
       // ("UI-component-details", this.props);
       // You can render any custom fallback UI
       return (
-        <div className="error-boundary">
+        <div className="error-boundary" style={{ height: "calc(100vh - 84px)" }}>
           <Redircter />
           <ErrorComponent initData={this.props.initData} />
 
