@@ -39,12 +39,16 @@ async function fetchDocument(fileStoreId) {
       }
 
       const page = pdfDoc.addPage();
-      const { width, height } = page.getSize();
+      const { width: pageWidth, height: pageHeight } = page.getSize();
+      const { width: imageWidth, height: imageHeight } = image;
+      const scale = Math.min(pageWidth / imageWidth, pageHeight / imageHeight);
+      const xOffset = (pageWidth - imageWidth * scale) / 2;
+      const yOffset = (pageHeight - imageHeight * scale) / 2;
       page.drawImage(image, {
-        x: 0,
-        y: 0,
-        width: width,
-        height: height,
+        x: xOffset,
+        y: yOffset,
+        width: imageWidth * scale,
+        height: imageHeight * scale,
       });
 
       const pdfBytes = await pdfDoc.save();
