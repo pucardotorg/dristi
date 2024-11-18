@@ -364,7 +364,7 @@ exports.getComplainantsDetailsForComplaint = async (cases) => {
                 ifIndividual: false,
                 institutionName: data.companyName || '',
                 complainantAddress: companyAddress || '',
-                nameOfAuthorizedSignatory: `${firstName} ${middleName} ${lastName}`,
+                nameOfAuthorizedSignatory: `${firstName} ${middleName} ${lastName}` || '',
                 designationOfAuthorizedSignatory: data.complainantDesignation || '',
             };
         } else {
@@ -373,7 +373,7 @@ exports.getComplainantsDetailsForComplaint = async (cases) => {
 
             return {
                 ifIndividual: true,
-                complainantName: `${firstName} ${middleName} ${lastName}`,
+                complainantName: `${firstName} ${middleName} ${lastName}` || '',
                 complainantAge: data.complainantAge || '',
                 complainantAddress: address || '',
                 phoneNumber: phoneNumber || '',
@@ -424,13 +424,13 @@ exports.getRespondentsDetailsForComplaint = async (cases) => {
                 ifAccusedIndividual: false,
                 accusedInstitutionName: data.respondentCompanyName || '',
                 accusedAddress: addresses && addresses.join(", ") || '',
-                nameOfAccusedAuthorizedSignatory: `${firstName} ${middleName} ${lastName}`,
+                nameOfAccusedAuthorizedSignatory: `${firstName} ${middleName} ${lastName}` || '',
                 designationOfAccusedAuthorizedSignatory: data.respondentDesignation || '',
             };
         } else {
             return {
                 ifAccusedIndividual: true,
-                accusedName: `${firstName} ${middleName} ${lastName}`,
+                accusedName: `${firstName} ${middleName} ${lastName}` || '',
                 accusedAge: data.respondentAge || '',
                 accusedAddress: addresses && addresses.join(", ") || '',
                 accusedPhoneNumber: data.phonenumbers && data.phonenumbers.mobileNumber && data.phonenumbers.mobileNumber.join(", ") || "",
@@ -570,12 +570,12 @@ exports.getWitnessDetailsForComplaint = async (cases) => {
         const additionalDetails = data && data.witnessAdditionalDetails && typeof data.witnessAdditionalDetails === 'object' && data.witnessAdditionalDetails.text ? data.witnessAdditionalDetails.text : '';
 
         return {
-            witnessName: `${firstName} ${middleName} ${lastName}`,
+            witnessName: `${firstName} ${middleName} ${lastName}` || '',
             witnessOccupation: data.witnessDesignation,
             witnessPhoneNumber: data.phonenumbers && data.phonenumbers.mobileNumber && data.phonenumbers.mobileNumber.join(", ") || "",
             witnessEmail: data.emails && data.emails.emailId && data.emails.emailId.join(", ") || "",
             witnessAddress: addresses && addresses.join(", ") || '',
-            witnessAdditionalDetails: data.witnessAdditionalDetails.text
+            witnessAdditionalDetails: data.witnessAdditionalDetails.text || ''
         };
     });
 };
