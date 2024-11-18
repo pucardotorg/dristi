@@ -146,7 +146,7 @@ public class PdfEmbedder {
                     // Once found, use the coordinates of the keyword
                     float x = finder.getKeywordX();
                     float y = finder.getKeywordY();
-                    coordinate.setX(x);
+                    coordinate.setX(x - signaturePlace.length()*5);
                     coordinate.setY(y);
                     coordinate.setFound(true);
                     coordinate.setPageNumber(i);

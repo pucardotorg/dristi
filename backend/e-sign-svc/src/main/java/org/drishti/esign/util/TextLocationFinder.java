@@ -39,6 +39,7 @@ public class TextLocationFinder implements RenderListener {
             currentText.append(text);
             if (currentText.toString().contains(keyword)) {
                 // Coordinates are in user space units
+                currentText = new StringBuilder();
                 keywordX = renderInfo.getBaseline().getStartPoint().get(0);
                 keywordY = renderInfo.getBaseline().getStartPoint().get(1);
                 keywordFound = true;
