@@ -154,12 +154,7 @@ exports.caseComplaintPdf = async (req, res, next) => {
     console.log("Pdf Request: {}", pdfRequest);
     const pdf = await pdfService.generateComplaintPDF(pdfRequest);
 
-    let finalComplaintPdf = await fileService.appendComplainantFilesToPDF(
-      pdf,
-      complainants
-    );
-
-    const finalPdfBuffer = Buffer.from(finalComplaintPdf);
+    const finalPdfBuffer = Buffer.from(pdf);
     console.log("Pdf Generated Successfully");
 
     res.setHeader("Content-Type", "application/pdf");

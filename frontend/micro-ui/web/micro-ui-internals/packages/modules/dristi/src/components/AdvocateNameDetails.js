@@ -160,6 +160,7 @@ function AdvocateNameDetails({ t, config, onSelect, formData = {}, errors, regis
     if (isApproved && !searchResult && selectedIndividual) {
       onSelect("AdvocateNameDetails", {
         ...formData?.AdvocateNameDetails,
+        advocateMobileNumber: selectedIndividual?.Individual?.[0]?.mobileNumber || '',
         advocateIdProof: identifierIdDetails?.fileStoreId
           ? [
               {
