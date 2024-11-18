@@ -362,7 +362,7 @@ exports.getComplainantsDetailsForComplaint = async (cases) => {
 
             return {
                 ifIndividual: false,
-                institutionName: data?.companyName || '',
+                institutionName: data?.complainantCompanyName || '',
                 complainantAddress: companyAddress || '',
                 nameOfAuthorizedSignatory: `${firstName} ${middleName} ${lastName}` || '',
                 designationOfAuthorizedSignatory: data?.complainantDesignation || '',
