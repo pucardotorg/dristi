@@ -207,12 +207,43 @@ const InsideHearingMainPage = () => {
   }, [transcriptText, setTranscriptText]);
 
   const isDepositionSaved = useMemo(() => {
-    return Boolean(hearing?.additionalDetails?.witnessDepositions?.find((witness) => witness.uuid === selectedWitness.uuid)?.deposition);
+    const witness = hearing?.additionalDetails?.witnessDepositions?.find((witness) => witness.uuid === selectedWitness?.uuid);
+    return witness?.isDepositionSaved === true;
   }, [selectedWitness, hearing]);
 
-  const saveWitnessDeposition = () => {
+  const saveWitnessDeposition = async () => {
     if (!hearing) return;
+
     setWitnessModalOpen(true);
+
+    const updatedHearing = structuredClone(hearing || {});
+    updatedHearing.additionalDetails = updatedHearing.additionalDetails || {};
+    updatedHearing.additionalDetails.witnessDepositions = updatedHearing.additionalDetails.witnessDepositions || [];
+    // Find the index of the selected witness in witnessDepositions
+    const witnessIndex = updatedHearing.additionalDetails.witnessDepositions.findIndex((witness) => witness.uuid === selectedWitness?.uuid);
+
+    if (!isDepositionSaved) {
+      if (witnessIndex !== -1) {
+        // existing ones
+        updatedHearing.additionalDetails.witnessDepositions[witnessIndex] = {
+          ...updatedHearing.additionalDetails.witnessDepositions[witnessIndex],
+          deposition: witnessDepositionText,
+          isDepositionSaved: false,
+        };
+      } else {
+        updatedHearing.additionalDetails.witnessDepositions.push({
+          ...selectedWitness,
+          deposition: witnessDepositionText,
+          isDepositionSaved: false,
+        });
+      }
+
+      await _updateTranscriptRequest({ body: { hearing: updatedHearing } }).then((res) => {
+        if (res?.hearing) {
+          setHearing(res.hearing);
+        }
+      });
+    }
   };
 
   const handleDropdownChange = (selectedWitnessOption) => {
@@ -241,11 +272,18 @@ const InsideHearingMainPage = () => {
       const updatedHearing = structuredClone(hearing || {});
       updatedHearing.additionalDetails = updatedHearing.additionalDetails || {};
       updatedHearing.additionalDetails.witnessDepositions = updatedHearing.additionalDetails.witnessDepositions || [];
+      const witnessIndex = updatedHearing.additionalDetails.witnessDepositions.findIndex((witness) => witness.uuid === selectedWitness?.uuid);
+
       if (!isDepositionSaved) {
-        updatedHearing.additionalDetails.witnessDepositions.push({
-          ...selectedWitness,
-          deposition: witnessDepositionText,
-        });
+        if (witnessIndex !== -1) {
+          // check for existing one
+          updatedHearing.additionalDetails.witnessDepositions[witnessIndex].isDepositionSaved = true;
+        } else {
+          updatedHearing.additionalDetails.witnessDepositions.push({
+            ...selectedWitness,
+            isDepositionSaved: true,
+          });
+        }
         await _updateTranscriptRequest({ body: { hearing: updatedHearing } }).then((res) => {
           if (res?.hearing) {
             setHearing(res.hearing);
