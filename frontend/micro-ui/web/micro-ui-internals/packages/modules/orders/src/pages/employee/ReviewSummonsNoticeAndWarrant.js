@@ -68,7 +68,7 @@ const ReviewSummonsNoticeAndWarrant = () => {
   // };
 
   const handleDownload = useCallback(() => {
-    const fileStoreId = rowData?.documents?.filter((data) => data?.documentType === "SIGNED")?.[0]?.fileStore;
+    const fileStoreId = rowData?.documents?.filter((data) => data?.documentType === "SIGNED_TASK_DOCUMENT")?.[0]?.fileStore;
     const uri = `${window.location.origin}${Urls.FileFetchById}?tenantId=${tenantId}&fileStoreId=${fileStoreId}`;
     const authToken = localStorage.getItem("token");
     axios
@@ -442,7 +442,12 @@ const ReviewSummonsNoticeAndWarrant = () => {
       actionSaveLabel: t("MARK_AS_SENT"),
       isStepperModal: false,
       modalBody: (
-        <PrintAndSendDocumentComponent infos={infos} documents={documents?.filter((docs) => docs.documentType === "SIGNED")} links={links} t={t} />
+        <PrintAndSendDocumentComponent
+          infos={infos}
+          documents={documents?.filter((docs) => docs.documentType === "SIGNED_TASK_DOCUMENT")}
+          links={links}
+          t={t}
+        />
       ),
       actionSaveOnSubmit: handleSubmit,
     };

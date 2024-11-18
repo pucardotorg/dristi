@@ -47,8 +47,6 @@ const WitnessModal = ({ handleClose, hearingId, setSignedDocumentUploadID, handl
   const [formData, setFormData] = useState({}); // storing the file upload data
   const [openUploadSignatureModal, setOpenUploadSignatureModal] = useState(false);
   const { uploadDocuments } = Digit.Hooks.orders.useDocumentUpload();
-  const [fileStoreId, setFileStoreId] = useState("c162c182-103f-463e-99b6-18654ed7a5b1"); // have to set the uploaded fileStoreID
-  const uri = `${window.location.origin}${Urls.FileFetchById}?tenantId=${tenantId}&fileStoreId=${fileStoreId}`;
   const name = "Signature";
   const uploadModalConfig = useMemo(() => {
     return {
@@ -155,8 +153,7 @@ const WitnessModal = ({ handleClose, hearingId, setSignedDocumentUploadID, handl
             <div className="donwload-submission" style={{ display: "flex", alignItems: "center" }}>
               <h2>{t("Download the Witness Deposition")}</h2>
               <button
-                href={uri}
-                arget="_blank"
+                target="_blank"
                 rel="noreferrer"
                 style={{ marginLeft: "10px", color: "#007E7E", cursor: "pointer", textDecoration: "underline", background: "none" }}
                 onClick={handleDownload}

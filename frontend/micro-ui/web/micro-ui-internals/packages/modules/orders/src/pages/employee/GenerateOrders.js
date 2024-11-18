@@ -1939,11 +1939,6 @@ const GenerateOrders = () => {
   };
 
   const updateCaseDetails = async (action) => {
-    const assignee = [...(respondents?.map((data) => data?.uuid[0]) || [])];
-    const advocateUuid =
-      Object.keys(allAdvocates)
-        .filter((data) => assignee?.includes(allAdvocates?.[data]?.[0]))
-        ?.flat() || [];
     return await DRISTIService.caseUpdateService(
       {
         cases: {
@@ -1952,7 +1947,6 @@ const GenerateOrders = () => {
           workflow: {
             ...caseDetails?.workflow,
             action,
-            ...(action === "ISSUE_ORDER" && { assignes: [...assignee, ...advocateUuid] }),
           },
         },
         tenantId,
