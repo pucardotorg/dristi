@@ -454,10 +454,10 @@ exports.getDocumentList = async (cases) => {
     const returnMemo = await this.generateChequeReturnMemoDescriptions(chequeDetails);
     const statutoryNotice = await this.generateDemandNoticeDescriptions(demandNoticeDetails);
     const proofOfDispatch = await this.generateProofDispatchDescriptions(demandNoticeDetails);
-    const proofOfService = demandNoticeDetails.proofOfAcknowledgmentFileStore ? await this.generateProofServiceDescriptions(demandNoticeDetails) : [];
+    const proofOfService = demandNoticeDetails?.[0]?.proofOfAcknowledgmentFileStore ? await this.generateProofServiceDescriptions(demandNoticeDetails) : [];
     const affidavitInLieuComplaint = ["Digital record of proof of Affidavit under section 223 of BNSS"];
-    const proofOfReply = demandNoticeDetails.proofOfReplyFileStore ? await this.generateProofReplyDescriptions(demandNoticeDetails) : [];
-    const proofOfDeposit = chequeDetails?.depositChequeFileStore ? await this.generateProofDepositDescriptions(chequeDetails) : [];
+    const proofOfReply = demandNoticeDetails?.[0]?.proofOfReplyFileStore ? await this.generateProofReplyDescriptions(demandNoticeDetails) : [];
+    const proofOfDeposit = chequeDetails?.[0]?.depositChequeFileStore ? await this.generateProofDepositDescriptions(chequeDetails) : [];
     const optionalDocs = await this.generateOptionalDocDescriptions(cases.documents);
 
     newDocumentList.push(
