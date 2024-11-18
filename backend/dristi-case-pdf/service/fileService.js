@@ -144,11 +144,18 @@ async function appendRespondentFilesToPDF(pdf, respondents) {
 
   for (let i = 0; i < respondents.length; i++) {
     const respondent = respondents[i];
-    if (respondent.inquiryAffidavitFileStore) {
+    if (respondent?.inquiryAffidavitFileStore) {
       await appendPdfPagesWithHeader(
         existingPdfDoc,
-        respondent.inquiryAffidavitFileStore,
+        respondent?.inquiryAffidavitFileStore,
         `Inquiry Affidavit Document ${i + 1}`
+      );
+    }
+    if (respondent?.companyDetailsUpload) {
+      await appendPdfPagesWithHeader(
+        existingPdfDoc,
+        respondent?.companyDetailsUpload,
+        `Accused Company Document ${i + 1}`
       );
     }
   }

@@ -345,16 +345,16 @@ exports.getPrayerSwornStatementDetails = (cases) => {
 };
 
 exports.getComplainantsDetailsForComplaint = async (cases) => {
-    if (!cases.additionalDetails || !cases.additionalDetails.complainantDetails || !cases.additionalDetails.complainantDetails.formdata) {
+    if (!cases?.additionalDetails || !cases?.additionalDetails?.complainantDetails || !cases?.additionalDetails?.complainantDetails?.formdata) {
         return [];
     }
-    return cases.additionalDetails.complainantDetails.formdata.map((formData) => {
-        const data = formData.data;
-        const complainantType = data.complainantType || '';
-        const firstName = data.firstName || '';
-        const middleName = data.middleName || '';
-        const lastName = data.lastName || '';
-        const phoneNumber = (data.complainantVerification && data.complainantVerification.mobileNumber) || '';
+    return cases?.additionalDetails?.complainantDetails?.formdata?.map((formData) => {
+        const data = formData?.data;
+        const complainantType = data?.complainantType || '';
+        const firstName = data?.firstName || '';
+        const middleName = data?.middleName || '';
+        const lastName = data?.lastName || '';
+        const phoneNumber = (data?.complainantVerification && data?.complainantVerification?.mobileNumber) || '';
 
         if (complainantType.code === 'REPRESENTATIVE') {
             const companyDetails = data.addressCompanyDetails || {};
@@ -362,19 +362,20 @@ exports.getComplainantsDetailsForComplaint = async (cases) => {
 
             return {
                 ifIndividual: false,
-                institutionName: data.companyName || '',
+                institutionName: data?.companyName || '',
                 complainantAddress: companyAddress || '',
                 nameOfAuthorizedSignatory: `${firstName} ${middleName} ${lastName}` || '',
-                designationOfAuthorizedSignatory: data.complainantDesignation || '',
+                designationOfAuthorizedSignatory: data?.complainantDesignation || '',
+                companyDetailsFileStore: getDocumentFileStore(data?.companyDetailsUpload, 'Authoriastion oF Representative Document') || '',
             };
         } else {
-            const addressDetails = data.complainantVerification && data.complainantVerification.individualDetails && data.complainantVerification.individualDetails.addressDetails || {};
+            const addressDetails = data?.complainantVerification && data?.complainantVerification?.individualDetails && data?.complainantVerification?.individualDetails?.addressDetails || {};
             const address = getStringAddressDetails(addressDetails);
 
             return {
                 ifIndividual: true,
                 complainantName: `${firstName} ${middleName} ${lastName}` || '',
-                complainantAge: data.complainantAge || '',
+                complainantAge: data?.complainantAge || '',
                 complainantAddress: address || '',
                 phoneNumber: phoneNumber || '',
                 emailId: '',
@@ -407,34 +408,36 @@ exports.getAdvocateDetailsForComplaint = async (cases) => {
 };
 
 exports.getRespondentsDetailsForComplaint = async (cases) => {
-    if (!cases.additionalDetails || !cases.additionalDetails.respondentDetails || !cases.additionalDetails.respondentDetails.formdata) {
+    if (!cases?.additionalDetails || !cases?.additionalDetails?.respondentDetails || !cases?.additionalDetails?.respondentDetails?.formdata) {
         return [];
     }
-    return cases.additionalDetails.respondentDetails.formdata.map((formData) => {
-        const data = formData.data;
-        const respondentType = data.respondentType || '';
-        const firstName = data.respondentFirstName || '';
-        const middleName = data.respondentMiddleName || '';
-        const lastName = data.respondentLastName || '';
-        const addresses = data.addressDetails.map((addressDetail) => {
-            return getStringAddressDetails(addressDetail.addressDetails);
+    return cases.additionalDetails.respondentDetails.formdata?.map((formData) => {
+        const data = formData?.data;
+        const respondentType = data?.respondentType || '';
+        const firstName = data?.respondentFirstName || '';
+        const middleName = data?.respondentMiddleName || '';
+        const lastName = data?.respondentLastName || '';
+        const addresses = data?.addressDetails?.map((addressDetail) => {
+            return getStringAddressDetails(addressDetail?.addressDetails);
         });
         if (respondentType.code === 'REPRESENTATIVE') {
             return {
                 ifAccusedIndividual: false,
-                accusedInstitutionName: data.respondentCompanyName || '',
-                accusedAddress: addresses && addresses.join(", ") || '',
+                accusedInstitutionName: data?.respondentCompanyName || '',
+                accusedAddress: addresses && addresses?.join(", ") || '',
                 nameOfAccusedAuthorizedSignatory: `${firstName} ${middleName} ${lastName}` || '',
-                designationOfAccusedAuthorizedSignatory: data.respondentDesignation || '',
+                designationOfAccusedAuthorizedSignatory: data?.respondentDesignation || '',
+                inquiryAffidavitFileStore: getDocumentFileStore(data?.inquiryAffidavitFileUpload, 'Inquiry Affidavit Document') || '',
+                companyDetailsUpload: getDocumentFileStore(data?.companyDetailsUpload, 'Accused Company Document') || ''
             };
         } else {
             return {
                 ifAccusedIndividual: true,
                 accusedName: `${firstName} ${middleName} ${lastName}` || '',
-                accusedAge: data.respondentAge || '',
-                accusedAddress: addresses && addresses.join(", ") || '',
-                accusedPhoneNumber: data.phonenumbers && data.phonenumbers.mobileNumber && data.phonenumbers.mobileNumber.join(", ") || "",
-                accusedEmailId: data.emails && data.emails.emailId && data.emails.emailId.join(", ") || "",
+                accusedAge: data?.respondentAge || '',
+                accusedAddress: addresses && addresses?.join(", ") || '',
+                accusedPhoneNumber: data?.phonenumbers?.mobileNumber?.join(", ") || "",
+                accusedEmailId: data?.emails?.emailId?.join(", ") || "",
             };
         }
     });
@@ -555,27 +558,25 @@ exports.generateOptionalDocDescriptions = async (documentList) => {
 }
 
 exports.getWitnessDetailsForComplaint = async (cases) => {
-    if (!cases.additionalDetails || !cases.additionalDetails.witnessDetails || !cases.additionalDetails.witnessDetails.formdata) {
+    if (!cases?.additionalDetails || !cases?.additionalDetails?.witnessDetails || !cases?.additionalDetails?.witnessDetails?.formdata) {
         return [];
     }
-    return cases.additionalDetails.witnessDetails.formdata.map((formData) => {
-        const data = formData.data;
-        const addresses = data.addressDetails.map((addressDetail) => {
-            return getStringAddressDetails(addressDetail.addressDetails);
+    return cases?.additionalDetails?.witnessDetails?.formdata?.map((formData) => {
+        const data = formData?.data;
+        const addresses = data?.addressDetails?.map((addressDetail) => {
+            return getStringAddressDetails(addressDetail?.addressDetails);
         });
-        const firstName = data.firstName || '';
-        const middleName = data.middleName || '';
-        const lastName = data.lastName || '';
-
-        const additionalDetails = data && data.witnessAdditionalDetails && typeof data.witnessAdditionalDetails === 'object' && data.witnessAdditionalDetails.text ? data.witnessAdditionalDetails.text : '';
+        const firstName = data?.firstName || '';
+        const middleName = data?.middleName || '';
+        const lastName = data?.lastName || '';
 
         return {
             witnessName: `${firstName} ${middleName} ${lastName}` || '',
-            witnessOccupation: data.witnessDesignation,
-            witnessPhoneNumber: data.phonenumbers && data.phonenumbers.mobileNumber && data.phonenumbers.mobileNumber.join(", ") || "",
-            witnessEmail: data.emails && data.emails.emailId && data.emails.emailId.join(", ") || "",
-            witnessAddress: addresses && addresses.join(", ") || '',
-            witnessAdditionalDetails: data.witnessAdditionalDetails.text || ''
+            witnessOccupation: data?.witnessDesignation,
+            witnessPhoneNumber: data?.phonenumbers?.mobileNumber?.join(", ") || "",
+            witnessEmail: data?.emails?.emailId?.join(", ") || "",
+            witnessAddress: addresses?.join(", ") || '',
+            witnessAdditionalDetails: data?.witnessAdditionalDetails?.text || ''
         };
     });
 };
