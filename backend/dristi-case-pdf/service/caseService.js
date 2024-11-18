@@ -399,7 +399,7 @@ exports.getAdvocateDetailsForComplaint = async (cases) => {
                 isPartyInPerson: false,
                 advocateName: data.advocateName || '',
                 barId: data.barRegistrationNumber || '',
-                advocatePhoneNumber : ""
+                advocatePhoneNumber : data.AdvocateNameDetails.advocateMobileNumber || ''
             };
         }
         
@@ -572,9 +572,9 @@ exports.getWitnessDetailsForComplaint = async (cases) => {
         return {
             witnessName: `${firstName} ${middleName} ${lastName}`,
             witnessOccupation: data.witnessDesignation,
-            witnessPhoneNumber: data.phonenumbers.mobileNumber.join(", ") || "",
-            witnessEmail: data.emails.emailId.join(", ") || "",
-            witnessAddress: addresses,
+            witnessPhoneNumber: data.phonenumbers && data.phonenumbers.mobileNumber && data.phonenumbers.mobileNumber.join(", ") || "",
+            witnessEmail: data.emails && data.emails.emailId && data.emails.emailId.join(", ") || "",
+            witnessAddress: addresses && addresses.join(", ") || '',
             witnessAdditionalDetails: data.witnessAdditionalDetails.text
         };
     });
