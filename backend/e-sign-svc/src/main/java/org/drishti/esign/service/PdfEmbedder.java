@@ -48,7 +48,7 @@ public class PdfEmbedder {
             appearance.setAcro6Layers(false);
 
             Coordinate locationToSign = findLocationToSign(reader, signaturePlaceHolder);
-            Rectangle rectangle = new Rectangle(locationToSign.getX(), locationToSign.getY(), locationToSign.getX() + (100), locationToSign.getY() + (90));
+            Rectangle rectangle = new Rectangle(locationToSign.getX(), locationToSign.getY(), locationToSign.getX() + (100), locationToSign.getY() + (50));
             appearance.setVisibleSignature(rectangle, locationToSign.getPageNumber(), signaturePlaceHolder);
 
             Font font = new Font();
