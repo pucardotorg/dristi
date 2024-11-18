@@ -77,7 +77,7 @@ function CaseLockModal({
           await createPendingTask({ name: t("PENDING_RE_E_SIGN_FOR_CASE"), status: "PENDING_RE_E-SIGN" }); // check status
           history.push(`${path}/sign-complaint?filingNumber=${filingNumber}`);
         } catch (error) {
-          toast.error(t("SOMETHING_WENT_WRONG"));
+          toast.error(error);
         }
       } else {
         try {

@@ -366,7 +366,7 @@ exports.getComplainantsDetailsForComplaint = async (cases) => {
                 complainantAddress: companyAddress || '',
                 nameOfAuthorizedSignatory: `${firstName} ${middleName} ${lastName}` || '',
                 designationOfAuthorizedSignatory: data?.complainantDesignation || '',
-                companyDetailsFileStore: getDocumentFileStore(data?.companyDetailsUpload, 'Authoriastion oF Representative Document') || '',
+                companyDetailsFileStore: getDocumentFileStore(data?.companyDetailsUpload, 'Company documents') || '',
             };
         } else {
             const addressDetails = data?.complainantVerification && data?.complainantVerification?.individualDetails && data?.complainantVerification?.individualDetails?.addressDetails || {};
@@ -400,7 +400,8 @@ exports.getAdvocateDetailsForComplaint = async (cases) => {
                 isPartyInPerson: false,
                 advocateName: data.advocateName || '',
                 barId: data.barRegistrationNumber || '',
-                advocatePhoneNumber : data.AdvocateNameDetails.advocateMobileNumber || ''
+                advocatePhoneNumber : data.AdvocateNameDetails.advocateMobileNumber || '',
+                vakalatnamaFileStore: getDocumentFileStore(data.vakalatnamaFileUpload, 'VAKALATNAMA') || '',
             };
         }
         
@@ -427,8 +428,8 @@ exports.getRespondentsDetailsForComplaint = async (cases) => {
                 accusedAddress: addresses && addresses?.join(", ") || '',
                 nameOfAccusedAuthorizedSignatory: `${firstName} ${middleName} ${lastName}` || '',
                 designationOfAccusedAuthorizedSignatory: data?.respondentDesignation || '',
-                inquiryAffidavitFileStore: getDocumentFileStore(data?.inquiryAffidavitFileUpload, 'Inquiry Affidavit Document') || '',
-                companyDetailsUpload: getDocumentFileStore(data?.companyDetailsUpload, 'Accused Company Document') || ''
+                inquiryAffidavitFileStore: getDocumentFileStore(data?.inquiryAffidavitFileUpload, 'Affidavit documents') || '',
+                companyDetailsUpload: getDocumentFileStore(data?.companyDetailsUpload, 'Company documents') || ''
             };
         } else {
             return {
@@ -454,9 +455,9 @@ exports.getDocumentList = async (cases) => {
     const statutoryNotice = await this.generateDemandNoticeDescriptions(demandNoticeDetails);
     const proofOfDispatch = await this.generateProofDispatchDescriptions(demandNoticeDetails);
     const proofOfService = demandNoticeDetails.proofOfAcknowledgmentFileStore ? await this.generateProofServiceDescriptions(demandNoticeDetails) : [];
-    const affidavitInLieuComplaint = ["Digital record of proof of Affidavit in-lieu-of inquiry under section 225, Bharatiya Nagarik Suraksha Sanhita, 2024"];
+    const affidavitInLieuComplaint = ["Digital record of proof of Affidavit under section 223 of BNSS"];
     const proofOfReply = demandNoticeDetails.proofOfReplyFileStore ? await this.generateProofReplyDescriptions(demandNoticeDetails) : [];
-    const proofOfDeposit = await this.generateProofDepositDescriptions(chequeDetails);
+    const proofOfDeposit = chequeDetails?.depositChequeFileStore ? await this.generateProofDepositDescriptions(chequeDetails) : [];
     const optionalDocs = await this.generateOptionalDocDescriptions(cases.documents);
 
     newDocumentList.push(

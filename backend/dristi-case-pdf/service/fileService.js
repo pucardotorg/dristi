@@ -313,7 +313,7 @@ async function appendPrayerSwornFilesToPDF(pdf, prayerSwornStatementDetails) {
       await appendPdfPagesWithHeader(
         existingPdfDoc,
         prayerSworn.memorandumOfComplaintFileStore,
-        `Memorandum of Complaint Document ${i + 1}`
+        `Complaint ${i + 1}`
       );
     }
     if (prayerSworn.prayerForReliefFileStore) {
@@ -327,7 +327,7 @@ async function appendPrayerSwornFilesToPDF(pdf, prayerSwornStatementDetails) {
       await appendPdfPagesWithHeader(
         existingPdfDoc,
         prayerSworn.swornStatement,
-        `Sworn Statement Document ${i + 1}`
+        `Affidavit under section 223 of BNSS ${i + 1}`
       );
     }
   }

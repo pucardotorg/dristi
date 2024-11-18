@@ -13,58 +13,55 @@ const { DocumentError } = require("../util/errorUtils");
  */
 exports.generateCasePdf = async (req, res, next) => {
   try {
-    const cases = req.body.cases;
+    const requestInfo = req.body.RequestInfo;
 
-    const filingNumber = cases.filingNumber || null;
-    const courtName = cases.courtName || `${config.courtName}`;
+    const caseData = req?.body?.cases;
 
-    const caseYear = await extractCaseYear(filingNumber);
-    const caseNumber = await extractCaseNumber(filingNumber);
-    const sectionNumber = await caseService.getCaseSectionNumber(cases);
+    const courtName = config.courtName;
+    const place = config.courtPlace;
+    const cmpNumber = caseData.cmpNumber;
 
-    const complainants = await caseService.getComplainantsDetails(cases);
-    const respondents = await caseService.getRespondentsDetails(cases);
-    const witnesses = await caseService.getWitnessDetails(cases);
-    const advocates = await caseService.getAdvocateDetails(cases);
+    const complainants = await caseService.getComplainantsDetailsForComplaint(caseData);
+    const accuseds = await caseService.getRespondentsDetailsForComplaint(caseData);
+    const advocates = await caseService.getAdvocateDetailsForComplaint(caseData);
+    const complaint = await caseService.getPrayerSwornStatementDetails(caseData)[0].memorandumOfComplaintText;
+    const dateOfFiling = caseService.formatDate(caseData?.filingDate ? new Date(caseData?.filingDate) : new Date());
+    const documentList = await caseService.getDocumentList(caseData);
+    const witnessScheduleList = await caseService.getWitnessDetailsForComplaint(caseData);
 
-    const chequeDetails = await caseService.getChequeDetails(cases);
+    const chequeDetails = await caseService.getChequeDetails(caseData);
     const debtLiabilityDetails = await caseService.getDebtLiabilityDetails(
-      cases
+      caseData
     );
-    const demandNoticeDetails = await caseService.getDemandNoticeDetails(cases);
+    const demandNoticeDetails = await caseService.getDemandNoticeDetails(caseData);
     const delayCondonationDetails =
-      await caseService.getDelayCondonationDetails(cases);
+      await caseService.getDelayCondonationDetails(caseData);
 
     const prayerSwornStatementDetails =
-      await caseService.getPrayerSwornStatementDetails(cases);
-
-    const requestInfo = req.body.RequestInfo;
+      await caseService.getPrayerSwornStatementDetails(caseData);
 
     const pdfRequest = {
       RequestInfo: requestInfo,
-      caseDetails: {
-        id: Date.now(),
-        courtName: courtName,
-        caseNumber: caseNumber,
-        caseYear: caseYear,
-        filingNumber: filingNumber,
-        sectionNumber: sectionNumber,
-        complainants: complainants,
-        respondents: respondents,
-        witnesses: witnesses,
-        advocates: advocates,
-        chequeDetails: chequeDetails,
-        debtLiabilityDetails: debtLiabilityDetails,
-        demandNoticeDetails: demandNoticeDetails,
-        delayCondonationDetails: delayCondonationDetails,
-        prayerSwornStatementDetails: prayerSwornStatementDetails,
-      },
+      Data: [
+        {
+          courtName: courtName,
+          place: place,
+          cmpNumber: cmpNumber,
+          ...complainants[0],
+          ...accuseds[0],
+          ...advocates[0],
+          complaint: complaint,
+          dateOfFiling: dateOfFiling,
+          documentList: documentList,
+          witnessScheduleList: witnessScheduleList
+        }
+      ]
     };
 
     console.log("Pdf Request: {}", pdfRequest);
-    await fileService.validateDocuments(cases?.documents || []);
-
-    const pdf = await pdfService.generatePDF(pdfRequest);
+    await fileService.validateDocuments(caseData?.documents || []);
+    
+    const pdf = await pdfService.generateComplaintPDF(pdfRequest);
 
     let finalPdf = await fileService.appendComplainantFilesToPDF(
       pdf,
@@ -72,7 +69,7 @@ exports.generateCasePdf = async (req, res, next) => {
     );
     finalPdf = await fileService.appendRespondentFilesToPDF(
       finalPdf,
-      respondents
+      accuseds
     );
     finalPdf = await fileService.appendChequeDetailsToPDF(
       finalPdf,
@@ -132,7 +129,7 @@ exports.caseComplaintPdf = async (req, res, next) => {
     const accuseds = await caseService.getRespondentsDetailsForComplaint(caseData);
     const advocates = await caseService.getAdvocateDetailsForComplaint(caseData);
     const complaint = await caseService.getPrayerSwornStatementDetails(caseData)[0].memorandumOfComplaintText;
-    const dateOfFiling = caseService.formatDate(new Date(caseData.filingDate));
+    const dateOfFiling = caseService.formatDate(caseData?.filingDate ? new Date(caseData?.filingDate) : new Date());
     const documentList = await caseService.getDocumentList(caseData);
     const witnessScheduleList = await caseService.getWitnessDetailsForComplaint(caseData);
 

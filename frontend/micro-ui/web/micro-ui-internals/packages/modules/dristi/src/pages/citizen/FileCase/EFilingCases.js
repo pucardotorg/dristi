@@ -1669,7 +1669,7 @@ function EFilingCases({ path }) {
 
           if (fileStoreId) {
             caseComplaintDocument = {
-              documentType: "case.complaint.signed",
+              documentType: "case.complaint.unsigned",
               fileStore: fileStoreId,
               fileName: filename,
             };
@@ -1729,15 +1729,15 @@ function EFilingCases({ path }) {
           history.push(`?caseId=${caseId}&selected=${nextSelected}`);
         }
       } catch (error) {
+        let message = t("SOMETHING_WENT_WRONG");
         if (error instanceof DocumentUploadError) {
-          toast.error(`${t("DOCUMENT_FORMAT_DOES_NOT_MATCH")} : ${error?.documentType}`);
+          message = `${t("DOCUMENT_FORMAT_DOES_NOT_MATCH")} : ${error?.documentType}`;
         } else if (extractCodeFromErrorMsg(error) === 413) {
-          toast.error(t("FAILED_TO_UPLOAD_FILE"));
-        } else {
-          toast.error(t("SOMETHING_WENT_WRONG"));
+          message = t("FAILED_TO_UPLOAD_FILE");
         }
         setIsDisabled(false);
         console.error("An error occurred:", error);
+        throw new Error(message);
       }
     }
   };
