@@ -309,7 +309,6 @@ const complainantDetailsFormConfig = [
                 },
                 errMsg: "CORE_COMMON_APPLICANT_ADDRESS_INVALID",
               },
-              isMandatory: true,
             },
           ],
           validation: {},
