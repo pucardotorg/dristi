@@ -35,7 +35,7 @@ exports.getCaseSectionNumber = async (cases) => {
 const getDocumentFileStore = (fileUploadDocuments, fileName) => {
     const documents = fileUploadDocuments?.document;
     if (Array.isArray(documents)) {
-      const document = documents.find(doc => doc?.fileName === fileName);
+      const document = documents.find(doc => doc?.fileName === fileName || doc?.name === fileName);
       return document?.fileStore ?? null;
     } else if (documents && documents?.fileName) {
       return documents.fileName === fileName ? documents?.fileStore ?? null : null;
@@ -379,6 +379,7 @@ exports.getComplainantsDetailsForComplaint = async (cases) => {
                 complainantAddress: address || '',
                 phoneNumber: phoneNumber || '',
                 emailId: '',
+                complainantIdProofFileStore: getDocumentFileStore(data?.complainantVerification?.individualDetails) || ''
             };
         }
     });
@@ -439,6 +440,7 @@ exports.getRespondentsDetailsForComplaint = async (cases) => {
                 accusedAddress: addresses && addresses?.join(", ") || '',
                 accusedPhoneNumber: data?.phonenumbers?.mobileNumber?.join(", ") || "",
                 accusedEmailId: data?.emails?.emailId?.join(", ") || "",
+                inquiryAffidavitFileStore: getDocumentFileStore(data?.inquiryAffidavitFileUpload, 'Affidavit documents') || '',
             };
         }
     });

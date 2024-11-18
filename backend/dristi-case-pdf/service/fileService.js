@@ -127,6 +127,13 @@ async function appendComplainantFilesToPDF(pdf, complainants) {
         `Authoriastion oF Representative Document ${i + 1}`
       );
     }
+    if (complainant?.complainantIdProofFileStore) {
+      await appendPdfPagesWithHeader(
+        existingPdfDoc,
+        complainant?.complainantIdProofFileStore,
+        `Complainant ID Proof Document ${i + 1}`
+      );
+    }
   }
 
   return await existingPdfDoc.save();
