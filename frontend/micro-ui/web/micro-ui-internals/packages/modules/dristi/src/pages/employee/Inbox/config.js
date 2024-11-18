@@ -138,7 +138,7 @@ export const newconfigClerk = {
         },
         fields: [
           {
-            label: "Application No",
+            label: "APPLICATION_NO",
             type: "text",
             isMandatory: false,
             disable: false,
@@ -162,31 +162,31 @@ export const newconfigClerk = {
       uiConfig: {
         columns: [
           {
-            label: "Application No",
+            label: "APPLICATION_NO",
             jsonPath: "businessObject.clerkDetails.applicationNumber",
             additionalCustomization: true,
           },
           {
-            label: "User Name",
+            label: "USER_NAME",
             jsonPath: "businessObject.individual.name",
             additionalCustomization: true,
           },
           {
-            label: "User Type",
+            label: "USER_TYPE",
             jsonPath: "ProcessInstance.businessService",
             additionalCustomization: true,
           },
           {
-            label: "Date Created",
+            label: "DATE_CREATED",
             jsonPath: "businessObject.auditDetails.createdTime",
             additionalCustomization: true,
           },
           {
-            label: "Due Since (no of days)",
+            label: "DUE_SINCE_IN_DAYS",
             jsonPath: "dueSince",
             additionalCustomization: true,
           },
-          { label: "Action", jsonPath: "businessObject.individual.individualId", additionalCustomization: true },
+          { label: "ACTION", jsonPath: "businessObject.individual.individualId", additionalCustomization: true },
         ],
         enableGlobalSearch: false,
         enableColumnSort: true,
