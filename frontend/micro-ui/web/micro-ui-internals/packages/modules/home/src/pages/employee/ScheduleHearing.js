@@ -535,7 +535,7 @@ function ScheduleHearing({
             actionSaveOnSubmit={handleClose}
             formId="modal-action"
             className="case-types"
-            popupStyles={{ maxWidth: "650px", width: "100%", height: "64%" }}
+            popupStyles={{ maxWidth: "650px", width: "100%" }}
             style={{ height: "40px", border: "none" }}
           >
             <div style={{ padding: "20px 0px 40px" }}>
