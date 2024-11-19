@@ -43,6 +43,15 @@ const getDocumentFileStore = (fileUploadDocuments, fileName) => {
     return null;
 };
 
+const getComplaintAdditionalDocumentFileStore = (fileUploadDocuments) => {
+  if (!Array.isArray(fileUploadDocuments)) return [];
+
+  return fileUploadDocuments
+    .flatMap(doc => doc?.document || [])
+    .map(item => item?.fileStore)
+    .filter(fileStore => fileStore);
+};
+
 /**
  * Extracts address information from a nested object.
  *
@@ -60,7 +69,7 @@ const getAddressDetails = (addressObject) => {
   };
 
   const getStringAddressDetails = (addressObject) => {
-    return `${addressObject?.locality || ''} ${addressObject?.city || ''} ${addressObject?.district || ''}  ${addressObject?.state || ''}  ${addressObject?.pincode || ''}`;
+    return `${addressObject?.locality || ''}, ${addressObject?.city || ''}, ${addressObject?.district || ''},  ${addressObject?.state || ''},  ${addressObject?.pincode || ''}`;
   };
 
   exports.formatDate = (date) => {
@@ -68,6 +77,26 @@ const getAddressDetails = (addressObject) => {
     const month = String(date.getMonth() + 1).padStart(2, "0");
     const year = date.getFullYear();
     return `${day}-${month}-${year}`;
+  };
+
+  exports.convertDateToDDMMYYYY = (dateString) => {
+    if (!dateString) return "";
+  
+    const [year, month, day] = dateString?.split("-");
+    return `${day}-${month}-${year}`;
+  };
+  
+  exports.convertToIndianCurrency = (amount, locale, currency) => {
+    if (typeof amount !== "number" && typeof amount !== "string") return "";
+  
+    const number = Number(amount);
+    if (isNaN(number)) return "";
+  
+    return new Intl.NumberFormat(locale, currency, {
+      style: "currency",
+      currency: currency,
+      maximumSignificantDigits: 3,
+    }).format(number).toString();
   };
 
 /**
@@ -337,7 +366,8 @@ exports.getPrayerSwornStatementDetails = (cases) => {
             prayerForReliefFileStore: getDocumentFileStore(swornStatementData.prayerForRelief, 'CS_PRAYER_FOR_RELIEF_HEADER'),
             swornStatement: getDocumentFileStore(swornStatementData.swornStatement, 'CS_SWORN_STATEMENT_HEADER') || '',
             additionalDetails: swornStatementData.additionalDetails && swornStatementData.additionalDetails.text || null,
-            additionalActsSectionsToChargeWith: swornStatementData.additionalActsSections && swornStatementData.additionalActsSections.text || null
+            additionalActsSectionsToChargeWith: swornStatementData.additionalActsSections && swornStatementData.additionalActsSections.text || null,
+            complaintAdditionalDocumentFileStore: getComplaintAdditionalDocumentFileStore(swornStatementData?.SelectUploadDocWithName),
         };
     });
 
@@ -478,23 +508,23 @@ exports.getDocumentList = async (cases) => {
 
 exports.generateBounceChequeDescriptions = async (chequeDetailsList) => {
     return chequeDetailsList.map((chequeDetails) => {
-        const chequeNumber = chequeDetails.chequeNumber || "[Cheque Number]";
-        const dateOfIssuance = chequeDetails.dateOfIssuance || "[Date of Issue of Cheque]";
-        const chequeAmount = chequeDetails.chequeAmount || "[Amount of Cheque]";
+        const chequeNumber = chequeDetails.chequeNumber || '';
+        const dateOfIssuance = this.convertDateToDDMMYYYY(chequeDetails.dateOfIssuance);
+        const chequeAmount = this.convertToIndianCurrency(chequeDetails.chequeAmount, 'en-IN', 'INR') || '';
         return `Digital record of cheque no. ${chequeNumber} dated ${dateOfIssuance} for ${chequeAmount}`;
     });
 }
 
 exports.generateChequeReturnMemoDescriptions = async (chequeDetailsList) => {
     return chequeDetailsList.map(chequeDetails => {
-        const dateOfDishonorCheque = chequeDetails.dateOfDeposit || "[Date of dishonor of cheque]"
+        const dateOfDishonorCheque = this.convertDateToDDMMYYYY(chequeDetails.dateOfDeposit);
         return `Digital record of cheque return memo dated ${dateOfDishonorCheque}.`
     });
 }
 
 exports.generateDemandNoticeDescriptions = async (demandNoticeList) => {
     return demandNoticeList.map(demandNotice => {
-        const dateOfIssuance = demandNotice.dateOfIssuance;
+        const dateOfIssuance = this.convertDateToDDMMYYYY(demandNotice.dateOfIssuance);
         if (dateOfIssuance) {
             return `Digital record of the statutory notice dated ${dateOfIssuance}.`;
         } else {
@@ -505,28 +535,28 @@ exports.generateDemandNoticeDescriptions = async (demandNoticeList) => {
 
 exports.generateProofDispatchDescriptions = async (demandNoticeList) => {
     return demandNoticeList.map(demandNotice => {
-        const dateOfDispatch = demandNotice.dateOfDispatch;
+        const dateOfDispatch = this.convertDateToDDMMYYYY(demandNotice.dateOfDispatch);
         return `Digital record of proof of dispatch dated ${dateOfDispatch}.`;
     });
 }
 
 exports.generateProofServiceDescriptions = async (demandNoticeList) => {
     return demandNoticeList.map(demandNotice => {
-        const dateOfDeemedService = demandNotice.dateOfDeemedService;
+        const dateOfDeemedService = this.convertDateToDDMMYYYY(demandNotice.dateOfDeemedService);
         return `Digital record of proof of service- ${dateOfDeemedService}.`;
     });
 }
 
 exports.generateProofReplyDescriptions = async (demandNoticeList) => {
     return demandNoticeList.map(demandNotice => {
-        const dateOfReply = demandNotice.dateOfReply;
+        const dateOfReply = this.convertDateToDDMMYYYY(demandNotice.dateOfReply);
         return `Digital record of proof of reply dated ${dateOfReply}.`;
     });
 }
 
 exports.generateProofDepositDescriptions = async (chequeDetailsList) => {
     return chequeDetailsList.map(chequeDetails => {
-        const dateOfDeposit = chequeDetails.dateOfDeposit;
+        const dateOfDeposit = this.convertDateToDDMMYYYY(chequeDetails.dateOfDeposit);
         return `Digital record of proof of deposit dated ${dateOfDeposit}.`;
     });
 }
@@ -545,8 +575,6 @@ exports.generateOptionalDocDescriptions = async (documentList) => {
                 return `Digital record of proof of authorized representative of the company in accused`;
             case "case.liabilityproof":
                 return `Digital record of proof of Debt/Liability`;
-            case "COMPLAINANT_ID_PROOF":
-                return `Digital record of proof of Complainant ID Proof`;
             case "CONDONATION_DOC":
                 return `Digital record of proof of Delay Condonation`;
             case "case.docs":

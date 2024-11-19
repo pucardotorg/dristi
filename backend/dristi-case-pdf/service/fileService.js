@@ -128,14 +128,7 @@ async function appendComplainantFilesToPDF(pdf, complainants) {
       await appendPdfPagesWithHeader(
         existingPdfDoc,
         complainant.companyDetailsFileStore,
-        `Authoriastion oF Representative Document ${i + 1}`
-      );
-    }
-    if (complainant?.complainantIdProofFileStore) {
-      await appendPdfPagesWithHeader(
-        existingPdfDoc,
-        complainant?.complainantIdProofFileStore,
-        `Complainant ID Proof Document ${i + 1}`
+        `Authoriastion of Representative Document ${i + 1}`
       );
     }
   }
@@ -340,6 +333,15 @@ async function appendPrayerSwornFilesToPDF(pdf, prayerSwornStatementDetails) {
         prayerSworn.swornStatement,
         `Affidavit under section 223 of BNSS ${i + 1}`
       );
+    }
+    if (prayerSworn?.complaintAdditionalDocumentFileStore?.length > 0) {
+      for (let j = 0; j < prayerSworn?.complaintAdditionalDocumentFileStore.length; j++) {
+        await appendPdfPagesWithHeader(
+          existingPdfDoc,
+          prayerSworn?.complaintAdditionalDocumentFileStore?.[j],
+          `Complaint Additional Document ${j + 1}`
+        );
+      }
     }
   }
 
