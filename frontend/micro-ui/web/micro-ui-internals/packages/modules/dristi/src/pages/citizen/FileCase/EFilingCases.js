@@ -1084,7 +1084,7 @@ function EFilingCases({ path }) {
                     key = formComponent.key + "." + formComponent.populators?.inputs?.[0]?.name;
                   }
                   if (formComponent.component === "VerifyPhoneNumber") {
-                    key = formComponent.key + "." + formComponent.name;
+                    key = formComponent.key + "." + formComponent?.name;
                   }
                 }
                 if (selected === "demandNoticeDetails" && formComponent.component === "SelectUserTypeComponent") {
@@ -1142,6 +1142,9 @@ function EFilingCases({ path }) {
                     scrutiny?.[selected]?.form?.[index]?.["liabilityType.name"]?.FSOError
                   ) {
                     modifiedFormComponent.disable = false;
+                  }
+                  if (selected === "chequeDetails" && key === "policeStation") {
+                    key = key + "." + formComponent?.populators?.optionsKey;
                   }
                   if (key in scrutiny?.[selected]?.form?.[index] && scrutiny?.[selected]?.form?.[index]?.[key]?.FSOError) {
                     if (key === "complainantVerification.individualDetails.document") {
@@ -1664,7 +1667,7 @@ function EFilingCases({ path }) {
           const contentDisposition = response.headers["content-disposition"];
           const filename = contentDisposition ? contentDisposition.split("filename=")[1]?.replace(/['"]/g, "") : "caseCompliantDetails.pdf";
           const pdfFile = new File([response?.data], filename, { type: "application/pdf" });
-          const document = await onDocumentUpload(pdfFile, pdfFile.name);
+          const document = await onDocumentUpload(pdfFile, pdfFile?.name);
           const fileStoreId = document?.file?.files?.[0]?.fileStoreId;
 
           if (fileStoreId) {

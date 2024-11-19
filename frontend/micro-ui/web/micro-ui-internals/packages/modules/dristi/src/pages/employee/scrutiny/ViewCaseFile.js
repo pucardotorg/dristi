@@ -15,6 +15,7 @@ import { reviewCaseFileFormConfig } from "../../citizen/FileCase/Config/reviewca
 
 import Button from "../../../components/Button";
 import useDownloadCasePdf from "../../../hooks/dristi/useDownloadCasePdf";
+import useGetStatuteSection from "../../../hooks/dristi/useGetStatuteSection";
 
 const downloadButtonStyle = {
   backgroundColor: "white",
@@ -64,6 +65,10 @@ function ViewCaseFile({ t, inViewCase = false }) {
   const [highlightChecklist, setHighlightChecklist] = useState(false);
 
   const { downloadPdf } = useDownloadCasePdf();
+
+  const { data: requiredDocumentsData, isLoading: isLoadingRequiredDocumentsData } = useGetStatuteSection("case", [{ name: "RequiredDocuments" }]);
+  const RequiredDocuments = requiredDocumentsData?.RequiredDocuments;
+  const requiredDocumentsPdfNIA = RequiredDocuments?.filter((item) => item?.caseType === "NIA-138")?.[0];
 
   const onFormValueChange = (setValue, formData, formState, reset, setError, clearErrors, trigger, getValues) => {
     if (JSON.stringify(formData) !== JSON.stringify(formdata.data)) {
@@ -596,7 +601,7 @@ function ViewCaseFile({ t, inViewCase = false }) {
                   <h3 className="item-text">
                     {t("CS_REFERENCE_RELATED_FIELDS")}{" "}
                     <span
-                      onClick={() => downloadPdf(tenantId, fileStoreId)}
+                      onClick={() => downloadPdf(tenantId, requiredDocumentsPdfNIA?.scrutinityFileStoreId)}
                       style={{ color: "#007e7e", textDecoration: "underline", cursor: "pointer" }}
                     >
                       {t("CS_HERE")}
