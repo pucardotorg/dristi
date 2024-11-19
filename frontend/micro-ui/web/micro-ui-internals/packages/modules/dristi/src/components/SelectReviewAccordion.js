@@ -318,6 +318,7 @@ function SelectReviewAccordion({ t, config, onSelect, formData = {}, errors, for
               [type ? type : "FSOError"]: trimmedError,
             }
           );
+          set(formData, [configKey, page], scrutinyMessage);
           setValue(configKey, scrutinyMessage, page);
         }
       }
