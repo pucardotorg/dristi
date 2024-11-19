@@ -53,8 +53,8 @@ jobs:
 
       - name: Build and Push Docker image for digit-ui
         run: |
-          docker build  -t pucarsolutionsdev.azurecr.io/digit-ui:v0.6.0-uat-${{ env.commit_hash }} -f  web/docker/Dockerfile .
-          docker push pucarsolutionsdev.azurecr.io/digit-ui:v0.6.0-uat-${{ env.commit_hash }}
+          docker build  -t pucarsolutionsdev.azurecr.io/digit-ui:${{ env.VERSION }}-${{ env.commit_hash }} -f  web/docker/Dockerfile .
+          docker push pucarsolutionsdev.azurecr.io/digit-ui:${{ env.VERSION }}-${{ env.commit_hash }}
         working-directory: frontend/micro-ui
 
   Workflow_Trigger:

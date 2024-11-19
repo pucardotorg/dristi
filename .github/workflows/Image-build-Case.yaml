@@ -69,13 +69,13 @@ jobs:
 
       - name: Build and Push Docker image for Case
         run: |
-          docker build --build-arg WORK_DIR="backend/case" -t pucarsolutionsdev.azurecr.io/pucar_case:v0.6.0-uat-${{ env.commit_hash }} -f build/maven/Dockerfile .
-          docker push pucarsolutionsdev.azurecr.io/pucar_case:v0.6.0-uat-${{ env.commit_hash }}
+          docker build --build-arg WORK_DIR="backend/case" -t pucarsolutionsdev.azurecr.io/pucar_case:${{ env.VERSION }}-${{ env.commit_hash }} -f build/maven/Dockerfile .
+          docker push pucarsolutionsdev.azurecr.io/pucar_case:${{ env.VERSION }}-${{ env.commit_hash }}
 
       - name: Build and Push Docker image for Case_DB
         run: |
-          docker build  -t pucarsolutionsdev.azurecr.io/case_db:v0.6.0-uat-${{ env.commit_hash }} -f  Dockerfile .
-          docker push pucarsolutionsdev.azurecr.io/case_db:v0.6.0-uat-${{ env.commit_hash }}
+          docker build  -t pucarsolutionsdev.azurecr.io/case_db:${{ env.VERSION }}-${{ env.commit_hash }} -f  Dockerfile .
+          docker push pucarsolutionsdev.azurecr.io/case_db:${{ env.VERSION }}-${{ env.commit_hash }}
         working-directory: backend/case/src/main/resources/db
 
   Workflow_Trigger:

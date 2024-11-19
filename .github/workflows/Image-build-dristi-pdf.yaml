@@ -53,8 +53,8 @@ jobs:
 
       - name: Build and Push Docker image for dristi-pdf
         run: |
-          docker build --build-arg WORK_DIR="utilities/dristi-pdf" -t pucarsolutionsdev.azurecr.io/dristi-pdf:v0.6.0-uat-${{ env.commit_hash }} -f utilities/dristi-pdf/Dockerfile .
-          docker push pucarsolutionsdev.azurecr.io/dristi-pdf:v0.6.0-uat-${{ env.commit_hash }}
+          docker build --build-arg WORK_DIR="utilities/dristi-pdf" -t pucarsolutionsdev.azurecr.io/dristi-pdf:${{ env.VERSION }}-${{ env.commit_hash }} -f utilities/dristi-pdf/Dockerfile .
+          docker push pucarsolutionsdev.azurecr.io/dristi-pdf:${{ env.VERSION }}-${{ env.commit_hash }}
 
   Workflow_Trigger:
     if: (github.event_name == 'push' && (startsWith(github.ref, 'refs/heads/develop') || startsWith(github.ref, 'refs/heads/release/') || startsWith(github.ref, 'refs/heads/hotfix/') || startsWith(github.ref, 'refs/tags/v'))) || github.event_name == 'workflow_dispatch'

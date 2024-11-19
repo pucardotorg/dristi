@@ -70,13 +70,13 @@ jobs:
 
       - name: Build and Push Docker image for Mdms-Service
         run: |
-          docker build --build-arg WORK_DIR="common/egov-mdms-service" -t pucarsolutionsdev.azurecr.io/egov-mdms-service:v0.6.0-uat-${{ env.commit_hash }} -f build/maven/Dockerfile .
-          docker push pucarsolutionsdev.azurecr.io/egov-mdms-service:v0.6.0-uat-${{ env.commit_hash }}
+          docker build --build-arg WORK_DIR="common/egov-mdms-service" -t pucarsolutionsdev.azurecr.io/egov-mdms-service:${{ env.VERSION }}-${{ env.commit_hash }} -f build/maven/Dockerfile .
+          docker push pucarsolutionsdev.azurecr.io/egov-mdms-service:${{ env.VERSION }}-${{ env.commit_hash }}
 
       - name: Build and Push Docker image for Mdms-Service Db
         run: |
-          docker build  -t pucarsolutionsdev.azurecr.io/egov-mdms-service-db:v0.6.0-uat-${{ env.commit_hash }} -f  Dockerfile .
-          docker push pucarsolutionsdev.azurecr.io/egov-mdms-service-db:v0.6.0-uat-${{ env.commit_hash }}
+          docker build  -t pucarsolutionsdev.azurecr.io/egov-mdms-service-db:${{ env.VERSION }}-${{ env.commit_hash }} -f  Dockerfile .
+          docker push pucarsolutionsdev.azurecr.io/egov-mdms-service-db:${{ env.VERSION }}-${{ env.commit_hash }}
         working-directory: common/egov-mdms-service/src/main/resources/db
 
   Workflow_Trigger:

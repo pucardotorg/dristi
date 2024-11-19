@@ -70,12 +70,12 @@ jobs:
 
       - name: Build and Push Docker image for Egov-Idgen
         run: |
-          docker build --build-arg WORK_DIR="common/egov-idgen" -t pucarsolutionsdev.azurecr.io/egov-idgen:v0.6.0-uat-${{ env.commit_hash }} -f build/maven/Dockerfile .
-          docker push pucarsolutionsdev.azurecr.io/egov-idgen:v0.6.0-uat-${{ env.commit_hash }}
+          docker build --build-arg WORK_DIR="common/egov-idgen" -t pucarsolutionsdev.azurecr.io/egov-idgen:${{ env.VERSION }}-${{ env.commit_hash }} -f build/maven/Dockerfile .
+          docker push pucarsolutionsdev.azurecr.io/egov-idgen:${{ env.VERSION }}-${{ env.commit_hash }}
       - name: Build and Push Docker image for Egov-Idgen Db
         run: |
-          docker build  -t pucarsolutionsdev.azurecr.io/egov-idgen-db:v0.6.0-uat-${{ env.commit_hash }} -f  Dockerfile .
-          docker push pucarsolutionsdev.azurecr.io/egov-idgen-db:v0.6.0-uat-${{ env.commit_hash }}
+          docker build  -t pucarsolutionsdev.azurecr.io/egov-idgen-db:${{ env.VERSION }}-${{ env.commit_hash }} -f  Dockerfile .
+          docker push pucarsolutionsdev.azurecr.io/egov-idgen-db:${{ env.VERSION }}-${{ env.commit_hash }}
         working-directory: common/egov-idgen/src/main/resources/db
 
   Workflow_Trigger:

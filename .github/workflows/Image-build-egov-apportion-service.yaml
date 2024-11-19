@@ -70,13 +70,13 @@ jobs:
 
       - name: Build and Push Docker image for Egov Apportion Service
         run: |
-          docker build --build-arg WORK_DIR="common/egov-apportion-service" -t pucarsolutionsdev.azurecr.io/apportion-service:v0.6.0-uat-${{ env.commit_hash }} -f build/maven/Dockerfile .
-          docker push pucarsolutionsdev.azurecr.io/apportion-service:v0.6.0-uat-${{ env.commit_hash }}
+          docker build --build-arg WORK_DIR="common/egov-apportion-service" -t pucarsolutionsdev.azurecr.io/apportion-service:${{ env.VERSION }}-${{ env.commit_hash }} -f build/maven/Dockerfile .
+          docker push pucarsolutionsdev.azurecr.io/apportion-service:${{ env.VERSION }}-${{ env.commit_hash }}
 
       - name: Build and Push Docker image for Egov Apportion Service DB
         run: |
-          docker build  -t pucarsolutionsdev.azurecr.io/apportion-service-db:v0.6.0-uat-${{ env.commit_hash }} -f  Dockerfile .
-          docker push pucarsolutionsdev.azurecr.io/apportion-service-db:v0.6.0-uat-${{ env.commit_hash }}
+          docker build  -t pucarsolutionsdev.azurecr.io/apportion-service-db:${{ env.VERSION }}-${{ env.commit_hash }} -f  Dockerfile .
+          docker push pucarsolutionsdev.azurecr.io/apportion-service-db:${{ env.VERSION }}-${{ env.commit_hash }}
         working-directory: common/egov-apportion-service/src/main/resources/db
 
   Workflow_Trigger:

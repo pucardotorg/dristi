@@ -70,13 +70,13 @@ jobs:
 
       - name: Build and Push Docker image for Application
         run: |
-          docker build --build-arg WORK_DIR="backend/application" -t pucarsolutionsdev.azurecr.io/pucar_application:v0.6.0-uat-${{ env.commit_hash }} -f build/maven/Dockerfile .
-          docker push pucarsolutionsdev.azurecr.io/pucar_application:v0.6.0-uat-${{ env.commit_hash }}
+          docker build --build-arg WORK_DIR="backend/application" -t pucarsolutionsdev.azurecr.io/pucar_application:${{ env.VERSION }}-${{ env.commit_hash }} -f build/maven/Dockerfile .
+          docker push pucarsolutionsdev.azurecr.io/pucar_application:${{ env.VERSION }}-${{ env.commit_hash }}
 
       - name: Build and Push Docker image for Application_DB
         run: |
-          docker build  -t pucarsolutionsdev.azurecr.io/pucar_application_db:v0.6.0-uat-${{ env.commit_hash }} -f  Dockerfile .
-          docker push pucarsolutionsdev.azurecr.io/pucar_application_db:v0.6.0-uat-${{ env.commit_hash }}
+          docker build  -t pucarsolutionsdev.azurecr.io/pucar_application_db:${{ env.VERSION }}-${{ env.commit_hash }} -f  Dockerfile .
+          docker push pucarsolutionsdev.azurecr.io/pucar_application_db:${{ env.VERSION }}-${{ env.commit_hash }}
         working-directory: backend/application/src/main/resources/db
 
   Workflow_Trigger:

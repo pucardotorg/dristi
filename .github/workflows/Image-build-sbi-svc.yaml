@@ -81,14 +81,14 @@ jobs:
       - name: Build and Push Docker image for sbi-svc
         if: (github.event_name == 'push' && (startsWith(github.ref, 'refs/heads/develop') || startsWith(github.ref, 'refs/heads/release/') || startsWith(github.ref, 'refs/heads/hotfix/') || startsWith(github.ref, 'refs/tags/v'))) || github.event_name == 'workflow_dispatch'
         run: |
-          docker build --build-arg WORK_DIR="backend/sbi-backend" -t pucarsolutionsdev.azurecr.io/sbi-svc:v0.6.0-uat-${{ env.commit_hash }} -f build/maven/Dockerfile .
-          docker push pucarsolutionsdev.azurecr.io/sbi-svc:v0.6.0-uat-${{ env.commit_hash }}
+          docker build --build-arg WORK_DIR="backend/sbi-backend" -t pucarsolutionsdev.azurecr.io/sbi-svc:${{ env.VERSION }}-${{ env.commit_hash }} -f build/maven/Dockerfile .
+          docker push pucarsolutionsdev.azurecr.io/sbi-svc:${{ env.VERSION }}-${{ env.commit_hash }}
 
       - name: Build and Push Docker image for scheduler-svc_DB
         if: (github.event_name == 'push' && (startsWith(github.ref, 'refs/heads/develop') || startsWith(github.ref, 'refs/heads/release/') || startsWith(github.ref, 'refs/heads/hotfix/') || startsWith(github.ref, 'refs/tags/v'))) || github.event_name == 'workflow_dispatch'
         run: |
-          docker build  -t pucarsolutionsdev.azurecr.io/sbi-svc-db:v0.6.0-uat-${{ env.commit_hash }} -f  Dockerfile .
-          docker push pucarsolutionsdev.azurecr.io/sbi-svc-db:v0.6.0-uat-${{ env.commit_hash }}
+          docker build  -t pucarsolutionsdev.azurecr.io/sbi-svc-db:${{ env.VERSION }}-${{ env.commit_hash }} -f  Dockerfile .
+          docker push pucarsolutionsdev.azurecr.io/sbi-svc-db:${{ env.VERSION }}-${{ env.commit_hash }}
         working-directory: backend/sbi-backend/src/main/resources/db
 
   Workflow_Trigger:

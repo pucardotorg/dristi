@@ -53,11 +53,11 @@ jobs:
 
       - name: Build and Push Docker image for pdf-service
         run: |
-          docker build  -t pucarsolutionsdev.azurecr.io/pdf-service:v0.6.0-uat-${{ env.commit_hash }} -f Dockerfile .
-          docker push pucarsolutionsdev.azurecr.io/pdf-service:v0.6.0-uat-${{ env.commit_hash }}
+          docker build  -t pucarsolutionsdev.azurecr.io/pdf-service:${{ env.VERSION }}-${{ env.commit_hash }} -f Dockerfile .
+          docker push pucarsolutionsdev.azurecr.io/pdf-service:${{ env.VERSION }}-${{ env.commit_hash }}
         working-directory: common/pdf-service
       - name: Build and Push Docker image for pdf-service DB
         run: |
-          docker build  -t pucarsolutionsdev.azurecr.io/pdf-service-db:v0.6.0-uat-${{ env.commit_hash }} -f  Dockerfile .
-          docker push pucarsolutionsdev.azurecr.io/pdf-service-db:v0.6.0-uat-${{ env.commit_hash }}
+          docker build  -t pucarsolutionsdev.azurecr.io/pdf-service-db:${{ env.VERSION }}-${{ env.commit_hash }} -f  Dockerfile .
+          docker push pucarsolutionsdev.azurecr.io/pdf-service-db:${{ env.VERSION }}-${{ env.commit_hash }}
         working-directory: common/pdf-service/migration

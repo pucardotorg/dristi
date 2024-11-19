@@ -70,13 +70,13 @@ jobs:
 
       - name: Build and Push Docker image for Order
         run: |
-          docker build --build-arg WORK_DIR="backend/order" -t pucarsolutionsdev.azurecr.io/pucar_order:v0.6.0-uat-${{ env.commit_hash }} -f build/maven/Dockerfile .
-          docker push pucarsolutionsdev.azurecr.io/pucar_order:v0.6.0-uat-${{ env.commit_hash }}
+          docker build --build-arg WORK_DIR="backend/order" -t pucarsolutionsdev.azurecr.io/pucar_order:${{ env.VERSION }}-${{ env.commit_hash }} -f build/maven/Dockerfile .
+          docker push pucarsolutionsdev.azurecr.io/pucar_order:${{ env.VERSION }}-${{ env.commit_hash }}
 
       - name: Build and Push Docker image for Order_DB
         run: |
-          docker build  -t pucarsolutionsdev.azurecr.io/pucar_order_db:v0.6.0-uat-${{ env.commit_hash }} -f  Dockerfile .
-          docker push pucarsolutionsdev.azurecr.io/pucar_order_db:v0.6.0-uat-${{ env.commit_hash }}
+          docker build  -t pucarsolutionsdev.azurecr.io/pucar_order_db:${{ env.VERSION }}-${{ env.commit_hash }} -f  Dockerfile .
+          docker push pucarsolutionsdev.azurecr.io/pucar_order_db:${{ env.VERSION }}-${{ env.commit_hash }}
         working-directory: backend/order/src/main/resources/db
 
   Workflow_Trigger:

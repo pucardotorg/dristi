@@ -53,8 +53,8 @@ jobs:
 
       - name: Build and Push Docker image for dristi-case-pdf
         run: |
-          docker build --build-arg WORK_DIR="backend/dristi-case-pdf" -t pucarsolutionsdev.azurecr.io/pucar_dristi_case_pdf:v0.6.0-uat-${{ env.commit_hash }} -f backend/dristi-case-pdf/Dockerfile .
-          docker push pucarsolutionsdev.azurecr.io/pucar_dristi_case_pdf:v0.6.0-uat-${{ env.commit_hash }}
+          docker build --build-arg WORK_DIR="backend/dristi-case-pdf" -t pucarsolutionsdev.azurecr.io/pucar_dristi_case_pdf:${{ env.VERSION }}-${{ env.commit_hash }} -f backend/dristi-case-pdf/Dockerfile .
+          docker push pucarsolutionsdev.azurecr.io/pucar_dristi_case_pdf:${{ env.VERSION }}-${{ env.commit_hash }}
 
 
   Workflow_Trigger:

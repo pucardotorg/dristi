@@ -70,8 +70,8 @@ jobs:
 
       - name: Build and Push Docker image for notification-mail
         run: |
-          docker build --build-arg WORK_DIR="common/egov-notification-mail" -t pucarsolutionsdev.azurecr.io/egov-notification-mail:v0.6.0-uat-${{ env.commit_hash }} -f build/maven/Dockerfile .
-          docker push pucarsolutionsdev.azurecr.io/egov-notification-mail:v0.6.0-uat-${{ env.commit_hash }}
+          docker build --build-arg WORK_DIR="common/egov-notification-mail" -t pucarsolutionsdev.azurecr.io/egov-notification-mail:${{ env.VERSION }}-${{ env.commit_hash }} -f build/maven/Dockerfile .
+          docker push pucarsolutionsdev.azurecr.io/egov-notification-mail:${{ env.VERSION }}-${{ env.commit_hash }}
 
 
   Workflow_Trigger:

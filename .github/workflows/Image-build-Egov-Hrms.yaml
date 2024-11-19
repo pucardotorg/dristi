@@ -70,13 +70,13 @@ jobs:
 
       - name: Build and Push Docker image for egov-hrms
         run: |
-          docker build --build-arg WORK_DIR="common/egov-hrms" -t pucarsolutionsdev.azurecr.io/egov-hrms:v0.6.0-uat-${{ env.commit_hash }} -f build/maven/Dockerfile .
-          docker push pucarsolutionsdev.azurecr.io/egov-hrms:v0.6.0-uat-${{ env.commit_hash }}
+          docker build --build-arg WORK_DIR="common/egov-hrms" -t pucarsolutionsdev.azurecr.io/egov-hrms:${{ env.VERSION }}-${{ env.commit_hash }} -f build/maven/Dockerfile .
+          docker push pucarsolutionsdev.azurecr.io/egov-hrms:${{ env.VERSION }}-${{ env.commit_hash }}
 
       - name: Build and Push Docker image for egov-hrms DB
         run: |
-          docker build  -t pucarsolutionsdev.azurecr.io/egov-hrms-db:v0.6.0-uat-${{ env.commit_hash }} -f  Dockerfile .
-          docker push pucarsolutionsdev.azurecr.io/egov-hrms-db:v0.6.0-uat-${{ env.commit_hash }}
+          docker build  -t pucarsolutionsdev.azurecr.io/egov-hrms-db:${{ env.VERSION }}-${{ env.commit_hash }} -f  Dockerfile .
+          docker push pucarsolutionsdev.azurecr.io/egov-hrms-db:${{ env.VERSION }}-${{ env.commit_hash }}
         working-directory: common/egov-hrms/src/main/resources/db
 
   Workflow_Trigger:

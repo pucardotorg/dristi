@@ -70,13 +70,13 @@ jobs:
 
       - name: Build and Push Docker image for Evidence
         run: |
-          docker build --build-arg WORK_DIR="backend/evidence" -t pucarsolutionsdev.azurecr.io/pucar_evidence:v0.6.0-uat-${{ env.commit_hash }} -f build/maven/Dockerfile .
-          docker push pucarsolutionsdev.azurecr.io/pucar_evidence:v0.6.0-uat-${{ env.commit_hash }}
+          docker build --build-arg WORK_DIR="backend/evidence" -t pucarsolutionsdev.azurecr.io/pucar_evidence:${{ env.VERSION }}-${{ env.commit_hash }} -f build/maven/Dockerfile .
+          docker push pucarsolutionsdev.azurecr.io/pucar_evidence:${{ env.VERSION }}-${{ env.commit_hash }}
 
       - name: Build and Push Docker image for Evidence_DB
         run: |
-          docker build  -t pucarsolutionsdev.azurecr.io/pucar_evidence_db:v0.6.0-uat-${{ env.commit_hash }} -f  Dockerfile .
-          docker push pucarsolutionsdev.azurecr.io/pucar_evidence_db:v0.6.0-uat-${{ env.commit_hash }}
+          docker build  -t pucarsolutionsdev.azurecr.io/pucar_evidence_db:${{ env.VERSION }}-${{ env.commit_hash }} -f  Dockerfile .
+          docker push pucarsolutionsdev.azurecr.io/pucar_evidence_db:${{ env.VERSION }}-${{ env.commit_hash }}
         working-directory: backend/evidence/src/main/resources/db
 
   Workflow_Trigger:

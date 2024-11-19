@@ -70,8 +70,8 @@ jobs:
 
       - name: Build and Push Docker image for analytics
         run: |
-          docker build --build-arg WORK_DIR="backend/analytics" -t pucarsolutionsdev.azurecr.io/pucar_analytics:v0.6.0-uat-${{ env.commit_hash }} -f build/maven/Dockerfile .
-          docker push pucarsolutionsdev.azurecr.io/pucar_analytics:v0.6.0-uat-${{ env.commit_hash }}
+          docker build --build-arg WORK_DIR="backend/analytics" -t pucarsolutionsdev.azurecr.io/pucar_analytics:${{ env.VERSION }}-${{ env.commit_hash }} -f build/maven/Dockerfile .
+          docker push pucarsolutionsdev.azurecr.io/pucar_analytics:${{ env.VERSION }}-${{ env.commit_hash }}
 
 
   Workflow_Trigger:
