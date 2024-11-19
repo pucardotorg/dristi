@@ -18,6 +18,13 @@ const displayAttendeesValueStyle = {
   textAlign: "left",
 };
 
+const displayPartyType = {
+  complainant: "COMPLAINANT_ATTENDEE",
+  respondent: "RESPONDENT_ATTENDEE",
+  witness: "WITNESS_ATTENDEE",
+  advocate: "ADVOCATE_ATTENDEE",
+};
+
 const DisplayAttendees = ({ partiesToAttend, onlineAttendees = [], offlineAttendees = [], handleAttendees, handleModal }) => {
   const { t } = useTranslation();
 
@@ -56,7 +63,7 @@ const DisplayAttendees = ({ partiesToAttend, onlineAttendees = [], offlineAttend
           <ul>
             {onlineAttendees.map((attendee) => (
               <li key={attendee.individualId || attendee.name}>
-                {attendee.name} - {attendee.type}
+                {attendee.name} - {t(displayPartyType[attendee.type.toLowerCase()])}
               </li>
             ))}
           </ul>
@@ -69,7 +76,7 @@ const DisplayAttendees = ({ partiesToAttend, onlineAttendees = [], offlineAttend
           <ul>
             {offlineAttendees.map((attendee) => (
               <li key={attendee.individualId || attendee.name}>
-                {attendee.name} - {attendee.type}
+                {attendee.name} - {t(displayPartyType[attendee.type.toLowerCase()])}
               </li>
             ))}
           </ul>
