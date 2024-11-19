@@ -42,7 +42,6 @@ const caseSecondaryActions = [
 const caseTertiaryActions = [{ action: "ISSUE_ORDER", label: "ISSUE_NOTICE" }];
 
 function CaseFileAdmission({ t, path }) {
-  const [isDisabled, setIsDisabled] = useState(false);
   const history = useHistory();
   const [showErrorToast, setShowErrorToast] = useState(false);
   const [showModal, setShowModal] = useState(false);
@@ -702,6 +701,13 @@ function CaseFileAdmission({ t, path }) {
     caseDetails,
   ]);
 
+  const isDisabled = useMemo(() => isLoading || isWorkFlowLoading || caseAdmitLoader || isLoader, [
+    isLoading,
+    isWorkFlowLoading,
+    caseAdmitLoader,
+    isLoader,
+  ]);
+
   const handleCreateDelayCondonation = async () => {
     const applicationReqBody = {
       tenantId,
@@ -919,7 +925,7 @@ function CaseFileAdmission({ t, path }) {
     return <Redirect to="/" />;
   }
 
-  if (isLoading || isWorkFlowLoading || isLoader) {
+  if (isLoading || isWorkFlowLoading || isLoader || caseAdmitLoader) {
     return <Loader />;
   }
   const scrollToHeading = (heading) => {
