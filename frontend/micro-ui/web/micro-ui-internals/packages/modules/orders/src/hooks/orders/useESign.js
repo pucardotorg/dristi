@@ -6,7 +6,7 @@ const useESign = () => {
   const parsedObj = JSON.parse(storedObj) || [];
 
   const handleEsign = useCallback(
-    async (name, pageModule, fileStoreId) => {
+    async (name, pageModule, fileStoreId, signPlaceHolder) => {
       try {
         const newSignStatuses = [...parsedObj, { name: name, isSigned: true }];
         localStorage.setItem("signStatus", JSON.stringify(newSignStatuses));
@@ -19,6 +19,7 @@ const useESign = () => {
             fileStoreId: fileStoreId,
             tenantId: tenantId,
             pageModule: pageModule,
+            signPlaceHolder: signPlaceHolder || null,
           },
         });
         if (eSignResponse) {

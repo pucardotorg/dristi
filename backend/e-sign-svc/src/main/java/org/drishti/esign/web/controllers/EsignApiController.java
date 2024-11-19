@@ -42,7 +42,7 @@ public class EsignApiController {
 
 
     @PostMapping("/v1/_signed")
-    public ResponseEntity<String> eSignDOC(@Parameter(in = ParameterIn.DEFAULT, description = "ESign Doc Details and Request Info", required = true, schema = @Schema()) @Valid @RequestBody SignDocRequest request) {
+    public ResponseEntity<String> signedDoc(@Parameter(in = ParameterIn.DEFAULT, description = "ESign Doc Details and Request Info", required = true, schema = @Schema()) @Valid @RequestBody SignDocRequest request) {
         log.info("api=/v1/_signed, result = IN_PROGRESS");
         String fileStoreId = eSignService.signDocWithDigitalSignature(request);
         log.info("api=/v1/_signed, result = SUCCESS");

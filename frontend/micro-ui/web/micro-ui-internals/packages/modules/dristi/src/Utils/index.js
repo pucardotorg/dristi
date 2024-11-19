@@ -143,7 +143,7 @@ export const extractFeeMedium = (feeName) => {
 export const documentsTypeMapping = {
   complainantId: "COMPLAINANT_ID_PROOF",
   complainantCompanyDetailsUpload: "AUTHORIZED_COMPLAINANT_COMPANY_REPRESENTATIVE",
-  inquiryAffidavitFileUpload: "case.affidavit.223bnss",
+  inquiryAffidavitFileUpload: "case.affidavit.225bnss",
   AccusedCompanyDetailsUpload: "AUTHORIZED_ACCUSED_COMPANY_REPRESENTATIVE",
   bouncedChequeFileUpload: "case.cheque",
   depositChequeFileUpload: "case.cheque.depositslip",
@@ -154,7 +154,7 @@ export const documentsTypeMapping = {
   proofOfReplyFileUpload: "case.replynotice",
   debtLiabilityFileUpload: "case.liabilityproof",
   condonationFileUpload: "CONDONATION_DOC",
-  swornStatement: "case.affidavit.225bnss",
+  swornStatement: "case.affidavit.223bnss",
   SelectUploadDocWithName: "case.docs",
   vakalatnamaFileUpload: "VAKALATNAMA_DOC",
 };
@@ -216,4 +216,8 @@ export const combineMultipleFiles = async (pdfFilesArray, finalFileName = "combi
     console.error("Error:", error);
     throw new DocumentUploadError(`Document upload failed: ${error.message}`, documentsTypeMapping[key]);
   }
+};
+
+export const cleanString = (input) => {
+  return input.trim().replace(/\s+/g, " ");
 };

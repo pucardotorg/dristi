@@ -39,12 +39,16 @@ async function fetchDocument(fileStoreId) {
       }
 
       const page = pdfDoc.addPage();
-      const { width, height } = page.getSize();
+      const { width: pageWidth, height: pageHeight } = page.getSize();
+      const { width: imageWidth, height: imageHeight } = image;
+      const scale = Math.min(pageWidth / imageWidth, pageHeight / imageHeight);
+      const xOffset = (pageWidth - imageWidth * scale) / 2;
+      const yOffset = (pageHeight - imageHeight * scale) / 2;
       page.drawImage(image, {
-        x: 0,
-        y: 0,
-        width: width,
-        height: height,
+        x: xOffset,
+        y: yOffset,
+        width: imageWidth * scale,
+        height: imageHeight * scale,
       });
 
       const pdfBytes = await pdfDoc.save();
@@ -124,7 +128,7 @@ async function appendComplainantFilesToPDF(pdf, complainants) {
       await appendPdfPagesWithHeader(
         existingPdfDoc,
         complainant.companyDetailsFileStore,
-        `Authoriastion oF Representative Document ${i + 1}`
+        `Authoriastion of Representative Document ${i + 1}`
       );
     }
   }
@@ -144,11 +148,18 @@ async function appendRespondentFilesToPDF(pdf, respondents) {
 
   for (let i = 0; i < respondents.length; i++) {
     const respondent = respondents[i];
-    if (respondent.inquiryAffidavitFileStore) {
+    if (respondent?.inquiryAffidavitFileStore) {
       await appendPdfPagesWithHeader(
         existingPdfDoc,
-        respondent.inquiryAffidavitFileStore,
+        respondent?.inquiryAffidavitFileStore,
         `Inquiry Affidavit Document ${i + 1}`
+      );
+    }
+    if (respondent?.companyDetailsUpload) {
+      await appendPdfPagesWithHeader(
+        existingPdfDoc,
+        respondent?.companyDetailsUpload,
+        `Accused Company Document ${i + 1}`
       );
     }
   }
@@ -306,7 +317,7 @@ async function appendPrayerSwornFilesToPDF(pdf, prayerSwornStatementDetails) {
       await appendPdfPagesWithHeader(
         existingPdfDoc,
         prayerSworn.memorandumOfComplaintFileStore,
-        `Memorandum of Complaint Document ${i + 1}`
+        `Complaint ${i + 1}`
       );
     }
     if (prayerSworn.prayerForReliefFileStore) {
@@ -320,8 +331,17 @@ async function appendPrayerSwornFilesToPDF(pdf, prayerSwornStatementDetails) {
       await appendPdfPagesWithHeader(
         existingPdfDoc,
         prayerSworn.swornStatement,
-        `Sworn Statement Document ${i + 1}`
+        `Affidavit under section 223 of BNSS ${i + 1}`
       );
+    }
+    if (prayerSworn?.complaintAdditionalDocumentFileStore?.length > 0) {
+      for (let j = 0; j < prayerSworn?.complaintAdditionalDocumentFileStore.length; j++) {
+        await appendPdfPagesWithHeader(
+          existingPdfDoc,
+          prayerSworn?.complaintAdditionalDocumentFileStore?.[j],
+          `Complaint Additional Document ${j + 1}`
+        );
+      }
     }
   }
 

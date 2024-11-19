@@ -1,5 +1,6 @@
 const config = require('../config/config'); 
-
+const axios = require('axios');
+var url = require("url");
 
 /**
  * Extracts case section from the case object.
@@ -34,12 +35,21 @@ exports.getCaseSectionNumber = async (cases) => {
 const getDocumentFileStore = (fileUploadDocuments, fileName) => {
     const documents = fileUploadDocuments?.document;
     if (Array.isArray(documents)) {
-      const document = documents.find(doc => doc?.fileName === fileName);
+      const document = documents.find(doc => doc?.fileName === fileName || doc?.name === fileName);
       return document?.fileStore ?? null;
     } else if (documents && documents?.fileName) {
       return documents.fileName === fileName ? documents?.fileStore ?? null : null;
     }
     return null;
+};
+
+const getComplaintAdditionalDocumentFileStore = (fileUploadDocuments) => {
+  if (!Array.isArray(fileUploadDocuments)) return [];
+
+  return fileUploadDocuments
+    .flatMap(doc => doc?.document || [])
+    .map(item => item?.fileStore)
+    .filter(fileStore => fileStore);
 };
 
 /**
@@ -56,6 +66,37 @@ const getAddressDetails = (addressObject) => {
       state: addressObject?.state || '',
       pincode: addressObject?.pincode || ''
     };
+  };
+
+  const getStringAddressDetails = (addressObject) => {
+    return `${addressObject?.locality || ''}, ${addressObject?.city || ''}, ${addressObject?.district || ''},  ${addressObject?.state || ''},  ${addressObject?.pincode || ''}`;
+  };
+
+  exports.formatDate = (date) => {
+    const day = String(date.getDate()).padStart(2, "0");
+    const month = String(date.getMonth() + 1).padStart(2, "0");
+    const year = date.getFullYear();
+    return `${day}-${month}-${year}`;
+  };
+
+  exports.convertDateToDDMMYYYY = (dateString) => {
+    if (!dateString) return "";
+  
+    const [year, month, day] = dateString?.split("-");
+    return `${day}-${month}-${year}`;
+  };
+  
+  exports.convertToIndianCurrency = (amount, locale, currency) => {
+    if (typeof amount !== "number" && typeof amount !== "string") return "";
+  
+    const number = Number(amount);
+    if (isNaN(number)) return "";
+  
+    return new Intl.NumberFormat(locale, {
+      style: "currency",
+      currency: currency,
+      maximumSignificantDigits: 2,
+    }).format(number).toString();
   };
 
 /**
@@ -268,7 +309,7 @@ exports.getDemandNoticeDetails = (cases) => {
             legalDemandNoticeFileStore: getDocumentFileStore(demandNoticeData.legalDemandNoticeFileUpload, 'LEGAL_DEMAND_NOTICE'),
             proofOfDispatchFileStore: getDocumentFileStore(demandNoticeData.proofOfDispatchFileUpload, 'PROOF_OF_DISPATCH_FILE_NAME'),
             proofOfService: demandNoticeData.proofOfService && demandNoticeData.proofOfService.code || null,
-            dateOfDeemedService: demandNoticeData.dateOfDeemedService || null,
+            dateOfDeemedService: demandNoticeData.dateOfService || null,
             dateOfAccrual: demandNoticeData.dateOfAccrual || null,
             proofOfAcknowledgmentFileStore: getDocumentFileStore(demandNoticeData.proofOfAcknowledgmentFileUpload, 'PROOF_LEGAL_DEMAND_NOTICE_FILE_NAME'),
             replyReceived: demandNoticeData.proofOfReply && demandNoticeData.proofOfReply.code || null,
@@ -325,9 +366,268 @@ exports.getPrayerSwornStatementDetails = (cases) => {
             prayerForReliefFileStore: getDocumentFileStore(swornStatementData.prayerForRelief, 'CS_PRAYER_FOR_RELIEF_HEADER'),
             swornStatement: getDocumentFileStore(swornStatementData.swornStatement, 'CS_SWORN_STATEMENT_HEADER') || '',
             additionalDetails: swornStatementData.additionalDetails && swornStatementData.additionalDetails.text || null,
-            additionalActsSectionsToChargeWith: swornStatementData.additionalActsSections && swornStatementData.additionalActsSections.text || null
+            additionalActsSectionsToChargeWith: swornStatementData.additionalActsSections && swornStatementData.additionalActsSections.text || null,
+            complaintAdditionalDocumentFileStore: getComplaintAdditionalDocumentFileStore(swornStatementData?.SelectUploadDocWithName),
         };
     });
 
     return prayerSwornStatementDetailsList;
+};
+
+exports.getComplainantsDetailsForComplaint = async (cases) => {
+    if (!cases?.additionalDetails || !cases?.additionalDetails?.complainantDetails || !cases?.additionalDetails?.complainantDetails?.formdata) {
+        return [];
+    }
+    return cases?.additionalDetails?.complainantDetails?.formdata?.map((formData) => {
+        const data = formData?.data;
+        const complainantType = data?.complainantType || '';
+        const firstName = data?.firstName || '';
+        const middleName = data?.middleName || '';
+        const lastName = data?.lastName || '';
+        const phoneNumber = (data?.complainantVerification && data?.complainantVerification?.mobileNumber) || '';
+
+        if (complainantType.code === 'REPRESENTATIVE') {
+            const companyDetails = data.addressCompanyDetails || {};
+            const companyAddress = getStringAddressDetails(companyDetails);
+
+            return {
+                ifIndividual: false,
+                institutionName: data?.complainantCompanyName || '',
+                complainantAddress: companyAddress || '',
+                nameOfAuthorizedSignatory: `${firstName} ${middleName} ${lastName}` || '',
+                designationOfAuthorizedSignatory: data?.complainantDesignation || '',
+                companyDetailsFileStore: getDocumentFileStore(data?.companyDetailsUpload, 'Company documents') || '',
+            };
+        } else {
+            const addressDetails = data?.complainantVerification && data?.complainantVerification?.individualDetails && data?.complainantVerification?.individualDetails?.addressDetails || {};
+            const address = getStringAddressDetails(addressDetails);
+
+            return {
+                ifIndividual: true,
+                complainantName: `${firstName} ${middleName} ${lastName}` || '',
+                complainantAge: data?.complainantAge || '',
+                complainantAddress: address || '',
+                phoneNumber: phoneNumber || '',
+                emailId: '',
+                complainantIdProofFileStore: getDocumentFileStore(data?.complainantVerification?.individualDetails) || ''
+            };
+        }
+    });
+};
+
+exports.getAdvocateDetailsForComplaint = async (cases) => {
+    if (!cases.additionalDetails || !cases.additionalDetails.advocateDetails || !cases.additionalDetails.advocateDetails.formdata) {
+        return [];
+    }
+    return cases.additionalDetails.advocateDetails.formdata.map((formData) => {
+        const data = formData.data;
+        
+        if (data.isAdvocateRepresenting.code === 'NO') {
+            return {
+                isPartyInPerson: true
+            };
+        } else {
+            return {
+                isPartyInPerson: false,
+                advocateName: data.advocateName || '',
+                barId: data.barRegistrationNumber || '',
+                advocatePhoneNumber : data.AdvocateNameDetails.advocateMobileNumber || '',
+                vakalatnamaFileStore: getDocumentFileStore(data.vakalatnamaFileUpload, 'VAKALATNAMA') || '',
+            };
+        }
+        
+    });
+};
+
+exports.getRespondentsDetailsForComplaint = async (cases) => {
+    if (!cases?.additionalDetails || !cases?.additionalDetails?.respondentDetails || !cases?.additionalDetails?.respondentDetails?.formdata) {
+        return [];
+    }
+    return cases.additionalDetails.respondentDetails.formdata?.map((formData) => {
+        const data = formData?.data;
+        const respondentType = data?.respondentType || '';
+        const firstName = data?.respondentFirstName || '';
+        const middleName = data?.respondentMiddleName || '';
+        const lastName = data?.respondentLastName || '';
+        const addresses = data?.addressDetails?.map((addressDetail) => {
+            return getStringAddressDetails(addressDetail?.addressDetails);
+        });
+        if (respondentType.code === 'REPRESENTATIVE') {
+            return {
+                ifAccusedIndividual: false,
+                accusedInstitutionName: data?.respondentCompanyName || '',
+                accusedAddress: addresses && addresses?.join(", ") || '',
+                nameOfAccusedAuthorizedSignatory: `${firstName} ${middleName} ${lastName}` || '',
+                designationOfAccusedAuthorizedSignatory: data?.respondentDesignation || '',
+                inquiryAffidavitFileStore: getDocumentFileStore(data?.inquiryAffidavitFileUpload, 'Affidavit documents') || '',
+                companyDetailsUpload: getDocumentFileStore(data?.companyDetailsUpload, 'Company documents') || ''
+            };
+        } else {
+            return {
+                ifAccusedIndividual: true,
+                accusedName: `${firstName} ${middleName} ${lastName}` || '',
+                accusedAge: data?.respondentAge || '',
+                accusedAddress: addresses && addresses?.join(", ") || '',
+                accusedPhoneNumber: data?.phonenumbers?.mobileNumber?.join(", ") || "",
+                accusedEmailId: data?.emails?.emailId?.join(", ") || "",
+                inquiryAffidavitFileStore: getDocumentFileStore(data?.inquiryAffidavitFileUpload, 'Affidavit documents') || '',
+            };
+        }
+    });
+};
+
+exports.getDocumentList = async (cases) => {
+    const newDocumentList = [];
+
+    const chequeDetails = this.getChequeDetails(cases);
+    const demandNoticeDetails = this.getDemandNoticeDetails(cases);
+
+    const bounceCheque = await this.generateBounceChequeDescriptions(chequeDetails);
+    const returnMemo = await this.generateChequeReturnMemoDescriptions(chequeDetails);
+    const statutoryNotice = await this.generateDemandNoticeDescriptions(demandNoticeDetails);
+    const proofOfDispatch = await this.generateProofDispatchDescriptions(demandNoticeDetails);
+    const proofOfService = demandNoticeDetails?.[0]?.proofOfAcknowledgmentFileStore ? await this.generateProofServiceDescriptions(demandNoticeDetails) : [];
+    const affidavitInLieuComplaint = ["Digital record of proof of Affidavit under section 223 of BNSS"];
+    const proofOfReply = demandNoticeDetails?.[0]?.proofOfReplyFileStore ? await this.generateProofReplyDescriptions(demandNoticeDetails) : [];
+    const proofOfDeposit = chequeDetails?.[0]?.depositChequeFileStore ? await this.generateProofDepositDescriptions(chequeDetails) : [];
+    const optionalDocs = await this.generateOptionalDocDescriptions(cases.documents);
+
+    newDocumentList.push(
+        ...bounceCheque,
+        ...returnMemo,
+        ...statutoryNotice,
+        ...proofOfDispatch,
+        ...proofOfService,
+        ...affidavitInLieuComplaint,
+        ...proofOfReply,
+        ...proofOfDeposit,
+        ...optionalDocs
+    );
+    return newDocumentList;
+};
+
+exports.generateBounceChequeDescriptions = async (chequeDetailsList) => {
+    return chequeDetailsList.map((chequeDetails) => {
+        const chequeNumber = chequeDetails.chequeNumber || '';
+        const dateOfIssuance = this.convertDateToDDMMYYYY(chequeDetails.dateOfIssuance);
+        const chequeAmount = this.convertToIndianCurrency(chequeDetails.chequeAmount, 'en-IN', 'INR') || '';
+        return `Digital record of cheque no. ${chequeNumber} dated ${dateOfIssuance} for ${chequeAmount}`;
+    });
+}
+
+exports.generateChequeReturnMemoDescriptions = async (chequeDetailsList) => {
+    return chequeDetailsList.map(chequeDetails => {
+        const dateOfDishonorCheque = this.convertDateToDDMMYYYY(chequeDetails.dateOfDeposit);
+        return `Digital record of cheque return memo dated ${dateOfDishonorCheque}.`
+    });
+}
+
+exports.generateDemandNoticeDescriptions = async (demandNoticeList) => {
+    return demandNoticeList.map(demandNotice => {
+        const dateOfIssuance = this.convertDateToDDMMYYYY(demandNotice.dateOfIssuance);
+        if (dateOfIssuance) {
+            return `Digital record of the statutory notice dated ${dateOfIssuance}.`;
+        } else {
+            return `Digital record of the statutory notice.`;
+        }
+    });
+}
+
+exports.generateProofDispatchDescriptions = async (demandNoticeList) => {
+    return demandNoticeList.map(demandNotice => {
+        const dateOfDispatch = this.convertDateToDDMMYYYY(demandNotice.dateOfDispatch);
+        return `Digital record of proof of dispatch dated ${dateOfDispatch}.`;
+    });
+}
+
+exports.generateProofServiceDescriptions = async (demandNoticeList) => {
+    return demandNoticeList.map(demandNotice => {
+        const dateOfDeemedService = this.convertDateToDDMMYYYY(demandNotice.dateOfDeemedService);
+        return `Digital record of proof of service- ${dateOfDeemedService}.`;
+    });
+}
+
+exports.generateProofReplyDescriptions = async (demandNoticeList) => {
+    return demandNoticeList.map(demandNotice => {
+        const dateOfReply = this.convertDateToDDMMYYYY(demandNotice.dateOfReply);
+        return `Digital record of proof of reply dated ${dateOfReply}.`;
+    });
+}
+
+exports.generateProofDepositDescriptions = async (chequeDetailsList) => {
+    return chequeDetailsList.map(chequeDetails => {
+        const dateOfDeposit = this.convertDateToDDMMYYYY(chequeDetails.dateOfDeposit);
+        return `Digital record of proof of deposit dated ${dateOfDeposit}.`;
+    });
+}
+
+exports.generateOptionalDocDescriptions = async (documentList) => {
+    if (!documentList) {
+        return [];
+    }
+    return documentList.map((document) => {
+        switch (document.documentType) {
+            case "AUTHORIZED_COMPLAINANT_COMPANY_REPRESENTATIVE":
+                return `Digital record of proof of authorized representative of the company in complainant`;
+            case "case.affidavit.225bnss":
+                return `Digital record of Affidavit in-lieu-of inquiry under section 225, Bharatiya Nagarik Suraksha Sanhita, 2024`;
+            case "AUTHORIZED_ACCUSED_COMPANY_REPRESENTATIVE":
+                return `Digital record of proof of authorized representative of the company in accused`;
+            case "case.liabilityproof":
+                return `Digital record of proof of Debt/Liability`;
+            case "CONDONATION_DOC":
+                return `Digital record of proof of Delay Condonation`;
+            case "case.docs":
+                return `Digital record of proof of Complaint Additional Documents`;
+            case "VAKALATNAMA_DOC":
+                return `Digital record of proof of Advocate Vakalatnama`;
+            default:
+                return null;
+        }
+    })
+    .filter(Boolean);
+}
+
+exports.getWitnessDetailsForComplaint = async (cases) => {
+    if (!cases?.additionalDetails || !cases?.additionalDetails?.witnessDetails || !cases?.additionalDetails?.witnessDetails?.formdata) {
+        return [];
+    }
+    return cases?.additionalDetails?.witnessDetails?.formdata?.map((formData) => {
+        const data = formData?.data;
+        const addresses = data?.addressDetails?.map((addressDetail) => {
+            return getStringAddressDetails(addressDetail?.addressDetails);
+        });
+        const firstName = data?.firstName || '';
+        const middleName = data?.middleName || '';
+        const lastName = data?.lastName || '';
+
+        return {
+            witnessName: `${firstName} ${middleName} ${lastName}` || '',
+            witnessOccupation: data?.witnessDesignation,
+            witnessPhoneNumber: data?.phonenumbers?.mobileNumber?.join(", ") || "",
+            witnessEmail: data?.emails?.emailId?.join(", ") || "",
+            witnessAddress: addresses?.join(", ") || '',
+            witnessAdditionalDetails: data?.witnessAdditionalDetails?.text || ''
+        };
+    });
+};
+
+exports.searchCase = async (caseId, tenantId, requestinfo) => {
+    try {
+      return await axios({
+        method: "post",
+        url: url.resolve(config.caseUrl, config.caseSearchUrl),
+        data: {
+          RequestInfo: requestinfo,
+          tenantId: tenantId,
+          criteria: [
+            {
+                caseId: caseId,
+            },
+          ],
+        },
+      });
+    } catch (error) {
+      throw error;
+    }
 };

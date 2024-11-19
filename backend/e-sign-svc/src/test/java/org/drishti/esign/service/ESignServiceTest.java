@@ -1,19 +1,25 @@
 package org.drishti.esign.service;
 
 import jakarta.servlet.ServletContext;
+import jakarta.servlet.http.HttpServletRequest;
 import org.drishti.esign.cipher.Encryption;
+import org.drishti.esign.config.Configuration;
+import org.drishti.esign.kafka.Producer;
+import org.drishti.esign.repository.EsignRequestRepository;
 import org.drishti.esign.util.FileStoreUtil;
 import org.drishti.esign.util.XmlFormDataSetter;
 import org.drishti.esign.web.models.*;
+import org.egov.common.contract.models.AuditDetails;
+import org.egov.common.contract.request.RequestInfo;
+import org.egov.common.contract.request.User;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.core.io.Resource;
-
-import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
@@ -52,7 +58,17 @@ public class ESignServiceTest {
     @Mock
     private ServletContext servletContext;
 
-    private final ESignRequest request = new ESignRequest();
+    @Mock
+    private Producer producer;
+
+    @Mock
+    private Configuration configuration;
+
+    @Mock
+    private EsignRequestRepository repository;
+
+
+    private final ESignRequest request = new ESignRequest(RequestInfo.builder().userInfo(User.builder().build()).build(), ESignParameter.builder().build());
     private Resource resource;
     private PrivateKey privateKey;
 
@@ -78,7 +94,7 @@ public class ESignServiceTest {
 
         when(fileStoreUtil.fetchFileStoreObjectById(anyString(), anyString())).thenReturn(resource);
         when(pdfEmbedder.generateHash(any(Resource.class))).thenReturn(fileHash);
-        when(formDataSetter.setFormXmlData(any() , any(ESignXmlData.class))).thenReturn(new ESignXmlData());
+        when(formDataSetter.setFormXmlData(any(), any(ESignXmlData.class))).thenReturn(new ESignXmlData());
         when(xmlGenerator.generateXml(any(ESignXmlData.class))).thenReturn(strToEncrypt);
         when(encryption.getPrivateKey(anyString())).thenReturn(privateKey);
         when(servletRequest.getServletContext()).thenReturn(servletContext);
@@ -98,6 +114,8 @@ public class ESignServiceTest {
         when(formDataSetter.setFormXmlData(anyString(), any(ESignXmlData.class))).thenReturn(new ESignXmlData());
         when(xmlGenerator.generateXml(any(ESignXmlData.class))).thenReturn("strToEncrypt");
         when(encryption.getPrivateKey(anyString())).thenThrow(new RuntimeException("Test Exception"));
+        when(configuration.getEsignCreateTopic()).thenReturn("testTopic");
+        doNothing().when(producer).push(anyString(), any());
 
         ESignXmlForm result = eSignService.signDoc(request);
 
@@ -107,40 +125,48 @@ public class ESignServiceTest {
     }
 
     @Test
-    public void signDocWithDigitalSignature_HappyPath() throws IOException {
-        SignDocRequest signDocRequest = new SignDocRequest();
-        SignDocParameter signDocParameter = new SignDocParameter();
-        signDocParameter.setFileStoreId("12345");
-        signDocParameter.setTenantId("tenant1");
-        signDocParameter.setResponse("response");
-        signDocRequest.setESignParameter(signDocParameter);
+    @DisplayName("Test successful signing of document with digital signature")
+    void testSignDocWithDigitalSignature_Success() throws IOException {
+        // Arrange
 
+        SignDocParameter eSignParameter = SignDocParameter.builder().txnId("123").build();
+        ESignParameter eSignDetails = ESignParameter.builder().auditDetails(AuditDetails.builder().build()).build();
         MultipartFile multipartFile = mock(MultipartFile.class);
+        SignDocRequest request = SignDocRequest.builder().eSignParameter(eSignParameter).build();
 
-        when(fileStoreUtil.fetchFileStoreObjectById(anyString(), anyString())).thenReturn(resource);
-        when(pdfEmbedder.signPdfWithDSAndReturnMultipartFile(any(Resource.class), anyString())).thenReturn(multipartFile);
-        when(fileStoreUtil.storeFileInFileStore(any(MultipartFile.class), anyString())).thenReturn("signedFileStoreId");
+        when(repository.getESignDetails(anyString())).thenReturn(eSignDetails);
+        when(fileStoreUtil.fetchFileStoreObjectById(any(), any())).thenReturn(resource);
+        when(pdfEmbedder.signPdfWithDSAndReturnMultipartFile(any(), any(), any())).thenReturn(multipartFile);
+        when(fileStoreUtil.storeFileInFileStore(any(), any())).thenReturn("signedFileStoreId");
 
-        String result = eSignService.signDocWithDigitalSignature(signDocRequest);
+        // Act
+        String result = eSignService.signDocWithDigitalSignature(request);
 
-        assertNotNull(result);
+        // Assert
         assertEquals("signedFileStoreId", result);
+
     }
 
     @Test
-    public void signDocWithDigitalSignature_Exception() throws IOException {
-        SignDocRequest signDocRequest = new SignDocRequest();
-        SignDocParameter signDocParameter = new SignDocParameter();
-        signDocParameter.setFileStoreId("12345");
-        signDocParameter.setTenantId("tenant1");
-        signDocParameter.setResponse("response");
-        signDocRequest.setESignParameter(signDocParameter);
+    @DisplayName("Test exception handling during file signing")
+    void testSignDocWithDigitalSignature_Exception() throws IOException {
+        // Arrange
+        SignDocRequest request = mock(SignDocRequest.class);
+        SignDocParameter eSignParameter = mock(SignDocParameter.class);
+        ESignParameter eSignDetails = mock(ESignParameter.class);
 
-        when(fileStoreUtil.fetchFileStoreObjectById(anyString(), anyString())).thenReturn(resource);
-        when(pdfEmbedder.signPdfWithDSAndReturnMultipartFile(any(Resource.class), anyString())).thenThrow(new IOException("Test Exception"));
+        when(request.getESignParameter()).thenReturn(eSignParameter);
+        when(eSignParameter.getTxnId()).thenReturn("txn123");
+        when(repository.getESignDetails("txn123")).thenReturn(eSignDetails);
+        when(eSignDetails.getFileStoreId()).thenReturn("fileStoreId");
+        when(eSignParameter.getTenantId()).thenReturn("tenantId");
+        when(fileStoreUtil.fetchFileStoreObjectById("fileStoreId", "tenantId")).thenReturn(resource);
+        when(pdfEmbedder.signPdfWithDSAndReturnMultipartFile(any(), any(), any())).thenThrow(new IOException("File signing failed"));
 
-        assertThrows(RuntimeException.class, () -> {
-            eSignService.signDocWithDigitalSignature(signDocRequest);
+        // Act & Assert
+        RuntimeException thrown = assertThrows(RuntimeException.class, () -> {
+            eSignService.signDocWithDigitalSignature(request);
         });
+        assertEquals("java.io.IOException: File signing failed", thrown.getMessage());
     }
 }

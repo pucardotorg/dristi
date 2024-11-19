@@ -3,7 +3,7 @@ on:
   push:
     branches:
       - develop
-      - hotfix/0.6
+      - hotfix/1.0
       - release/**
     tags:
       - 'v*'
@@ -12,7 +12,7 @@ on:
   pull_request:
     branches:
       - develop
-      - hotfix/0.6
+      - hotfix/1.0
       - release/**
     paths:
       - 'common/egov-hrms/**'

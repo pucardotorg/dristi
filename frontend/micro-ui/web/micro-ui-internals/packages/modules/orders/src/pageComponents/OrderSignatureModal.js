@@ -39,6 +39,7 @@ function OrderSignatureModal({
   const uri = `${window.location.origin}${Urls.FileFetchById}?tenantId=${tenantId}&fileStoreId=${orderPdfFileStoreID}`;
   const { uploadDocuments } = useDocumentUpload();
   const name = "Signature";
+  const judgePlaceholder = "Judge Signature";
   const uploadModalConfig = useMemo(() => {
     return {
       key: "uploadSignature",
@@ -126,10 +127,11 @@ function OrderSignatureModal({
                   // setOpenAadharModal(true);
                   // setIsSigned(true);
                   localStorage.setItem("orderPDF", orderPdfFileStoreID);
-                  handleEsign(name, pageModule, orderPdfFileStoreID);
+                  handleEsign(name, pageModule, orderPdfFileStoreID, judgePlaceholder);
                 }}
                 className={"aadhar-sign-in"}
                 labelClassName={"aadhar-sign-in"}
+                isDisabled={true}
               />
               <Button
                 icon={<FileUploadIcon />}
@@ -150,7 +152,7 @@ function OrderSignatureModal({
                 uri={uri}
                 t={t}
                 displayFilename={"CLICK_HERE"}
-                pdf = {true}
+                pdf={true}
               />
             </div>
           </div>

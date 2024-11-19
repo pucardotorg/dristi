@@ -1084,7 +1084,7 @@ function EFilingCases({ path }) {
                     key = formComponent.key + "." + formComponent.populators?.inputs?.[0]?.name;
                   }
                   if (formComponent.component === "VerifyPhoneNumber") {
-                    key = formComponent.key + "." + formComponent.name;
+                    key = formComponent.key + "." + formComponent?.name;
                   }
                 }
                 if (selected === "demandNoticeDetails" && formComponent.component === "SelectUserTypeComponent") {
@@ -1142,6 +1142,9 @@ function EFilingCases({ path }) {
                     scrutiny?.[selected]?.form?.[index]?.["liabilityType.name"]?.FSOError
                   ) {
                     modifiedFormComponent.disable = false;
+                  }
+                  if (selected === "chequeDetails" && key === "policeStation") {
+                    key = key + "." + formComponent?.populators?.optionsKey;
                   }
                   if (key in scrutiny?.[selected]?.form?.[index] && scrutiny?.[selected]?.form?.[index]?.[key]?.FSOError) {
                     if (key === "complainantVerification.individualDetails.document") {
@@ -1641,48 +1644,54 @@ function EFilingCases({ path }) {
       let res;
       let caseComplaintDocument = {};
       let casePdfDocument = [];
-      if (isCaseLocked) {
-        setIsDisabled(true);
-        const caseObject = isCaseReAssigned && errorCaseDetails ? errorCaseDetails : caseDetails;
-        const response = await axios.post(
-          "/dristi-case-pdf/v1/fetchCaseComplaintPdf",
-          {
-            cases: caseObject,
-            RequestInfo: {
-              authToken: Digit.UserService.getUser().access_token,
-              userInfo: Digit.UserService.getUser()?.info,
-              msgId: `${Date.now()}|${Digit.StoreData.getCurrentLanguage()}`,
-              apiId: "Rainmaker",
-            },
-          },
-          { responseType: "blob" } // Important: Set responseType to handle binary data
-        );
-        const contentDisposition = response.headers["content-disposition"];
-        const filename = contentDisposition ? contentDisposition.split("filename=")[1]?.replace(/['"]/g, "") : "caseCompliantDetails.pdf";
-        const pdfFile = new File([response?.data], filename, { type: "application/pdf" });
-        const document = await onDocumentUpload(pdfFile, pdfFile.name);
-        const fileStoreId = document?.file?.files?.[0]?.fileStoreId;
-
-        if (fileStoreId) {
-          caseComplaintDocument = {
-            documentType: document?.fileType,
-            fileStore: fileStoreId,
-            fileName: filename,
-          };
-        } else {
-          throw new Error("FILE_STORE_ID_MISSING");
-        }
-        res = await refetchCasePDfGeneration();
-        casePdfDocument = res?.data?.cases?.[0]?.documents
-          .filter((doc) => doc.additionalDetails?.fields?.some((field) => field.key === "FILE_CATEGORY" && field.value === "CASE_GENERATED_DOCUMENT"))
-          .map((doc) => doc.fileStore);
-        if (res?.status === "error") {
-          setIsDisabled(false);
-          toast.error(t("CASE_PDF_ERROR"));
-          throw new Error("CASE_PDF_ERROR");
-        }
-      }
       try {
+        let casePdfDocument = [];
+        if (isCaseLocked) {
+          setIsDisabled(true);
+          const caseObject = isCaseReAssigned && errorCaseDetails ? errorCaseDetails : caseDetails;
+          const response = await axios.post(
+            "/dristi-case-pdf/v1/fetchCaseComplaintPdf",
+            {
+              cases: {
+                id: caseObject?.id,
+                tenantId: tenantId,
+              },
+              RequestInfo: {
+                authToken: Digit.UserService.getUser().access_token,
+                userInfo: Digit.UserService.getUser()?.info,
+                msgId: `${Date.now()}|${Digit.StoreData.getCurrentLanguage()}`,
+                apiId: "Rainmaker",
+              },
+            },
+            { responseType: "blob" } // Important: Set responseType to handle binary data
+          );
+          const contentDisposition = response.headers["content-disposition"];
+          const filename = contentDisposition ? contentDisposition.split("filename=")[1]?.replace(/['"]/g, "") : "caseCompliantDetails.pdf";
+          const pdfFile = new File([response?.data], filename, { type: "application/pdf" });
+          const document = await onDocumentUpload(pdfFile, pdfFile?.name);
+          const fileStoreId = document?.file?.files?.[0]?.fileStoreId;
+
+          if (fileStoreId) {
+            caseComplaintDocument = {
+              documentType: "case.complaint.unsigned",
+              fileStore: fileStoreId,
+              fileName: filename,
+            };
+          } else {
+            throw new Error("FILE_STORE_ID_MISSING");
+          }
+          res = await refetchCasePDfGeneration();
+          casePdfDocument = res?.data?.cases?.[0]?.documents
+            .filter((doc) =>
+              doc.additionalDetails?.fields?.some((field) => field.key === "FILE_CATEGORY" && field.value === "CASE_GENERATED_DOCUMENT")
+            )
+            .map((doc) => doc.fileStore);
+          if (res?.status === "error") {
+            setIsDisabled(false);
+            toast.error(t("CASE_PDF_ERROR"));
+            throw new Error("CASE_PDF_ERROR");
+          }
+        }
         await updateCaseDetails({
           t,
           isCompleted: true,
@@ -1723,15 +1732,15 @@ function EFilingCases({ path }) {
           history.push(`?caseId=${caseId}&selected=${nextSelected}`);
         }
       } catch (error) {
+        let message = t("SOMETHING_WENT_WRONG");
         if (error instanceof DocumentUploadError) {
-          toast.error(`${t("DOCUMENT_FORMAT_DOES_NOT_MATCH")} : ${error?.documentType}`);
+          message = `${t("DOCUMENT_FORMAT_DOES_NOT_MATCH")} : ${error?.documentType}`;
         } else if (extractCodeFromErrorMsg(error) === 413) {
-          toast.error(t("FAILED_TO_UPLOAD_FILE"));
-        } else {
-          toast.error(t("SOMETHING_WENT_WRONG"));
+          message = t("FAILED_TO_UPLOAD_FILE");
         }
         setIsDisabled(false);
         console.error("An error occurred:", error);
+        throw new Error(message);
       }
     }
   };

@@ -292,6 +292,7 @@ function EFilingPayment({ t, submitModalInfo = mockSubmitModalInfo, path }) {
             className={"secondary-button-selector"}
             label={t("CS_PRINT_CASE_FILE")}
             labelClassName={"secondary-label-selector"}
+            style={{ minWidth: "30%" }}
             onButtonClick={() => {
               downloadPdf(tenantId, fileStoreIdToUse);
               localStorage.removeItem("fileStoreId");

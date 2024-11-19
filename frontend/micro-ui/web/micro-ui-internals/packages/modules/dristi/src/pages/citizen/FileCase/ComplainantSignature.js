@@ -87,8 +87,10 @@ const getStyles = () => ({
     justifyContent: "center",
     backgroundColor: "#007E7E",
     border: "none",
-    cursor: "pointer",
+    // cursor: "pointer",
     padding: "0 20px",
+    opacity: 0.5,
+    cursor: "default",
   },
   uploadButton: {
     marginBottom: "16px",
@@ -173,6 +175,8 @@ const ComplainantSignature = ({ path }) => {
   const { handleEsign } = Digit.Hooks.orders.useESign();
   const { uploadDocuments } = Digit.Hooks.orders.useDocumentUpload();
   const name = "Signature";
+  const complainantPlaceholder = "Complainant Signature";
+  const advocatePlaceholder = "Advocate Signature";
 
   const uploadModalConfig = useMemo(() => {
     return {
@@ -318,7 +322,8 @@ const ComplainantSignature = ({ path }) => {
   };
 
   const handleEsignAction = () => {
-    handleEsign(name, "ci", DocumentFileStoreId);
+    const signPlaceHolder = isLitigantPartyInPerson || !isLitigantEsignCompleted ? complainantPlaceholder : advocatePlaceholder;
+    handleEsign(name, "ci", DocumentFileStoreId, signPlaceHolder);
   };
 
   const handleUploadFile = () => {
@@ -446,11 +451,28 @@ const ComplainantSignature = ({ path }) => {
     return true;
   };
 
+  const updateSignedDocInCaseDoc = () => {
+    const tempDocList = structuredClone(caseDetails?.documents || []);
+    const index = tempDocList.findIndex((doc) => doc.documentType === "case.complaint.signed");
+    const signedDoc = {
+      documentType: "case.complaint.signed",
+      fileStore: signatureDocumentId ? signatureDocumentId : DocumentFileStoreId,
+      fileName: "case Complaint Signed Document",
+    };
+    if (index > -1) {
+      tempDocList.splice(index, 1);
+    }
+    tempDocList.push(signedDoc);
+    return tempDocList;
+  };
+
   const handleSubmit = async (state) => {
     setLoader(true);
 
     let calculationResponse = {};
     const assignees = getAllAssignees(caseDetails);
+
+    const caseDocList = updateSignedDocInCaseDoc();
 
     if (isSubmit(state)) {
       try {
@@ -462,6 +484,7 @@ const ComplainantSignature = ({ path }) => {
                 ...caseDetails?.additionalDetails,
                 signedCaseDocument: signatureDocumentId ? signatureDocumentId : DocumentFileStoreId,
               },
+              documents: caseDocList,
               workflow: {
                 ...caseDetails?.workflow,
                 action: isSelectedUploadDoc
@@ -709,7 +732,7 @@ const ComplainantSignature = ({ path }) => {
             <p style={styles.signatureDescription}>{t("EITHER_ESIGN_UPLOAD")}</p>
             {isSelectedEsign &&
               (!(isAdvocateFilingCase && !isLitigantEsignCompleted) ? (
-                <button style={styles.esignButton} onClick={handleEsignAction}>
+                <button style={styles.esignButton} disabled={true} onClick={handleEsignAction}>
                   {t("CS_ESIGN")}
                 </button>
               ) : (

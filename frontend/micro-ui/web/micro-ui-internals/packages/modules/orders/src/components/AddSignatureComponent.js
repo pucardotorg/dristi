@@ -126,6 +126,7 @@ const AddSignatureComponent = ({ t, isSigned, setIsSigned, handleSigned, rowData
                     fontWeight: 700,
                     textAlign: "center",
                   }}
+                  isDisabled={true}
                 />
                 <Button
                   icon={<FileUploadIcon />}
@@ -152,7 +153,7 @@ const AddSignatureComponent = ({ t, isSigned, setIsSigned, handleSigned, rowData
                   style={{ color: "#007E7E", cursor: "pointer", textDecoration: "underline" }}
                   t={t}
                   displayFilename={"CLICK_HERE"}
-                  pdf = { true }
+                  pdf={true}
                 />
               </div>
             </div>

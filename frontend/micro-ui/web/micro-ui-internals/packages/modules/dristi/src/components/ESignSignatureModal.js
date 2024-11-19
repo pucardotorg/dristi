@@ -162,6 +162,7 @@ function ESignSignatureModal({
                 }}
                 className={"aadhar-sign-in"}
                 labelClassName={"aadhar-sign-in"}
+                isDisabled={true}
               />
               <Button
                 icon={<FileUploadIcon />}

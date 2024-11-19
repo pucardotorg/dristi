@@ -19,7 +19,7 @@ const CustomCheckBoxCard = ({ t, config, onSelect, formData = {}, errors, label 
                 {t(input.label)}
               </CardHeader>
 
-              <CardText style={{ fontWeight: 200 }} className="card-label-smaller">
+              <CardText style={{ fontWeight: 200, width: "70%", textAlign: "center" }} className="card-label-smaller">
                 {t(input.subLabel)}
               </CardText>
 

@@ -2059,8 +2059,8 @@ const JoinCaseHome = ({ refreshInbox, setShowSubmitResponseModal, setResponsePen
     setOtp(value);
   };
 
-  const onResendOtp = () => {
-    setOtp("");
+  const onResendOtp = async () => {
+    await selectMobileNumber(accusedRegisterFormData?.mobileNumber, tenantId);
   };
 
   const [userData, setUserData] = useState({});
@@ -2269,7 +2269,7 @@ const JoinCaseHome = ({ refreshInbox, setShowSubmitResponseModal, setResponsePen
               onOtpChange={onOtpChange}
               otp={otp}
               size={6}
-              otpEnterTime={10}
+              otpEnterTime={25}
               onResend={onResendOtp}
               mobileNumber={accusedRegisterFormData?.phoneNumber}
             />

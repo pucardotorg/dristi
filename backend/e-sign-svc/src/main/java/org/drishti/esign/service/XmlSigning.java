@@ -32,6 +32,8 @@ import java.security.PrivateKey;
 import java.security.PublicKey;
 import java.util.Collections;
 
+import static org.drishti.esign.config.ServiceConstants.PUBLIC_KEY_FILE_NAME;
+
 /**
  * This class is used to provide convenient methods to digitally sign an XML
  * document.
@@ -77,7 +79,7 @@ public class XmlSigning {
         KeyInfoFactory keyInfoFact = xmlSigFactory.getKeyInfoFactory();
 
         try {
-            PublicKey privKey = encryption.getPublicKey("testasp.cer");
+            PublicKey privKey = encryption.getPublicKey(PUBLIC_KEY_FILE_NAME);
             keyValue = keyInfoFact.newKeyValue(privKey);
         } catch (KeyException ex) {
             ex.printStackTrace();

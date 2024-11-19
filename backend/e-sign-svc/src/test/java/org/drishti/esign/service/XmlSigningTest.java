@@ -19,6 +19,7 @@ import java.security.PrivateKey;
 import java.security.PublicKey;
 import java.util.Collections;
 
+import static org.drishti.esign.config.ServiceConstants.PUBLIC_KEY_FILE_NAME;
 import static org.junit.Assert.*;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.*;
@@ -119,7 +120,7 @@ public class XmlSigningTest {
         when(keyInfoFactory.newKeyValue(publicKey)).thenReturn(keyValue);
         when(keyInfoFactory.newKeyInfo(Collections.singletonList(keyValue))).thenReturn(mock(KeyInfo.class));
 
-        xmlSigning.getKeyInfo(xmlSignatureFactory, "testasp.cer");
+        xmlSigning.getKeyInfo(xmlSignatureFactory, PUBLIC_KEY_FILE_NAME);
         verify(encryption).getPublicKey(anyString());
         verify(keyInfoFactory).newKeyValue(publicKey);
         verify(keyInfoFactory).newKeyInfo(Collections.singletonList(keyValue));

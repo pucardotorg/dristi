@@ -24,7 +24,7 @@ let externalHost = envVariables.EGOV_EXTERNAL_HOST;
 function escapeRegex(input) {
   if (typeof input === "string") {
     return input.replace(/[\\"]/g, "\\$&");
-  } else if (typeof input === "object" && input !== null) {
+  } else if (typeof input === "object" && !Array.isArray(input) && input !== null) {
     const escapedObject = {};
     for (const key in input) {
       if (typeof input[key] === "string") {

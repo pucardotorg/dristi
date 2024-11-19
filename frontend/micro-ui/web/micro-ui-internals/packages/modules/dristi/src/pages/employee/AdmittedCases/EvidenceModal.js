@@ -16,14 +16,24 @@ import DocViewerWrapper from "../docViewerWrapper";
 import SelectCustomDocUpload from "../../../components/SelectCustomDocUpload";
 import ESignSignatureModal from "../../../components/ESignSignatureModal";
 import useDownloadCasePdf from "../../../hooks/dristi/useDownloadCasePdf";
-import { removeInvalidNameParts } from "../../../Utils";
+import { cleanString, removeInvalidNameParts } from "../../../Utils";
 const stateSla = {
   DRAFT_IN_PROGRESS: 2,
 };
 
 const dayInMillisecond = 24 * 3600 * 1000;
 
-const EvidenceModal = ({ caseData, documentSubmission = [], setShow, userRoles, modalType, setUpdateCounter, showToast, caseId }) => {
+const EvidenceModal = ({
+  caseData,
+  documentSubmission = [],
+  setShow,
+  userRoles,
+  modalType,
+  setUpdateCounter,
+  showToast,
+  caseId,
+  setIsDelayApplicationPending,
+}) => {
   const [comments, setComments] = useState(documentSubmission[0]?.comments ? documentSubmission[0].comments : []);
   const [showConfirmationModal, setShowConfirmationModal] = useState(null);
   const [showSuccessModal, setShowSuccessModal] = useState(null);
@@ -637,7 +647,12 @@ const EvidenceModal = ({ caseData, documentSubmission = [], setShow, userRoles, 
           await handleRejectApplication();
         }
         if (showConfirmationModal.type === "accept") {
-          await handleAcceptApplication();
+          try {
+            await handleAcceptApplication();
+            if (setIsDelayApplicationPending) setIsDelayApplicationPending(false);
+          } catch (error) {
+            console.error("error :>> ", error);
+          }
         }
         counterUpdate();
         setShowSuccessModal(true);
@@ -875,7 +890,7 @@ const EvidenceModal = ({ caseData, documentSubmission = [], setShow, userRoles, 
                         <div
                           className="send-comment-btn"
                           onClick={async () => {
-                            if (currentComment !== "") {
+                            if (cleanString(currentComment) !== "") {
                               let newComment =
                                 modalType === "Submissions"
                                   ? {
@@ -883,7 +898,7 @@ const EvidenceModal = ({ caseData, documentSubmission = [], setShow, userRoles, 
                                       comment: [
                                         {
                                           tenantId,
-                                          comment: currentComment,
+                                          comment: cleanString(currentComment),
                                           individualId: "",
                                           commentDocumentId: "",
                                           commentDocumentName: "",
@@ -945,9 +960,15 @@ const EvidenceModal = ({ caseData, documentSubmission = [], setShow, userRoles, 
                                 }
                               }
                               setComments((prev) => [...prev, ...newComment.comment]);
-                              setCurrentComment("");
                               setFormData({});
-                              handleSubmitComment(newComment);
+                              try {
+                                await handleSubmitComment(newComment);
+                                setCurrentComment("");
+                              } catch (error) {
+                                console.log("error :>> ", error);
+                              }
+                            } else {
+                              setCurrentComment("");
                             }
                           }}
                         >

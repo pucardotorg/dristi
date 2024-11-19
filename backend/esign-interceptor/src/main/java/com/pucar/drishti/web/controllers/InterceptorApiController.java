@@ -33,7 +33,7 @@ public class InterceptorApiController {
 
     @GetMapping("/v1/redirect")
     public ResponseEntity<HttpHeaders> redirectHandler(@RequestParam("result") String result, @RequestParam("filestoreId") String filestoreId, @RequestParam("userType") String userType) {
-        log.info("api=/v1/redirect, result = IN_PROGRESS result = {}, filestoreId = {}, userType = {}",result,filestoreId,userType);
+        log.info("api=/v1/redirect, result = IN_PROGRESS result = {}, filestoreId = {}, userType = {}", result, filestoreId, userType);
         log.info("redirecting through get method");
 
         // Construct the final redirect URL
@@ -43,14 +43,14 @@ public class InterceptorApiController {
         HttpHeaders headers = new HttpHeaders();
         headers.setLocation(URI.create(redirectUri));
         log.info("redirectUri {}", redirectUri);
-        log.info("api=/v1/redirect, result = SUCCESS result = {}, filestoreId = {}, userType = {}",result,filestoreId,userType);
+        log.info("api=/v1/redirect, result = SUCCESS result = {}, filestoreId = {}, userType = {}", result, filestoreId, userType);
         return new ResponseEntity<>(headers, HttpStatus.TEMPORARY_REDIRECT);
     }
 
 
     @PostMapping("/v1/_intercept")
     public ModelAndView eSignV1Interceptor(@RequestParam("eSignResponse") String response, @RequestParam("espTxnID") String espId) {
-        log.info("api=/v1/_intercept, result = IN_PROGRESS eSignResponse = {}, espTxnID = {}",response,espId);
+        log.info("api=/v1/_intercept, result = IN_PROGRESS eSignResponse = {}, espTxnID = {}", response, espId);
 
         String filestoreId = "";
         String result = "error";
@@ -60,11 +60,11 @@ public class InterceptorApiController {
         log.info("calculating tenantId,pageModule,fileStore id");
         String tenantId = espId.substring(0, firstHyphenIndex);
         String pageModule = espId.substring(firstHyphenIndex + 1, secondHyphenIndex);
-        String fileStoreId = espId.substring(secondHyphenIndex + 1);
-        log.info("tenantId {} ,pageModule {} , fileStoreId {}", tenantId, pageModule, fileStoreId);
+        String txnId = espId.substring(secondHyphenIndex + 1);
+        log.info("tenantId {} ,pageModule {} , txnId {}", tenantId, pageModule, txnId);
         try {
             log.info("sending response to sign doc");
-            filestoreId = service.process(response, espId, tenantId, fileStoreId);
+            filestoreId = service.process(response, espId, tenantId, txnId);
             result = "success";
             log.info("successfully sign doc");
         } catch (Exception e) {
@@ -88,7 +88,7 @@ public class InterceptorApiController {
         modelAndView.addObject("result", result);
         modelAndView.addObject("filestoreId", filestoreId);
         modelAndView.addObject("userType", userType);
-        log.info("api=/v1/_intercept, result = SUCCESS eSignResponse = {}, espTxnID = {}",response,espId);
+        log.info("api=/v1/_intercept, result = SUCCESS eSignResponse = {}, espTxnID = {}", response, espId);
         return modelAndView;
 
     }

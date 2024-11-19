@@ -12,6 +12,7 @@ import org.springframework.http.*;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.multipart.MultipartFile;
 
+import static org.drishti.esign.config.ServiceConstants.FILE_STORE_SERVICE_EXCEPTION_CODE;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.Mockito.*;
@@ -63,7 +64,7 @@ public class FileStoreUtilTest {
             fileStoreUtil.fetchFileStoreObjectById(fileStoreId, tenantId);
         });
 
-        assertEquals("FILESTORE_SERVICE_EXCEPTION", exception.getCode());
+        assertEquals(FILE_STORE_SERVICE_EXCEPTION_CODE, exception.getCode());
         verify(restTemplate, times(1)).getForObject(anyString(), eq(Resource.class));
     }
 

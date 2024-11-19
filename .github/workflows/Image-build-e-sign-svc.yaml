@@ -3,7 +3,7 @@ on:
   push:
     branches:
       - develop
-      - hotfix/0.6
+      - hotfix/1.0
       - release/**
     tags:
       - 'v*'
@@ -12,7 +12,7 @@ on:
   pull_request:
     branches:
       - develop
-      - hotfix/0.6
+      - hotfix/1.0
       - release/**
     paths:
       - 'backend/e-sign-svc/**'
@@ -89,7 +89,12 @@ jobs:
         run: |
           docker build --build-arg WORK_DIR="backend/e-sign-svc" -t pucarsolutionsdev.azurecr.io/pucar_e-sign-svc:${{ env.VERSION }}-${{ env.commit_hash }} -f build/maven/Dockerfile .
           docker push pucarsolutionsdev.azurecr.io/pucar_e-sign-svc:${{ env.VERSION }}-${{ env.commit_hash }}
-
+      - name: Build and Push Docker image for e-sign-svc DB
+        if: (github.event_name == 'push' && (github.ref == 'refs/heads/develop' || github.ref == 'refs/heads/release/0.4' || github.ref == 'refs/heads/release/0.5')) || github.event_name == 'workflow_dispatch'
+        run: |
+          docker build  -t pucarsolutionsdev.azurecr.io/pucar_e-sign-svc-db:${{ env.VERSION }}-${{ env.commit_hash }} -f  Dockerfile .
+          docker push pucarsolutionsdev.azurecr.io/pucar_e-sign-svc-db:${{ env.VERSION }}-${{ env.commit_hash }}
+        working-directory: backend/e-sign-svc/src/main/resources/db
 
   Workflow_Trigger:
     if: (github.event_name == 'push' && (startsWith(github.ref, 'refs/heads/develop') || startsWith(github.ref, 'refs/heads/release/') || startsWith(github.ref, 'refs/heads/hotfix/') || startsWith(github.ref, 'refs/tags/v'))) || github.event_name == 'workflow_dispatch'

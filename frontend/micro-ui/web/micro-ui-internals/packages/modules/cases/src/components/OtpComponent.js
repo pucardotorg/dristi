@@ -48,8 +48,8 @@ const OtpComponent = ({
     timeLeft > 0 ? 1000 : null
   );
 
-  const handleResendOtp = () => {
-    onResend();
+  const handleResendOtp = async () => {
+    await onResend();
     setTimeLeft(otpEnterTime);
   };
   return (

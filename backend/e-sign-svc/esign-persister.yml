@@ -1,0 +1,45 @@
+serviceMaps:
+  serviceName: e-sign-svc
+  mappings:
+    - version: 1.0
+      description: Persists e-sign request details in tables
+      fromTopic: create-esign
+      isTransaction: true
+      isAuditEnabled: true
+      module: ESIGN
+      objecIdJsonPath: $.id
+      tenantIdJsonPath: $.tenantId
+      auditAttributeBasePath: ESignParameter
+      queryMaps:
+        - query: INSERT INTO dristi_esign_pdf(id, tenantId, filestoreId, signPlaceHolder, signedFilestoreId, pageModule, authType , createdBy, lastModifiedBy, createdTime, lastModifiedTime) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);
+          basePath: ESignParameter
+          jsonMaps:
+            - jsonPath: $.ESignParameter.id
+            - jsonPath: $.ESignParameter.tenantId
+            - jsonPath: $.ESignParameter.fileStoreId
+            - jsonPath: $.ESignParameter.signPlaceHolder
+            - jsonPath: $.ESignParameter.signedFileStoreId
+            - jsonPath: $.ESignParameter.pageModule
+            - jsonPath: $.ESignParameter.authType
+            - jsonPath: $.ESignParameter.auditDetails.createdBy
+            - jsonPath: $.ESignParameter.auditDetails.lastModifiedBy
+            - jsonPath: $.ESignParameter.auditDetails.createdTime
+            - jsonPath: $.ESignParameter.auditDetails.lastModifiedTime
+
+    - version: 1.0
+      description: Update e-sign request details in tables
+      fromTopic: update-esign
+      isTransaction: true
+      isAuditEnabled: true
+      module: ESIGN
+      objecIdJsonPath: $.id
+      tenantIdJsonPath: $.tenantId
+      auditAttributeBasePath: ESignParameter
+      queryMaps:
+        - query: UPDATE  dristi_esign_pdf SET signedFilestoreId =?,lastModifiedBy =?,lastModifiedTime = ? where id =?;
+          basePath: ESignParameter
+          jsonMaps:
+            - jsonPath: $.ESignParameter.signedFileStoreId
+            - jsonPath: $.ESignParameter.auditDetails.lastModifiedBy
+            - jsonPath: $.ESignParameter.auditDetails.lastModifiedTime
+            - jsonPath: $.ESignParameter.id

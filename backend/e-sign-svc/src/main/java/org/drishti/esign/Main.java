@@ -9,7 +9,7 @@ import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Import;
 
 @Import({TracerConfiguration.class})
-@SpringBootApplication(exclude = {DataSourceAutoConfiguration.class})
+@SpringBootApplication()
 @ComponentScan(basePackages = {"org.drishti.esign", "org.drishti.esign.web.controllers", "org.drishti.esign.config"})
 public class Main {
 
