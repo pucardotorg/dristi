@@ -144,6 +144,8 @@ public class ServiceConstants {
 
 
     public static final String ADVOCATE_ESIGN_PENDING = "ADVOCATE_ESIGN_PENDING";
+
+    public static final String PENDING_SIGN = "PENDING_SIGN";
     public static final String CASE_SUBMISSION = "CASE_SUBMISSION";
     public static final String CASE_FILED = "CASE_FILED";
     public static final String SCRUTINY_COMPLETE_CASE_REGISTERED = "SCRUTINY_COMPLETE_CASE_REGISTERED";

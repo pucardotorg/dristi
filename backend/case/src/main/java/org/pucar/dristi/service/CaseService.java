@@ -290,7 +290,7 @@ public class CaseService {
     }
 
     private String getNotificationStatus(String previousStatus, String updatedStatus) {
-        if (updatedStatus.equalsIgnoreCase(PENDING_E_SIGN)){
+        if (updatedStatus.equalsIgnoreCase(PENDING_E_SIGN) || updatedStatus.equalsIgnoreCase(PENDING_SIGN)){
             return ESIGN_PENDING;
         }
         else if(updatedStatus.equalsIgnoreCase(PAYMENT_PENDING)){
