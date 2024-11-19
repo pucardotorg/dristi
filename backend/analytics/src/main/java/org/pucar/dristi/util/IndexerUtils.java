@@ -1,17 +1,21 @@
 package org.pucar.dristi.util;
 
+import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.jayway.jsonpath.JsonPath;
 import lombok.extern.slf4j.Slf4j;
+import org.egov.common.contract.request.RequestInfo;
 import org.egov.common.contract.request.User;
+import org.egov.common.models.individual.Individual;
 import org.egov.tracer.model.CustomException;
 import org.json.JSONArray;
 import org.json.JSONObject;
 import org.pucar.dristi.config.Configuration;
 import org.pucar.dristi.config.MdmsDataConfig;
 import org.pucar.dristi.kafka.consumer.EventConsumerConfig;
-import org.pucar.dristi.web.models.PendingTask;
-import org.pucar.dristi.web.models.PendingTaskType;
+import org.pucar.dristi.service.IndividualService;
+import org.pucar.dristi.service.SmsNotificationService;
+import org.pucar.dristi.web.models.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
@@ -21,6 +25,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.client.ResourceAccessException;
 import org.springframework.web.client.RestTemplate;
 
+import java.time.Clock;
 import java.util.*;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
@@ -52,8 +57,17 @@ public class IndexerUtils {
 
     private final CaseOverallStatusUtil caseOverallStatusUtil;
 
+    private final SmsNotificationService notificationService;
+
+    private final IndividualService individualService;
+
+    private final AdvocateUtil advocateUtil;
+
+    private final Clock clock;
+
+
     @Autowired
-    public IndexerUtils(RestTemplate restTemplate, Configuration config, CaseUtil caseUtil, EvidenceUtil evidenceUtil, TaskUtil taskUtil, ApplicationUtil applicationUtil, ObjectMapper mapper, MdmsDataConfig mdmsDataConfig, CaseOverallStatusUtil caseOverallStatusUtil) {
+    public IndexerUtils(RestTemplate restTemplate, Configuration config, CaseUtil caseUtil, EvidenceUtil evidenceUtil, TaskUtil taskUtil, ApplicationUtil applicationUtil, ObjectMapper mapper, MdmsDataConfig mdmsDataConfig, CaseOverallStatusUtil caseOverallStatusUtil, SmsNotificationService notificationService, IndividualService individualService, AdvocateUtil advocateUtil, Clock clock) {
         this.restTemplate = restTemplate;
         this.config = config;
         this.caseUtil = caseUtil;
@@ -63,6 +77,10 @@ public class IndexerUtils {
         this.mapper = mapper;
         this.mdmsDataConfig = mdmsDataConfig;
         this.caseOverallStatusUtil = caseOverallStatusUtil;
+        this.notificationService = notificationService;
+        this.individualService = individualService;
+        this.advocateUtil = advocateUtil;
+        this.clock = clock;
     }
 
     public static boolean isNullOrEmpty(String str) {
@@ -175,6 +193,8 @@ public class IndexerUtils {
         boolean isCompleted;
         boolean isGeneric;
 
+        stateSla = getSla(stateSla);
+
         log.info("Inside indexer utils build payload:: entityType: {}, referenceId: {}, status: {}, action: {}, tenantId: {}", entityType, referenceId, status, action, tenantId);
         Object object = caseOverallStatusUtil.checkCaseOverAllStatus(entityType, referenceId, status, action, tenantId, requestInfo);
         Map<String, String> details = processEntity(entityType, referenceId, status, action, object, requestInfo);
@@ -191,7 +211,34 @@ public class IndexerUtils {
             Object task = taskUtil.getTask(requestInfo, tenantId, null, referenceId, status);
             net.minidev.json.JSONArray assignToList = JsonPath.read(task.toString(), ASSIGN_TO_PATH);
             assignedTo = assignToList.toString();
+            Object dueDate = JsonPath.read(task.toString(), DUE_DATE_PATH);
+            stateSla = dueDate != null ? ((Number) dueDate).longValue() : null;
             assignedRole =  new JSONArray().toString();
+        }
+        if(!isCompleted) {
+            try {
+                String jsonString = requestInfo.toString();
+                RequestInfo request = mapper.readValue(jsonString, RequestInfo.class);
+                CaseSearchRequest caseSearchRequest = createCaseSearchRequest(request, filingNumber);
+                JsonNode caseDetails = caseUtil.searchCaseDetails(caseSearchRequest);
+                JsonNode litigants = caseUtil.getLitigants(caseDetails);
+                Set<String> individualIds = caseUtil.getIndividualIds(litigants);
+                JsonNode representatives = caseUtil.getRepresentatives(caseDetails);
+                Set<String> representativeIds = caseUtil.getAdvocateIds(representatives);
+
+                if(!representativeIds.isEmpty()){
+                    representativeIds = advocateUtil.getAdvocate(request,representativeIds.stream().toList());
+                }
+                individualIds.addAll(representativeIds);
+                SmsTemplateData smsTemplateData = enrichSmsTemplateData(details);
+                Set<String> phonenumbers = callIndividualService(request, individualIds);
+                for (String number : phonenumbers) {
+                    notificationService.sendNotification(request, smsTemplateData, PENDING_TASK_CREATED, number);
+                }
+            } catch (Exception e) {
+                // Log the exception and continue the execution without throwing
+                log.error("Error occurred while sending notification: {}", e.toString());
+            }
         }
 
         try {
@@ -205,6 +252,32 @@ public class IndexerUtils {
                 ES_INDEX_HEADER_FORMAT + ES_INDEX_DOCUMENT_FORMAT,
                 config.getIndex(), referenceId, id, name, entityType, referenceId, status, assignedTo, assignedRole, cnrNumber, filingNumber, isCompleted, stateSla, businessServiceSla, additionalDetails
         );
+    }
+
+    private Set<String> callIndividualService(RequestInfo requestInfo, Set<String> individualIds) {
+
+        Set<String> mobileNumber = new HashSet<>();
+        for(String id : individualIds){
+            List<Individual> individuals = individualService.getIndividualsByIndividualId(requestInfo, id);
+            if(individuals.get(0).getMobileNumber() != null){
+                mobileNumber.add(individuals.get(0).getMobileNumber());
+            }
+        }
+        return mobileNumber;
+    }
+
+    private SmsTemplateData enrichSmsTemplateData(Map<String, String> details) {
+        return SmsTemplateData.builder()
+                .cmpNumber(details.get("cmpNumber"))
+                .efilingNumber(details.get("filingNumber")).build();
+    }
+
+    public CaseSearchRequest createCaseSearchRequest(RequestInfo requestInfo, String filingNumber) {
+        CaseSearchRequest caseSearchRequest = new CaseSearchRequest();
+        caseSearchRequest.setRequestInfo(requestInfo);
+        CaseCriteria caseCriteria = CaseCriteria.builder().filingNumber(filingNumber).defaultFields(false).build();
+        caseSearchRequest.addCriteriaItem(caseCriteria);
+        return caseSearchRequest;
     }
 
 
@@ -302,9 +375,11 @@ public class IndexerUtils {
         Thread.sleep(config.getApiCallDelayInSeconds() * 1000);
         Object caseObject = caseUtil.getCase(request, config.getStateLevelTenantId(), null, referenceId, null);
         String cnrNumber = JsonPath.read(caseObject.toString(), CNR_NUMBER_PATH);
+        String cmpNumber = JsonPath.read(caseObject.toString(), CMP_NUMBER_PATH);
 
         caseDetails.put("cnrNumber", cnrNumber);
         caseDetails.put("filingNumber", referenceId);
+        caseDetails.put("cmpNumber", cmpNumber);
 
         return caseDetails;
     }
@@ -399,6 +474,16 @@ public class IndexerUtils {
             log.error("Exception while trying to index the ES documents. Note: ES is not Down.", e);
             throw e;
         }
+    }
+
+    public Long getSla(Long stateSla) {
+        long currentTime = clock.millis();
+        if (stateSla == null || stateSla < ONE_DAY_DURATION_MILLIS) {
+            stateSla = currentTime + ONE_DAY_DURATION_MILLIS;
+        } else {
+            stateSla += currentTime;
+        }
+        return stateSla;
     }
 
 }

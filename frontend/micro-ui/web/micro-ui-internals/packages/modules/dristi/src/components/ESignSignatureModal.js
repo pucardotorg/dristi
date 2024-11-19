@@ -177,7 +177,13 @@ function ESignSignatureModal({
             </div>
             <div className="donwload-submission">
               <h2>{t("WANT_TO_DOWNLOAD")}</h2>
-              <AuthenticatedLink uri={uri} style={{ color: "#007E7E", cursor: "pointer", textDecoration: "underline" }} displayFilename={"CLICK_HERE"} t={t}></AuthenticatedLink>
+              <AuthenticatedLink
+                uri={uri}
+                style={{ color: "#007E7E", cursor: "pointer", textDecoration: "underline" }}
+                displayFilename={"CLICK_HERE"}
+                t={t}
+                pdf={true}
+              ></AuthenticatedLink>
             </div>
           </div>
         ) : (

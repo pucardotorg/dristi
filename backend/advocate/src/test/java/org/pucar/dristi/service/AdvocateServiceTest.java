@@ -174,6 +174,7 @@ import static org.pucar.dristi.config.ServiceConstants.ADVOCATE_CREATE_EXCEPTION
         doNothing().when(workflowService).updateWorkflowStatus(request);
         when(config.getAdvocateUpdateTopic()).thenReturn("advocateUpdateTopic");
         doNothing().when(producer).push(anyString(), any());
+        when(request.getAdvocate().getStatus()).thenReturn("hfjg");
 
         Advocate result = advocateService.updateAdvocate(request);
 

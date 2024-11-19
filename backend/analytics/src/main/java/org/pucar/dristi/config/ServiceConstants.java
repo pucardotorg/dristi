@@ -75,6 +75,8 @@ public class ServiceConstants {
     public static final String APPLICATION_PATH = "$.applicationList.*";
     public static final String CNR_NUMBERS_PATH = "$.cnrNumbers";
     public static final String CNR_NUMBER_PATH = "$.cnrNumber";
+
+    public static final String CMP_NUMBER_PATH = "$.cmpNumber";
     public static final String CASE_TITLE_PATH = "$.caseTitle";
 
     public static final String CASE_STAGE_PATH = "$.stage";
@@ -193,4 +195,23 @@ public class ServiceConstants {
 
     public static final String ASSIGN_TO_PATH="$.assignedTo";
 
+
+    public static final String NOTIFICATION_ENG_LOCALE_CODE = "en_IN";
+
+    public static final String NOTIFICATION_MODULE_CODE = "notification";
+
+    public static final String NOTIFICATION_LOCALIZATION_CODES_JSONPATH = "$.messages.*.code";
+    public static final String NOTIFICATION_LOCALIZATION_MSGS_JSONPATH = "$.messages.*.message";
+
+    public static final String PENDING_TASK_CREATED = "PENDING_TASK_CREATED";
+
+    public static final String ERROR_WHILE_FETCHING_FROM_CASE = "ERROR_WHILE_FETCHING_FROM_CASE";
+
+    public static final String INDIVIDUAL_UTILITY_EXCEPTION = "INDIVIDUAL_UTILITY_EXCEPTION";
+
+    public static final String ERROR_WHILE_FETCHING_FROM_ADVOCATE = "ERROR_WHILE_FETCHING_FROM_ADVOCATE";
+
+    public static final String DUE_DATE_PATH= "$.duedate";
+
+    public static final long ONE_DAY_DURATION_MILLIS=86400000L;
 }

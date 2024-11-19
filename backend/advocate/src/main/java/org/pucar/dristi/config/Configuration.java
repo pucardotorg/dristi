@@ -144,4 +144,17 @@ public class Configuration {
 
 	@Value("${egov.idgen.clerkFormat}")
 	private String clerkFormat;
+
+	@Value("${egov.sms.notification.advocate.registered.template.id}")
+	private String smsNotificationAdvocateRegisteredTemplateId;
+
+	//Localization
+	@Value("${egov.localization.host}")
+	private String localizationHost;
+
+	@Value("${egov.localization.context.path}")
+	private String localizationContextPath;
+
+	@Value("${egov.localization.search.endpoint}")
+	private String localizationSearchEndpoint;
 }

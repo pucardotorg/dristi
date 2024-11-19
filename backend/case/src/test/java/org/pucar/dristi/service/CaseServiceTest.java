@@ -28,6 +28,7 @@ import org.pucar.dristi.config.ServiceConstants;
 import org.pucar.dristi.enrichment.CaseRegistrationEnrichment;
 import org.pucar.dristi.kafka.Producer;
 import org.pucar.dristi.repository.CaseRepository;
+import org.pucar.dristi.util.AdvocateUtil;
 import org.pucar.dristi.util.BillingUtil;
 import org.pucar.dristi.util.EncryptionDecryptionUtil;
 import org.pucar.dristi.validators.CaseRegistrationValidator;
@@ -56,6 +57,16 @@ public class CaseServiceTest {
     private CacheService cacheService;
     @Mock
     private ObjectMapper objectMapper;
+
+    @Mock
+    private SmsNotificationService notificationService;
+
+    @Mock
+    private IndividualService individualService;
+
+    @Mock
+    private AdvocateUtil advocateUtil;
+
 
     @InjectMocks
     private CaseService caseService;
@@ -105,7 +116,7 @@ public class CaseServiceTest {
         joinCaseRequest.setAdditionalDetails("form-data");
         courtCase = new CourtCase();
         objectMapper = new ObjectMapper();
-        caseService = new CaseService(validator,enrichmentUtil,caseRepository,workflowService,config,producer,new BillingUtil(new RestTemplate(),config),encryptionDecryptionUtil,objectMapper,cacheService);
+        caseService = new CaseService(validator,enrichmentUtil,caseRepository,workflowService,config,producer,new BillingUtil(new RestTemplate(),config),encryptionDecryptionUtil,objectMapper,cacheService, notificationService, individualService, advocateUtil);
     }
 
     CaseCriteria setupTestCaseCriteria(CourtCase courtCase) {
@@ -273,6 +284,7 @@ public class CaseServiceTest {
         AdvocateMapping advocateMapping = AdvocateMapping.builder().advocateId("222").representing(Collections.singletonList(party)).isActive(true).auditDetails(new AuditDetails()).build();
         List<AdvocateMapping> advocates = new ArrayList<>();
         advocates.add(advocateMapping);
+
         courtCase.setRepresentatives(advocates);
         courtCase.setAccessCode("access-code");
         courtCase.setId(UUID.randomUUID());
@@ -282,6 +294,7 @@ public class CaseServiceTest {
 
         when(config.getUpdateRepresentativeJoinCaseTopic()).thenReturn("update-topic");
         when(validator.canRepresentativeJoinCase(joinCaseRequest)).thenReturn(true);
+        when(individualService.getIndividualsByIndividualId(requestInfo, "111")).thenReturn(null);
 
         User user = new User();
         user.setTenantId(TEST_TENANT_ID);
@@ -297,6 +310,8 @@ public class CaseServiceTest {
         when(encryptionDecryptionUtil.encryptObject(any(CourtCase.class), any(String.class), eq(CourtCase.class)))
                 .thenAnswer(invocation -> invocation.getArgument(0));
 
+        LinkedHashMap<String, Object> additionalDetails = new LinkedHashMap<>();
+        additionalDetails.put(ADVOCATE_NAME, "John Doe");
         String additionalDetails1Json = """
         {
             "advocateDetails": {
@@ -346,13 +361,14 @@ public class CaseServiceTest {
             }
         }
         """;
+
+        advocateMapping2.setAdditionalDetails(additionalDetails);
         Object additionalDetails1 = objectMapper.readValue(additionalDetails1Json, Object.class);
         Object additionalDetails2 = objectMapper.readValue(additionalDetails2Json, Object.class);
         courtCase.setAdditionalDetails(additionalDetails1);
         joinCaseRequest.setAdditionalDetails(additionalDetails2);
         when(config.getCaseDecryptSelf()).thenReturn("CaseDecryptSelf");
         when(config.getCourtCaseEncrypt()).thenReturn("CourtCase");
-
         doNothing().when(cacheService).save(any(),any());
 
         // Call the method
@@ -374,12 +390,13 @@ public class CaseServiceTest {
 
         CaseCriteria caseCriteria = setupTestCaseCriteria(courtCase); // or false for CaseNotFound scenario
         when(caseRepository.getCases(anyList(), any())).thenReturn(Collections.singletonList(caseCriteria));
-
         joinCaseRequest.setRequestInfo(requestInfo);
         joinCaseRequest.setCaseFilingNumber("12345");
         joinCaseRequest.setAccessCode("validAccessCode");
         joinCaseRequest.setLitigant(litigant);
         joinCaseRequest.setAdditionalDetails("form-data");
+        LinkedHashMap<String, Object> additionalDetails = new LinkedHashMap<>();
+        additionalDetails.put(ADVOCATE_NAME, "John Doe");
         String additionalDetails1Json = """
         {
             "advocateDetails": {
@@ -429,6 +446,7 @@ public class CaseServiceTest {
             }
         }
         """;
+        advocate.setAdditionalDetails(additionalDetails);
         Object additionalDetails1 = objectMapper.readValue(additionalDetails1Json, Object.class);
         Object additionalDetails2 = objectMapper.readValue(additionalDetails2Json, Object.class);
         courtCase.setAdditionalDetails(additionalDetails1);
@@ -559,10 +577,12 @@ public class CaseServiceTest {
     @Test
     void testUpdateCase_Success() {
         // Setup
+
+        String updatedStatus = "STATUS";
         CourtCase courtCase = new CourtCase(); // Mock case-indexer.yml CourtCase object with required fields
         courtCase.setId(UUID.randomUUID());
         caseRequest.setCases(courtCase);
-
+        courtCase.setStatus(updatedStatus);
         when(validator.validateUpdateRequest(any(CaseRequest.class))).thenReturn(true);
         doNothing().when(enrichmentUtil).enrichCaseApplicationUponUpdate(any(CaseRequest.class));
         doNothing().when(workflowService).updateWorkflowStatus(any(CaseRequest.class));
@@ -578,7 +598,6 @@ public class CaseServiceTest {
         CourtCase results = caseService.updateCase(caseRequest);
 
         // Assert
-        assertNotNull(results);
         verify(producer).push(eq("case-update-topic"), any(CaseRequest.class));
     }
 

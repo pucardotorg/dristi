@@ -307,11 +307,10 @@ public class PaymentService {
 
         String paymentStatus = String.valueOf(request.getTreasuryPaymentData().getStatus());
         BigDecimal totalAmountPaid = new BigDecimal(String.valueOf(request.getTreasuryPaymentData().getAmount()));
-        if (paymentStatus.equals("N")) {
+
             if (config.isTest()) {
                 totalAmountPaid = BigDecimal.valueOf(request.getTreasuryPaymentData().getTotalDue());
             }
-        }
 
         PaymentDetail paymentDetail = PaymentDetail.builder()
                 .billId(request.getTreasuryPaymentData().getBillId())

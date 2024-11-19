@@ -219,6 +219,8 @@ export const newConfig = [
               name: "locality",
               validation: {
                 isRequired: true,
+                minlength: 2,
+                maxlength: 256,
               },
               isMandatory: true,
             },
@@ -466,7 +468,7 @@ export const newConfig = [
               },
             },
             {
-              label: "Upload ID Proof",
+              label: "CS_UPLOAD_PROOF",
               type: "documentUpload",
               name: "ID_Proof",
               validation: {},
@@ -493,8 +495,8 @@ export const newConfig = [
         populators: {
           inputs: [
             {
-              label: "Terms and Conditions",
-              subLabel: "Before diving in, we'll need to verify your identity for account setup.",
+              label: "ES_COMMON_USER_TERMS_AND_CONDITIONS",
+              subLabel: "CS_VERFIY_IDENTITY_SUB_TEXT",
               type: "multiple",
               name: "terms_condition",
               optionsKey: "name",
@@ -505,22 +507,22 @@ export const newConfig = [
                 {
                   code: "AGREE_MESSAGE",
                   name:
-                    "By using this app, you agree to abide by our community guidelines, fostering a respectful and inclusive environment for all users",
+                    "FIRST_TERMS_AND_CONDITIONS",
                 },
                 {
                   code: "PRIVACY_MESSAGE",
                   name:
-                    "Your privacy is paramount. Rest assured, your data is securely handled and never shared with third parties without your consent",
+                    "SECOND_TERMS_AND_CONDITIONS",
                 },
                 {
                   code: "LAWFUL_MESSAGE",
                   name:
-                    "Please refrain from engaging in any unlawful activities while using our app, ensuring a safe and compliant platform for everyone",
+                    "THIRD_TERMS_AND_CONDITIONS",
                 },
                 {
                   code: "MODIFICATION_MESSAGE",
                   name:
-                    "We reserve the right to modify our services and terms at any time, keeping you informed of any updates through our communication channels",
+                    "FOURTH_TERMS_AND_CONDITIONS",
                 },
               ],
             },

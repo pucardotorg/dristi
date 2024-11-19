@@ -77,13 +77,11 @@ const selectCompMultiConfig = {
         type: "text",
         name: "locality",
         validation: {
-          isRequired: true,
           minlength: 2,
           maxlength: 256,
           pattern: /^[^\$\"<>?\\\\~`!@$%^()={}\[\]*:;“”‘’]{2,256}$/i,
           errMsg: "CORE_COMMON_APPLICANT_ADDRESS_INVALID",
         },
-        isMandatory: true,
       },
     ],
     validation: {},

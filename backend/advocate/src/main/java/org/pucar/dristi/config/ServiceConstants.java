@@ -76,4 +76,13 @@ public class ServiceConstants {
 	public static final String ADVOCATE_LIST_QUERY = "Final advocate list query :: {}";
 	public static final String DOCUMENT_LIST_QUERY = "Final document query :: {}";
 	public static final String AND = " AND ";
+
+	public static final String REGISTERED = "REGISTERED";
+
+	public static final String ADVOCATE_REGISTERED = "ADVOCATE_REGISTERED";
+
+	public static final String NOTIFICATION_ENG_LOCALE_CODE = "en_IN";
+	public static final String NOTIFICATION_MODULE_CODE = "notification";
+	public static final String NOTIFICATION_LOCALIZATION_CODES_JSONPATH = "$.messages.*.code";
+	public static final String NOTIFICATION_LOCALIZATION_MSGS_JSONPATH = "$.messages.*.message";
 }

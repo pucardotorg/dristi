@@ -260,4 +260,6 @@ public class Configuration {
     @Value("${role.system.admin}")
     private String systemAdmin;
 
+    @Value("${role.payment.collector}")
+    private String paymentCollector;
 }

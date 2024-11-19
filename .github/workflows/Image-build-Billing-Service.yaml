@@ -3,6 +3,7 @@ on:
   push:
     branches:
       - develop
+      - hotfix/0.6
       - release/**
     tags:
       - 'v*'
@@ -11,6 +12,7 @@ on:
   pull_request:
     branches:
       - develop
+      - hotfix/0.6
       - release/**
     paths:
       - 'common/billing-service/**'
@@ -53,8 +55,9 @@ jobs:
           if [[ "${GITHUB_REF}" == refs/tags/* ]]; then
             VERSION=${GITHUB_REF#refs/tags/}  # Use tag name for version
           elif [[ "${GITHUB_REF}" == refs/heads/* ]]; then
-            # Use branch name as version if it's a branch push
+            # Use branch name as version, replacing '/' with '-'
             VERSION=${GITHUB_REF#refs/heads/}
+            VERSION=$(echo "${VERSION}" | sed 's|/|-|g')
           else
             VERSION="latest"  # Default version if not a tag or branch
           fi
@@ -66,17 +69,17 @@ jobs:
 
       - name: Build and Push Docker image for Billing-Service
         run: |
-          docker build --build-arg WORK_DIR="common/billing-service" -t pucarsolutionsdev.azurecr.io/pucar_billing:${{ env.VERSION }}-${{ env.commit_hash }} -f build/maven/Dockerfile .
-          docker push pucarsolutionsdev.azurecr.io/pucar_billing:${{ env.VERSION }}-${{ env.commit_hash }}
+          docker build --build-arg WORK_DIR="common/billing-service" -t pucarsolutionsdev.azurecr.io/pucar_billing:v0.6.0-uat-${{ env.commit_hash }} -f build/maven/Dockerfile .
+          docker push pucarsolutionsdev.azurecr.io/pucar_billing:v0.6.0-uat-${{ env.commit_hash }}
 
       - name: Build and Push Docker image for Billing-Service_DB
         run: |
-          docker build  -t pucarsolutionsdev.azurecr.io/pucar_billing_db:${{ env.VERSION }}-${{ env.commit_hash }} -f  Dockerfile .
-          docker push pucarsolutionsdev.azurecr.io/pucar_billing_db:${{ env.VERSION }}-${{ env.commit_hash }}
+          docker build  -t pucarsolutionsdev.azurecr.io/pucar_billing_db:v0.6.0-uat-${{ env.commit_hash }} -f  Dockerfile .
+          docker push pucarsolutionsdev.azurecr.io/pucar_billing_db:v0.6.0-uat-${{ env.commit_hash }}
         working-directory: common/billing-service/src/main/resources/db
 
   Workflow_Trigger:
-    if: (github.event_name == 'push' && (startsWith(github.ref, 'refs/heads/develop') || startsWith(github.ref, 'refs/heads/release/') || startsWith(github.ref, 'refs/tags/v'))) || github.event_name == 'workflow_dispatch'
+    if: (github.event_name == 'push' && (startsWith(github.ref, 'refs/heads/develop') || startsWith(github.ref, 'refs/heads/release/') || startsWith(github.ref, 'refs/heads/hotfix/') || startsWith(github.ref, 'refs/tags/v'))) || github.event_name == 'workflow_dispatch'
     runs-on: ubuntu-latest
     needs: docker_image-build
     steps:

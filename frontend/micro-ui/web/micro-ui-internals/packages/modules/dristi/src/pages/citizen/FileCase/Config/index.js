@@ -1,5 +1,3 @@
-import { demandNoticeConfig } from "./demandNoticeConfig";
-
 export const sideMenuConfig = [
   {
     isOpen: false,
@@ -30,26 +28,26 @@ export const sideMenuConfig = [
           // "dateOfBirth",
           "complainantVerification.otpNumber", // checkThis- make sure to unset otpNumber if otp model is closed or canceled.
         ],
-        initialMandatoryFieldCount: 12,
+        initialMandatoryFieldCount: 10,
         dependentMandatoryFields: [
           { field: "addressCompanyDetails-select.pincode", dependentOn: "complainantType", dependentOnKey: "showCompanyDetails" },
           { field: "addressCompanyDetails-select.state", dependentOn: "complainantType", dependentOnKey: "showCompanyDetails" },
           { field: "addressCompanyDetails-select.district", dependentOn: "complainantType", dependentOnKey: "showCompanyDetails" },
           { field: "addressCompanyDetails-select.city", dependentOn: "complainantType", dependentOnKey: "showCompanyDetails" },
-          { field: "addressCompanyDetails-select.locality", dependentOn: "complainantType", dependentOnKey: "showCompanyDetails" },
           { field: "addressDetails-select.pincode", dependentOn: "complainantType", dependentOnKey: "isIndividual" },
           { field: "addressDetails-select.state", dependentOn: "complainantType", dependentOnKey: "isIndividual" },
           { field: "addressDetails-select.district", dependentOn: "complainantType", dependentOnKey: "isIndividual" },
           { field: "addressDetails-select.city", dependentOn: "complainantType", dependentOnKey: "isIndividual" },
-          { field: "addressDetails-select.locality", dependentOn: "complainantType", dependentOnKey: "isIndividual" },
           { field: "complainantCompanyName", dependentOn: "complainantType", dependentOnKey: "showCompanyDetails" },
           { field: "complainantTypeOfEntity", dependentOn: "complainantType", dependentOnKey: "showCompanyDetails" },
         ],
-        optionalFields: ["middleName", "lastName", "complainantAge"],
-        initialOptionalFieldCount: 3,
+        optionalFields: ["middleName", "lastName", "complainantAge", "addressCompanyDetails-select.locality", "addressDetails-select.locality"],
+        initialOptionalFieldCount: 5,
         dependentOptionalFields: [
+          { field: "addressCompanyDetails-select.locality", dependentOn: "complainantType", dependentOnKey: "showCompanyDetails" },
           { field: "companyDetailsUpload.document", dependentOn: "complainantType", dependentOnKey: "showCompanyDetails" },
           { field: "complainantDesignation", dependentOn: "complainantType", dependentOnKey: "showCompanyDetails" },
+          { field: "addressDetails-select.locality", dependentOn: "complainantType", dependentOnKey: "isIndividual" },
         ],
       },
       {
@@ -72,13 +70,7 @@ export const sideMenuConfig = [
         ifMultipleAddressLocations: {
           // using this for counting mandatory fields in case of multiple locations .
           dataKey: "addressDetails",
-          mandatoryFields: [
-            "addressDetails.pincode",
-            "addressDetails.state",
-            "addressDetails.district",
-            "addressDetails.city",
-            "addressDetails.locality",
-          ],
+          mandatoryFields: ["addressDetails.pincode", "addressDetails.state", "addressDetails.district", "addressDetails.city"],
         },
         initialMandatoryFieldCount: 10,
         dependentMandatoryFields: [
@@ -92,6 +84,7 @@ export const sideMenuConfig = [
           "phonenumbers.mobileNumber",
           "emails.emailId",
           "inquiryAffidavitFileUpload.document",
+          "addressDetails.locality",
         ],
         dependentOptionalFields: [
           { field: "companyDetailsUpload.document", dependentOn: "respondentType", dependentOnKey: "showCompanyDetails" },
@@ -272,17 +265,18 @@ export const sideMenuConfig = [
         ifMultipleAddressLocations: {
           // using this for counting mandatory fields in case of multiple locations .
           dataKey: "addressDetails",
-          mandatoryFields: [
-            "addressDetails.pincode",
-            "addressDetails.state",
-            "addressDetails.district",
-            "addressDetails.city",
-            "addressDetails.locality",
-          ],
+          mandatoryFields: ["addressDetails.pincode", "addressDetails.state", "addressDetails.district", "addressDetails.city"],
         },
         initialMandatoryFieldCount: 0,
         dependentMandatoryFields: [],
-        optionalFields: ["middleName", "lastName", "phonenumbers.mobileNumber", "emails.emailId", "witnessAdditionalDetails.text"],
+        optionalFields: [
+          "middleName",
+          "lastName",
+          "phonenumbers.mobileNumber",
+          "emails.emailId",
+          "witnessAdditionalDetails.text",
+          "addressDetails.locality",
+        ],
         dependentOptionalFields: [],
         initialOptionalFieldCount: 4,
       },

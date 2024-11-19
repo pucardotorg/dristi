@@ -114,8 +114,35 @@ public class ServiceConstants {
     public static final String COURT_CASE_ENCRYPT = "CourtCase";
     public static final String CASE_DECRYPT_SELF = "CaseDecryptSelf";
     public static final String CASE_DECRYPT_OTHER = "CaseDecryptOther";
-    public static final String PAYMENT_PENDING = "PAYMENT_PENDING";
+    public static final String PAYMENT_PENDING = "PENDING_PAYMENT";
+
+    public static final String PENDING_E_SIGN = "PENDING_E-SIGN";
+
+
+    public static final String MAKE_PAYMENT = "MAKE_PAYMENT";
+
+    public static final String UNDER_SCRUTINY = "UNDER_SCRUTINY";
+
+    public static final String CASE_PAYMENT_COMPLETED = "CASE_PAYMENT_COMPLETED";
+
+    public static final String PENDING_REGISTRATION = "PENDING_REGISTRATION";
+
+    public static final String FSO_VALIDATED = "FSO_VALIDATED";
+    public static final String CASE_SUBMITTED = "CASE_SUBMITTED";
     public static final String ESIGN_PENDING = "ESIGN_PENDING";
+
+    public static final String CASE_REASSIGNED = "CASE_REASSIGNED";
+
+    public static final String FSO_SEND_BACK = "FSO_SEND_BACK";
+
+    public static final String JUDGE_SEND_BACK = "JUDGE_SEND_BACK";
+
+    public static final String PENDING_ADMISSION_HEARING = "PENDING_ADMISSION_HEARING";
+
+
+    public static final String CASE_REGISTERED = "CASE_REGISTERED";
+
+
     public static final String ADVOCATE_ESIGN_PENDING = "ADVOCATE_ESIGN_PENDING";
     public static final String CASE_SUBMISSION = "CASE_SUBMISSION";
     public static final String CASE_FILED = "CASE_FILED";
@@ -134,6 +161,10 @@ public class ServiceConstants {
     public static final String JUDGE_ID = "JUDGE_ID";
 
     public static final String FLOW_JAC = "flow_jac";
+
+    public static final String ADVOCATE_CASE_JOIN = "ADVOCATE_CASE_JOIN";
+
+    public static final String ADVOCATE_NAME = "advocateName";
 
     private ServiceConstants() {
     }

@@ -148,6 +148,8 @@ function EFilingPayment({ t, submitModalInfo = mockSubmitModalInfo, path }) {
     mockSubmitModalInfo,
     scenario,
   });
+  const { downloadPdf } = useDownloadCasePdf();
+
   const onSubmitCase = async () => {
     try {
       const bill = await fetchBill(caseDetails?.filingNumber + `_${suffix}`, tenantId, "case-default");
@@ -243,7 +245,7 @@ function EFilingPayment({ t, submitModalInfo = mockSubmitModalInfo, path }) {
 
   const fileStoreIdToUse = caseDetails?.additionalDetails?.signedCaseDocument || fileStoreId;
 
-  const { downloadPdf } = useDownloadCasePdf();
+  const uri = fileStoreIdToUse ? `${window.location.origin}${Urls.FileFetchById}?tenantId=${tenantId}&fileStoreId=${fileStoreIdToUse}` : null;
   return (
     <div className=" user-registration">
       <div className="e-filing-payment" style={{ height: "580px" }}>
@@ -293,15 +295,6 @@ function EFilingPayment({ t, submitModalInfo = mockSubmitModalInfo, path }) {
             onButtonClick={() => {
               downloadPdf(tenantId, fileStoreIdToUse);
               localStorage.removeItem("fileStoreId");
-            }}
-            style={{
-              display: "flex",
-              color: "#505A5F",
-              textDecoration: "none",
-              // width: 250,
-              whiteSpace: "nowrap",
-              overflow: "hidden",
-              textOverflow: "ellipsis",
             }}
           />
           <Button
