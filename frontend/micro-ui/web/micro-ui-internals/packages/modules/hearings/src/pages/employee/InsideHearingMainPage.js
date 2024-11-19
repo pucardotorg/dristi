@@ -198,13 +198,13 @@ const InsideHearingMainPage = () => {
   };
 
   useEffect(() => {
-    if (hearingsData) {
+    if (hearingsData && transcriptText) {
       const hearingData = hearingsData?.HearingList?.[0];
       if (hearingData && transcriptText !== hearingData?.transcript[0] && !disableTextArea) {
         updateAPICall(transcriptText);
       }
     }
-  }, [transcriptText, setTranscriptText]);
+  }, [transcriptText, setTranscriptText, hearingsData, disableTextArea]);
 
   const isDepositionSaved = useMemo(() => {
     const witness = hearing?.additionalDetails?.witnessDepositions?.find((witness) => witness.uuid === selectedWitness?.uuid);
