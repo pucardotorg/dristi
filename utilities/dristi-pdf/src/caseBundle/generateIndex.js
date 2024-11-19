@@ -386,6 +386,7 @@ async function processPendingAdmissionCase({
     tenantId,
     requestInfo
   );
+  const courtCase = caseResponse?.data?.criteria[0]?.responseList[0];
 
   const titlepageSection = filterCaseBundleBySection(
     caseBundleMaster,
@@ -436,7 +437,6 @@ async function processPendingAdmissionCase({
     "complaint"
   )[0];
 
-  const courtCase = caseResponse?.data?.criteria[0]?.responseList[0];
 
   const complaintFileStoreId = courtCase.documents.find(
     // (doc) => doc.documentType === "case.complaint.signed"
