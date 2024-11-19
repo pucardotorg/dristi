@@ -60,7 +60,7 @@ public class SmsNotificationService {
             pushNotification(templateData, message, mobileNumber, config.getSmsNotificationAdmissionHearingScheduledTemplateId());
         }
         if(messageCode.equalsIgnoreCase(ORDER_ISSUED)){
-            pushNotification(templateData, message, mobileNumber, config.getSmsNotificationAdmissionHearingScheduledTemplateId());
+            pushNotification(templateData, message, mobileNumber, config.getSmsNotificationJudgeIssueOrderTemplateId());
         }
     }
 

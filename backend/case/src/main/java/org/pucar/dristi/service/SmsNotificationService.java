@@ -74,13 +74,13 @@ public class SmsNotificationService {
             pushNotification(smsTemplateData, message, mobileNumber, config.getSmsNotificationCaseFsoSendBackTemplateId());
         }
         else if(messageCode.equalsIgnoreCase(CASE_REGISTERED)){
-            pushNotification(smsTemplateData, message, mobileNumber, config.getSmsNotificationCaseFsoSendBackTemplateId());
+            pushNotification(smsTemplateData, message, mobileNumber, config.getSmsNotificationCaseJudgeRegisterTemplateId());
         }
         else if(messageCode.equalsIgnoreCase(JUDGE_SEND_BACK)){
             pushNotification(smsTemplateData, message, mobileNumber, config.getSmsNotificationCaseJudgeSendBackTemplateId());
         }
         else if(messageCode.equalsIgnoreCase(ADVOCATE_CASE_JOIN)){
-            pushNotification(smsTemplateData, message, mobileNumber, config.getSmsNotificationCaseJudgeSendBackTemplateId());
+            pushNotification(smsTemplateData, message, mobileNumber, config.getSmsNotificationAdvocateJoinCaseTemplateId());
         }
     }
 
@@ -153,7 +153,9 @@ public class SmsNotificationService {
                 .replace("{{cnr}}", Optional.ofNullable(userDetailsForSMS.get("cnr")).orElse(""))
                 .replace("{{link}}", Optional.ofNullable(userDetailsForSMS.get("link")).orElse(""))
                 .replace("{{date}}", Optional.ofNullable(userDetailsForSMS.get("date")).orElse(""))
-                .replace("{{cmpNumber}}", Optional.ofNullable(userDetailsForSMS.get("cmpNumber")).orElse(""));
+                .replace("{{cmpNumber}}", Optional.ofNullable(userDetailsForSMS.get("cmpNumber")).orElse(""))
+                .replace("{{courtCaseNumber}}", Optional.ofNullable(userDetailsForSMS.get("courtCaseNumber")).orElse(""))
+                .replace("{{advocateName}}", Optional.ofNullable(userDetailsForSMS.get("advocateName")).orElse(""));
         return message;
     }
 
