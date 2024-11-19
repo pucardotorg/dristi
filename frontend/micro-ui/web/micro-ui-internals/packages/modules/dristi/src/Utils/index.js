@@ -217,3 +217,7 @@ export const combineMultipleFiles = async (pdfFilesArray, finalFileName = "combi
     throw new DocumentUploadError(`Document upload failed: ${error.message}`, documentsTypeMapping[key]);
   }
 };
+
+export const cleanString = (input) => {
+  return input.trim().replace(/\s+/g, " ");
+};

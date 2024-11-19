@@ -164,7 +164,7 @@ const SelectUserTypeComponent = ({ t, config, onSelect, formData = {}, errors, f
         return (
           <React.Fragment key={index}>
             {showDependentFields && (
-              <LabelFieldPair>
+              <LabelFieldPair style={{ display: "flex", flexDirection: "column", alignItems: "start" }}>
                 {!config?.disableScrutinyHeader && (
                   <CardLabel className="card-label-smaller" style={{ display: "flex", width: "100%" }}>
                     {t(input.label) +
@@ -181,7 +181,7 @@ const SelectUserTypeComponent = ({ t, config, onSelect, formData = {}, errors, f
                       }`}
                   </CardLabel>
                 )}
-                <div className="field">
+                <div className="field" style={{ width: "100%" }}>
                   {["radioButton", "dropdown"].includes(input?.type) && (
                     <CustomDropdown
                       t={t}

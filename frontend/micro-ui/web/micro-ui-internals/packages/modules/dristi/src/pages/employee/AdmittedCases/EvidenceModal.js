@@ -16,7 +16,7 @@ import DocViewerWrapper from "../docViewerWrapper";
 import SelectCustomDocUpload from "../../../components/SelectCustomDocUpload";
 import ESignSignatureModal from "../../../components/ESignSignatureModal";
 import useDownloadCasePdf from "../../../hooks/dristi/useDownloadCasePdf";
-import { removeInvalidNameParts } from "../../../Utils";
+import { cleanString, removeInvalidNameParts } from "../../../Utils";
 const stateSla = {
   DRAFT_IN_PROGRESS: 2,
 };
@@ -875,7 +875,7 @@ const EvidenceModal = ({ caseData, documentSubmission = [], setShow, userRoles, 
                         <div
                           className="send-comment-btn"
                           onClick={async () => {
-                            if (currentComment !== "") {
+                            if (cleanString(currentComment) !== "") {
                               let newComment =
                                 modalType === "Submissions"
                                   ? {
@@ -883,7 +883,7 @@ const EvidenceModal = ({ caseData, documentSubmission = [], setShow, userRoles, 
                                       comment: [
                                         {
                                           tenantId,
-                                          comment: currentComment,
+                                          comment: cleanString(currentComment),
                                           individualId: "",
                                           commentDocumentId: "",
                                           commentDocumentName: "",
@@ -945,9 +945,15 @@ const EvidenceModal = ({ caseData, documentSubmission = [], setShow, userRoles, 
                                 }
                               }
                               setComments((prev) => [...prev, ...newComment.comment]);
-                              setCurrentComment("");
                               setFormData({});
-                              handleSubmitComment(newComment);
+                              try {
+                                await handleSubmitComment(newComment);
+                                setCurrentComment("");
+                              } catch (error) {
+                                console.log("error :>> ", error);
+                              }
+                            } else {
+                              setCurrentComment("");
                             }
                           }}
                         >

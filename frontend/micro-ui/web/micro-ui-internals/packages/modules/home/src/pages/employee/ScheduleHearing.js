@@ -535,14 +535,16 @@ function ScheduleHearing({
             actionSaveOnSubmit={handleClose}
             formId="modal-action"
             className="case-types"
+            popupStyles={{ maxWidth: "650px", width: "100%", height: "64%" }}
+            style={{ height: "40px", border: "none" }}
           >
-            <div style={{ padding: 20 }}>
+            <div style={{ padding: "20px 0px 40px" }}>
               <Banner
                 whichSvg={"tick"}
                 successful={true}
                 message={"You have successfully selected your opt-out dates."}
                 headerStyles={{ fontSize: "32px" }}
-                style={{ minWidth: "100%", marginTop: "10px" }}
+                style={{ minWidth: "100%", marginTop: "10px", padding: "0px 24px" }}
               ></Banner>
               <InfoCard
                 className="payment-status-info-card"
