@@ -92,10 +92,10 @@ const getAddressDetails = (addressObject) => {
     const number = Number(amount);
     if (isNaN(number)) return "";
   
-    return new Intl.NumberFormat(locale, currency, {
+    return new Intl.NumberFormat(locale, {
       style: "currency",
       currency: currency,
-      maximumSignificantDigits: 3,
+      maximumSignificantDigits: 2,
     }).format(number).toString();
   };
 
