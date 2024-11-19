@@ -1190,6 +1190,16 @@ export const getRespondentName = (respondentDetails) => {
   return respondentDetails?.respondentCompanyName || "";
 };
 
+const updateComplaintDocInCaseDoc = (docList, complaintDoc) => {
+  const newDocList = structuredClone(docList || []);
+  const index = newDocList.findIndex((doc) => doc.documentType === "case.complaint.unsigned");
+  if (index > -1) {
+    newDocList.splice(index, 1);
+  }
+  newDocList.push(complaintDoc);
+  return newDocList;
+};
+
 export const updateCaseDetails = async ({
   t,
   isCompleted,
@@ -2248,7 +2258,7 @@ export const updateCaseDetails = async ({
   }
   if (selected === "reviewCaseFile") {
     if (caseComplaintDocument) {
-      tempDocList = [...tempDocList, caseComplaintDocument];
+      tempDocList = updateComplaintDocInCaseDoc(tempDocList, caseComplaintDocument);
     }
 
     data.additionalDetails = {
@@ -2257,7 +2267,7 @@ export const updateCaseDetails = async ({
         formdata: updatedFormData,
         isCompleted: isCompleted === "PAGE_CHANGE" ? caseDetails.caseDetails?.[selected]?.isCompleted : isCompleted,
       },
-      ...(caseComplaintDocument && { signedCaseDocument: caseComplaintDocument?.fileStore })
+      ...(caseComplaintDocument && { signedCaseDocument: caseComplaintDocument?.fileStore }),
     };
   }
   const caseTitle = ["DRAFT_IN_PROGRESS", "CASE_REASSIGNED"].includes(caseDetails?.status)
@@ -2270,6 +2280,7 @@ export const updateCaseDetails = async ({
 
   setErrorCaseDetails({
     ...caseDetails,
+    documents: tempDocList,
     litigants: !caseDetails?.litigants ? [] : caseDetails?.litigants,
     ...data,
     caseTitle,

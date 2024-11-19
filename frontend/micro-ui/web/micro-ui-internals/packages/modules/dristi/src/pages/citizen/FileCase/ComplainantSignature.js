@@ -449,11 +449,28 @@ const ComplainantSignature = ({ path }) => {
     return true;
   };
 
+  const updateSignedDocInCaseDoc = () => {
+    const tempDocList = structuredClone(caseDetails?.documents || []);
+    const index = tempDocList.findIndex((doc) => doc.documentType === "case.complaint.signed");
+    const signedDoc = {
+      documentType: "case.complaint.signed",
+      fileStore: signatureDocumentId ? signatureDocumentId : DocumentFileStoreId,
+      fileName: "case Complaint Signed Document",
+    };
+    if (index > -1) {
+      tempDocList.splice(index, 1);
+    }
+    tempDocList.push(signedDoc);
+    return tempDocList;
+  };
+
   const handleSubmit = async (state) => {
     setLoader(true);
 
     let calculationResponse = {};
     const assignees = getAllAssignees(caseDetails);
+
+    const caseDocList = updateSignedDocInCaseDoc();
 
     if (isSubmit(state)) {
       try {
@@ -465,6 +482,7 @@ const ComplainantSignature = ({ path }) => {
                 ...caseDetails?.additionalDetails,
                 signedCaseDocument: signatureDocumentId ? signatureDocumentId : DocumentFileStoreId,
               },
+              documents: caseDocList,
               workflow: {
                 ...caseDetails?.workflow,
                 action: isSelectedUploadDoc

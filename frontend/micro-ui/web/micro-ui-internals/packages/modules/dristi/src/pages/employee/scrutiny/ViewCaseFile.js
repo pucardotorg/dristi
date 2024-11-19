@@ -157,7 +157,7 @@ function ViewCaseFile({ t, inViewCase = false }) {
   }
 
   const fileStoreId = useMemo(() => {
-    return caseDetails?.documents?.[0]?.fileStore;
+    return caseDetails?.documents?.filter((doc) => doc?.key === "case.complaint.signed")?.map((doc) => doc?.fileStore)?.[0];
   }, [caseDetails]);
 
   const newScrutinyData = useMemo(() => {
