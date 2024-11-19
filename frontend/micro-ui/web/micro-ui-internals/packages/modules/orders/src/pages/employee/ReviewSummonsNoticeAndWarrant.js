@@ -482,7 +482,7 @@ const ReviewSummonsNoticeAndWarrant = () => {
     // if (rowData?.id) getTaskDocuments();
     if (rowData?.filingNumber) getHearingFromCaseId();
     setSelectedDelievery(
-      rowData?.status === "NOTICE_SENT" || rowData?.status === "SUMMON_SENT" || rowData?.status === "DELIVERED"
+      rowData?.status === "NOTICE_SENT" || rowData?.status === "SUMMON_SENT" || rowData?.status === "WARRANT_SENT" || rowData?.status === "DELIVERED"
         ? {
             key: "DELIVERED",
             value: "Delivered",
@@ -492,7 +492,7 @@ const ReviewSummonsNoticeAndWarrant = () => {
   }, [rowData]);
 
   const handleRowClick = (props) => {
-    if (props?.original?.status === "DELIVERED") {
+    if (["DELIVERED", "UNDELIVERED", "EXECUTED"].includes(props?.original?.status)) {
       return; // Do nothing if the row's status is 'Completed'
     }
 
