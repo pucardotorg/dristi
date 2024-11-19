@@ -295,14 +295,11 @@ const TasksComponent = ({
           const individualId = data?.fields?.find((field) => field.key === "additionalDetails.individualId")?.value;
           const caseId = data?.fields?.find((field) => field.key === "additionalDetails.caseId")?.value;
           const updateReferenceId = referenceId.split("_").pop();
-          const isManual = referenceId?.includes("MANUAL_");
           const defaultObj = { referenceId: updateReferenceId, ...caseDetail };
           const pendingTaskActions = selectTaskType?.[entityType || taskTypeCode];
           const isCustomFunction = Boolean(pendingTaskActions?.[status]?.customFunction);
           const dayCount = stateSla
-            ? isManual
-              ? Math.abs(Math.ceil((Number(stateSla) - todayDate) / dayInMillisecond))
-              : stateSla
+            ? Math.abs(Math.ceil((Number(stateSla) - todayDate) / dayInMillisecond))
             : dueInSec
             ? Math.abs(Math.ceil(dueInSec / dayInMillisecond))
             : null;
