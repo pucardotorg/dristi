@@ -29,12 +29,23 @@ const AddAttendees = ({
     setAddPartyModal(true);
   };
 
-  const attendeeOptions = Array.isArray(attendees)
-    ? attendees.map((attendee) => ({
-        value: attendee.individualId || attendee.name,
-        label: attendee.name,
-      }))
-    : [];
+  const attendeeOptions = useMemo(() => {
+    if (!Array.isArray(attendees)) {
+      return [];
+    }
+    debugger;
+    const uniqueAttendees = attendees.reduce((acc, attendee) => {
+      if (!acc.some((item) => item?.individualId === attendee?.individualId)) {
+        acc.push(attendee);
+      }
+      return acc;
+    }, []);
+    debugger;
+    return uniqueAttendees.map((attendee) => ({
+      value: attendee.individualId || attendee.name,
+      label: attendee.name,
+    }));
+  }, [attendees]);
 
   const selectedOfflineAttendees = useMemo(
     () =>
