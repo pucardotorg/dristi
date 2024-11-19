@@ -2056,7 +2056,7 @@ const GenerateOrders = () => {
               status: true,
               attendees: [
                 ...currentOrder?.additionalDetails?.formdata?.namesOfPartiesRequired.map((attendee) => {
-                  return { name: attendee.name, individualId: attendee.individualId, type: "Complainant" };
+                  return { name: attendee.name, individualId: attendee.individualId, type: attendee.partyType };
                 }),
                 ...advocateData,
               ],
