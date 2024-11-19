@@ -162,7 +162,10 @@ function ViewCaseFile({ t, inViewCase = false }) {
   }
 
   const fileStoreId = useMemo(() => {
-    return caseDetails?.documents?.filter((doc) => doc?.key === "case.complaint.signed")?.map((doc) => doc?.fileStore)?.[0];
+    return (
+      caseDetails?.documents?.filter((doc) => doc?.key === "case.complaint.signed")?.map((doc) => doc?.fileStore)?.[0] ||
+      caseDetails?.additionalDetails?.signedCaseDocument
+    );
   }, [caseDetails]);
 
   const newScrutinyData = useMemo(() => {
