@@ -55,10 +55,6 @@ CS->AS: return false
 AS->AU: return Error (cannot create application)
 else valid caseID
 AS->AUS ++: generate Application Number
-AUS->CS++: get case summary (filing number)
-return case summary
-AUS->IDS++: generate application number (courtID) in CMP format
-return applicationNumber
 return applicationNumber
 AS->AS: enrich applicationID, applicationNumber
 AS->W++: action "CREATE"
@@ -114,6 +110,11 @@ PU->AS++: updateApplication (record payment)
 AS->W++: action "MAKE_PAYMENT"
 W->K: post state transition event
 return "PENDING_APPROVAL"
+AS->AUS ++: generate cmpNumber
+AUS->IDS++: generate cmpNumber (courtID)
+return cmpNumber
+return cmpNumber
+AS->AS: enrich cmpNumber
 return 200 application update success
 AAS->K: listen to state transition event
 opt
