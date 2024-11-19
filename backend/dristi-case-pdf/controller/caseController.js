@@ -112,23 +112,22 @@ exports.generateCasePdf = async (req, res, next) => {
 
 exports.caseComplaintPdf = async (req, res, next) => {
   try {
-    const caseId = req.body.cases.id;
-    const tenantId = req.body.cases.tenantId;
+    const caseId = req?.body?.cases?.id;
+    const tenantId = req?.body?.cases?.tenantId;
 
-    const requestInfo = req.body.RequestInfo;
+    const requestInfo = req?.body?.RequestInfo;
 
     const cases = await caseService.searchCase(caseId, tenantId, requestInfo);
-    const caseData = cases.data.criteria[0].responseList[0];
-    const filingNumber = caseData.filingNumber || null;
-
-    const courtName = config.courtName;
-    const place = config.courtPlace;
-    const cmpNumber = caseData.cmpNumber;
+    const caseData = cases?.data?.criteria?.[0]?.responseList?.[0];
+    
+    const courtName = config?.courtName;
+    const place = config?.courtPlace;
+    const filingNumber = caseData?.filingNumber;
 
     const complainants = await caseService.getComplainantsDetailsForComplaint(caseData);
     const accuseds = await caseService.getRespondentsDetailsForComplaint(caseData);
     const advocates = await caseService.getAdvocateDetailsForComplaint(caseData);
-    const complaint = await caseService.getPrayerSwornStatementDetails(caseData)[0].memorandumOfComplaintText;
+    const complaint = await caseService.getPrayerSwornStatementDetails(caseData)?.[0]?.memorandumOfComplaintText;
     const dateOfFiling = caseService.formatDate(caseData?.filingDate ? new Date(caseData?.filingDate) : new Date());
     const documentList = await caseService.getDocumentList(caseData);
     const witnessScheduleList = await caseService.getWitnessDetailsForComplaint(caseData);
@@ -139,7 +138,7 @@ exports.caseComplaintPdf = async (req, res, next) => {
         {
           courtName: courtName,
           place: place,
-          cmpNumber: cmpNumber,
+          filingNumber: filingNumber,
           ...complainants[0],
           ...accuseds[0],
           ...advocates[0],
