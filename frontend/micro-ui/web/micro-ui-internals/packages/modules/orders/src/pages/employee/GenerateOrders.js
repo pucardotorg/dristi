@@ -1995,25 +1995,18 @@ const GenerateOrders = () => {
         ? [{}]
         : currentOrder?.additionalDetails?.formdata?.namesOfPartiesRequired?.filter((data) => data?.partyType === "respondent");
       const promiseList = summonsArray?.map((data) =>
-        ordersService
-          .createOrder(
-            {
-              order: {
-                ...orderbody,
-                additionalDetails: {
-                  ...orderbody?.additionalDetails,
-                  selectedParty: data,
-                },
+        ordersService.createOrder(
+          {
+            order: {
+              ...orderbody,
+              additionalDetails: {
+                ...orderbody?.additionalDetails,
+                selectedParty: data,
               },
             },
-            { tenantId }
-          )
-          .then((res) => {
-            if (caseDetails?.status === "ADMISSION_HEARING_SCHEDULED") {
-              updateCaseDetails("ADMIT");
-            }
-            return res;
-          })
+          },
+          { tenantId }
+        )
       );
 
       const resList = await Promise.all(promiseList);
