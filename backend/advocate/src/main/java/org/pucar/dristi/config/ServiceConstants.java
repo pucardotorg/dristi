@@ -77,7 +77,7 @@ public class ServiceConstants {
 	public static final String DOCUMENT_LIST_QUERY = "Final document query :: {}";
 	public static final String AND = " AND ";
 
-	public static final String REGISTERED = "REGISTERED";
+	public static final String ACTIVE = "ACTIVE";
 
 	public static final String ADVOCATE_REGISTERED = "ADVOCATE_REGISTERED";
 

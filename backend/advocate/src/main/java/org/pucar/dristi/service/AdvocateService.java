@@ -197,7 +197,7 @@ public class AdvocateService {
 
     }
     private String getMessageCode(String updatedStatus) {
-        if (updatedStatus.equalsIgnoreCase(REGISTERED)){
+        if (updatedStatus.equalsIgnoreCase(ACTIVE)){
             return ADVOCATE_REGISTERED;
         }
         return null;
@@ -209,7 +209,8 @@ public class AdvocateService {
             List<String> individualIds = Collections.singletonList(advocateRequest.getAdvocate().getIndividualId());
 
             List<String> phonenumbers = callIndividualService(advocateRequest.getRequestInfo(), individualIds);
-            SmsTemplateData smsTemplateData = SmsTemplateData.builder().build();
+            SmsTemplateData smsTemplateData = SmsTemplateData.builder()
+                    .tenantId(advocateRequest.getAdvocate().getTenantId()).build();
             for (String number : phonenumbers) {
                 notificationService.sendNotification(advocateRequest.getRequestInfo(), smsTemplateData, messageCode, number);
             }

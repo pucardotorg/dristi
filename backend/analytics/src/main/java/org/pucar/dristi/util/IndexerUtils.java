@@ -269,6 +269,7 @@ public class IndexerUtils {
     private SmsTemplateData enrichSmsTemplateData(Map<String, String> details) {
         return SmsTemplateData.builder()
                 .cmpNumber(details.get("cmpNumber"))
+                .tenantId(config.getEgovStateTenantId())
                 .efilingNumber(details.get("filingNumber")).build();
     }
 

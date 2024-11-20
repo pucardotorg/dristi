@@ -112,6 +112,7 @@ public class SmsNotificationService {
         smsDetails.put("cnr", smsTemplateData.getCnrNumber());
         smsDetails.put("cmpNumber", smsTemplateData.getCmpNumber());
         smsDetails.put("advocateName", smsTemplateData.getAdvocateName());
+        smsDetails.put("courtCaseNumber", smsTemplateData.getCourtCaseNumber());
         smsDetails.put("date", "");
         smsDetails.put("link", "");
         smsDetails.put("tenantId", smsTemplateData.getTenantId().split("\\.")[0]);
