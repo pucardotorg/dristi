@@ -65,11 +65,11 @@ router.post(
     if (!tenantId || !caseId || !index || !state || !requestInfo) {
       return res.status(400).json({
         message:
-          "Missing required fields: 'tenantId', 'caseId', 'index', 'state', or 'requestInfo'.",
+        "Missing required fields: 'tenantId', 'caseId', 'index', 'state', or 'requestInfo'.",
       });
     }
 
-    logger.info("recd request to process case bundle for:", {caseId, index, state, requestInfo});
+    logger.info("recd request to process case bundle for:", JSON.stringify({caseId, index, state, requestInfo}));
 
     try {
       // Process the case bundle
