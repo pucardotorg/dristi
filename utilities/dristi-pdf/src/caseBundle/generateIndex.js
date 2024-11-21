@@ -387,7 +387,7 @@ async function processPendingAdmissionCase({
     tenantId,
     requestInfo
   );
-  logger.info("recd case response:", JSON.stringify(caseResponse));
+  logger.info("recd case response:", caseResponse);
   const courtCase = caseResponse?.data?.criteria[0]?.responseList[0];
 
   const titlepageSection = filterCaseBundleBySection(
@@ -410,7 +410,7 @@ async function processPendingAdmissionCase({
       { RequestInfo: requestInfo }
     );
     const caseCoverDoc = await PDFDocument.load(caseCoverPdfResponse.data).catch(e => {
-      logger.error(JSON.stringify(e));
+      logger.error(e);
       throw e;
     });
 
@@ -419,7 +419,7 @@ async function processPendingAdmissionCase({
       tenantId,
       requestInfo
     ).catch(e => {
-        logger.error(JSON.stringify(e));
+        logger.error(e);
         throw e;
       });
 
@@ -458,7 +458,7 @@ async function processPendingAdmissionCase({
     complaintFileStoreId,
     requestInfo
   ).catch(e => {
-      logger.error(JSON.stringify(e));
+      logger.error(e);
       throw e;
     });
 
@@ -485,7 +485,7 @@ async function processPendingAdmissionCase({
       data,
       { RequestInfo: requestInfo }
     ).catch(e => {
-        logger.error(JSON.stringify(e));
+        logger.error(e);
         throw e;
       });
 
@@ -504,7 +504,7 @@ async function processPendingAdmissionCase({
     tenantId,
     requestInfo
   ).catch(e => {
-      logger.error(JSON.stringify(e));
+      logger.error(e);
       throw e;
     });
 
