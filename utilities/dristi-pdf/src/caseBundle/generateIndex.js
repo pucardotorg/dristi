@@ -323,8 +323,8 @@ async function applyDocketToDocument(
     complainant?.middleName,
     complainant?.lastName,
   ]
-  .filter(Boolean)
-  .join(" ");
+    .filter(Boolean)
+    .join(" ");
   const data = {
     Data: [
       {
@@ -336,8 +336,8 @@ async function applyDocketToDocument(
           respondent.middleName,
           respondent.lastName,
         ]
-        .filter(Boolean)
-        .join(" "),
+          .filter(Boolean)
+          .join(" "),
         docketApplicationType,
         docketNameOfAdvocate,
         docketCounselFor,
@@ -387,7 +387,7 @@ async function processPendingAdmissionCase({
     tenantId,
     requestInfo
   );
-  logger.info("recd case response:", JSON.stringify(caseResponse));
+  logger.info("recd case response", JSON.stringify(caseResponse?.data));
   const courtCase = caseResponse?.data?.criteria[0]?.responseList[0];
 
   const titlepageSection = filterCaseBundleBySection(
@@ -400,8 +400,8 @@ async function processPendingAdmissionCase({
     const coverCaseType = courtCase.caseType;
     const coverCaseNumber =
       courtCase.courtCaseNumber ||
-        courtCase.cmpNumber ||
-        courtCase.filingNumber;
+      courtCase.cmpNumber ||
+      courtCase.filingNumber;
     const data = { Data: [{ coverCaseName, coverCaseType, coverCaseNumber }] };
     const caseCoverPdfResponse = await create_pdf_v2(
       tenantId,
@@ -409,7 +409,9 @@ async function processPendingAdmissionCase({
       data,
       { RequestInfo: requestInfo }
     );
-    const caseCoverDoc = await PDFDocument.load(caseCoverPdfResponse.data).catch(e => {
+    const caseCoverDoc = await PDFDocument.load(
+      caseCoverPdfResponse.data
+    ).catch((e) => {
       logger.error(JSON.stringify(e));
       throw e;
     });
@@ -418,10 +420,10 @@ async function processPendingAdmissionCase({
       caseCoverDoc,
       tenantId,
       requestInfo
-    ).catch(e => {
-        logger.error(JSON.stringify(e));
-        throw e;
-      });
+    ).catch((e) => {
+      logger.error(JSON.stringify(e));
+      throw e;
+    });
 
     // update index
 
@@ -445,7 +447,6 @@ async function processPendingAdmissionCase({
     "complaint"
   )[0];
 
-
   const complaintFileStoreId = courtCase.documents.find(
     // (doc) => doc.documentType === "case.complaint.signed"
     (doc) => doc.documentType === "case.cheque"
@@ -453,17 +454,43 @@ async function processPendingAdmissionCase({
   if (!complaintFileStoreId) {
     throw new Error("no case complaint");
   }
-  const { data: stream } = await search_pdf_v2(
+
+  const { data: stream, headers } = await search_pdf_v2(
     tenantId,
     complaintFileStoreId,
     requestInfo
-  ).catch(e => {
-      logger.error(JSON.stringify(e));
-      throw e;
+  ).catch((e) => {
+    logger.error(JSON.stringify(e));
+    throw e;
+  });
+  const mimeType = headers["content-type"];
+  let pdfDoc;
+  if (mimeType === "application/pdf") {
+    pdfDoc = await PDFDocument.load(stream);
+  } else if (["image/jpeg", "image/png", "image/jpg"].includes(mimeType)) {
+    pdfDoc = await PDFDocument.create();
+    let img;
+    if (mimeType === "image/png") {
+      img = await pdfDoc.embedPng(stream);
+    } else {
+      const repairedImage = await fixJpg(stream);
+      img = await pdfDoc.embedJpg(repairedImage);
+    }
+
+    const { width, height } = img.scale(1);
+    const scale = Math.min(A4_WIDTH / width, A4_HEIGHT / height);
+    const xOffset = (A4_WIDTH - width * scale) / 2;
+    const yOffset = (A4_HEIGHT - height * scale) / 2;
+    const page = pdfDoc.addPage([A4_WIDTH, A4_HEIGHT]);
+    page.drawImage(img, {
+      x: xOffset,
+      y: yOffset,
+      width: width * scale,
+      height: height * scale,
     });
+  }
 
   let caseBundlePdfDoc = await PDFDocument.create();
-  let pdfDoc = await PDFDocument.load(stream);
 
   const copiedPages = await caseBundlePdfDoc.copyPages(
     pdfDoc,
@@ -476,19 +503,18 @@ async function processPendingAdmissionCase({
     const coverCaseType = courtCase.caseType;
     const coverCaseNumber =
       courtCase.courtCaseNumber ||
-        courtCase.cmpNumber ||
-        courtCase.filingNumber;
+      courtCase.cmpNumber ||
+      courtCase.filingNumber;
     const data = { Data: [{ coverCaseName, coverCaseType, coverCaseNumber }] };
     const caseCoverPdfResponse = await create_pdf_v2(
       tenantId,
       "cover-page-pdf",
       data,
       { RequestInfo: requestInfo }
-    ).catch(e => {
-        logger.error(JSON.stringify(e));
-        throw e;
-      });
-
+    ).catch((e) => {
+      logger.error(JSON.stringify(e));
+      throw e;
+    });
 
     const caseCoverDoc = await PDFDocument.load(caseCoverPdfResponse.data);
     const copiedPages = await caseCoverDoc.copyPages(
@@ -503,16 +529,17 @@ async function processPendingAdmissionCase({
     caseBundlePdfDoc,
     tenantId,
     requestInfo
-  ).catch(e => {
-      logger.error(JSON.stringify(e));
-      throw e;
-    });
+  ).catch((e) => {
+    logger.error(JSON.stringify(e));
+    throw e;
+  });
 
   // update index
 
   const complaintIndexSection = indexCopy.sections.find(
     (section) => section.name === "complaint"
   );
+  complaintIndexSection.lineItems = complaintIndexSection.lineItems || [];
   complaintIndexSection.lineItems[0] = {
     ...complaintIndexSection.lineItems[0],
     createPDF: false,
@@ -544,8 +571,8 @@ async function processPendingAdmissionCase({
           complainant?.middleName,
           complainant?.lastName,
         ]
-        .filter(Boolean)
-        .join(" ");
+          .filter(Boolean)
+          .join(" ");
         const docketNameOfAdvocate = courtCase.representatives?.find((adv) =>
           adv.representing?.find(
             (party) => party.partyType === "complainant.primary"
@@ -619,8 +646,8 @@ async function processPendingAdmissionCase({
           complainant?.middleName,
           complainant?.lastName,
         ]
-        .filter(Boolean)
-        .join(" ");
+          .filter(Boolean)
+          .join(" ");
         const docketNameOfAdvocate = courtCase.representatives?.find((adv) =>
           adv.representing?.any(
             (party) => party.partyType === "complainant.primary"
@@ -677,24 +704,24 @@ async function processPendingAdmissionCase({
 
   if (vakalatnamaSection && Array.isArray(courtCase.representatives)) {
     const vakalats = courtCase.representatives
-    .map((representative) => {
-      const representation = representative.representing[0];
-      const fileStoreId =
-        representative?.additionalDetails?.document?.[0]
-        ?.vakalatnamaFileUpload?.fileStore;
-      if (!fileStoreId) {
-        return null;
-      }
-      return {
-        isActive: representation.isActive,
-        partyType: representation.partyType,
-        fileStoreId: fileStoreId,
-        representingFullName: representation.additionalDetails.fullName,
-        advocateFullName: representative.additionalDetails.advocateName,
-        dateOfAddition: representative.auditDetails.createdTime,
-      };
-    })
-    .filter(Boolean);
+      .map((representative) => {
+        const representation = representative.representing[0];
+        const fileStoreId =
+          representative?.additionalDetails?.document?.[0]
+            ?.vakalatnamaFileUpload?.fileStore;
+        if (!fileStoreId) {
+          return null;
+        }
+        return {
+          isActive: representation.isActive,
+          partyType: representation.partyType,
+          fileStoreId: fileStoreId,
+          representingFullName: representation.additionalDetails.fullName,
+          advocateFullName: representative.additionalDetails.advocateName,
+          dateOfAddition: representative.auditDetails.createdTime,
+        };
+      })
+      .filter(Boolean);
 
     vakalats.sort((vak1, vak2) => {
       if (vak1.isActive && vak2.isActive) {
