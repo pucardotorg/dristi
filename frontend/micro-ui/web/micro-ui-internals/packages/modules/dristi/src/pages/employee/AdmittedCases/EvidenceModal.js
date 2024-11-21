@@ -313,10 +313,12 @@ const EvidenceModal = ({
         message = "";
       }
     }
-    showToast({
-      isError: false,
-      message,
-    });
+    if (message) {
+      showToast({
+        isError: false,
+        message,
+      });
+    }
     counterUpdate();
     handleBack();
   };
