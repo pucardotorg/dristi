@@ -8,6 +8,7 @@ const { renderError } = require("../utils/renderError");
 const asyncMiddleware = require("../utils/asyncMiddleware");
 const buildCasePdf = require("../caseBundle/buildCasePdf");
 const processCaseBundle = require("../caseBundle/generateIndex");
+const { logger } = require("../logger");
 
 const A4_WIDTH = 595.28; // A4 width in points
 const A4_HEIGHT = 841.89; // A4 height in points
@@ -67,6 +68,8 @@ router.post(
           "Missing required fields: 'tenantId', 'caseId', 'index', 'state', or 'requestInfo'.",
       });
     }
+
+    logger.info("recd request to process case bundle for:", {caseId, index, state, requestInfo});
 
     try {
       // Process the case bundle
