@@ -165,6 +165,7 @@ const GenerateOrders = () => {
   const roles = Digit.UserService.getUser()?.info?.roles;
   const canESign = roles?.some((role) => role.code === "ORDER_ESIGN");
   const { downloadPdf } = Digit.Hooks.dristi.useDownloadCasePdf();
+  const judgeName = window?.globalConfigs?.getConfig("JUDGE_NAME");
   const setSelectedOrder = (orderIndex) => {
     _setSelectedOrder(orderIndex);
   };
@@ -1613,7 +1614,7 @@ const GenerateOrders = () => {
             courtPhone: courtDetails?.phone,
             courtId: caseDetails?.courtId,
             hearingNumber: orderData?.hearingNumber,
-            judgeName: "John Koshy",
+            judgeName: judgeName,
           },
           deliveryChannels: {
             channelName: "",
@@ -1647,7 +1648,7 @@ const GenerateOrders = () => {
             courtPhone: courtDetails?.phone,
             courtId: caseDetails?.courtId,
             hearingNumber: orderData?.hearingNumber,
-            judgeName: "John Koshy",
+            judgeName: judgeName,
           },
           deliveryChannels: {
             channelName: "",
@@ -1680,7 +1681,7 @@ const GenerateOrders = () => {
             caseTitle: caseDetails?.caseTitle,
             year: new Date(caseDetails).getFullYear(),
             hearingDate: new Date(orderData?.additionalDetails?.formdata?.dateOfHearing || "").getTime(),
-            judgeName: "John Koshy",
+            judgeName: judgeName,
             courtName: courtDetails?.name,
             courtAddress: courtDetails?.address,
             courtPhone: courtDetails?.phone,
