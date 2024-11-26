@@ -4,7 +4,7 @@ import { Route, Switch, useRouteMatch } from "react-router-dom";
 import { loginConfig as defaultLoginConfig } from "./config";
 import LoginComponent from "./login";
 
-const EmployeeLogin = () => {
+const EmployeeLogin = ({ tenantsData, isTenantsDataLoading }) => {
   const { t } = useTranslation();
   const { path } = useRouteMatch();
   const [loginConfig, setloginConfig] = useState(defaultLoginConfig);
@@ -12,7 +12,7 @@ const EmployeeLogin = () => {
   const { data: mdmsData, isLoading } = Digit.Hooks.useCommonMDMS(Digit.ULBService.getStateId(), "commonUiConfig", ["LoginConfig"], {
     select: (data) => {
       return {
-        config: data?.commonUiConfig?.LoginConfig
+        config: data?.commonUiConfig?.LoginConfig,
       };
     },
     retry: false,
@@ -20,12 +20,10 @@ const EmployeeLogin = () => {
 
   //let loginConfig = mdmsData?.config ? mdmsData?.config : defaultLoginConfig;
   useEffect(() => {
-    if(isLoading == false && mdmsData?.config)
-    {  
-      setloginConfig(mdmsData?.config)
+    if (isLoading == false && mdmsData?.config) {
+      setloginConfig(mdmsData?.config);
     }
-  },[mdmsData, isLoading])
-
+  }, [mdmsData, isLoading]);
 
   const loginParams = useMemo(() =>
     loginConfig.map(
@@ -43,7 +41,7 @@ const EmployeeLogin = () => {
   return (
     <Switch>
       <Route path={`${path}`} exact>
-        <LoginComponent config={loginParams[0]} t={t} />
+        <LoginComponent config={loginParams[0]} t={t} tenantsData={tenantsData} isTenantsDataLoading={isTenantsDataLoading} />
       </Route>
     </Switch>
   );

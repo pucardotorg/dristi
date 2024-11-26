@@ -37,7 +37,7 @@ export const loginConfig = [
             moduleName: "tenant",
             localePrefix: "TENANT_TENANTS",
             select:
-              "(data)=>{ return Array.isArray(data['tenant'].tenants) && Digit.Utils.getUnique(data['tenant'].tenants).map(ele=>({code:ele.code,name:Digit.Utils.locale.getTransformedLocale('TENANT_TENANTS_'+ele.code)}))}",
+              "(data) => {return data['tenant']?.tenants?.map((item) => {return { code: item.code, name: item.name + '_' + item.description };});}",
           },
         },
       },

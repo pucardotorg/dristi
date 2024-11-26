@@ -1,6 +1,6 @@
 import { BackButton, Dropdown, FormComposer, FormComposerV2, Loader, Toast } from "@egovernments/digit-ui-react-components";
 import PropTypes from "prop-types";
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useMemo } from "react";
 import { useHistory } from "react-router-dom";
 import Background from "../../../components/Background";
 import Header from "../../../components/Header";
@@ -19,7 +19,7 @@ const setEmployeeDetail = (userObject, token) => {
   localStorage.setItem("Employee.user-info", JSON.stringify(userObject));
 };
 
-const Login = ({ config: propsConfig, t, isDisabled }) => {
+const Login = ({ config: propsConfig, t, isDisabled, tenantsData, isTenantsDataLoading }) => {
   const { data: cities, isLoading } = Digit.Hooks.useTenants();
   const { data: storeData, isLoading: isStoreLoading } = Digit.Hooks.useStore.getInitData();
   const { stateInfo } = storeData || {};
@@ -100,20 +100,39 @@ const Login = ({ config: propsConfig, t, isDisabled }) => {
   const onForgotPassword = () => {
     history.push(`/${window?.contextPath}/employee/user/forgot-password`);
   };
-  const defaultValue = {
-    code: Digit.ULBService.getStateId(),
-    name: Digit.Utils.locale.getTransformedLocale(`TENANT_TENANTS_${Digit.ULBService.getStateId()}`),
-  };
-
-  let config = [{ body: propsConfig?.inputs }];
 
   const { mode } = Digit.Hooks.useQueryParams();
-  if (mode === "admin" && config?.[0]?.body?.[2]?.disable === false && config?.[0]?.body?.[2]?.populators?.defaultValue == undefined) {
-    config[0].body[2].disable = true;
-    config[0].body[2].isMandatory = false;
-    config[0].body[2].populators.defaultValue = defaultValue;
-  }
-  return isLoading || isStoreLoading ? (
+
+  const defaultValue = useMemo(() => {
+    if (tenantsData && tenantsData.length > 0) {
+      return {
+        code: Digit.ULBService.getStateId(),
+        name: Digit.Utils.locale.getTransformedLocale(tenantsData?.[0]?.city),
+      };
+    }
+    return null;
+  }, [tenantsData]);
+
+  const config = useMemo(() => {
+    const baseConfig = [{ body: propsConfig?.inputs }];
+
+    if (baseConfig[0]?.body && defaultValue) {
+      const updatedConfig = [...baseConfig];
+      if (mode === "admin" && updatedConfig[0].body[2]?.disable === false && updatedConfig[0].body[2]?.populators?.defaultValue == undefined) {
+        updatedConfig[0].body[2].disable = true;
+        updatedConfig[0].body[2].isMandatory = false;
+        updatedConfig[0].body[2].populators.defaultValue = defaultValue;
+      } else if (updatedConfig[0].body[2]?.populators?.defaultValue == undefined) {
+        updatedConfig[0].body[2].isMandatory = false;
+        updatedConfig[0].body[2].populators.defaultValue = defaultValue;
+      }
+      return updatedConfig;
+    }
+
+    return baseConfig;
+  }, [propsConfig?.inputs, defaultValue, mode]);
+
+  return isLoading || isStoreLoading || isTenantsDataLoading ? (
     <Loader />
   ) : (
     <Background>
@@ -137,7 +156,7 @@ const Login = ({ config: propsConfig, t, isDisabled }) => {
         cardClassName="loginCardClassName"
         buttonClassName="buttonClassName"
       >
-        <Header />
+        <Header tenantsData={tenantsData} />
       </FormComposerV2>
       {showToast && <Toast error={true} label={t(showToast)} onClose={closeToast} />}
       <div className="employee-login-home-footer" style={{ backgroundColor: "unset" }}>
