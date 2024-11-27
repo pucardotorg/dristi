@@ -20,6 +20,7 @@ router.post(
       index,
       caseNumber,
       RequestInfo,
+      tenantId,
       // caseDetails
     } = req.body;
 
@@ -34,7 +35,7 @@ router.post(
 
     try {
       // Call buildCasePdf and get updated index with pageCount
-      const result = await buildCasePdf(caseNumber, index, RequestInfo);
+      const result = await buildCasePdf(caseNumber, index, RequestInfo, tenantId);
 
       // Extract pageCount and remove it from updatedIndex
       const { pageCount, ...updatedIndex } = result;

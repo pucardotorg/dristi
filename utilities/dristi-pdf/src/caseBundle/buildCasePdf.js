@@ -68,7 +68,7 @@ const caseBundleDesignMock = [
   },
 ];
 
-async function buildCasePdf(caseNumber, index, requestInfo) {
+async function buildCasePdf(caseNumber, index, requestInfo, tenantId) {
   try {
     const caseBundleDesign = caseBundleDesignMock;
 
@@ -109,7 +109,7 @@ async function buildCasePdf(caseNumber, index, requestInfo) {
 
         try {
           // Fetch PDF from fileStoreId
-          const pdfResponse = await search_pdf(index.tenantId, item.fileStoreId, requestInfo);
+          const pdfResponse = await search_pdf(tenantId, item.fileStoreId, requestInfo);
           console.log(pdfResponse);
           if (pdfResponse.status === 200 && pdfResponse.data[item.fileStoreId]) {
             const pdfUrl = pdfResponse.data[item.fileStoreId];
