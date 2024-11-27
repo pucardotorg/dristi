@@ -110,6 +110,7 @@ async function buildCasePdf(caseNumber, index, requestInfo) {
         try {
           // Fetch PDF from fileStoreId
           const pdfResponse = await search_pdf(index.tenantId, item.fileStoreId);
+          console.log(pdfResponse);
           if (pdfResponse.status === 200 && pdfResponse.data[item.fileStoreId]) {
             const pdfUrl = pdfResponse.data[item.fileStoreId];
             const pdfFetchResponse = await axios.get(pdfUrl, {
