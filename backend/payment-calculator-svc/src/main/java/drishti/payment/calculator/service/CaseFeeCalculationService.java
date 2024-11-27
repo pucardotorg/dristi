@@ -77,7 +77,7 @@ public class CaseFeeCalculationService {
 
     private int getAdvocateCountForCase(RequestInfo requestInfo, EFillingCalculationCriteria calculationCriteria) {
         CaseCriteria criteria = CaseCriteria.builder()
-                .caseId(calculationCriteria.getCaseId())
+                .filingNumber(calculationCriteria.getFilingNumber())
                 .defaultFields(false)
                 .build();
         CaseSearchRequest searchRequest = CaseSearchRequest.builder()
@@ -87,7 +87,7 @@ public class CaseFeeCalculationService {
                 .criteria(Collections.singletonList(criteria)).build();
 
         JsonNode caseNode = caseUtil.searchCaseDetails(searchRequest);
-        return caseNode.get("advocateCount")!=null ? caseNode.get("advocateCount").asInt() : 0;
+        return caseNode.get("advocateCount")!= null ? caseNode.get("advocateCount").asInt() : 0;
     }
 
     public List<BreakDown> getFeeBreakdown(double vakalathnamaFee, double advocateClerkWelfareFund, double totalApplicationFee, double petitionFee, double condonationFee, double advocateFee) {

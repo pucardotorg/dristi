@@ -1887,6 +1887,7 @@ function EFilingCases({ path }) {
             tenantId: tenantId,
             caseId: caseId,
             delayCondonation: delayCondonation,
+            filingNumber: caseDetails?.filingNumber,
           },
         ],
       },

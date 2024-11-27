@@ -118,7 +118,12 @@ exports.caseComplaintPdf = async (req, res, next) => {
     
     const courtName = config?.courtName;
     const place = config?.courtPlace;
-    const filingNumber = caseData?.filingNumber;
+    const filingNumber = caseData.filingNumber;
+
+    if (!filingNumber) {
+      console.log("Case Data", caseData)
+      throw new Error('Filing Number is not present');
+    }
 
     const complainants = await caseService.getComplainantsDetailsForComplaint(caseData);
     const accuseds = await caseService.getRespondentsDetailsForComplaint(caseData);

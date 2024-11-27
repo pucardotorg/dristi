@@ -447,7 +447,7 @@ export const UICustomizations = {
       return link;
     },
     additionalCustomizations: (row, key, column, value, t, searchResult) => {
-      const caseId = row?.businessObject?.billDetails?.caseTitleFilingNumber.split(",")[1];
+      const caseId = row?.businessObject?.billDetails?.caseTitleFilingNumber.split(",")[1].trim();
       const consumerCode = row?.businessObject?.billDetails?.consumerCode;
       const service = row?.businessObject?.billDetails?.service;
       const billStatus = row?.businessObject?.billDetails?.billStatus;
