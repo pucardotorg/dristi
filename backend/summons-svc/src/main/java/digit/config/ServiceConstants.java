@@ -22,6 +22,7 @@ public class ServiceConstants {
     public static final String FAILED = "failed";
 
     public static final String PAYMENT_CALCULATOR_ERROR = "PAYMENT_CALCULATOR_ERROR";
+    public static final Long TWO_YEARS_IN_MILLISECOND = (365 * 2 + 1) * 24L * 60 * 60 * 1000;
 
     public static final String URL = "url";
     public static final String URL_SHORTENING_ERROR_CODE = "URL_SHORTENING_ERROR";

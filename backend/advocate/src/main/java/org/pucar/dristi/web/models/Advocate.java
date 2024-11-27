@@ -11,6 +11,7 @@ import lombok.NoArgsConstructor;
 import org.egov.common.contract.models.AuditDetails;
 import org.egov.common.contract.models.Document;
 import org.egov.common.contract.models.Workflow;
+import org.egov.common.contract.workflow.ProcessInstance;
 import org.springframework.validation.annotation.Validated;
 
 import java.util.ArrayList;
@@ -65,6 +66,9 @@ public class Advocate {
 	@JsonProperty("workflow")
 	@Valid
 	private Workflow workflow = null;
+
+	@JsonProperty("currentProcessInstance")
+	private ProcessInstance currentProcessInstance = null;
 
 	@JsonProperty("documents")
 	@Valid

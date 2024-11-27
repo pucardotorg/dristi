@@ -56,7 +56,7 @@ public class EPostFeeService implements Payment {
 
         List<BreakDown> breakDowns = taskUtil.getFeeBreakdown(courtFees, gstFee, ePostFeeWithoutGST + envelopeFee);
 
-        double totalAmount = ePostFeeWithoutGST + (gstPercentage * ePostFeeWithoutGST) + courtFees + envelopeFee;
+        double totalAmount = Math.ceil(ePostFeeWithoutGST + (gstPercentage * ePostFeeWithoutGST) + courtFees + envelopeFee);
 
         return Calculation.builder()
                 .applicationId(criteria.getSummonId())
@@ -91,7 +91,7 @@ public class EPostFeeService implements Payment {
 
         List<BreakDown> breakDowns = taskUtil.getFeeBreakdown(courtFees, postFee);
 
-        double totalAmount = courtFees + postFee;
+        double totalAmount = Math.ceil(courtFees + postFee);
 
         return Calculation.builder()
                 .applicationId(criteria.getId())

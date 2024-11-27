@@ -51,6 +51,12 @@ public class Demand {
     @Valid
     private List<DemandDetail> demandDetails = new ArrayList<>();
 
+    @JsonProperty("fixedBillExpiryDate")
+    private Long fixedBillExpiryDate;
+
+    @JsonProperty("billExpiryTime")
+    private Long billExpiryTime;
+
     @JsonProperty("auditDetails")
     private AuditDetails auditDetails;
 

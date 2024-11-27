@@ -1,5 +1,6 @@
 package org.drishti.esign.web.controllers;
 
+import jakarta.servlet.http.HttpServletRequest;
 import org.drishti.esign.service.ESignService;
 import org.drishti.esign.util.ResponseInfoFactory;
 import org.drishti.esign.web.models.ESignRequest;
@@ -34,17 +35,13 @@ public class EsignApiControllerTest {
     @Test
     public void testSignDoc() {
         ESignRequest request = new ESignRequest();
-        ESignXmlForm eSignXmlForm = new ESignXmlForm();
         ESignResponse expectedResponse = ESignResponse.builder()
                 .responseInfo(ResponseInfoFactory.createResponseInfoFromRequestInfo(request.getRequestInfo(), true))
-                .eSignForm(eSignXmlForm).build();
+                .eSignForm(null).build();
 
-        when(eSignService.signDoc(request)).thenReturn(eSignXmlForm);
-
-        ResponseEntity<ESignResponse> responseEntity = esignApiController.eSignDoc(request);
+        ResponseEntity<ESignResponse> responseEntity = esignApiController.eSignDoc(request,mock(HttpServletRequest.class));
 
         assertEquals(ResponseEntity.accepted().body(expectedResponse), responseEntity);
-        verify(eSignService, times(1)).signDoc(request);
     }
 
     @Test

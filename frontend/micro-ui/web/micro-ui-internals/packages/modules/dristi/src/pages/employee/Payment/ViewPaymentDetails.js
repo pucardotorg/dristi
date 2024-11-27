@@ -164,13 +164,17 @@ const ViewPaymentDetails = ({ location, match }) => {
   const courtFeeBreakup = useMemo(() => breakupResponse?.Calculation?.[0]?.breakDown?.filter((data) => data?.type === "Court Fee"), [
     breakupResponse?.Calculation,
   ]);
+  const processFeeBreakup = useMemo(() => breakupResponse?.Calculation?.[0]?.breakDown?.filter((data) => data?.type !== "Court Fee"), [
+    breakupResponse?.Calculation,
+  ]);
   const totalAmount = useMemo(() => {
     const totalAmount = calculationResponse?.Calculation?.[0]?.totalAmount || currentBillDetails?.totalAmount || 0;
     return parseFloat(totalAmount).toFixed(2);
   }, [calculationResponse?.Calculation, currentBillDetails]);
 
   const paymentCalculation = useMemo(() => {
-    const breakdown = calculationResponse?.Calculation?.[0]?.breakDown || courtFeeBreakup || [];
+    const breakdown =
+      calculationResponse?.Calculation?.[0]?.breakDown || (paymentType?.includes("Court") ? courtFeeBreakup : processFeeBreakup) || [];
     const updatedCalculation = breakdown.map((item) => ({
       key: item?.type,
       value: item?.amount,

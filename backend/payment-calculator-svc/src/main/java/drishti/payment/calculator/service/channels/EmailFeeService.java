@@ -31,7 +31,7 @@ public class EmailFeeService implements Payment {
     public Calculation calculatePayment(RequestInfo requestInfo, SummonCalculationCriteria criteria) {
 
         SpeedPostConfigParams speedPostConfigParams = taskUtil.getIPostFeesDefaultData(requestInfo, criteria.getTenantId());
-        Double courtFee = taskUtil.calculateCourtFees(speedPostConfigParams);
+        Double courtFee = Math.ceil(taskUtil.calculateCourtFees(speedPostConfigParams));
         return Calculation.builder()
                 .applicationId(criteria.getSummonId())
                 .tenantId(criteria.getTenantId())
@@ -51,7 +51,7 @@ public class EmailFeeService implements Payment {
 
         //TODO:validation on allowed methods
 
-        Double courtFees = taskUtil.calculateCourtFees(filteredTaskPayment.get(0));
+        Double courtFees = Math.ceil(taskUtil.calculateCourtFees(filteredTaskPayment.get(0)));
 
         return Calculation.builder()
                 .applicationId(criteria.getId())

@@ -4,7 +4,7 @@ import { useTranslation } from "react-i18next";
 import { useHistory } from "react-router-dom";
 import Background from "../../../components/Background";
 
-const LanguageSelection = () => {
+const LanguageSelection = ({ tenantsData }) => {
   const { data: storeData, isLoading } = Digit.Hooks.useStore.getInitData();
   const { t } = useTranslation();
   const history = useHistory();
@@ -28,7 +28,7 @@ const LanguageSelection = () => {
         <div className="bannerHeader">
           <img className="bannerLogo" src={stateInfo?.logoUrl} alt="Digit" />
 
-          <p>{t(`TENANT_TENANTS_${stateInfo?.code.toUpperCase()}`)}</p>
+          <p>{t(tenantsData?.[0]?.state)}</p>
         </div>
         <div className="language-selector" style={{ justifyContent: "space-around", marginBottom: "24px", padding: "0 5%" }}>
           {languages.map((language, index) => (

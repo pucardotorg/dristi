@@ -23,7 +23,7 @@ public class ServiceConstants {
                     + "\"billDetails\": {"
                     + "\"id\": \"%s\","
                     + "\"tenantId\": \"%s\","
-                    + "\"caseTitleFilingNumber\": \"%s,%s\","
+                    + "\"caseTitleFilingNumber\": \"%s, %s\","
                     + "\"stage\": \"%s\","
                     + "\"caseType\": \"%s\","
                     + "\"paymentType\": \"%s\","

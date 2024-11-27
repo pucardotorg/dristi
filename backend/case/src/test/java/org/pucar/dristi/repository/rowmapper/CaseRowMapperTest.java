@@ -50,6 +50,7 @@ class CaseRowMapperTest {
         when(rs.getString("judgeid")).thenReturn("judge1");
         when(rs.getString("stage")).thenReturn("stage1");
         when(rs.getString("substage")).thenReturn("substage1");
+        when(rs.getInt("advocatecount")).thenReturn(2);
         when(rs.getString("filingdate")).thenReturn("123453634747");
         when(rs.getString("judgementdate")).thenReturn("12325326");
         when(rs.getString("registrationdate")).thenReturn("123453634747");

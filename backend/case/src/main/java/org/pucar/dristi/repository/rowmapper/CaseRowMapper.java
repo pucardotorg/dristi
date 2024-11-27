@@ -67,6 +67,7 @@ public class CaseRowMapper implements ResultSetExtractor<List<CourtCase>> {
                             .stage(rs.getString("stage"))
                             .isActive(rs.getBoolean("isactive"))
                             .substage(rs.getString("substage"))
+                            .advocateCount(rs.getInt("advocatecount"))
                             .filingDate(parseDateToLong(rs.getString("filingdate")))
                             .judgementDate(parseDateToLong(rs.getString("judgementdate")))
                             .registrationDate(parseDateToLong(rs.getString("registrationdate")))

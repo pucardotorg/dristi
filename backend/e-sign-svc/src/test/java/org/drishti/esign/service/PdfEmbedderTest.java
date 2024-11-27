@@ -43,13 +43,10 @@ public class PdfEmbedderTest {
     }
 
 @Test
-    public void signPdfWithDSAndReturnMultipartFile_ExceptionThrown() throws IOException {
-        // Arrange
-        when(resource.getInputStream()).thenThrow(new IOException("Test Exception"));
-
+    public void signPdfWithDSAndReturnMultipartFile_ExceptionThrown() {
         // Act & Assert
         assertThrows(RuntimeException.class, () -> {
-            pdfEmbedder.signPdfWithDSAndReturnMultipartFile(resource, sampleResponse,"field Name");
+            pdfEmbedder.signPdfWithDSAndReturnMultipartFile(resource.toString(), sampleResponse,"field Name");
         });
     }
 

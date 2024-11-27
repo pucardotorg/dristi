@@ -24,12 +24,12 @@ public class ServiceConstants {
 
     public static final String VAKALATHNAMA_FEE = "Vakalathnama Fee";
 
-    public static final String ADVOCATE_WELFARE_FUND = "Advocate Welfare Fund";
 
     public static final String ADVOCATE_CLERK_WELFARE_FUND = "Advocate Clerk Welfare Fund";
     public static final String TOTAL_APPLICATION_FEE = "Total Application Fee";
     public static final String PETITION_FEE = "Petition Fee";
     public static final String DELAY_CONDONATION_FEE = "Delay Condonation Application Fee";
+    public static final String ADVOCATE_FEE = "Advocate Welfare Fund";
 
     public static final String COURT_FEE = "Court Fee";
     public static final String POSTAL_HUB_NOT_FOUND = "POSTAL_HUB_NOT_FOUND";
@@ -48,5 +48,7 @@ public class ServiceConstants {
     public static final String CALCULATE_PAYMENT_EXCEPTION = "CALCULATE_PAYMENT_EXCEPTION";
     public static final String ILLEGAL_STATE_EXCEPTION = "ILLEGAL_STATE_EXCEPTION";
 
+    public static final String ERROR_WHILE_FETCHING_FROM_CASE = "ERROR_WHILE_FETCHING_FROM_CASE";
+    public static final String FLOW_JAC = "flow_jac";
 
 }

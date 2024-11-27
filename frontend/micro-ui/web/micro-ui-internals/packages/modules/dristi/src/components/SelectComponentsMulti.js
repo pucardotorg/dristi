@@ -6,6 +6,80 @@ import Button from "./Button";
 import LocationComponent from "./LocationComponent";
 import { CaseWorkflowState } from "../Utils/caseWorkflow";
 
+const witnessAddressConfig = {
+  type: "component",
+  key: "addressDetails",
+  withoutLabel: true,
+  populators: {
+    inputs: [
+      {
+        label: "CS_TYPE_OF_ADDRESS",
+        showOptional: true,
+        type: "Radio",
+        name: "typeOfAddress",
+        options: [],
+      },
+      {
+        label: "PINCODE",
+        type: "text",
+        name: "pincode",
+        validation: {
+          minlength: 6,
+          maxlength: 6,
+          patternType: "Pincode",
+          pattern: "[0-9]+",
+          max: "9999999",
+          errMsg: "ADDRESS_PINCODE_INVALID",
+          title: "",
+        },
+      },
+      {
+        label: "STATE",
+        type: "text",
+        name: "state",
+        validation: {
+          pattern: /^[^{0-9}^\$\"<>?\\\\~!@#$%^()+={}\[\]*,/_:;“”‘’]{1,50}$/i,
+          errMsg: "CORE_COMMON_APPLICANT_STATE_INVALID",
+          patternType: "Name",
+          title: "",
+        },
+      },
+      {
+        label: "DISTRICT",
+        type: "text",
+        name: "district",
+        validation: {
+          pattern: /^[^{0-9}^\$\"<>?\\\\~!@#$%^()+={}\[\]*,/_:;“”‘’]{1,50}$/i,
+          errMsg: "CORE_COMMON_APPLICANT_DISTRICT_INVALID",
+          patternType: "Name",
+          title: "",
+        },
+      },
+      {
+        label: "CITY/TOWN",
+        type: "text",
+        name: "city",
+        validation: {
+          patternType: "Name",
+          errMsg: "CORE_COMMON_APPLICANT_CITY_INVALID",
+        },
+      },
+      {
+        label: "ADDRESS",
+        type: "text",
+        name: "locality",
+        validation: {
+          minlength: 2,
+          maxlength: 256,
+          pattern: /^[^\$\"<>?\\\\~`!@$%^()={}\[\]*:;“”‘’]{2,256}$/i,
+          errMsg: "CORE_COMMON_APPLICANT_ADDRESS_INVALID",
+        },
+      },
+    ],
+    validation: {},
+  },
+};
+
 const selectCompMultiConfig = {
   type: "component",
   key: "addressDetails",
@@ -118,13 +192,13 @@ const SelectComponentsMulti = ({ t, config, onSelect, formData, errors, setError
   );
 
   const modifiedSelectCompMultiConfig = useMemo(() => {
-    const config = { ...selectCompMultiConfig };
-    const typeOfAddressField = config.populators.inputs.find((input) => input.name === "typeOfAddress");
+    const updatedConfig = { ...(config?.formType === "Witness" ? witnessAddressConfig : selectCompMultiConfig) };
+    const typeOfAddressField = updatedConfig.populators.inputs.find((input) => input.name === "typeOfAddress");
     if (typeOfAddressField) {
       typeOfAddressField.options = typeOfAddressData;
     }
-    return config;
-  }, [typeOfAddressData]);
+    return updatedConfig;
+  }, [typeOfAddressData, config]);
 
   const addressLabel = useMemo(() => {
     return formData?.respondentType?.code;

@@ -233,31 +233,53 @@ function EfilingPaymentBreakdown({ setShowModal, header, subHeader }) {
             <span style={{ fontWeight: 700 }}>Rs {totalAmount}/-.</span>
             {` ${t("CS_MANDATORY_STEP_TO_FILE_CASE")}`}
           </div>
+          <div className="payment-calculator-wrapper" style={{ display: "flex", flexDirection: "column", maxHeight: "150px", overflowY: "auto" }}>
+            {paymentCalculation
+              .filter((item) => !item.isTotalFee)
+              .map((item) => (
+                <div
+                  style={{
+                    display: "flex",
+                    justifyContent: "space-between",
+                    alignItems: "center",
+                    paddingRight: "16px",
+                  }}
+                >
+                  <span>{item.key}</span>
+                  <span>
+                    {item.currency} {parseFloat(item.value).toFixed(2)}
+                  </span>
+                </div>
+              ))}
+          </div>
           <div className="payment-calculator-wrapper" style={{ display: "flex", flexDirection: "column" }}>
-            {paymentCalculation.map((item) => (
-              <div
-                style={{
-                  display: "flex",
-                  justifyContent: "space-between",
-                  alignItems: "center",
-                  borderTop: item.isTotalFee && "1px solid #BBBBBD",
-                  fontSize: item.isTotalFee && "16px",
-                  fontWeight: item.isTotalFee && "700",
-                  paddingTop: item.isTotalFee && "12px",
-                }}
-              >
-                <span>{item.key}</span>
-                <span>
-                  {item.currency} {parseFloat(item.value).toFixed(2)}
-                </span>
-              </div>
-            ))}
+            {paymentCalculation
+              .filter((item) => item.isTotalFee)
+              .map((item) => (
+                <div
+                  style={{
+                    display: "flex",
+                    justifyContent: "space-between",
+                    alignItems: "center",
+                    borderTop: "1px solid #BBBBBD",
+                    fontSize: "16px",
+                    fontWeight: "700",
+                    paddingTop: "12px",
+                    paddingRight: paymentCalculation.length >6 ? "28px" : "16px"
+                  }}
+                >
+                  <span>{item.key}</span>
+                  <span>
+                    {item.currency} {parseFloat(item.value).toFixed(2)}
+                  </span>
+                </div>
+              ))}
           </div>
           <div>
             <InfoCard
               variant={"default"}
               label={t("CS_COMMON_NOTE")}
-              style={{ margin: "100px 0 0 0", backgroundColor: "#ECF3FD" }}
+              style={{ backgroundColor: "#ECF3FD" }}
               additionalElements={[
                 <div style={{ display: "flex", alignItems: "center", gap: 4 }}>
                   <span>{t("CS_OFFLINE_PAYMENT_STEP_TEXT")}</span>

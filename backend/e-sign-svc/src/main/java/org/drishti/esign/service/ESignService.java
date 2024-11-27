@@ -36,7 +36,6 @@ public class ESignService {
     private final Encryption encryption;
     private final XmlFormDataSetter formDataSetter;
     private final XmlGenerator xmlGenerator;
-    private final HttpServletRequest servletRequest;
     private final FileStoreUtil fileStoreUtil;
     private final Producer producer;
     private final Configuration configuration;
@@ -44,20 +43,27 @@ public class ESignService {
     private final EsignRequestRepository repository;
 
     @Autowired
-    public ESignService(PdfEmbedder pdfEmbedder, XmlSigning xmlSigning, Encryption encryption, XmlFormDataSetter formDataSetter, XmlGenerator xmlGenerator, HttpServletRequest servletRequest, FileStoreUtil fileStoreUtil, Producer producer, Configuration configuration, EsignRequestRepository repository) {
+    public ESignService(PdfEmbedder pdfEmbedder, XmlSigning xmlSigning, Encryption encryption, XmlFormDataSetter formDataSetter, XmlGenerator xmlGenerator, FileStoreUtil fileStoreUtil, Producer producer, Configuration configuration, EsignRequestRepository repository) {
         this.pdfEmbedder = pdfEmbedder;
         this.xmlSigning = xmlSigning;
         this.encryption = encryption;
         this.formDataSetter = formDataSetter;
         this.xmlGenerator = xmlGenerator;
-        this.servletRequest = servletRequest;
         this.fileStoreUtil = fileStoreUtil;
         this.producer = producer;
         this.configuration = configuration;
         this.repository = repository;
     }
 
-    public ESignXmlForm signDoc(ESignRequest request) {
+    public ESignXmlForm signDoc(ESignRequest request, HttpServletRequest servletRequest) {
+
+        // Root Directory.
+        String uploadRootPath = servletRequest.getServletContext().getRealPath("upload");
+        File uploadRootDir = new File(uploadRootPath);
+        if (!uploadRootDir.exists()) {
+            uploadRootDir.mkdirs();
+        }
+
 
         ESignParameter eSignParameter = request.getESignParameter();
         eSignParameter.setId(UUID.randomUUID().toString());
@@ -65,9 +71,11 @@ public class ESignService {
         String tenantId = eSignParameter.getTenantId();
         String pageModule = eSignParameter.getPageModule();
         Resource resource = fileStoreUtil.fetchFileStoreObjectById(fileStoreId, eSignParameter.getTenantId());
-        String fileHash = pdfEmbedder.generateHash(resource);
+        File destFile = new File(uploadRootDir.getAbsolutePath() + File.separator + fileStoreId);
+        eSignParameter.setFilePath(destFile.getAbsolutePath());
+        String fileHash = pdfEmbedder.pdfSigner(resource, destFile, eSignParameter);
         ESignXmlData eSignXmlData = formDataSetter.setFormXmlData(fileHash, new ESignXmlData());
-        eSignXmlData.setTxn(tenantId + "-" + pageModule + "-" +eSignParameter.getId());
+        eSignXmlData.setTxn(tenantId + "-" + pageModule + "-" + eSignParameter.getId());
         String strToEncrypt = xmlGenerator.generateXml(eSignXmlData);  // this method is writing in testing.xml
         log.info(strToEncrypt);
         String xmlData = "";
@@ -115,13 +123,11 @@ public class ESignService {
         String fileStoreId = eSignDetails.getFileStoreId();
         String tenantId = eSignParameter.getTenantId();
         String response = eSignParameter.getResponse();
-        String signPlaceHolder = eSignDetails.getSignPlaceHolder();
+        String filePath =eSignDetails.getFilePath();
 
-        Resource resource = fileStoreUtil.fetchFileStoreObjectById(fileStoreId, eSignParameter.getTenantId());
         MultipartFile multipartFile;
         try {
-            //fixme: get the multipart file and upload into fileStore
-            multipartFile = pdfEmbedder.signPdfWithDSAndReturnMultipartFile(resource, response, signPlaceHolder);
+            multipartFile = pdfEmbedder.signPdfWithDSAndReturnMultipartFile(filePath, response, fileStoreId);
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
@@ -137,7 +143,6 @@ public class ESignService {
         producer.push(configuration.getEsignUpdateTopic(), eSignRequest);
         return signedFileStoreId;
     }
-
 
 
 }

@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { Redirect, Route, Switch, useLocation, useRouteMatch, useHistory } from "react-router-dom";
 import { AppModules } from "../../components/AppModules";
@@ -35,12 +35,32 @@ const EmployeeApp = ({
   const { path } = useRouteMatch();
   const location = useLocation();
   const showLanguageChange = location?.pathname?.includes("language-selection");
+  const [tenantsData, setTenantsData] = useState([]);
   const isUserProfile = userScreensExempted.some((url) => location?.pathname?.includes(url));
   useEffect(() => {
     Digit.UserService.setType("employee");
   }, []);
 
   const additionalComponent = initData?.modules?.filter((i) => i?.additionalComponent)?.map((i) => i?.additionalComponent);
+
+  const { data: rawTenantsData, isLoading: isTenantsDataLoading } = Digit.Hooks.useCustomMDMS(
+    Digit.ULBService.getStateId(),
+    "tenant",
+    [{ name: "tenants" }],
+    {
+      select: (data) => data,
+    }
+  );
+  useEffect(() => {
+    if (rawTenantsData?.tenant?.tenants) {
+      const transformedData = rawTenantsData["tenant"]?.tenants?.map((item) => ({
+        code: item.code,
+        city: item.name + "_" + item.description,
+        state: item.description,
+      }));
+      setTenantsData(transformedData);
+    }
+  }, [rawTenantsData]);
 
   return (
     <div className="employee">
@@ -70,7 +90,7 @@ const EmployeeApp = ({
           >
             <Switch>
               <Route path={`${path}/user/login`}>
-                <EmployeeLogin />
+                <EmployeeLogin tenantsData={tenantsData} isTenantsDataLoading={isTenantsDataLoading} />
               </Route>
               {/* <Route path={`${path}/user/forgot-password`}>
                 <ForgotPassword />
@@ -90,7 +110,7 @@ const EmployeeApp = ({
                 />
               </Route>
               <Route path={`${path}/user/language-selection`}>
-                <LanguageSelection />
+                <LanguageSelection tenantsData={tenantsData} />
               </Route>
               <Route>
                 <Redirect to={`${path}/user/language-selection`} />

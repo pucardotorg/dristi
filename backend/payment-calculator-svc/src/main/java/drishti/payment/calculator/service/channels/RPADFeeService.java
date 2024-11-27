@@ -49,7 +49,7 @@ public class RPADFeeService implements Payment {
                 throw new CustomException(ILLEGAL_STATE_EXCEPTION, "No matching task payment found for task type: " + taskType);
             }
 
-            Double courtFees = taskUtil.calculateCourtFees(filteredTaskPayment.get(0));
+            Double courtFees = Math.ceil(taskUtil.calculateCourtFees(filteredTaskPayment.get(0)));
             log.debug("Calculated court fees: {}", courtFees);
 
             return Calculation.builder()

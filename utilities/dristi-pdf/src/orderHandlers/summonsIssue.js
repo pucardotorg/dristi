@@ -172,6 +172,8 @@ async function summonsIssue(req, res, qrCode) {
           judgeSignature: judgeDetails.judgeSignature,
           courtSeal: judgeDetails.courtSeal,
           qrCodeUrl: base64Url,
+          orderHeading: mdmsCourtRoom.orderHeading,
+          judgeDesignation: judgeDetails.judgeDesignation,
         },
       ],
     };

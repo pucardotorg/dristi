@@ -202,6 +202,8 @@ const orderForRejectionReschedulingRequest = async (req, res, qrCode) => {
           courtSeal: judgeDetails.courtSeal,
           judgeName: judgeDetails.name,
           qrCodeUrl: base64Url,
+          orderHeading: mdmsCourtRoom.orderHeading,
+          judgeDesignation: judgeDetails.judgeDesignation,
         },
       ],
     };

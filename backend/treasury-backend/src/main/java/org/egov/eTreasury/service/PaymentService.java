@@ -307,10 +307,20 @@ public class PaymentService {
 
         String paymentStatus = String.valueOf(request.getTreasuryPaymentData().getStatus());
         BigDecimal totalAmountPaid = new BigDecimal(String.valueOf(request.getTreasuryPaymentData().getAmount()));
-
+        log.info("Tracking transaction for billingId : {} with paymentStatus : {} ",request.getTreasuryPaymentData().getBillId(),paymentStatus);
             if (config.isTest()) {
                 totalAmountPaid = BigDecimal.valueOf(request.getTreasuryPaymentData().getTotalDue());
             }
+            else if(!paymentStatus.equals("Y")){
+                log.info("Total Amount Paid : {} ",totalAmountPaid);
+                log.info("Total Due : {} ",request.getTreasuryPaymentData().getTotalDue());
+                log.info("eTreasury in test mode : {} ",config.isTest());
+                log.info("Transaction failed for billingId : {} ",request.getTreasuryPaymentData().getBillId());
+                return;
+            }
+            log.info("Total Amount Paid : {} ",totalAmountPaid);
+            log.info("Total Due : {} ",request.getTreasuryPaymentData().getTotalDue());
+            log.info("eTreasury in test mode : {} ",config.isTest());
 
         PaymentDetail paymentDetail = PaymentDetail.builder()
                 .billId(request.getTreasuryPaymentData().getBillId())

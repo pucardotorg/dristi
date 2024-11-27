@@ -112,13 +112,9 @@ exports.generateCasePdf = async (req, res, next) => {
 
 exports.caseComplaintPdf = async (req, res, next) => {
   try {
-    const caseId = req?.body?.cases?.id;
-    const tenantId = req?.body?.cases?.tenantId;
-
     const requestInfo = req?.body?.RequestInfo;
 
-    const cases = await caseService.searchCase(caseId, tenantId, requestInfo);
-    const caseData = cases?.data?.criteria?.[0]?.responseList?.[0];
+    const caseData = req?.body?.cases;
     
     const courtName = config?.courtName;
     const place = config?.courtPlace;

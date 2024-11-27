@@ -233,6 +233,7 @@ public class DemandService {
                 .businessService(businessService)
                 .taxPeriodFrom(config.getTaxPeriodFrom()).taxPeriodTo(config.getTaxPeriodTo())
                 .demandDetails(demandDetailList)
+                .billExpiryTime(TWO_YEARS_IN_MILLISECOND)
                 .additionalDetails(additionalDetails)
                 .build();
         return demand;

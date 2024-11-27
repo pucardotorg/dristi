@@ -6,6 +6,8 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.Map;
 
 @Data
@@ -34,5 +36,8 @@ public class EFilingParam {
 
     @JsonProperty("petitionFee")
     private Map<String, Range> petitionFee;
+
+    @JsonProperty("noOfAdvocateFees")
+    private LinkedHashMap<String, HashMap<String, Integer>> noOfAdvocateFees;
 
 }
