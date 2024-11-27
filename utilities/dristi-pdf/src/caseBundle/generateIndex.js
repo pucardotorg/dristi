@@ -784,6 +784,7 @@ async function processPendingAdmissionCase({
   }
 
   indexCopy.isRegistered = true;
+  indexCopy.contentLastModified = Date.now();
 
   return indexCopy;
 }
