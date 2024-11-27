@@ -1,4 +1,4 @@
-package org.pucar.dristi.util;
+package dristi;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -15,7 +15,18 @@ import org.pucar.dristi.config.MdmsDataConfig;
 import org.pucar.dristi.kafka.consumer.EventConsumerConfig;
 import org.pucar.dristi.service.IndividualService;
 import org.pucar.dristi.service.SmsNotificationService;
+import org.pucar.dristi.util.AdvocateUtil;
+import org.pucar.dristi.util.ApplicationUtil;
+import org.pucar.dristi.util.CaseOverallStatusUtil;
+import org.pucar.dristi.util.CaseUtil;
+import org.pucar.dristi.util.EvidenceUtil;
+import org.pucar.dristi.util.TaskUtil;
 import org.pucar.dristi.web.models.*;
+import org.pucar.dristi.web.models.CaseCriteria;
+import org.pucar.dristi.web.models.CaseSearchRequest;
+import org.pucar.dristi.web.models.PendingTask;
+import org.pucar.dristi.web.models.PendingTaskType;
+import org.pucar.dristi.web.models.SmsTemplateData;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
@@ -219,7 +230,7 @@ public class IndexerUtils {
             try {
                 String jsonString = requestInfo.toString();
                 RequestInfo request = mapper.readValue(jsonString, RequestInfo.class);
-                CaseSearchRequest caseSearchRequest = createCaseSearchRequest(request, filingNumber);
+                org.pucar.dristi.web.models.CaseSearchRequest caseSearchRequest = createCaseSearchRequest(request, filingNumber);
                 JsonNode caseDetails = caseUtil.searchCaseDetails(caseSearchRequest);
                 JsonNode litigants = caseUtil.getLitigants(caseDetails);
                 Set<String> individualIds = caseUtil.getIndividualIds(litigants);
@@ -230,7 +241,7 @@ public class IndexerUtils {
                     representativeIds = advocateUtil.getAdvocate(request,representativeIds.stream().toList());
                 }
                 individualIds.addAll(representativeIds);
-                SmsTemplateData smsTemplateData = enrichSmsTemplateData(details);
+                org.pucar.dristi.web.models.SmsTemplateData smsTemplateData = enrichSmsTemplateData(details);
                 Set<String> phonenumbers = callIndividualService(request, individualIds);
                 for (String number : phonenumbers) {
                     notificationService.sendNotification(request, smsTemplateData, PENDING_TASK_CREATED, number);
@@ -266,17 +277,16 @@ public class IndexerUtils {
         return mobileNumber;
     }
 
-    private SmsTemplateData enrichSmsTemplateData(Map<String, String> details) {
+    private org.pucar.dristi.web.models.SmsTemplateData enrichSmsTemplateData(Map<String, String> details) {
         return SmsTemplateData.builder()
                 .cmpNumber(details.get("cmpNumber"))
-                .tenantId(config.getEgovStateTenantId())
                 .efilingNumber(details.get("filingNumber")).build();
     }
 
-    public CaseSearchRequest createCaseSearchRequest(RequestInfo requestInfo, String filingNumber) {
-        CaseSearchRequest caseSearchRequest = new CaseSearchRequest();
+    public org.pucar.dristi.web.models.CaseSearchRequest createCaseSearchRequest(RequestInfo requestInfo, String filingNumber) {
+        org.pucar.dristi.web.models.CaseSearchRequest caseSearchRequest = new CaseSearchRequest();
         caseSearchRequest.setRequestInfo(requestInfo);
-        CaseCriteria caseCriteria = CaseCriteria.builder().filingNumber(filingNumber).defaultFields(false).build();
+        org.pucar.dristi.web.models.CaseCriteria caseCriteria = CaseCriteria.builder().filingNumber(filingNumber).defaultFields(false).build();
         caseSearchRequest.addCriteriaItem(caseCriteria);
         return caseSearchRequest;
     }
@@ -288,7 +298,7 @@ public class IndexerUtils {
         boolean isCompleted = true;
         boolean isGeneric = false;
 
-        List<PendingTaskType> pendingTaskTypeList = mdmsDataConfig.getPendingTaskTypeMap().get(entityType);
+        List<org.pucar.dristi.web.models.PendingTaskType> pendingTaskTypeList = mdmsDataConfig.getPendingTaskTypeMap().get(entityType);
         if (pendingTaskTypeList == null) return caseDetails;
 
         // Determine name and isCompleted based on status and action

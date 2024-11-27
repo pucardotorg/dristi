@@ -1,4 +1,4 @@
-package org.pucar.dristi.service;
+package dristi;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.json.JSONArray;
@@ -10,6 +10,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.pucar.dristi.config.Configuration;
+import org.pucar.dristi.service.IndexerService;
 import org.pucar.dristi.util.IndexerUtils;
 import org.pucar.dristi.util.Util;
 import org.springframework.web.client.RestTemplate;

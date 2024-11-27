@@ -1,4 +1,4 @@
-package org.pucar.dristi.util;
+package dristi;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -11,6 +11,8 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.pucar.dristi.config.Configuration;
 import org.pucar.dristi.repository.ServiceRequestRepository;
+import org.pucar.dristi.util.TaskUtil;
+import org.pucar.dristi.util.Util;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNull;

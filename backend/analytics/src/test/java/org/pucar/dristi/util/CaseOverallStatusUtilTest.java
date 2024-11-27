@@ -1,4 +1,4 @@
-package org.pucar.dristi.util;
+package dristi;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -15,6 +15,9 @@ import org.mockito.MockitoAnnotations;
 import org.pucar.dristi.config.Configuration;
 import org.pucar.dristi.config.MdmsDataConfig;
 import org.pucar.dristi.kafka.Producer;
+import org.pucar.dristi.util.CaseOverallStatusUtil;
+import org.pucar.dristi.util.HearingUtil;
+import org.pucar.dristi.util.OrderUtil;
 import org.pucar.dristi.web.models.CaseOutcome;
 import org.pucar.dristi.web.models.CaseOutcomeType;
 import org.pucar.dristi.web.models.CaseOverallStatusType;

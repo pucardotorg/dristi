@@ -1,7 +1,9 @@
-package org.pucar.dristi.web.models;
+package dristi;
 
 import org.egov.common.contract.request.RequestInfo;
 import org.junit.jupiter.api.Test;
+import org.pucar.dristi.web.models.PendingTask;
+import org.pucar.dristi.web.models.PendingTaskRequest;
 
 import static org.junit.jupiter.api.Assertions.*;
 

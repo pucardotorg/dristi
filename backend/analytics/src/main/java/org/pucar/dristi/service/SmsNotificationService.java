@@ -1,4 +1,4 @@
-package org.pucar.dristi.service;
+package dristi;
 
 import com.jayway.jsonpath.JsonPath;
 import lombok.extern.slf4j.Slf4j;

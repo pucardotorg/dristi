@@ -1,4 +1,4 @@
-package org.pucar.dristi.web.models;
+package dristi;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;

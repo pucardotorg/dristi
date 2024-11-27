@@ -1,4 +1,4 @@
-package org.pucar.dristi.repository;
+package dristi;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.egov.tracer.model.ServiceCallException;
@@ -10,6 +10,7 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.pucar.dristi.repository.ServiceRequestRepository;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.ResponseEntity;

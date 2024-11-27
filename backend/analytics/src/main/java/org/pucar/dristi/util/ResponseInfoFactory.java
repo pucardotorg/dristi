@@ -1,4 +1,4 @@
-package org.pucar.dristi.util;
+package dristi;
 
 import org.egov.common.contract.request.RequestInfo;
 import org.egov.common.contract.response.ResponseInfo;

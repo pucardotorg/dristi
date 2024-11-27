@@ -1,4 +1,4 @@
-package org.pucar.dristi.web.models;
+package dristi;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.validation.Valid;
@@ -6,6 +6,7 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.pucar.dristi.web.models.Advocate;
 import org.springframework.validation.annotation.Validated;
 
 import java.util.List;

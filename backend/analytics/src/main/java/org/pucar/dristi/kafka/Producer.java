@@ -1,4 +1,4 @@
-package org.pucar.dristi.kafka;
+package dristi;
 
 import lombok.extern.slf4j.Slf4j;
 import org.egov.tracer.kafka.CustomKafkaTemplate;

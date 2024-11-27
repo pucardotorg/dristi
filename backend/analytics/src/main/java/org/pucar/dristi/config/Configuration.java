@@ -1,4 +1,4 @@
-package org.pucar.dristi.config;
+package dristi;
 
 import jakarta.annotation.PostConstruct;
 import lombok.*;

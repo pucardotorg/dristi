@@ -1,4 +1,4 @@
-package org.pucar.dristi.service;
+package dristi;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
@@ -13,6 +13,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.pucar.dristi.config.Configuration;
+import org.pucar.dristi.service.PendingTaskService;
 import org.pucar.dristi.util.IndexerUtils;
 import org.pucar.dristi.web.models.PendingTask;
 import org.pucar.dristi.web.models.PendingTaskRequest;

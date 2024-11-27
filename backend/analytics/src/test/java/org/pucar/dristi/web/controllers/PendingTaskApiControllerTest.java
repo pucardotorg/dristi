@@ -1,4 +1,4 @@
-package org.pucar.dristi.web.controllers;
+package dristi;
 
 import org.egov.common.contract.request.RequestInfo;
 import org.egov.common.contract.response.ResponseInfo;
@@ -11,7 +11,11 @@ import org.mockito.MockitoAnnotations;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.pucar.dristi.service.PendingTaskService;
 import org.pucar.dristi.util.ResponseInfoFactory;
+import org.pucar.dristi.web.controllers.PendingTaskApiController;
 import org.pucar.dristi.web.models.*;
+import org.pucar.dristi.web.models.PendingTask;
+import org.pucar.dristi.web.models.PendingTaskRequest;
+import org.pucar.dristi.web.models.PendingTaskResponse;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 
@@ -40,8 +44,8 @@ class PendingTaskApiControllerTest {
     @Test
     void testPendingTaskV1CreatePost_Success() {
         // Mock PendingTaskService response
-        PendingTask expectedTask = new PendingTask();
-        when(pendingTaskService.createPendingTask(any(PendingTaskRequest.class)))
+        org.pucar.dristi.web.models.PendingTask expectedTask = new org.pucar.dristi.web.models.PendingTask();
+        when(pendingTaskService.createPendingTask(any(org.pucar.dristi.web.models.PendingTaskRequest.class)))
                 .thenReturn(expectedTask);
 
         // Mock ResponseInfoFactory response
@@ -50,15 +54,15 @@ class PendingTaskApiControllerTest {
                 .thenReturn(expectedResponseInfo);
 
         // Create mock PendingTaskRequest
-        PendingTaskRequest requestBody = new PendingTaskRequest();
+        org.pucar.dristi.web.models.PendingTaskRequest requestBody = new org.pucar.dristi.web.models.PendingTaskRequest();
         requestBody.setRequestInfo(new RequestInfo());
 
         // Perform POST request
-        ResponseEntity<PendingTaskResponse> response = controller.pendingTaskV1CreatePost(requestBody);
+        ResponseEntity<org.pucar.dristi.web.models.PendingTaskResponse> response = controller.pendingTaskV1CreatePost(requestBody);
 
         // Verify response status and content
         assertEquals(HttpStatus.OK, response.getStatusCode());
-        PendingTaskResponse actualResponse = response.getBody();
+        org.pucar.dristi.web.models.PendingTaskResponse actualResponse = response.getBody();
         assertNotNull(actualResponse);
         assertEquals(expectedTask, actualResponse.getPendingTask());
         assertEquals(expectedResponseInfo, actualResponse.getResponseInfo());
@@ -67,7 +71,7 @@ class PendingTaskApiControllerTest {
     @Test
     void testPendingTaskV1CreatePost_InvalidRequest() {
         // Prepare invalid request
-        PendingTaskRequest requestBody = new PendingTaskRequest();  // Missing required fields
+        org.pucar.dristi.web.models.PendingTaskRequest requestBody = new org.pucar.dristi.web.models.PendingTaskRequest();  // Missing required fields
 
         // Expected validation error
         when(pendingTaskService.createPendingTask(requestBody)).thenThrow(new IllegalArgumentException("Invalid request"));
@@ -84,7 +88,7 @@ class PendingTaskApiControllerTest {
     @Test
     void testPendingTaskV1CreatePost_EmptyList() {
         // Mock service to return an empty list
-        when(pendingTaskService.createPendingTask(any(PendingTaskRequest.class))).thenReturn(new PendingTask());
+        when(pendingTaskService.createPendingTask(any(org.pucar.dristi.web.models.PendingTaskRequest.class))).thenReturn(new org.pucar.dristi.web.models.PendingTask());
 
         // Mock ResponseInfoFactory
         ResponseInfo expectedResponseInfo = new ResponseInfo();
@@ -92,28 +96,28 @@ class PendingTaskApiControllerTest {
                 .thenReturn(expectedResponseInfo);
 
         // Prepare request
-        PendingTaskRequest requestBody = new PendingTaskRequest();
+        org.pucar.dristi.web.models.PendingTaskRequest requestBody = new org.pucar.dristi.web.models.PendingTaskRequest();
         requestBody.setRequestInfo(new RequestInfo());
 
         // Perform POST request
-        ResponseEntity<PendingTaskResponse> response = controller.pendingTaskV1CreatePost(requestBody);
+        ResponseEntity<org.pucar.dristi.web.models.PendingTaskResponse> response = controller.pendingTaskV1CreatePost(requestBody);
 
         // Verify OK status and response
         assertEquals(HttpStatus.OK, response.getStatusCode());
-        PendingTaskResponse actualResponse = response.getBody();
+        org.pucar.dristi.web.models.PendingTaskResponse actualResponse = response.getBody();
         assertNotNull(actualResponse);
-        assertEquals(new PendingTask(), actualResponse.getPendingTask());
+        assertEquals(new org.pucar.dristi.web.models.PendingTask(), actualResponse.getPendingTask());
     }
 
     @Test
     void testPendingTaskV1CreatePost_Neutral() {
         // Create a neutral request with some optional fields missing
-        PendingTaskRequest neutralPendingTaskRequest = new PendingTaskRequest();
+        org.pucar.dristi.web.models.PendingTaskRequest neutralPendingTaskRequest = new org.pucar.dristi.web.models.PendingTaskRequest();
         neutralPendingTaskRequest.setRequestInfo(new RequestInfo());
         // Add more fields if necessary, leaving some optional fields empty
 
         // Mock PendingTaskService response
-        PendingTask expectedTask = new PendingTask();
+        org.pucar.dristi.web.models.PendingTask expectedTask = new PendingTask();
         when(pendingTaskService.createPendingTask(any(PendingTaskRequest.class)))
                 .thenReturn(expectedTask);
 
@@ -123,7 +127,7 @@ class PendingTaskApiControllerTest {
                 .thenReturn(expectedResponseInfo);
 
         // Perform POST request
-        ResponseEntity<PendingTaskResponse> response = controller.pendingTaskV1CreatePost(neutralPendingTaskRequest);
+        ResponseEntity<org.pucar.dristi.web.models.PendingTaskResponse> response = controller.pendingTaskV1CreatePost(neutralPendingTaskRequest);
 
         // Verify response status and content
         assertEquals(HttpStatus.OK, response.getStatusCode());

@@ -1,4 +1,4 @@
-package org.pucar.dristi.util;
+package dristi;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.jayway.jsonpath.JsonPath;
@@ -11,6 +11,15 @@ import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.pucar.dristi.config.Configuration;
 import org.pucar.dristi.config.MdmsDataConfig;
+import org.pucar.dristi.util.*;
+import org.pucar.dristi.util.ApplicationUtil;
+import org.pucar.dristi.util.CaseOverallStatusUtil;
+import org.pucar.dristi.util.CaseUtil;
+import org.pucar.dristi.util.EvidenceUtil;
+import org.pucar.dristi.util.HearingUtil;
+import org.pucar.dristi.util.IndexerUtils;
+import org.pucar.dristi.util.OrderUtil;
+import org.pucar.dristi.util.TaskUtil;
 import org.pucar.dristi.web.models.PendingTask;
 import org.pucar.dristi.web.models.PendingTaskType;
 import org.springframework.http.*;
@@ -28,7 +37,7 @@ import static org.pucar.dristi.config.ServiceConstants.*;
 public class IndexerUtilsTest {
 
     @InjectMocks
-    private IndexerUtils indexerUtils;
+    private org.pucar.dristi.util.IndexerUtils indexerUtils;
 
     @Mock
     private RestTemplate restTemplate;
@@ -93,10 +102,10 @@ public class IndexerUtilsTest {
 
     @Test
     public void testIsNullOrEmpty() {
-        assertTrue(IndexerUtils.isNullOrEmpty(null));
-        assertTrue(IndexerUtils.isNullOrEmpty(""));
-        assertTrue(IndexerUtils.isNullOrEmpty(" "));
-        assertFalse(IndexerUtils.isNullOrEmpty("test"));
+        assertTrue(org.pucar.dristi.util.IndexerUtils.isNullOrEmpty(null));
+        assertTrue(org.pucar.dristi.util.IndexerUtils.isNullOrEmpty(""));
+        assertTrue(org.pucar.dristi.util.IndexerUtils.isNullOrEmpty(" "));
+        assertFalse(org.pucar.dristi.util.IndexerUtils.isNullOrEmpty("test"));
     }
 
     @Test

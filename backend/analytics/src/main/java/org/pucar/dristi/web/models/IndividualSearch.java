@@ -1,4 +1,4 @@
-package org.pucar.dristi.web.models;
+package dristi;
 
 
 import com.fasterxml.jackson.annotation.JsonFormat;

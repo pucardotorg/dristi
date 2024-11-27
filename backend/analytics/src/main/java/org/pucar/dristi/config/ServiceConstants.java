@@ -1,4 +1,4 @@
-package org.pucar.dristi.config;
+package dristi;
 
 
 import org.springframework.stereotype.Component;
