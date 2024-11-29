@@ -11,7 +11,6 @@ participant ViewCaseUI as VU
 participant DocumentSubmisionUI as DU
 participant DocumentReviewUI as DRU
 
-
 box DRISIT Services
 participant CaseSvc as CS #gold
 participant ArtifactSvc as ARS #gold
@@ -19,6 +18,7 @@ participant ArtifactUtilSvc as ARUS #gold
 end box
 
 participant ESignSvc as ES #orange
+participant NotificationSvc as NS #orange
 
 box DIGIT Services #lightgray
 participant PDFSvc as PS #lightgreen
@@ -67,5 +67,6 @@ ARS->W++: action "E-SIGN"
 W->K: post state transition event
 return "COMPLETED"
 return 200 (artifact updated)
-
-@enduml
+ARS->NS++: send notification to other parties
+return
+@endum
