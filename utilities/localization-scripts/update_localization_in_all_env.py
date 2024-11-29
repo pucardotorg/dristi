@@ -1,118 +1,139 @@
 import csv
 import requests
+import os
 
-#all env list with the credentials
-env_list=[
-    {
-        "url":"dristi-kerala-dev.pucar.org",
-        'password': 'Beehyv@123',
-        "username":"workbenchUser",
-    },
-    {
-        "url":"dristi-kerala-qa.pucar.org",
-        'password': 'Beehyv@123',
-        "username":"mdmsQa",
-    },
-    {
-        "url":"dristi-kerala-uat.pucar.org",
-        'password': 'Beehyv@123',
-        "username":"uatWorkbench01",
-    },
-    {
-        "url":"dristi-dev.pucar.org",
-        'password': 'Beehyv@123',
-        "username":"mdmsDpgDev",
-    }
-]
+# Prompt user to input environment details
+env_list = []
+print("Enter environment details (type 'done' to finish):")
+while True:
+    env_url = input("Environment URL (e.g., dristi-kerala-dev.pucar.org): ").strip()
+    if env_url.lower() == 'done':
+        break
+    username = input(f"Username for {env_url}: ").strip()
+    password = input(f"Password for {env_url}: ").strip()
+    tenant_id = input(f"Tenant ID for {env_url} (e.g., kl): ").strip()
+    env_list.append({"url": env_url, "username": username, "password": password, "tenantId": tenant_id})
 
-# files we need to do localization (Excel file format should be: code, message)
-# add files in file_data in the below format
-file_data = [
-    # {'filename': 'case.csv', 'module': 'case'},
-    # {'filename': 'common.csv', 'module': 'common'},
-    # {'filename': 'home.csv', 'module': 'home'},
-    # {'filename': 'hearings.csv', 'module': 'hearings'},
-    # {'filename': 'orders.csv', 'module': 'orders'},
-    # {'filename': 'submissions.csv', 'module': 'submissions'},
-]
+if not env_list:
+    print("No environments provided. Exiting.")
+    exit()
 
-language = "en_IN" # change the value acc. to the language needed for localization
+# Prompt user for file details
+file_data = []
+print("Enter file details for localization (type 'done' to finish):")
+while True:
+    filename = input("CSV filename (e.g., home.csv): ").strip()
+    if filename.lower() == 'done':
+        break
+    if not os.path.isfile(filename):
+        print(f"File {filename} does not exist. Please check the path and try again.")
+        continue
+    module = input(f"Module for {filename}: ").strip()
+    file_data.append({'filename': filename, 'module': module})
 
+if not file_data:
+    print("No files provided for localization. Exiting.")
+    exit()
+
+language = input("Enter language code (default: en_IN): ").strip() or "en_IN"
+
+# Headers for authentication and localization
 headers = {
     'accept': 'application/json, text/plain, */*',
     'accept-language': 'en-US,en;q=0.7',
-    'authorization': 'Basic ZWdvdi11c2VyLWNsaWVudDo=',
+    "Authorization": "Basic ZWdvdi11c2VyLWNsaWVudDo=",
     'content-type': 'application/x-www-form-urlencoded',
-    'origin': 'https://dristi-kerala-dev.pucar.org',
-    'priority': 'u=1, i',
-    'sec-ch-ua': '"Chromium";v="130", "Brave";v="130", "Not?A_Brand";v="99"',
-    'sec-ch-ua-mobile': '?0',
-    'sec-ch-ua-platform': '"Linux"',
-    'sec-fetch-dest': 'empty',
-    'sec-fetch-mode': 'cors',
-    'sec-fetch-site': 'same-origin',
-    'sec-gpc': '1',
-    'user-agent': 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/130.0.0.0 Safari/537.36'
+    'user-agent': 'Mozilla/5.0'
 }
 
 localization_headers = {
     'Content-Type': 'application/json'
 }
 
-data ={
+# Authentication data template
+data = {
     'userType': 'EMPLOYEE',
-    'tenantId': 'kl',
     'scope': 'read',
     'grant_type': 'password'
 }
 
-def get_auth_token(url,headers,data):
-    try :
-        response = requests.post(url,headers=headers,data=data).json()
-        return response['access_token']
-    except:
-        print("some ting went wrong ")
+def get_auth_token(url, headers, data):
+    """Fetch authentication token for the environment."""
+    try:
+        response = requests.post(url, headers=headers, data=data)
+        response.raise_for_status()
+        token = response.json().get('access_token')
+        if not token:
+            raise ValueError("Authentication response did not contain a token.")
+        return token
+    except requests.exceptions.RequestException as e:
+        print(f"Error fetching token for {url}: {e}")
+        return None
+    except ValueError as ve:
+        print(ve)
+        return None
 
-# fetching the token for all env and saving it back in env_list with token of that env
-for index in range(len(env_list)):
-    env=env_list[index]
-    env_url="https://"+env['url']+"/user/oauth/token?_=1731396254439"
-    data['username']= env['username']
-    data['password']=env['password']
-    env['token']=get_auth_token(env_url,headers,data)
+# Fetch tokens for all environments
+for index, env in enumerate(env_list):
+    env_url = f"https://{env['url']}/user/oauth/token"
+    data['username'] = env['username']
+    data['password'] = env['password']
+    data['tenantId'] = env['tenantId']
+    print(f"Fetching token for environment: {env['url']}")
+    token = get_auth_token(env_url, headers, data)
+    if token:
+        env['token'] = token
+        print(f"Token fetched successfully for {env['url']}.")
+    else:
+        print(f"Failed to fetch token for {env['url']}. Skipping this environment.")
+        env_list[index]['token'] = None
 
+# Remove environments without tokens
+env_list = [env for env in env_list if env.get('token')]
 
-# saving one localization message in all env at a time and then moving ahead to other
+if not env_list:
+    print("No environments with valid tokens. Exiting.")
+    exit()
+
+# Process each localization file and upload messages
 for file_module in file_data:
-    with open(file_module['filename'], mode='r') as file:
-        csv_reader = csv.reader(file)
-        msg_index=1
-        module = "rainmaker-"+file_module['module']
-        for index, row in enumerate(csv_reader):
-            text=str(row[msg_index])
-            if "{" in text  or text=='-' or text=="NA" :
-                print("skiip" , index, row[0])
-                continue
-            if row[0] and text :
-                for env in env_list:
-                    loc_url = 'https://'+ env['url']+'/localization/messages/v1/_upsert'
-                    loc_data = {
-                        "RequestInfo": {
-                            "authToken": env['token']
-                        
-                        },
-                        "tenantId": "kl",
-                        "messages": [
-                            {
-                                "code": row[0],
-                                "message": row[msg_index],
+    try:
+        with open(file_module['filename'], mode='r') as file:
+            csv_reader = csv.reader(file)
+            module = f"rainmaker-{file_module['module']}"
+            for index, row in enumerate(csv_reader):
+                # Skip invalid or unwanted rows
+                if len(row) < 2:
+                    print(f"Skipping invalid row {index}: {row}")
+                    continue
+
+                text = str(row[1]).strip()
+                if "{" in text or text in ('-', "NA"):
+                    print(f"Skipping row {index} with invalid text: {row}")
+                    continue
+
+                if row[0].strip() and text:
+                    for env in env_list:
+                        loc_url = f'https://{env["url"]}/localization/messages/v1/_upsert'
+                        loc_data = {
+                            "RequestInfo": {"authToken": env['token']},
+                            "tenantId": env['tenantId'],
+                            "messages": [{
+                                "code": row[0].strip(),
+                                "message": text,
                                 "module": module,
-                                "locale": language 
-                            }
-                        ]
-                    }
-                    print(row[0],row[msg_index])
-                    response = requests.post(loc_url, headers=localization_headers, json=loc_data)
-                    if response.status_code != 200:
-                        print(response.status_code)
-                        break
+                                "locale": language
+                            }]
+                        }
+                        try:
+                            response = requests.post(loc_url, headers=localization_headers, json=loc_data)
+                            response.raise_for_status()
+                            print(f"Uploaded: {row[0].strip()} to {env['url']} for tenantId {env['tenantId']}.")
+                        except requests.exceptions.RequestException as e:
+                            print(f"Error uploading {row[0]} to {env['url']} for tenantId {env['tenantId']}: {e}")
+    except FileNotFoundError:
+        print(f"File not found: {file_module['filename']}")
+    except Exception as e:
+        print(f"An unexpected error occurred while processing {file_module['filename']}: {e}")
+
+print("Localization upload process completed.")
