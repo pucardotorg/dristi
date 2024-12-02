@@ -22,7 +22,6 @@ if (!fs.existsSync(TEMP_FILES_DIR)) {
 const A4_WIDTH = 595.28; // A4 width in points
 const A4_HEIGHT = 841.89; // A4 height in points
 
-
 /**
  *
  * @param  {...PDFDocument} pdfDocuments
@@ -75,7 +74,8 @@ async function persistPDF(pdfDoc, tenantId, requestInfo) {
  */
 function filterCaseBundleBySection(caseBundleMasterData, sectionName) {
   return caseBundleMasterData.filter(
-    (indexItem) => indexItem.name === sectionName && indexItem.isactive
+    (indexItem) =>
+      indexItem.name === sectionName && indexItem.isactive === "yes"
   );
 }
 
@@ -287,7 +287,7 @@ async function processPendingAdmissionCase({
   )[0];
 
   const complaintFileStoreId = courtCase.documents.find(
-     (doc) => doc.documentType === "case.complaint.signed"
+    (doc) => doc.documentType === "case.complaint.signed"
     //(doc) => doc.documentType === "case.cheque"
   )?.fileStore;
   if (!complaintFileStoreId) {
@@ -337,7 +337,7 @@ async function processPendingAdmissionCase({
   );
   copiedPages.forEach((page) => caseBundlePdfDoc.addPage(page));
 
-  if (complaintSection.docketpagerequired) {
+  if (complaintSection.docketpagerequired === "yes") {
     const coverCaseName = courtCase.caseTitle;
     const coverCaseType = courtCase.caseType;
     const coverCaseNumber =
@@ -402,7 +402,7 @@ async function processPendingAdmissionCase({
       if (!documentFileStoreId) {
         return null;
       }
-      if (section.docketpagerequired) {
+      if (section.docketpagerequired === "yes") {
         const complainant =
           courtCase?.additionalDetails?.complainantDetails?.formdata?.[0]?.data;
         const docketComplainantName = [
@@ -477,7 +477,7 @@ async function processPendingAdmissionCase({
       if (!documentFileStoreId) {
         return null;
       }
-      if (section.docketpagerequired) {
+      if (section.docketpagerequired === "yes") {
         const complainant =
           courtCase?.additionalDetails?.complainantDetails?.formdata?.[0]?.data;
         const docketComplainantName = [
@@ -577,7 +577,7 @@ async function processPendingAdmissionCase({
 
     const vakalatLineItems = await Promise.all(
       vakalats.map(async (vakalat) => {
-        if (section.docketpagerequired) {
+        if (section.docketpagerequired === "yes") {
           const mergedVakalatDocumentFileStoreId = await applyDocketToDocument(
             vakalat.fileStoreId,
             {
