@@ -25,17 +25,22 @@ router.post(
     } = req.body;
 
     // Validate required parameters
-    if (!index || !caseNumber || !RequestInfo) {
+    if (!index || !caseNumber || !RequestInfo || !tenantId) {
       return renderError(
         res,
-        "Missing required fields: 'index', 'caseNumber', or 'RequestInfo'.",
+        "Missing required fields: 'index', 'caseNumber', 'tenantId' or 'RequestInfo'.",
         400
       );
     }
 
     try {
       // Call buildCasePdf and get updated index with pageCount
-      const result = await buildCasePdf(caseNumber, index, RequestInfo, tenantId);
+      const result = await buildCasePdf(
+        caseNumber,
+        index,
+        RequestInfo,
+        tenantId
+      );
 
       // Extract pageCount and remove it from updatedIndex
       const { pageCount, ...updatedIndex } = result;
@@ -50,7 +55,7 @@ router.post(
       renderError(
         res,
         "An error occurred while creating the case bundle PDF.",
-        500,
+        400,
         error
       );
     }
@@ -66,11 +71,16 @@ router.post(
     if (!tenantId || !caseId || !index || !state || !requestInfo) {
       return res.status(400).json({
         message:
-        "Missing required fields: 'tenantId', 'caseId', 'index', 'state', or 'requestInfo'.",
+          "Missing required fields: 'tenantId', 'caseId', 'index', 'state', or 'requestInfo'.",
       });
     }
 
-    logger.info("recd request to process case bundle for:", JSON.stringify({caseId, index, state, requestInfo}));
+    logger.info("recd request to process case bundle for:", {
+      caseId,
+      index,
+      state,
+      requestInfo,
+    });
 
     try {
       // Process the case bundle
@@ -89,7 +99,7 @@ router.post(
       });
     } catch (error) {
       console.error("Error processing case bundle:", error);
-      res.status(500).json({
+      res.status(400).json({
         message: "An error occurred while processing the case bundle.",
         error: error.message,
       });
@@ -150,7 +160,7 @@ router.post(
     } catch (error) {
       console.error("Error during PDF merging:", error?.message);
 
-      res.status(500).json({
+      res.status(400).json({
         message: "Error creating merged PDF",
         error: error.message,
       });

@@ -1,76 +1,35 @@
-const { search_pdf, create_file } = require("../api");
+const { search_pdf, create_file, search_mdms } = require("../api");
 const { PDFDocument, rgb } = require("pdf-lib");
 const axios = require("axios");
 const fs = require("fs");
 const path = require("path");
 
-// Mock Case Bundle Design
-const caseBundleDesignMock = [
-  {
-    section_name: "Case Cover Page",
-    isEnabled: true,
-    title: "Case Cover Page",
-    hasHeader: false,
-    hasFooter: true,
-    name: "titlepage",
-    doctype: null,
-    docketpagerequired: "no",
-    sorton: null,
-    isactive: "yes",
-  },
-  {
-    section_name: "Case History",
-    isEnabled: true,
-    title: "Case History",
-    hasHeader: false,
-    hasFooter: false,
-    name: "adiary",
-    doctype: null,
-    docketpagerequired: "no",
-    sorton: null,
-    isactive: "no",
-  },
-  {
-    section_name: "Pending Applications",
-    isEnabled: true,
-    title: "Pending Applications",
-    hasHeader: true,
-    hasFooter: true,
-    name: "pendingapplications",
-    doctype: "applicationNumber",
-    docketpagerequired: "yes",
-    sorton: "applicationNumber",
-    isactive: "yes",
-  },
-  {
-    section_name: "Complaint",
-    isEnabled: true,
-    title: "Complaint",
-    hasHeader: false,
-    hasFooter: true,
-    name: "complaint",
-    doctype: null,
-    docketpagerequired: "yes",
-    sorton: null,
-    isactive: "yes",
-  },
-  {
-    section_name: "Affidavit",
-    isEnabled: true,
-    title: "Affidavit",
-    hasHeader: false,
-    hasFooter: true,
-    name: "affidavit",
-    doctype: null,
-    docketpagerequired: "yes",
-    sorton: null,
-    isactive: "yes",
-  },
-];
+/**
+ * @typedef CaseBundleMaster
+ * @type {object}
+ * @property {string} Items
+ * @property {string} docketpagerequired
+ * @property {string} doctype
+ * @property {string} id
+ * @property {string} isactive
+ * @property {string} name
+ * @property {string} section
+ * @property {string} sorton
+ */
 
 async function buildCasePdf(caseNumber, index, requestInfo, tenantId) {
   try {
-    const caseBundleDesign = caseBundleDesignMock;
+    /**
+     * @type {CaseBundleMaster[]}
+     */
+    const caseBundleDesign = await search_mdms(
+      null,
+      "CaseManagement.case_bundle_master",
+      tenantId,
+      requestInfo
+    ).then((mdmsRes) => {
+      return mdmsRes.data.mdms.filter((x) => x.isActive).map((x) => x.data);
+    });
 
     if (!caseBundleDesign || caseBundleDesign.length === 0) {
       throw new Error("No case bundle design found in MDMS.");
@@ -87,7 +46,7 @@ async function buildCasePdf(caseNumber, index, requestInfo, tenantId) {
       }
 
       const sectionConfig = caseBundleDesign.find(
-        (design) => design.name === section.name && design.isEnabled
+        (design) => design.name === section.name && design.isactive
       );
 
       if (!sectionConfig) {
@@ -109,9 +68,15 @@ async function buildCasePdf(caseNumber, index, requestInfo, tenantId) {
 
         try {
           // Fetch PDF from fileStoreId
-          const pdfResponse = await search_pdf(tenantId, item.fileStoreId, requestInfo);
-          console.log(pdfResponse);
-          if (pdfResponse.status === 200 && pdfResponse.data[item.fileStoreId]) {
+          const pdfResponse = await search_pdf(
+            tenantId,
+            item.fileStoreId,
+            requestInfo
+          );
+          if (
+            pdfResponse.status === 200 &&
+            pdfResponse.data[item.fileStoreId]
+          ) {
             const pdfUrl = pdfResponse.data[item.fileStoreId];
             const pdfFetchResponse = await axios.get(pdfUrl, {
               responseType: "arraybuffer",
@@ -139,9 +104,13 @@ async function buildCasePdf(caseNumber, index, requestInfo, tenantId) {
             );
             copiedPages.forEach((page) => mergedPdf.addPage(page));
 
-            console.log(`Successfully appended pages from fileStoreId: ${item.fileStoreId}`);
+            console.log(
+              `Successfully appended pages from fileStoreId: ${item.fileStoreId}`
+            );
           } else {
-            console.error(`Failed to fetch PDF for fileStoreId: ${item.fileStoreId}`);
+            console.error(
+              `Failed to fetch PDF for fileStoreId: ${item.fileStoreId}`
+            );
           }
         } catch (error) {
           console.error(
@@ -165,12 +134,15 @@ async function buildCasePdf(caseNumber, index, requestInfo, tenantId) {
     });
 
     // Create a temporary directory and unique file name
-    const directoryPath = process.env.TEMP_FILES_DIR || path.join(__dirname, "../case-bundles");
+    const directoryPath =
+      process.env.TEMP_FILES_DIR || path.join(__dirname, "../case-bundles");
     if (!fs.existsSync(directoryPath)) {
       fs.mkdirSync(directoryPath, { recursive: true });
     }
 
-    const tempFileName = `bundle-${Date.now()}-${Math.random().toString(36).slice(2)}.pdf`;
+    const tempFileName = `bundle-${Date.now()}-${Math.random()
+      .toString(36)
+      .slice(2)}.pdf`;
     const filePath = path.join(directoryPath, tempFileName);
 
     try {
@@ -179,7 +151,6 @@ async function buildCasePdf(caseNumber, index, requestInfo, tenantId) {
       fs.writeFileSync(filePath, pdfBytes);
 
       // Upload the merged PDF and update the index
-      const tenantId = index.tenantId;
       const fileStoreResponse = await create_file(
         filePath,
         tenantId,

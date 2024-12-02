@@ -5,6 +5,7 @@ import java.io.IOException;
 import java.util.List;
 
 import org.egov.common.contract.response.ResponseInfo;
+import org.pucar.dristi.service.CaseBundleService;
 import org.pucar.dristi.service.CaseManagerService;
 import org.pucar.dristi.service.ServiceUrlMapperVCService;
 import org.pucar.dristi.service.ServiceUrlMappingPdfService;
@@ -44,16 +45,19 @@ public class CasemanagerApiController {
 
     private final CaseManagerService caseManagerService;
 
+    private  final CaseBundleService caseBundleService;
+
     private final ResponseInfoFactory responseInfoFactory;
 
     @Autowired
-    public CasemanagerApiController(ObjectMapper objectMapper, HttpServletRequest request, ServiceUrlMappingPdfService serviceUrlMappingPdfService, ServiceUrlMapperVCService serviceUrlMapperVCService, CaseManagerService caseManagerService, ResponseInfoFactory responseInfoFactory) {
+    public CasemanagerApiController(CaseBundleService caseBundleService,ObjectMapper objectMapper, HttpServletRequest request, ServiceUrlMappingPdfService serviceUrlMappingPdfService, ServiceUrlMapperVCService serviceUrlMapperVCService, CaseManagerService caseManagerService, ResponseInfoFactory responseInfoFactory) {
         this.objectMapper = objectMapper;
         this.request = request;
         this.serviceUrlMapperVCService = serviceUrlMapperVCService;
         this.serviceUrlMappingPdfService = serviceUrlMappingPdfService;
         this.caseManagerService = caseManagerService;
         this.responseInfoFactory = responseInfoFactory;
+        this.caseBundleService = caseBundleService;
     }
 
     @RequestMapping(value = "/casemanager/case/v1/_group", method = RequestMethod.POST)
@@ -116,6 +120,22 @@ public class CasemanagerApiController {
     public ResponseEntity<Object> getPdf(@Valid @RequestBody PdfRequest pdfRequest) {
         Object pdfResponse = serviceUrlMappingPdfService.getSVcUrlMappingPdf(pdfRequest);
         return new ResponseEntity<>(pdfResponse, HttpStatus.OK);
+    }
+
+    @PostMapping("/casemanager/case/v1/_buildcasebundle")
+    public ResponseEntity<Object> caseBundle(@Valid @RequestBody CaseBundleRequest caseBundleRequest) {
+        String fileStoreId = caseBundleService.getCaseBundle(caseBundleRequest);
+        ResponseInfo responseInfo = responseInfoFactory.createResponseInfoFromRequestInfo(caseBundleRequest.getRequestInfo(), true);
+        CaseBundleResponse caseBundleResponse = CaseBundleResponse.builder().responseInfo(responseInfo).fileStoreId(fileStoreId).build();
+        return new ResponseEntity<>(caseBundleResponse, HttpStatus.OK);
+    }
+
+    @PostMapping("/casemanager/case/v1/bulk/_buildcasebundle")
+    public ResponseEntity<Object> caseBundleBulk(@Valid @RequestBody CaseBundleBulkRequest caseBundleBulkRequest) {
+        Boolean status = caseBundleService.getBulkCaseBundle(caseBundleBulkRequest);
+        ResponseInfo responseInfo = responseInfoFactory.createResponseInfoFromRequestInfo(caseBundleBulkRequest.getRequestInfo(), true);
+        CaseBundleBulkResponse caseBundleBulkResponse = CaseBundleBulkResponse.builder().responseInfo(responseInfo).status(status).build();
+        return new ResponseEntity<>(caseBundleBulkResponse, HttpStatus.OK);
     }
 
 }

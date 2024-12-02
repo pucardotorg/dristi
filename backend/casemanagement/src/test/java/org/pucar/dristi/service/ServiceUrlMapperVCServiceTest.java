@@ -52,7 +52,7 @@ class ServiceUrlMapperVCServiceTest {
 		vcCredentialRequest.setRequestInfo(new RequestInfo());
 		vcCredentialRequest.setTenantId("tenantId");
 
-		when(mdmsV2Util.fetchMdmsV2Data(any(), any(), any(), any(), any(), any()))
+		when(mdmsV2Util.fetchMdmsV2Data(any(), any(), any(), any(), any(), any(),any()))
 				.thenReturn(new ArrayList<>());
 
 		// Act & Assert

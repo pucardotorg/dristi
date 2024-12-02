@@ -55,6 +55,11 @@ class MdmsV2UtilTest {
 		String schemaCode = "schemaCode";
 		Boolean isActive = true;
 
+		// Adding filters object
+		HashMap<String, String> filters = new HashMap<>();
+		filters.put("section", "Complaint");
+		filters.put("name", "complainant");
+
 		List<Mdms> mockMdmsList = List.of(new Mdms());
 		MdmsResponseV2 mockMdmsResponseV2 = new MdmsResponseV2();
 		mockMdmsResponseV2.setMdms(mockMdmsList);
@@ -65,13 +70,12 @@ class MdmsV2UtilTest {
 		doReturn(mockMdmsResponseV2).when(mapper).convertValue(any(), any(Class.class));
 
 		// Act
-		List<Mdms> result = mdmsV2Util.fetchMdmsV2Data(requestInfo, tenantId, ids, uniqueIdentifiers, schemaCode, isActive);
+		List<Mdms> result = mdmsV2Util.fetchMdmsV2Data(requestInfo, tenantId, ids, uniqueIdentifiers, schemaCode, isActive, filters);
 
 		// Assert
 		assertNotNull(result);
 		assertTrue(result.containsAll(mockMdmsList));
 	}
-
 
 	@Test
 	void testGetMdmsV2Request_AllParameters() {
@@ -85,12 +89,18 @@ class MdmsV2UtilTest {
 		String schemaCode = "schemaCode";
 		Boolean isActive = true;
 
+		// Adding filters object
+		HashMap<String, String> filters = new HashMap<>();
+		filters.put("section", "Complaint");
+		filters.put("name", "complainant");
+
 		MdmsCriteriaV2 expectedMdmsCriteriaV2 = new MdmsCriteriaV2();
 		expectedMdmsCriteriaV2.setTenantId(tenantId);
 		expectedMdmsCriteriaV2.setIds(ids);
 		expectedMdmsCriteriaV2.setUniqueIdentifiers(uniqueIdentifiers);
 		expectedMdmsCriteriaV2.setSchemaCode(schemaCode);
 		expectedMdmsCriteriaV2.setIsActive(isActive);
+		expectedMdmsCriteriaV2.setFilterMap(filters); // Adding filters to the expected criteria
 
 		MdmsCriteriaReqV2 expected = MdmsCriteriaReqV2.builder()
 				.requestInfo(requestInfo)
@@ -98,7 +108,7 @@ class MdmsV2UtilTest {
 				.build();
 
 		// Act
-		MdmsCriteriaReqV2 result = mdmsV2Util.getMdmsV2Request(requestInfo, tenantId, ids, uniqueIdentifiers, schemaCode, isActive);
+		MdmsCriteriaReqV2 result = mdmsV2Util.getMdmsV2Request(requestInfo, tenantId, ids, uniqueIdentifiers, schemaCode, isActive, filters);
 
 		// Assert
 		assertEquals(expected, result);
@@ -109,13 +119,18 @@ class MdmsV2UtilTest {
 		// Arrange
 		RequestInfo requestInfo = new RequestInfo();
 
+		// Adding filters object
+		HashMap<String, String> filters = new HashMap<>();
+		filters.put("section", "Complaint");
+		filters.put("name", "complainant");
+
 		MdmsCriteriaReqV2 expected = MdmsCriteriaReqV2.builder()
 				.requestInfo(requestInfo)
 				.mdmsCriteria(new MdmsCriteriaV2())
 				.build();
 
 		// Act
-		MdmsCriteriaReqV2 result = mdmsV2Util.getMdmsV2Request(requestInfo, null, null, null, null, null);
+		MdmsCriteriaReqV2 result = mdmsV2Util.getMdmsV2Request(requestInfo, null, null, null, null, null, null);
 
 		// Assert
 		assertEquals(expected, result);

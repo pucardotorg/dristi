@@ -1,10 +1,29 @@
-var config = require("./config");
-var axios = require("axios").default;
-var url = require("url");
+const config = require("./config");
+const Axios = require("axios");
+const URL = require("url");
 const { logger } = require("./logger");
 const { Pool } = require("pg");
 const fs = require("fs");
 const FormData = require("form-data");
+
+const axios = Axios.create();
+axios.interceptors.response.use(
+  (res) => res,
+  (error) => {
+    const errorDetails = {
+      message: error.message,
+      stack: error.stack,
+      status: error.response?.status, // HTTP status code if available
+      data: error.response?.data, // Response body if available
+      url: error.config?.url, // Requested URL
+      method: error.config?.method, // HTTP method
+    };
+
+    // Log error using Winston
+    logger.error("Error during API call", errorDetails);
+    return Promise.reject(error);
+  }
+);
 
 const pool = new Pool({
   user: config.DB_USER,
@@ -20,7 +39,7 @@ async function search_case(cnrNumber, tenantId, requestinfo) {
   try {
     return await axios({
       method: "post",
-      url: url.resolve(config.host.case, config.paths.case_search),
+      url: URL.resolve(config.host.case, config.paths.case_search),
       data: {
         RequestInfo: requestinfo,
         tenantId: tenantId,
@@ -38,25 +57,15 @@ async function search_case(cnrNumber, tenantId, requestinfo) {
 }
 
 async function search_case_v2(criteria, tenantId, requestinfo) {
-  try {
-    return await axios({
-      method: "post",
-      url: url.resolve(config.host.case, config.paths.case_search),
-      data: {
-        RequestInfo: requestinfo,
-        tenantId: tenantId,
-        criteria,
-      },
-    });
-  } catch (error) {
-    logger.error(
-      `Error in ${config.paths.case_search}: ${JSON.stringify(
-        error.response.data
-      )}`
-    );
-    console.log("AAAAAAAAAAA");
-    throw error;
-  }
+  return await axios({
+    method: "post",
+    url: URL.resolve(config.host.case, config.paths.case_search),
+    data: {
+      RequestInfo: requestinfo,
+      tenantId: tenantId,
+      criteria,
+    },
+  });
 }
 
 async function search_order(
@@ -65,48 +74,38 @@ async function search_order(
   requestinfo,
   isOrderNumber = false
 ) {
-  try {
-    return await axios({
-      method: "post",
-      url: url.resolve(config.host.order, config.paths.order_search),
-      data: {
-        RequestInfo: requestinfo,
+  return await axios({
+    method: "post",
+    url: URL.resolve(config.host.order, config.paths.order_search),
+    data: {
+      RequestInfo: requestinfo,
+      tenantId: tenantId,
+      criteria: {
         tenantId: tenantId,
-        criteria: {
-          tenantId: tenantId,
-          ...(isOrderNumber ? { orderNumber: orderId } : { id: orderId }),
-        },
+        ...(isOrderNumber ? { orderNumber: orderId } : { id: orderId }),
       },
-    });
-  } catch (error) {
-    logger.error(`Error in ${config.paths.order_search}: ${error.message}`);
-    throw error;
-  }
+    },
+  });
 }
 
 async function search_hearing(tenantId, cnrNumber, requestinfo) {
-  try {
-    return await axios({
-      method: "post",
-      url: url.resolve(config.host.hearing, config.paths.hearing_search),
-      data: {
-        RequestInfo: requestinfo,
-        criteria: {
-          tenantId: tenantId,
-          cnrNumber: cnrNumber,
-        },
-        pagination: {
-          limit: 10,
-          offset: 0,
-          sortBy: "createdTime",
-          order: "desc",
-        },
+  return await axios({
+    method: "post",
+    url: URL.resolve(config.host.hearing, config.paths.hearing_search),
+    data: {
+      RequestInfo: requestinfo,
+      criteria: {
+        tenantId: tenantId,
+        cnrNumber: cnrNumber,
       },
-    });
-  } catch (error) {
-    logger.error(`Error in ${config.paths.hearing_search}: ${error.message}`);
-    throw error;
-  }
+      pagination: {
+        limit: 10,
+        offset: 0,
+        sortBy: "createdTime",
+        order: "desc",
+      },
+    },
+  });
 }
 
 async function search_mdms(
@@ -115,149 +114,115 @@ async function search_mdms(
   tenantID,
   requestInfo
 ) {
-  try {
-    return await axios({
-      method: "post",
-      url: url.resolve(config.host.mdms, config.paths.mdms_search),
-      data: {
-        RequestInfo: requestInfo,
-        MdmsCriteria: {
-          tenantId: tenantID,
-          schemaCode: schemaCode,
-          uniqueIdentifiers: [uniqueIdentifier],
-        },
+  return await axios({
+    method: "post",
+    url: URL.resolve(config.host.mdms, config.paths.mdms_search),
+    data: {
+      RequestInfo: requestInfo,
+      MdmsCriteria: {
+        tenantId: tenantID,
+        schemaCode: schemaCode,
+        limit: 100,
+        ...(uniqueIdentifier && { uniqueIdentifiers: [uniqueIdentifier] }),
       },
-    });
-  } catch (error) {
-    logger.error(`Error in ${config.paths.mdms_search}: ${error.message}`);
-    throw error;
-  }
+    },
+  });
 }
 
 async function search_hrms(tenantId, employeeTypes, courtRooms, requestinfo) {
-  var params = {
+  const params = {
     tenantId: tenantId,
     employeetypes: employeeTypes,
     courtrooms: courtRooms,
     limit: 10,
     offset: 0,
   };
-  try {
-    return await axios({
-      method: "post",
-      url: url.resolve(config.host.hrms, config.paths.hrms_search),
-      data: {
-        RequestInfo: requestinfo,
-      },
-      params,
-    });
-  } catch (error) {
-    logger.error(`Error in ${config.paths.hrms_search}: ${error.message}`);
-    throw error;
-  }
+
+  return await axios({
+    method: "post",
+    url: URL.resolve(config.host.hrms, config.paths.hrms_search),
+    data: {
+      RequestInfo: requestinfo,
+    },
+    params,
+  });
 }
 
 async function search_individual(tenantId, individualId, requestinfo) {
-  var params = {
+  const params = {
     tenantId: tenantId,
     limit: 10,
     offset: 0,
   };
-  try {
-    return await axios({
-      method: "post",
-      url: url.resolve(config.host.individual, config.paths.individual_search),
-      data: {
-        RequestInfo: requestinfo,
-        Individual: {
-          individualId: individualId,
-        },
+
+  return await axios({
+    method: "post",
+    url: URL.resolve(config.host.individual, config.paths.individual_search),
+    data: {
+      RequestInfo: requestinfo,
+      Individual: {
+        individualId: individualId,
       },
-      params,
-    });
-  } catch (error) {
-    logger.error(
-      `Error in ${config.paths.individual_search}: ${error.message}`
-    );
-    throw error;
-  }
+    },
+    params,
+  });
 }
 
 async function search_advocate(tenantId, individualId, requestinfo) {
-  var params = {
+  const params = {
     tenantId: tenantId,
     limit: 10,
     offset: 0,
   };
-  try {
-    return await axios({
-      method: "post",
-      url: url.resolve(config.host.advocate, config.paths.advocate_search),
-      data: {
-        RequestInfo: requestinfo,
-        criteria: [
-          {
-            individualId: individualId,
-          },
-        ],
-      },
-      params,
-    });
-  } catch (error) {
-    logger.error(`Error in ${config.paths.advocate_search}: ${error.message}`);
-    throw error;
-  }
+
+  return await axios({
+    method: "post",
+    url: URL.resolve(config.host.advocate, config.paths.advocate_search),
+    data: {
+      RequestInfo: requestinfo,
+      criteria: [
+        {
+          individualId: individualId,
+        },
+      ],
+    },
+    params,
+  });
 }
 
 async function search_individual_uuid(tenantId, userUuid, requestinfo) {
-  var params = {
+  const params = {
     tenantId: tenantId,
     limit: 10,
     offset: 0,
   };
-  try {
-    return await axios({
-      method: "post",
-      url: url.resolve(config.host.individual, config.paths.individual_search),
-      data: {
-        RequestInfo: requestinfo,
-        Individual: {
-          userUuid: [userUuid],
-        },
+
+  return await axios({
+    method: "post",
+    url: URL.resolve(config.host.individual, config.paths.individual_search),
+    data: {
+      RequestInfo: requestinfo,
+      Individual: {
+        userUuid: [userUuid],
       },
-      params,
-    });
-  } catch (error) {
-    logger.error(
-      `Error in ${config.paths.individual_search}: ${error.message}`
-    );
-    throw error;
-  }
+    },
+    params,
+  });
 }
 
 async function search_application(tenantId, applicationId, requestinfo) {
-  try {
-    return await axios({
-      method: "post",
-      url: url.resolve(
-        config.host.application,
-        config.paths.application_search
-      ),
-      data: {
-        RequestInfo: requestinfo,
+  return await axios({
+    method: "post",
+    url: URL.resolve(config.host.application, config.paths.application_search),
+    data: {
+      RequestInfo: requestinfo,
+      tenantId: tenantId,
+      criteria: {
         tenantId: tenantId,
-        criteria: {
-          tenantId: tenantId,
-          applicationNumber: applicationId,
-        },
+        applicationNumber: applicationId,
       },
-    });
-  } catch (error) {
-    logger.error(
-      `Error in ${config.paths.application_search}: ${error.message}`
-    );
-    throw error;
-  }
+    },
+  });
 }
 
 async function search_sunbirdrc_credential_service(
@@ -266,147 +231,111 @@ async function search_sunbirdrc_credential_service(
   uuid,
   requestinfo
 ) {
-  try {
-    return await axios({
-      method: "post",
-      url: url.resolve(
-        config.host.sunbirdrc_credential_service,
-        config.paths.sunbirdrc_credential_service_search
-      ),
-      data: {
-        RequestInfo: requestinfo,
-        tenantId: tenantId,
-        code: code,
-        uuid: uuid,
-      },
-    });
-  } catch (error) {
-    logger.error(
-      `Error in ${config.paths.sunbirdrc_credential_service_search}: ${error.message}`
-    );
-    throw error;
-  }
+  return await axios({
+    method: "post",
+    url: URL.resolve(
+      config.host.sunbirdrc_credential_service,
+      config.paths.sunbirdrc_credential_service_search
+    ),
+    data: {
+      RequestInfo: requestinfo,
+      tenantId: tenantId,
+      code: code,
+      uuid: uuid,
+    },
+  });
 }
 
 async function create_pdf(tenantId, key, data, requestinfo) {
-  try {
-    return await axios({
-      responseType: "stream",
-      method: "post",
-      url: url.resolve(config.host.pdf, config.paths.pdf_create),
-      data: Object.assign(requestinfo, data),
-      params: {
-        tenantId: tenantId,
-        key: key,
-      },
-    });
-  } catch (error) {
-    logger.error(`Error in ${config.paths.pdf_create}: ${error.message}`);
-    throw error;
-  }
+  return await axios({
+    responseType: "stream",
+    method: "post",
+    url: URL.resolve(config.host.pdf, config.paths.pdf_create),
+    data: Object.assign(requestinfo, data),
+    params: {
+      tenantId: tenantId,
+      key: key,
+    },
+  });
 }
 
 async function create_pdf_v2(tenantId, key, data, requestinfo) {
-  try {
-    return await axios({
-      responseType: "arraybuffer",
-      method: "post",
-      url: url.resolve(config.host.pdf, config.paths.pdf_create),
-      data: Object.assign(requestinfo, data),
-      params: {
-        tenantId: tenantId,
-        key: key,
-      },
-    });
-  } catch (error) {
-    logger.error(`Error in ${config.paths.pdf_create}: ${error.response.data}`);
-    throw error;
-  }
+  return await axios({
+    responseType: "arraybuffer",
+    method: "post",
+    url: URL.resolve(config.host.pdf, config.paths.pdf_create),
+    data: Object.assign(requestinfo, data),
+    params: {
+      tenantId: tenantId,
+      key: key,
+    },
+  });
 }
 
 async function search_pdf(tenantId, fileStoreId, requestInfo) {
-  try {
-    const apiUrl = url.resolve(
-      config.host.filestore,
-      config.paths.filestore_create + "/url"
-    );
-    const response = await axios.get(apiUrl, {
-      headers: {
-        "Content-Type": "application/json",
-        "auth-token": requestInfo?.authToken || auth_token,
-        tenantId: tenantId, // including tenantId as a header
-      },
-      params: {
-        tenantId: tenantId,
-        fileStoreIds: fileStoreId,
-      },
-    });
+  const apiUrl = URL.resolve(
+    config.host.filestore,
+    config.paths.filestore_create + "/url"
+  );
+  const response = await axios.get(apiUrl, {
+    headers: {
+      "Content-Type": "application/json",
+      "auth-token": requestInfo?.authToken || auth_token,
+      tenantId: tenantId, // including tenantId as a header
+    },
+    params: {
+      tenantId: tenantId,
+      fileStoreIds: fileStoreId,
+    },
+  });
 
-    return response;
-  } catch (error) {
-    logger.error(
-      `Error in ${config.paths.filestore_create + "/url"}: ${error.message}`
-    );
-    throw error;
-  }
+  return response;
 }
 
 async function search_pdf_v2(tenantId, fileStoreId, requestInfo) {
-  try {
-    const apiUrl = url.resolve(
-      config.host.filestore,
-      config.paths.filestore_search_id
-    );
-    const response = await axios.get(apiUrl, {
-      headers: {
-        "auth-token": requestInfo?.authToken || auth_token,
-      },
-      params: {
-        tenantId: tenantId,
-        fileStoreId: fileStoreId,
-      },
-      responseType: "arraybuffer",
-    });
+  const apiUrl = URL.resolve(
+    config.host.filestore,
+    config.paths.filestore_search_id
+  );
+  const response = await axios.get(apiUrl, {
+    headers: {
+      "auth-token": requestInfo?.authToken || auth_token,
+    },
+    params: {
+      tenantId: tenantId,
+      fileStoreId: fileStoreId,
+    },
+    responseType: "arraybuffer",
+  });
 
-    return response;
-  } catch (error) {
-    logger.error(
-      `Error in ${config.paths.filestore_create + "/url"}: ${error.message}`
-    );
-    throw error;
-  }
+  return response;
 }
 
 async function create_file(filePath, tenantId, module, tag) {
-  try {
-    // Check if file exists
-    if (!fs.existsSync(filePath)) {
-      console.error(`Error: File does not exist at path: ${filePath}`);
-      return;
-    }
-
-    const form = new FormData();
-    form.append("file", fs.createReadStream(filePath));
-    form.append("tenantId", tenantId);
-    form.append("module", module);
-    form.append("tag", tag);
-
-    // Prepare URL for the request
-    const url = `${config.host.filestore}${config.paths.filestore_create}`;
-    const response = await axios.post(url, form, {
-      headers: {
-        ...form.getHeaders(), // Adds the required Content-Type header for multipart/form-data
-        "auth-token": auth_token,
-        tenantId,
-      },
-      maxContentLength: Infinity, // Optional, in case the file size is large
-      maxBodyLength: Infinity, // Optional, in case the file size is large
-    });
-    return response;
-  } catch (error) {
-    console.error(error);
-    throw error;
+  // Check if file exists
+  if (!fs.existsSync(filePath)) {
+    console.error(`Error: File does not exist at path: ${filePath}`);
+    return;
   }
+
+  const form = new FormData();
+  form.append("file", fs.createReadStream(filePath));
+  form.append("tenantId", tenantId);
+  form.append("module", module);
+  form.append("tag", tag);
+
+  // Prepare URL for the request
+  const url = `${config.host.filestore}${config.paths.filestore_create}`;
+  const response = await axios.post(url, form, {
+    headers: {
+      ...form.getHeaders(), // Adds the required Content-Type header for multipart/form-data
+      "auth-token": auth_token,
+      tenantId,
+    },
+    maxContentLength: Infinity, // Optional, in case the file size is large
+    maxBodyLength: Infinity, // Optional, in case the file size is large
+  });
+  return response;
 }
 
 async function create_file_v2({
@@ -416,61 +345,50 @@ async function create_file_v2({
   form,
   requestInfo,
 }) {
-  try {
-    if (!form) {
-      // Check if file exists
-      if (!fs.existsSync(filePath)) {
-        console.error(`Error: File does not exist at path: ${filePath}`);
-        return;
-      }
-
-      form = new FormData();
-      form.append("file", fs.createReadStream(filePath));
-      form.append("tenantId", tenantId);
-      form.append("module", module);
+  if (!form) {
+    // Check if file exists
+    if (!fs.existsSync(filePath)) {
+      console.error(`Error: File does not exist at path: ${filePath}`);
+      return;
     }
 
-    // Prepare URL for the request
-    const apiUrl = url.resolve(
-      config.host.filestore,
-      config.paths.filestore_create
-    );
-    console.log(form.getHeaders());
-    const response = await axios.post(apiUrl, form, {
-      headers: {
-        ...form.getHeaders(), // Adds the required Content-Type header for multipart/form-data
-        "auth-token": requestInfo.authToken || auth_token,
-        tenantId,
-      },
-      maxContentLength: Infinity, // Optional, in case the file size is large
-      maxBodyLength: Infinity, // Optional, in case the file size is large
-    });
-    return response;
-  } catch (error) {
-    console.log(error);
-    throw error;
+    form = new FormData();
+    form.append("file", fs.createReadStream(filePath));
+    form.append("tenantId", tenantId);
+    form.append("module", module);
   }
+
+  // Prepare URL for the request
+  const apiUrl = URL.resolve(
+    config.host.filestore,
+    config.paths.filestore_create
+  );
+  const response = await axios.post(apiUrl, form, {
+    headers: {
+      ...form.getHeaders(), // Adds the required Content-Type header for multipart/form-data
+      "auth-token": requestInfo.authToken || auth_token,
+      tenantId,
+    },
+    maxContentLength: Infinity, // Optional, in case the file size is large
+    maxBodyLength: Infinity, // Optional, in case the file size is large
+  });
+  return response;
 }
 
 module.exports = create_file;
 
 async function search_message(tenantId, module, locale, requestinfo) {
-  try {
-    return await axios({
-      responseType: "json",
-      method: "post",
-      url: url.resolve(config.host.localization, config.paths.message_search),
-      data: Object.assign(requestinfo),
-      params: {
-        tenantId: tenantId,
-        module: module,
-        locale: locale,
-      },
-    });
-  } catch (error) {
-    logger.error(`Error in ${config.paths.message_search}: ${error.message}`);
-    throw error;
-  }
+  return await axios({
+    responseType: "json",
+    method: "post",
+    url: URL.resolve(config.host.localization, config.paths.message_search),
+    data: Object.assign(requestinfo),
+    params: {
+      tenantId: tenantId,
+      module: module,
+      locale: locale,
+    },
+  });
 }
 
 module.exports = {

@@ -1,15 +1,16 @@
 const { createLogger, format, transports } = require("winston");
 
-
 const myFormat = format.printf(({ level, message, label, timestamp }) => {
-  return `${timestamp} [${label}] [${level}]: ${message}`;
+  const formattedMessage =
+    typeof message === "string" ? message : JSON.stringify(message);
+  return `${timestamp} [${label}] [${level}]: ${formattedMessage}`;
 });
 
 const logger = createLogger({
   format: format.combine(
-    format.label({ label: 'BFF' }),
+    format.label({ label: "BFF" }),
     format.timestamp({ format: " YYYY-MM-DD HH:mm:ss.SSSZZ " }),
-    format.simple(),
+    format.json(),
     myFormat
   ),
   transports: [new transports.Console()],
