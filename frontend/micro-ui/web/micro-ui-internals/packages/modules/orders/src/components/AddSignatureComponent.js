@@ -126,7 +126,6 @@ const AddSignatureComponent = ({ t, isSigned, setIsSigned, handleSigned, rowData
                     fontWeight: 700,
                     textAlign: "center",
                   }}
-                  isDisabled={true}
                 />
                 <Button
                   icon={<FileUploadIcon />}

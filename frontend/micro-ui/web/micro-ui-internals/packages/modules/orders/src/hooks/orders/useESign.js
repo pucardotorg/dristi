@@ -33,7 +33,7 @@ const useESign = () => {
           localStorage.setItem("esignProcess", true);
           const form = document.createElement("form");
           form.method = "POST";
-          form.action = "https://es-staging.cdac.in/esignlevel1/2.1/form/signdoc";
+          form.action = "https://esignservice.cdac.in/esign2.1/2.1/form/signdoc";
           const eSignRequestInput = document.createElement("input");
           eSignRequestInput.type = "hidden";
           eSignRequestInput.name = "eSignRequest";

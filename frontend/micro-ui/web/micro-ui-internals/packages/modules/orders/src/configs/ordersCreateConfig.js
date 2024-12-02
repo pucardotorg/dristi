@@ -112,12 +112,6 @@ export const configs = [
               isOptional: true,
             },
           ],
-          validation: {
-            customValidationFn: {
-              moduleName: "dristiOrders",
-              masterName: "alphaNumericValidation",
-            },
-          },
           mdmsConfig: {
             moduleName: "Order",
             masterName: "", // TO DO: ADD CONFIG IN MDMS
@@ -338,12 +332,6 @@ export const configsOrderSection202CRPC = [
               type: "TextAreaComponent",
             },
           ],
-          validation: {
-            customValidationFn: {
-              moduleName: "dristiOrders",
-              masterName: "alphaNumericValidation",
-            },
-          },
         },
       },
     ],
@@ -414,12 +402,6 @@ export const configsOrderSection202CRPC = [
               type: "TextAreaComponent",
             },
           ],
-          validation: {
-            customValidationFn: {
-              moduleName: "dristiOrders",
-              masterName: "alphaNumericValidation",
-            },
-          },
         },
       },
     ],
@@ -582,12 +564,6 @@ export const configsOrderMandatorySubmissions = [
             type: "TranscriptionTextAreaComponent",
             placeholder: "TYPE_HERE_PLACEHOLDER",
             isOptional: true,
-          },
-          validation: {
-            customValidationFn: {
-              moduleName: "dristiOrders",
-              masterName: "alphaNumericValidation",
-            },
           },
         },
       },
@@ -865,12 +841,6 @@ export const configsOrderSubmissionExtension = [
               type: "TextAreaComponent",
             },
           ],
-          validation: {
-            customValidationFn: {
-              moduleName: "dristiOrders",
-              masterName: "alphaNumericValidation",
-            },
-          },
         },
       },
     ],
@@ -977,12 +947,6 @@ export const configsOrderTranferToADR = [
               type: "TextAreaComponent",
             },
           ],
-          validation: {
-            customValidationFn: {
-              moduleName: "dristiOrders",
-              masterName: "alphaNumericValidation",
-            },
-          },
         },
       },
     ],
@@ -1146,12 +1110,6 @@ export const configsScheduleHearingDate = [
               type: "TextAreaComponent",
             },
           ],
-          validation: {
-            customValidationFn: {
-              moduleName: "dristiOrders",
-              masterName: "alphaNumericValidation",
-            },
-          },
         },
       },
     ],
@@ -1314,12 +1272,6 @@ export const configsScheduleNextHearingDate = [
               type: "TextAreaComponent",
             },
           ],
-          validation: {
-            customValidationFn: {
-              moduleName: "dristiOrders",
-              masterName: "alphaNumericValidation",
-            },
-          },
         },
       },
     ],
@@ -1341,12 +1293,6 @@ export const configsScheduleNextHearingDate = [
               type: "TextAreaComponent",
             },
           ],
-          validation: {
-            customValidationFn: {
-              moduleName: "dristiOrders",
-              masterName: "alphaNumericValidation",
-            },
-          },
         },
       },
     ],
@@ -1395,12 +1341,6 @@ export const configsRejectRescheduleHeadingDate = [
               type: "TextAreaComponent",
             },
           ],
-          validation: {
-            customValidationFn: {
-              moduleName: "dristiOrders",
-              masterName: "alphaNumericValidation",
-            },
-          },
         },
       },
     ],
@@ -1449,12 +1389,6 @@ export const configsRejectCheckout = [
               type: "TextAreaComponent",
             },
           ],
-          validation: {
-            customValidationFn: {
-              moduleName: "dristiOrders",
-              masterName: "alphaNumericValidation",
-            },
-          },
         },
       },
     ],
@@ -1592,12 +1526,6 @@ export const configsRescheduleHearingDate = [
               type: "TextAreaComponent",
             },
           ],
-          validation: {
-            customValidationFn: {
-              moduleName: "dristiOrders",
-              masterName: "alphaNumericValidation",
-            },
-          },
         },
       },
     ],
@@ -1735,12 +1663,6 @@ export const configCheckout = [
               type: "TextAreaComponent",
             },
           ],
-          validation: {
-            customValidationFn: {
-              moduleName: "dristiOrders",
-              masterName: "alphaNumericValidation",
-            },
-          },
         },
       },
     ],
@@ -1860,12 +1782,6 @@ export const configsInitiateRescheduleHearingDate = [
               type: "TextAreaComponent",
             },
           ],
-          validation: {
-            customValidationFn: {
-              moduleName: "dristiOrders",
-              masterName: "alphaNumericValidation",
-            },
-          },
         },
       },
     ],
@@ -1959,12 +1875,6 @@ export const configsAssignDateToRescheduledHearing = [
               type: "TextAreaComponent",
             },
           ],
-          validation: {
-            customValidationFn: {
-              moduleName: "dristiOrders",
-              masterName: "alphaNumericValidation",
-            },
-          },
         },
       },
     ],
@@ -2059,12 +1969,6 @@ export const configsAssignNewHearingDate = [
               type: "TextAreaComponent",
             },
           ],
-          validation: {
-            customValidationFn: {
-              moduleName: "dristiOrders",
-              masterName: "alphaNumericValidation",
-            },
-          },
         },
       },
     ],
@@ -2134,12 +2038,6 @@ export const configRejectSubmission = [
               type: "TextAreaComponent",
             },
           ],
-          validation: {
-            customValidationFn: {
-              moduleName: "dristiOrders",
-              masterName: "alphaNumericValidation",
-            },
-          },
         },
       },
     ],
@@ -2239,12 +2137,6 @@ export const configsVoluntarySubmissionStatus = [
               type: "TextAreaComponent",
             },
           ],
-          validation: {
-            customValidationFn: {
-              moduleName: "dristiOrders",
-              masterName: "alphaNumericValidation",
-            },
-          },
         },
       },
     ],
@@ -2370,12 +2262,6 @@ export const configsCaseTransfer = [
               type: "TextAreaComponent",
             },
           ],
-          validation: {
-            customValidationFn: {
-              moduleName: "dristiOrders",
-              masterName: "alphaNumericValidation",
-            },
-          },
         },
       },
     ],
@@ -2426,12 +2312,6 @@ export const configsCaseTransfer = [
               type: "TextAreaComponent",
             },
           ],
-          validation: {
-            customValidationFn: {
-              moduleName: "dristiOrders",
-              masterName: "alphaNumericValidation",
-            },
-          },
         },
       },
     ],
@@ -2593,12 +2473,6 @@ export const configsCaseSettlement = [
               type: "TextAreaComponent",
             },
           ],
-          validation: {
-            customValidationFn: {
-              moduleName: "dristiOrders",
-              masterName: "alphaNumericValidation",
-            },
-          },
         },
       },
     ],
@@ -2728,12 +2602,6 @@ export const configsIssueSummons = [
               type: "TextAreaComponent",
             },
           ],
-          validation: {
-            customValidationFn: {
-              moduleName: "dristiOrders",
-              masterName: "alphaNumericValidation",
-            },
-          },
         },
       },
     ],
@@ -2884,12 +2752,6 @@ export const configsIssueNotice = [
               type: "TextAreaComponent",
             },
           ],
-          validation: {
-            customValidationFn: {
-              moduleName: "dristiOrders",
-              masterName: "alphaNumericValidation",
-            },
-          },
         },
       },
     ],
@@ -3002,12 +2864,6 @@ export const configsIssueOfWarrants = [
               type: "TextAreaComponent",
             },
           ],
-          validation: {
-            customValidationFn: {
-              moduleName: "dristiOrders",
-              masterName: "alphaNumericValidation",
-            },
-          },
         },
       },
     ],
@@ -3146,12 +3002,6 @@ export const configsOthers = [
               type: "TextAreaComponent",
             },
           ],
-          validation: {
-            customValidationFn: {
-              moduleName: "dristiOrders",
-              masterName: "alphaNumericValidation",
-            },
-          },
         },
       },
     ],
@@ -4033,12 +3883,6 @@ export const configsJudgement = [
               type: "TextAreaComponent",
             },
           ],
-          validation: {
-            customValidationFn: {
-              moduleName: "dristiOrders",
-              masterName: "alphaNumericValidation",
-            },
-          },
         },
       },
     ],
@@ -4057,12 +3901,6 @@ export const configsJudgement = [
             textAreaSubHeader: "CONTENT",
             placeholder: "TYPE_HERE_PLACEHOLDER",
             type: "TranscriptionTextAreaComponent",
-          },
-          validation: {
-            customValidationFn: {
-              moduleName: "dristiOrders",
-              masterName: "alphaNumericValidation",
-            },
           },
         },
       },

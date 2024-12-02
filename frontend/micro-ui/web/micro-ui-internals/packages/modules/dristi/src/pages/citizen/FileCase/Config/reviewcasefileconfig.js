@@ -430,6 +430,11 @@ export const reviewCaseFileFormConfig = [
                   value: "witnessAge",
                 },
                 {
+                  type: "text",
+                  label: "WITNESS_DESIGNATION",
+                  value: "witnessDesignation",
+                },
+                {
                   type: "address",
                   label: "ADDRESS",
                   value: "addressDetails",
@@ -511,6 +516,11 @@ export const reviewCaseFileFormConfig = [
                   type: "text",
                   label: "CS_BAR_REGISTRATION",
                   value: "barRegistrationNumber",
+                },
+                {
+                  type: "text",
+                  label: "NUMBER_OF_ADVOCATES",
+                  value: "numberOfAdvocate",
                 },
                 {
                   type: "image",

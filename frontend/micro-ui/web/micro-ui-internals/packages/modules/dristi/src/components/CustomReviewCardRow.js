@@ -253,7 +253,7 @@ const CustomReviewCardRow = ({
           <div className={`text-main ${bgclassname}`}>
             <div className="text">
               <div className="label">{t(label)}</div>
-              <div className="value">
+              <div className="value" style={{overflowY:"auto",maxHeight:"310px"}}>
                 {Array.isArray(textValue)
                   ? textValue.length > 0
                     ? textValue.map((text, index) => <div key={index}>{t(text) || t("")}</div>)
@@ -670,7 +670,7 @@ const CustomReviewCardRow = ({
         }
 
         return (
-          <div className={`address-main ${bgclassname}`}>
+          <div className={`address-main ${bgclassname}`} style={{ borderBottom: "1px #e8e8e8 solid" }}>
             <div className="address">
               <div className="label">{t(label)}</div>
               <div className={`value ${!isScrutiny ? "column" : ""}`}>

@@ -75,7 +75,7 @@ function CaseFileAdmission({ t, path }) {
       tenantId,
     },
     {},
-    "dristi",
+    `dristi-${caseId}`,
     caseId,
     Boolean(caseId)
   );

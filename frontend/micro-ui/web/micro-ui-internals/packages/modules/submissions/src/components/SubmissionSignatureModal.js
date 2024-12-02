@@ -107,7 +107,6 @@ function SubmissionSignatureModal({ t, handleProceed, handleCloseSignaturePopup,
                 }}
                 className={"aadhar-sign-in"}
                 labelClassName={"submission-aadhar-sign-in"}
-                isDisabled={true}
               ></Button>
               <Button
                 icon={<FileUploadIcon />}

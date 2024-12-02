@@ -95,7 +95,8 @@ const getAddressDetails = (addressObject) => {
     return new Intl.NumberFormat(locale, {
       style: "currency",
       currency: currency,
-      maximumSignificantDigits: 2,
+      minimumFractionDigits: 0,
+      maximumFractionDigits: 0,
     }).format(number).toString();
   };
 

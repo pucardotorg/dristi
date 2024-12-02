@@ -1051,6 +1051,8 @@ export const UICustomizations = {
         return /^[^{0-9}^\$\"<>?\\\\~!@#$%^()+={}\[\]*,/_:;“”‘’]{1,}$/i;
       case "address":
         return /^[^\$\"<>?\\\\~`!@$%^()={}\[\]*:;“”‘’]{2,256}$/i;
+      case "nonNumericString":
+        return /^[^0-9]{1,}$/i;
       default:
         return;
     }

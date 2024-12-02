@@ -269,9 +269,9 @@ function EFilingCases({ path }) {
       tenantId,
     },
     {},
-    "dristi",
+    `dristi-${caseId}`,
     caseId,
-    caseId
+    Boolean(caseId)
   );
 
   const getAllKeys = useMemo(() => {
@@ -638,14 +638,42 @@ function EFilingCases({ path }) {
                         input?.key === "advocateDetails"
                           ? caseDetails?.additionalDetails?.[input?.key]?.formdata?.[0]?.data?.advocateName
                             ? caseDetails?.additionalDetails?.[input?.key]?.formdata
-                            : [{ data: { advocateName: "", barRegistrationNumber: "", vakalatnamaFileUpload: {} } }]
+                            : [
+                                {
+                                  data: {
+                                    advocateName: "",
+                                    barRegistrationNumber: "",
+                                    vakalatnamaFileUpload: {},
+                                    isAdvocateRepresenting: {
+                                      code: "NO",
+                                      name: "No",
+                                      showForm: true,
+                                      isEnabled: true,
+                                    },
+                                  },
+                                },
+                              ]
                           : caseDetails?.additionalDetails?.[input?.key]?.formdata || caseDetails?.caseDetails?.[input?.key]?.formdata || {};
                       if (isCaseReAssigned) {
                         dataobj =
                           input?.key === "advocateDetails"
                             ? errorCaseDetails?.additionalDetails?.[input?.key]?.formdata?.[0]?.data?.advocateName
                               ? errorCaseDetails?.additionalDetails?.[input?.key]?.formdata
-                              : [{ data: { advocateName: "", barRegistrationNumber: "", vakalatnamaFileUpload: {} } }]
+                              : [
+                                  {
+                                    data: {
+                                      advocateName: "",
+                                      barRegistrationNumber: "",
+                                      vakalatnamaFileUpload: {},
+                                      isAdvocateRepresenting: {
+                                        code: "NO",
+                                        name: "No",
+                                        showForm: true,
+                                        isEnabled: true,
+                                      },
+                                    },
+                                  },
+                                ]
                             : errorCaseDetails?.additionalDetails?.[input?.key]?.formdata ||
                               errorCaseDetails?.caseDetails?.[input?.key]?.formdata ||
                               {};
@@ -1646,7 +1674,12 @@ function EFilingCases({ path }) {
           const contentDisposition = response.headers["content-disposition"];
           const filename = contentDisposition ? contentDisposition.split("filename=")[1]?.replace(/['"]/g, "") : "caseCompliantDetails.pdf";
           const pdfFile = new File([response?.data], filename, { type: "application/pdf" });
-          const document = await onDocumentUpload(pdfFile, pdfFile?.name);
+          let document = {};
+          try {
+            document = await onDocumentUpload(pdfFile, pdfFile?.name);
+          } catch (error) {
+            throw error;
+          }
           const fileStoreId = document?.file?.files?.[0]?.fileStoreId;
 
           if (fileStoreId) {
@@ -1704,9 +1737,10 @@ function EFilingCases({ path }) {
         } else if (extractCodeFromErrorMsg(error) === 413) {
           message = t("FAILED_TO_UPLOAD_FILE");
         }
+        toast.error(message);
         setIsDisabled(false);
         console.error("An error occurred:", error);
-        throw new Error(message);
+        return { error };
       }
     }
   };

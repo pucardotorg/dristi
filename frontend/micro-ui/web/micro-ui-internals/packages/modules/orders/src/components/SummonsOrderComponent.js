@@ -87,9 +87,9 @@ const SummonsOrderComponent = ({ t, config, formData, onSelect, clearErrors }) =
       tenantId,
     },
     {},
-    "dristi",
+    `dristi-${filingNumber}`,
     filingNumber,
-    filingNumber
+    Boolean(filingNumber)
   );
   const caseDetails = useMemo(
     () => ({
@@ -340,7 +340,9 @@ const SummonsOrderComponent = ({ t, config, formData, onSelect, clearErrors }) =
               <Dropdown
                 t={t}
                 option={userList?.map((user) => ({
-                  label: [user?.data?.firstName, user?.data?.lastName, `(${t(displayPartyType[user?.data?.partyType.toLowerCase()])})`].filter(Boolean).join(" "),
+                  label: [user?.data?.firstName, user?.data?.lastName, `(${t(displayPartyType[user?.data?.partyType.toLowerCase()])})`]
+                    .filter(Boolean)
+                    .join(" "),
                   value: user,
                 }))}
                 optionKey="label"

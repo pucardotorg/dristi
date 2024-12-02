@@ -64,9 +64,9 @@ function SelectReviewAccordion({ t, config, onSelect, formData = {}, errors, for
       tenantId,
     },
     {},
-    "dristi",
+    `dristi-${caseId}`,
     caseId,
-    caseId
+    Boolean(caseId)
   );
 
   const caseDetails = useMemo(

@@ -2312,7 +2312,6 @@ export const updateCaseDetails = async ({
         advocateCount:
           formdata?.[0]?.data?.numberOfAdvocate || caseDetails?.additionalDetails?.advocateDetails?.formdata[0]?.data?.numberOfAdvocate || 0,
         linkedCases: caseDetails?.linkedCases ? caseDetails?.linkedCases : [],
-        courtId: action !== "SAVE_DRAFT" ? window?.globalConfigs?.getConfig("COURT_ID") || "COURT_ID" : null,
         workflow: {
           ...caseDetails?.workflow,
           action: action,

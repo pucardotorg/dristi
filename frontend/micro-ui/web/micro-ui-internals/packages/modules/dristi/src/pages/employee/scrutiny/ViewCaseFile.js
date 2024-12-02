@@ -16,6 +16,9 @@ import { reviewCaseFileFormConfig } from "../../citizen/FileCase/Config/reviewca
 import Button from "../../../components/Button";
 import useDownloadCasePdf from "../../../hooks/dristi/useDownloadCasePdf";
 import downloadPdfWithLink from "../../../Utils/downloadPdfWithLink";
+const judgeId = window?.globalConfigs?.getConfig("JUDGE_ID") || "JUDGE_ID";
+const courtId = window?.globalConfigs?.getConfig("COURT_ID") || "COURT_ID";
+const benchId = window?.globalConfigs?.getConfig("BENCH_ID") || "BENCH_ID";
 
 const downloadButtonStyle = {
   backgroundColor: "white",
@@ -114,7 +117,7 @@ function ViewCaseFile({ t, inViewCase = false }) {
       tenantId,
     },
     {},
-    "dristi",
+    `dristi-${caseId}`,
     caseId,
     Boolean(caseId)
   );
@@ -322,6 +325,7 @@ function ViewCaseFile({ t, inViewCase = false }) {
             action,
             ...(action === CaseWorkflowAction.SEND_BACK && { assignes: assignees }),
           },
+          ...(action === CaseWorkflowAction.VALIDATE && { judgeId, courtId, benchId }),
         },
         tenantId,
       },

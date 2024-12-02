@@ -61,9 +61,9 @@ function EfilingPaymentBreakdown({ setShowModal, header, subHeader }) {
       tenantId,
     },
     {},
-    "dristi",
+    `dristi-${caseId}`,
     caseId,
-    caseId
+    Boolean(caseId)
   );
 
   const caseDetails = useMemo(

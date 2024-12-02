@@ -260,7 +260,7 @@ const TasksComponent = ({
 
   const fetchPendingTasks = useCallback(
     async function () {
-      if (isLoading) return;
+      if (isLoading || pendingTaskActionDetails?.length === 0) return;
       const listOfFilingNumber = [
         ...new Set(pendingTaskActionDetails?.map((data) => data?.fields?.find((field) => field.key === "filingNumber")?.value)),
       ]?.map((data) => ({

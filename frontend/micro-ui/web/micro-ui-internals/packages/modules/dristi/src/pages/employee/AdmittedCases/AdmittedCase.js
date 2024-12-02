@@ -188,10 +188,9 @@ const AdmittedCases = () => {
       tenantId,
     },
     {},
-    "dristi",
-    filingNumber,
+    `dristi-${caseId}`,
     caseId,
-    false
+    Boolean(caseId)
   );
   const caseDetails = useMemo(() => caseData?.criteria?.[0]?.responseList?.[0] || {}, [caseData]);
   const cnrNumber = useMemo(() => caseDetails?.cnrNumber || "", [caseDetails]);

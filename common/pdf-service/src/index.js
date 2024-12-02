@@ -116,15 +116,15 @@ var fontDescriptors = {
     normal: "src/fonts/BalooPaaji2-Regular.ttf",
     bold: "src/fonts/BalooPaaji2-Bold.ttf"
   },
-  KartikaMalyalam:{
-    normal: "src/fonts/kartika-regular-unicode-font.ttf",
-    bold: "src/fonts/kartika-bold-unicode-font.ttf"
+  MalayalamSangamMn:{
+    normal: "src/fonts/malayalam-sangam-mn.ttf",
+    bold: "src/fonts/malayalam-sangam-mn-bold.ttf"
   }
 };
 
 var defaultFontMapping = {
-  en_IN: 'KartikaMalyalam',
-  ml_IN: 'KartikaMalyalam',
+  en_IN: 'MalayalamSangamMn',
+  ml_IN: 'MalayalamSangamMn',
   hi_IN: 'default',
   pn_IN: 'BalooPaaji',
   od_IN: 'BalooBhaina',
