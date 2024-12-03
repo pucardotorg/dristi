@@ -83,6 +83,7 @@ export const userTypeOptions = [
       "SUBMISSION_DELETE",
       "TASK_VIEWER",
       "ADVOCATE_VIEWER",
+      "ADVOCATE_APPLICATION_VIEWER",
       "PENDING_TASK_CREATOR",
     ],
     apiDetails: {

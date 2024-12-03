@@ -39,7 +39,7 @@ function OrderSignatureModal({
   const uri = `${window.location.origin}${Urls.FileFetchById}?tenantId=${tenantId}&fileStoreId=${orderPdfFileStoreID}`;
   const { uploadDocuments } = useDocumentUpload();
   const name = "Signature";
-  const judgePlaceholder = "Judge Signature";
+  const judgePlaceholder = "Signature";
   const uploadModalConfig = useMemo(() => {
     return {
       key: "uploadSignature",

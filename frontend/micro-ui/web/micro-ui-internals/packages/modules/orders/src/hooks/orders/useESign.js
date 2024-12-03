@@ -4,6 +4,7 @@ const useESign = () => {
   const tenantId = window?.Digit.ULBService.getCurrentTenantId();
   const storedObj = useMemo(() => localStorage.getItem("signStatus"), []);
   const parsedObj = JSON.parse(storedObj) || [];
+  const esignUrl = window?.globalConfigs?.getConfig("ESIGN_URL") || "https://es-staging.cdac.in/esignlevel2/2.1/form/signdoc";
 
   const handleEsign = useCallback(
     async (name, pageModule, fileStoreId, signPlaceHolder) => {
@@ -33,7 +34,7 @@ const useESign = () => {
           localStorage.setItem("esignProcess", true);
           const form = document.createElement("form");
           form.method = "POST";
-          form.action = "https://esignservice.cdac.in/esign2.1/2.1/form/signdoc";
+          form.action = esignUrl;
           const eSignRequestInput = document.createElement("input");
           eSignRequestInput.type = "hidden";
           eSignRequestInput.name = "eSignRequest";

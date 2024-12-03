@@ -17,6 +17,7 @@ function SubmissionSignatureModal({ t, handleProceed, handleCloseSignaturePopup,
   const tenantId = window?.Digit.ULBService.getCurrentTenantId();
   const uri = `${window.location.origin}${Urls.FileFetchById}?tenantId=${tenantId}&fileStoreId=${applicationPdfFileStoreId}`;
   const name = "Signature";
+  const advocatePlaceholder = "Advocate Signature";
 
   const uploadModalConfig = useMemo(() => {
     return {
@@ -103,7 +104,7 @@ function SubmissionSignatureModal({ t, handleProceed, handleCloseSignaturePopup,
                   // setOpenAadharModal(true);
                   // setIsSigned(true);
                   localStorage.setItem("applicationPDF", applicationPdfFileStoreId);
-                  handleEsign(name, pageModule, applicationPdfFileStoreId);
+                  handleEsign(name, pageModule, applicationPdfFileStoreId, advocatePlaceholder);
                 }}
                 className={"aadhar-sign-in"}
                 labelClassName={"submission-aadhar-sign-in"}

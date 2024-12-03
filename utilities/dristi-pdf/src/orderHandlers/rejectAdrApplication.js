@@ -94,6 +94,7 @@ async function rejectAdrApplication(req, res, qrCode) {
       "Failed to query MDMS service for court room"
     );
     const mdmsCourtRoom = resMdms?.data?.mdms[0]?.data;
+    const judgeDetails = config.constants.judgeDetails;
     if (!mdmsCourtRoom) {
       renderError(res, "Court room MDMS master not found", 404);
     }
@@ -210,7 +211,7 @@ async function rejectAdrApplication(req, res, qrCode) {
           provideBriefReasoning: "Reason",
           reasonForRejection: "Rejection Reason",
           additionalComments: order.comments,
-          judgeSignature: "Judge Signature",
+          judgeSignature: judgeDetails.judgeSignature,
           judgeName: employee.user.name,
           courtSeal: "Court Seal",
           qrCodeUrl: base64Url,

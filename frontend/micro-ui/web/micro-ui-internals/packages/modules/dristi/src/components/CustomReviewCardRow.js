@@ -46,6 +46,22 @@ const badgeStyle = {
   textAlign: "center",
 };
 
+const convertToIndianCurrency = (amount, locale, currency) => {
+  if (typeof amount !== "number" && typeof amount !== "string") return "";
+
+  const number = Number(amount);
+  if (isNaN(number)) return "";
+
+  return new Intl.NumberFormat(locale, {
+    style: "currency",
+    currency: currency,
+    minimumFractionDigits: 0,
+    maximumFractionDigits: 0,
+  })
+    .format(number)
+    .toString();
+};
+
 const CustomReviewCardRow = ({
   isScrutiny,
   isJudge,
@@ -73,6 +89,7 @@ const CustomReviewCardRow = ({
     badgeType = null,
     textDependentOn = null,
     textDependentValue = null,
+    isLocalizationRequired = false,
     notAvailable = null,
     enableScrutinyField = false,
   } = config;
@@ -253,14 +270,16 @@ const CustomReviewCardRow = ({
           <div className={`text-main ${bgclassname}`}>
             <div className="text">
               <div className="label">{t(label)}</div>
-              <div className="value" style={{overflowY:"auto",maxHeight:"310px"}}>
+              <div className="value" style={{ overflowY: "auto", maxHeight: "310px" }}>
                 {Array.isArray(textValue)
                   ? textValue.length > 0
                     ? textValue.map((text, index) => <div key={index}>{t(text) || t("")}</div>)
                     : t("")
                   : textValue && typeof textValue === "object"
-                  ? t(textValue?.text) || ""
-                  : t(textValue) || (dependentOnValue && t(textDependentValue)) || t(notAvailable) || t("")}
+                  ? textValue?.text || ""
+                  : isLocalizationRequired
+                  ? t(textValue)
+                  : textValue || (dependentOnValue && t(textDependentValue)) || t(notAvailable) || t("")}
               </div>
               {showFlagIcon && (
                 <div
@@ -331,7 +350,7 @@ const CustomReviewCardRow = ({
 
       case "amount":
         let amountValue = extractValue(data, value);
-        amountValue = amountValue ? `₹${amountValue}` : t("");
+        amountValue = amountValue ? convertToIndianCurrency(amountValue, "en-IN", "INR") : t("");
         return (
           <div className={`amount-main ${bgclassname}`}>
             <div className="amount">
@@ -783,6 +802,7 @@ const CustomReviewCardRow = ({
     textDependentOn,
     label,
     textDependentValue,
+    isLocalizationRequired,
     notAvailable,
     enableScrutinyField,
     isJudge,
