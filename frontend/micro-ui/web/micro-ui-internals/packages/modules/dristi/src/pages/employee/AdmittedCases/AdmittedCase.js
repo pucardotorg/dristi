@@ -551,7 +551,7 @@ const AdmittedCases = () => {
               },
             },
           }
-        : tabConfig.label === "Documents"
+        : tabConfig.label === "Filings"
         ? {
             ...tabConfig,
             apiDetails: {
@@ -605,7 +605,7 @@ const AdmittedCases = () => {
               },
             },
           }
-        : tabConfig.label === "Submissions"
+        : tabConfig.label === "Applications"
         ? {
             ...tabConfig,
             apiDetails: {
@@ -1384,6 +1384,14 @@ const AdmittedCases = () => {
     history.push(`/digit-ui/citizen/submissions/submissions-create?filingNumber=${filingNumber}`);
   };
 
+  const handleCitizenAction = (option) => {
+    if (option.value === "RAISE_APPLICATION") {
+      history.push(`/digit-ui/citizen/submissions/submissions-create?filingNumber=${filingNumber}`);
+    } else if (option.value === "SUBMIT_DOCUMENTS") {
+      // to do
+    }
+  };
+
   const handleSelect = (option) => {
     if (option === t("MAKE_SUBMISSION")) {
       history.push(`/digit-ui/employee/submissions/submissions-create?filingNumber=${filingNumber}&applicationType=DOCUMENT`);
@@ -1602,6 +1610,21 @@ const AdmittedCases = () => {
         showToast({ isError: true, message: "ORDER_CREATION_FAILED" });
       });
   };
+
+  const citizenActionOptions = useMemo(
+    () => [
+      {
+        value: "RAISE_APPLICATION",
+        label: "Raise Application",
+      },
+      {
+        value: "SUBMIT_DOCUMENTS",
+        label: "Submit Documents",
+      },
+    ],
+    []
+  );
+
   const takeActionOptions = useMemo(
     () => [
       ...(userRoles?.includes("SUBMISSION_CREATOR") ? [t("MAKE_SUBMISSION")] : []),
@@ -1678,7 +1701,31 @@ const AdmittedCases = () => {
                 onButtonClick={() => downloadPdf(tenantId, caseDetails?.additionalDetails?.signedCaseDocument)}
               />
             )}
-            {showMakeSubmission && <Button label={t("MAKE_SUBMISSION")} onButtonClick={handleMakeSubmission} />}
+            {showMakeSubmission && (
+              <div className="evidence-header-wrapper">
+                <div className="evidence-hearing-header" style={{ background: "transparent" }}>
+                  <div className="evidence-actions" style={{ ...(isTabDisabled ? { pointerEvents: "none" } : {}) }}>
+                    <ActionButton
+                      variation={"primary"}
+                      label={t("CS_CASE_MAKE_FILINGS")}
+                      icon={showMenu ? "ExpandLess" : "ExpandMore"}
+                      isSuffix={true}
+                      onClick={handleTakeAction}
+                      className={"take-action-btn-class"}
+                    ></ActionButton>
+                    {showMenu && (
+                      <Menu
+                        t={t}
+                        optionKey={"label"}
+                        localeKeyPrefix={"CS_CASE"}
+                        options={citizenActionOptions}
+                        onSelect={(option) => handleCitizenAction(option)}
+                      ></Menu>
+                    )}
+                  </div>
+                </div>
+              </div>
+            )}
           </div>
           {showTakeAction && (
             <div className="judge-action-block" style={{ display: "flex" }}>
@@ -1788,7 +1835,7 @@ const AdmittedCases = () => {
               </div> */}
             </div>
           )}
-          {userRoles.includes("ORDER_CREATOR") && config?.label === "Submissions" && (
+          {userRoles.includes("ORDER_CREATOR") && config?.label === "Applications" && (
             <div style={{ display: "flex", gap: "10px" }}>
               <div
                 onClick={() => handleSelect(t("MANDATORY_SUBMISSIONS_RESPONSES"))}
@@ -1801,7 +1848,7 @@ const AdmittedCases = () => {
               </div> */}
             </div>
           )}
-          {isCitizen && config?.label === "Submissions" && (
+          {isCitizen && config?.label === "Applications" && (
             <div style={{ display: "flex", gap: "10px" }}>
               {showMakeSubmission && (
                 <div
@@ -1853,7 +1900,6 @@ const AdmittedCases = () => {
           <ViewCaseFile t={t} inViewCase={true} />
         </div>
       )}
-
       {show && (
         <EvidenceModal
           documentSubmission={documentSubmission}
@@ -1881,11 +1927,9 @@ const AdmittedCases = () => {
           handleOrdersTab={handleOrdersTab}
         />
       )}
-
       {showHearingTranscriptModal && (
         <HearingTranscriptModal t={t} hearing={currentHearing} setShowHearingTranscriptModal={setShowHearingTranscriptModal} />
       )}
-
       {showScheduleHearingModal && (
         <ScheduleHearing
           setUpdateCounter={setUpdateCounter}
@@ -1898,7 +1942,6 @@ const AdmittedCases = () => {
           createAdmissionOrder={createAdmissionOrder}
         />
       )}
-
       {orderDraftModal && <ViewAllOrderDrafts t={t} setShow={setOrderDraftModal} draftOrderList={draftOrderList} filingNumber={filingNumber} />}
       {submissionsViewModal && (
         <ViewAllSubmissions
