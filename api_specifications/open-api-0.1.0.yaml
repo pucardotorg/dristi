@@ -1,0 +1,337 @@
+openapi: "3.0.0"
+info:
+  title: All Public/Open APIs supported by the platform
+  description: This API specification defines the various APIs that are open to external world. Anyone can call these. These are unauthenticated APIs. These need to managed via rate limiting settings at the gateway level to limit access
+  version: 0.1.0
+tags:
+  - name: Open APIs
+paths:
+  /openapi/v1/{tenantID}/case/cnr/{cnrNumber}:
+    get:
+      tags:
+        - Open APIs
+      summary: get case summary by cnr number
+      description: The API is used to get case summary details using the case CNR Number within a specific tenant. example - GET /openapi/v1/KL/case/cnr/KLKM520008652024
+      operationId: getCaseByCNR
+      parameters:
+        - name: tenantID
+          in: path
+          description: tenant ID
+          required: true
+          schema:
+            type: string
+            pattern: "^[a-zA-Z]{2}$"
+            maxLength: 2
+            minLength: 2
+        - name: cnrNumber
+          in: path
+          description: the CNR number of the case in format SCDCECNNNNNNYYYY where SC=State Code, DC=District Code, EC=Establishment Code NNNNNN=Case Number and YYYY=Year, whose summary is requested
+          required: true
+          schema:
+            type: string
+            maxLength: 16
+            minLength: 16
+      responses:
+        '200':
+          description: ResponseInfo with case summary
+          headers:
+            Cache-Control:
+              schema:
+                type: string
+              description: |
+                Caching directive for clients:
+                - max-age=300 (5 minutes)
+                - must-revalidate
+              example: "max-age=300, must-revalidate"
+            ETag:
+              schema:
+                type: string
+              description: Entity tag for cache validation
+          content:
+            'application/json':
+              schema:
+                $ref: '#/components/schemas/CaseSummaryResponse'
+        '400':
+          description: querying case summary failed
+          content:
+            'application/json':
+              schema:
+                $ref: https://raw.githubusercontent.com/egovernments/DIGIT-OSS/master/core-services/docs/common-contract_v1-1.yml#/components/schemas/ErrorRes
+
+  /openapi/v1/{tenantID}/case/{year}/{caseType}:
+    get:
+      tags:
+        - Open APIs
+      summary: get case summary by case number for a specific year
+      description: The API is used to get a list of cases (case number and title) within a specific tenant, year, and type of the case (CMP, CC or ST). The API supports pagination. example - (1) GET /openapi/v1/KL/case/2024/CMP/?page=1&size=10&sort=registrationDate,desc
+      operationId: getCaseListByCaseType
+      parameters:
+        - name: tenantID
+          in: path
+          description: tenant ID
+          required: true
+          schema:
+            type: string
+            pattern: "^[a-zA-Z]{2}$"
+            maxLength: 2
+            minLength: 2
+        - name: year
+          in: path
+          description: if type= CMP, then year in which the case was registered. Can check based on registration date also. If type = CC/ST, then check against CourtCase.courtCaseNumber(year). The minimum year is set to 2024 as this is the year the system has gone live and the first case in the system is from 2024. No earlier cases exist.
+          required: true
+          schema:
+            type: integer
+            format: int32
+            minimum: 2024
+        - name: caseType
+          in: path
+          description: the type of the case CMP/CC/ST
+          required: true
+          schema:
+            type: string
+            enum: [CMP, CC, ST]
+        - name: offset
+          in: query
+          description: Page number to retrieve (0-based index)
+          required: false
+          schema:
+            type: integer
+            default: 0
+            minimum: 0
+        - name: limit
+          in: query
+          description: Number of items per page
+          required: false
+          schema:
+            type: integer
+            default: 10
+            minimum: 1
+            maximum: 100
+        - name: sort
+          in: query
+          description: Sorting criteria in the format `field,asc` or `field,desc`
+          required: false
+          schema:
+            type: string
+            pattern: "^(registrationDate|filingDate),(asc|desc)$"
+            example: "registrationDate,desc"
+      responses:
+        '200':
+          description: ResponseInfo with case summary
+          headers:
+            Cache-Control:
+              schema:
+                type: string
+              description: |
+                Caching directive for clients:
+                - max-age=300 (5 minutes)
+                - must-revalidate
+              example: "max-age=300, must-revalidate"
+            ETag:
+              schema:
+                type: string
+              description: Entity tag for cache validation
+          content:
+            'application/json':
+              schema:
+                $ref: '#/components/schemas/CaseListResponse'
+        '400':
+          description: querying case summary failed
+          content:
+            'application/json':
+              schema:
+                $ref: https://raw.githubusercontent.com/egovernments/DIGIT-OSS/master/core-services/docs/common-contract_v1-1.yml#/components/schemas/ErrorRes
+
+  /openapi/v1/{tenantID}/case/{year}/{caseType}/{caseNumber}:
+    get:
+      tags:
+        - Open APIs
+      summary: get case summary by case number for a specific year
+      description: The API is used to get case summary details within a specific tenant. The parameters are year, type of the case (CMP, CC or ST) and the case number. example - (1) GET /openapi/v1/KL/case/2024/CMP/?page=1&size=10&sort=registrationDate,desc. (2) GET /openapi/v1/KL/case/2024/CMP/?caseNumber=CMP/15/2024
+      operationId: getCaseByCaseNumber
+      parameters:
+        - name: tenantID
+          in: path
+          description: tenant ID
+          required: true
+          schema:
+            type: string
+            pattern: "^[a-zA-Z]{2}$"
+            maxLength: 2
+            minLength: 2
+        - name: year
+          in: path
+          description: if type= CMP, then year in which the case was registered. Can check based on registration date also. If type = CC/ST, then check against CourtCase.courtCaseNumber(year). The minimum year is set to 2024 as this is the year the system has gone live and the first case in the system is from 2024. No earlier cases exist.
+          required: true
+          schema:
+            type: integer
+            format: int32
+            minimum: 2024
+        - name: caseType
+          in: path
+          description: the type of the case CMP/CC/ST
+          required: true
+          schema:
+            type: string
+            enum: [CMP, CC, ST]
+        - name: caseNumber
+          in: query
+          description: Number part of CMP/CC/ST case number in format <type>/<number>/<year>
+          required: true
+          schema:
+            type: integer
+            format: int32
+            maximum: 99999999
+            minimum: 1
+          example:
+            - 123 for case number CMP/123/2024 (for CMP type)
+            - 456 for case number CC/456/2024 (for CC type)
+            - 789 for case number ST/789/2024 (for ST type)
+      responses:
+        '200':
+          description: ResponseInfo with case number and title
+          headers:
+            Cache-Control:
+              schema:
+                type: string
+              description: |
+                Caching directive for clients:
+                - max-age=300 (5 minutes)
+                - must-revalidate
+              example: "max-age=300, must-revalidate"
+            ETag:
+              schema:
+                type: string
+              description: Entity tag for cache validation
+          content:
+            'application/json':
+              schema:
+                $ref: '#/components/schemas/CaseListResponse'
+        '400':
+          description: querying case summary failed
+          content:
+            'application/json':
+              schema:
+                $ref: https://raw.githubusercontent.com/egovernments/DIGIT-OSS/master/core-services/docs/common-contract_v1-1.yml#/components/schemas/ErrorRes
+
+
+components:
+  schemas:
+    CaseSummaryResponse:
+      type: object
+      properties:
+        ResponseInfo:
+          $ref: https://raw.githubusercontent.com/egovernments/DIGIT-OSS/master/core-services/docs/common-contract_v1-1.yml#/components/schemas/ResponseInfo
+        caseSummary:
+          $ref: '#/components/schemas/CaseSummary'
+
+    CaseListResponse:
+      type: object
+      properties:
+        ResponseInfo:
+          $ref: https://raw.githubusercontent.com/egovernments/DIGIT-OSS/master/core-services/docs/common-contract_v1-1.yml#/components/schemas/ResponseInfo
+        caseList:
+          type: array
+          items:
+            $ref: '#/components/schemas/CaseListLineItem'
+        pagination:
+          $ref: >-
+            https://raw.githubusercontent.com/egovernments/DIGIT-OSS/master/core-services/docs/common-contract_v1-1.yml#/components/schemas/Pagination
+
+    CaseSummary:
+      type: object
+      description: this is a summary representation of CourtCase object. A limited set of fields, formatted appropriately are returned. Since the object already exists, there are no field level rules set for this summary object
+      required:
+        - cnrNumber
+        - filingNumber
+        - filingDate
+        - registrationNumber
+        - registrationDate
+        - caseType
+        - statutesAndSections
+        - subStage
+        - judgeName
+        - complainant
+        - respondent
+        - advocateComplainant
+        - advocateRespondent
+      properties:
+        cnrNumber:
+          type: string
+          maxLength: 16
+          minLength: 16
+          example: "KLKM521235562024"
+        filingNumber:
+          type: string
+          maxLength: 14
+          minLength: 14
+          example: "KL-000075-2024"
+        filingDate:
+          type: integer
+          format: int64
+          description: filing date in EPOCH time (milliseconds) format
+        registrationNumber:
+          type: string
+          description: CMP number. null is not available
+          example: "CMP/1/2024"
+          minLength: 10
+          maxLength: 18
+        registrationDate:
+          type: integer
+          format: int64
+          description: registration date in EPOCH time (milliseconds) format
+        nextHearingDate:
+          type: integer
+          format: int64
+          description: date of next scheduled hearing in EPOCH time (milliseconds) format
+        caseType:
+          type: string
+          description: fixed value based on case type
+          enum: ["Criminal Miscellaneous Petition", "Summary Trail"]
+        statutesAndSections:
+          type: array
+          items:
+            type: object
+            properties:
+              statute:
+                type: string
+                example: "NIA"
+              sections:
+                type: array
+                items:
+                  type: string
+                example: ["S138", "S142(1)(a)", "S145"]
+          description: An array of statute and sections for the case
+        status:
+          type: string
+          description: CMP case not yet admitted, response will be Pending. ST Case already admitted, response will be Pending. ST case already registered, but queried using CMP, response will be Disposed.
+          enum: ["Pending", "Disposed"]
+        subStage:
+          type: string
+          description: this will be returned as "<stage> - <sub stage>"
+          example: "Pre-Trail - Appearance"
+        judgeName:
+          type: string
+          description: full name of the Judge
+        complainant:
+          type: string
+          description: full name of the primary complainant
+        respondent:
+          type: string
+          description: full name of the primary respondent
+        advocateComplainant:
+          type: string
+          description: full name of the primary advocate of complainant
+        advocateRespondent:
+          type: string
+          description: full name of the primary advocate of respondent
+
+    CaseListLineItem:
+      type: object
+      properties:
+        caseNumber:
+          type: string
+          description: CMP/CC/ST number of the case based on the input query caseType. Sorted on case Number in reverse chronological order, i.e. the latest case at the top and earliest at the bottom
+          example: "CMP/1/2024"
+        caseTitle:
+          type: string

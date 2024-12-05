@@ -755,9 +755,9 @@ components:
     CaseSummaryResponse:
       type: object
       properties:
-        requestInfo:
+        ResponseInfo:
           $ref: >-
-            https://raw.githubusercontent.com/egovernments/DIGIT-Specs/common-contract-update/Common%20Services/common-contract.yaml#/components/schemas/RequestInfo
+            https://raw.githubusercontent.com/egovernments/DIGIT-Specs/common-contract-update/Common%20Services/common-contract.yaml#/components/schemas/ResponseInfo
         cases:
           type: array
           items:
@@ -778,7 +778,7 @@ components:
     CaseListResponse:
       type: object
       properties:
-        RequestInfo:
+        ResponseInfo:
           $ref: >-
             https://raw.githubusercontent.com/egovernments/DIGIT-OSS/master/core-services/docs/common-contract_v1-1.yml#/components/schemas/ResponseInfo
         cases:
