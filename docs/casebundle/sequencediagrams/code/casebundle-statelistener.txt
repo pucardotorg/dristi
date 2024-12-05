@@ -1,0 +1,78 @@
+@startuml
+autonumber
+skinparam responseMessageBelowArrow true
+
+title "Case Bundle - State Change Listener"
+
+box DRISIT Services
+participant CaseBundleIndexBuilderSvc as CBIBS #gold
+participant CaseBundleSvc as CBS #gold
+end box
+
+box DIGIT Services #lightgray
+participant MasterDataSvc as MDS #lightgreen
+queue Kafka as K #lightgreen
+Database ESIndexer as ES #gray
+end box
+
+
+alt save-case-application topic
+  note right of CBIBS: this is where the index gets created for the first time
+  CBIBS->K++: listen to save-wf-transition topic
+  return topicEntry
+  CBIBS ->CBS ++: initiate indexJson from template
+  CBS->CBS: enrich indexJson.caseId = topicEntry.caseId
+  CBS->ES: insert index (indexJson)
+  return
+else update-application-comments-application topic
+  note right of CBIBS: this to handle new objections being added to an application
+  CBIBS->K++: listen to update-application-comments-application
+  return topicEntry
+  CBIBS->ES++: query 'case-bundle-pdf' index for topicEntry.caseId
+  return indexJson
+  CBIBS->CBS++ : processObjections(topicEntry, indexJson)
+  note right of CBIBS: look at "Case Bundle - Objection Index Generator" Sequence Diagram
+else representative-join-case topic
+  note right of CBIBS: this to handle an advocate joining a case, and hence a vakalat will be available
+  CBIBS->K++: listen to representative-join-case
+  return topicEntry
+  CBIBS->ES++: query 'case-bundle-pdf' index for topicEntry.caseId
+  return indexJson
+  CBIBS->CBS++ : processVakalat(topicEntry, indexJson)
+  note right of CBIBS: look at "Case Bundle - Objection Index Generator" Sequence Diagram
+else save-wf-transition topic
+  note right of CBIBS: this to handle workflow update events that impact the case bundle related files
+  CBIBS->K++: listen to save-wf-transition topic
+  return topic entry
+
+  CBIBS ->CBS ++: is valid state (ProcessInstances.moduleName, ProcessInstances.businessService, ProcessInstances.state.state)
+  CBS ->MDS++: query case_bundle_state_master for module, businessService, state
+  return masterRecord
+
+  alt stateName not in masterRecord
+    CBS ->CBIBS : return FALSE
+    note right of CBIBS : This state is not related to case bundle PDF. Hence exit
+  else
+    return return TRUE
+    note right of CBIBS : This is a state related to case bundle PDF. proceed further
+  end
+
+  CBIBS->ES++: query 'case-bundle-pdf' index for caseId
+  return indexJson
+
+  alt if ProcessInstances.moduleName = case
+    CBIBS->CBS++ : processCase(ProcessInstances.businessId, indexJson, stateName)
+    note right of CBIBS : look at "Case Bundle - Case Index Generator" Sequence Diagram
+  else if ProcessInstances.moduleName = application
+    CBIBS->CBS : processApplication(ProcessInstances.businessId, indexJson, stateName)
+    note right of CBIBS: look at "Case Bundle - Application Index Generator" Sequence Diagram
+  else if ProcessInstances.moduleName = order
+    CBIBS->CBS : processOrder(ProcessInstances.businessId, indexJson, stateName)
+    note right of CBIBS: look at "Case Bundle - Order Index Generator" Sequence Diagram
+  else if ProcessInstances.moduleName = task
+    CBIBS->CBS : processTask(ProcessInstances.businessId, indexJson, stateName)
+    note right of CBIBS: look at "Case Bundle - Task Index Generator" Sequence Diagram
+  end
+  return
+end
+@enduml

@@ -1,0 +1,78 @@
+@startuml
+autonumber
+skinparam responseMessageBelowArrow true
+
+title "Case Bundle - Objection Index Generator"
+
+box DRISIT Services
+participant CaseBundleIndexBuilderSvc as CBIBS #gold
+participant CaseBundleSvc as CBS #gold
+participant CaseManagementService as CMS #gold
+participant CaseSvc as CS #gold
+participant OrderSvc as OS #gold
+participant CaseUtilSvc as CUS #gold
+end box
+
+box DIGIT Services #lightgray
+Database ESIndexer as ES #gray
+participant FilestoreSvc as FS #lightgreen
+participant PDFSvc as PS #lightgreen
+participant MasterDataSvc as MDS #lightgreen
+end box
+
+note across: an objection may have been added with a new comment. need to process it. Objection is added immediately after the application, it is for. The application could be in pendingapplication or applications section, depending on if it has been approved or not
+CBIBS->CBS++ : processObjections(topicEntry, indexJson)
+note right of CBS: orders section of Case Bundle
+CBS->MDS++: get record from case_bundle_master where section.name = "pendingapplicationobjections" OR "applicationobjections"
+return sectionRows
+alt both sectionRows.isActive = false
+  note right of CBS: section not to be processed. EXIT method
+end
+CBS->CBS: get application fileStoreID(topicEntry, documentType = application.signed) as appSourceId
+CBS->CBS: search indexJson.sections.items.lineItem.sourceId = appSourceId, get as lineItem
+
+alt lineItem = null
+note right of CBS: unlikely, because you cannot raise an objection, if there is no application
+  CBS->CBS: throw error and exit method
+end
+
+CBS->CBS: get objectionStoreId from topicEntry
+
+alt objectionStoreId = null
+  CBS->CBS: exit method
+end
+
+CBS->FS++: get objectionPDF (objectionStoreId)
+return objectionPDF as bundlePDF
+
+alt sectionRow.docketPageRequired = true
+  CUS->CS++: get casedetails (topicEntry.caseId)
+  CUS->CUS: prepare docket page content
+  note right of CUS
+     data to be used Objection.creationDate, topicEntry.applicationType
+     caseDetails.litigants, caseDetails.representatives, caseDetails.caseTitle
+     and courtName from HRMS using caseDetails.courtID
+  end note
+  return docketJson
+  CBS->PS++: create cover PDF (docketJson, pdfTemplate)
+  return docketPDF
+  CBS->CBS: bundlePDF= merge (append) bundlePDF into docketPDF
+  return bundlePDF
+end
+CBS->FS++: store bundlePDF
+return bundlePDFId
+
+CBS->CBS: Create Item Json
+CBS->CBS: set item.content = vakalat
+CBS->CBS: set item.sortParam = application.cmpNumber
+CBS->CBS: set item.createPDF = false
+CBS->CBS: set item.sourceId = objectionStoreId
+CBS->CBS: set item.fileStoreId = bundlePDFId
+
+CBS->CBS: append indexJson (section.name = 'vakalat') with Item
+CBS->CBS: indexJson.contentLastModified = current EPOCH DateTime
+CBS->CMS: update index(indexJson)
+CMS->ES: update index (caseID, indexJson)
+return
+
+@enduml

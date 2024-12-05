@@ -133,6 +133,60 @@ paths:
                 $ref: >-
                   https://raw.githubusercontent.com/egovernments/DIGIT-Specs/common-contract-update/Common%20Services/common-contract.yaml#/components/schemas/ErrorResponse
 
+  /casemanager/case/v1/_buildcasebundle:
+    post:
+      tags:
+        - Case Management Service
+      description: API used to create a case bundle for a single case. This is directly called from the font end, when there is a need to create the bundle at a specific time
+      requestBody:
+        description: Details of the court cases to be ungrouped + ResponseInfo meta data.
+        content:
+          '*/*':
+            schema:
+              $ref: '#/components/schemas/CaseBundleRequest'
+        required: true
+      responses:
+        '200':
+          description: ResponseInfo with case group created successfully
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/CaseBundleResponse'
+        '400':
+          description: Error grouping cases together.
+          content:
+            '*/*':
+              schema:
+                $ref: >-
+                  https://raw.githubusercontent.com/egovernments/DIGIT-Specs/common-contract-update/Common%20Services/common-contract.yaml#/components/schemas/ErrorResponse
+
+  /casemanager/case/v1/bulk/_buildcasebundle:
+    post:
+      tags:
+        - Case Management Service
+      description: API used to create a case bundle for multiple cases. This is typically called from the daily midnight cron job. It will query the case-bundle-pdf Index and create case bundle PDFs for the same. It will just store the files and log details with regards start time, end time, case bundles created, bundles failed. Since this is called by cron job, it will just return a success (if method got called) or failure, if something happened
+      requestBody:
+        description: Details of the court cases to be ungrouped + ResponseInfo meta data.
+        content:
+          '*/*':
+            schema:
+              $ref: '#/components/schemas/CaseBundleBulkRequest'
+        required: true
+      responses:
+        '200':
+          description: ResponseInfo with case group created successfully
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/CaseBundleBulkResponse'
+        '400':
+          description: Error grouping cases together.
+          content:
+            '*/*':
+              schema:
+                $ref: >-
+                  https://raw.githubusercontent.com/egovernments/DIGIT-Specs/common-contract-update/Common%20Services/common-contract.yaml#/components/schemas/ErrorResponse
+
 components:
   schemas:
     CaseGroup:
@@ -283,4 +337,93 @@ components:
           items:
             $ref: '#/components/schemas/CaseGroup'
 
+    CaseBundleRequest:
+      type: object
+      properties:
+        requestInfo:
+          $ref: https://raw.githubusercontent.com/egovernments/DIGIT-Specs/common-contract-update/Common%20Services/common-contract.yaml#/components/schemas/RequestInfo
+        tenantId:
+          type: string
+        caseId:
+          type: string
+          format: uuid
+          minLength: 36
+          maxLength: 36
 
+    CaseBundleResponse:
+      type: object
+      properties:
+        responseInfo:
+          $ref: https://raw.githubusercontent.com/egovernments/DIGIT-Specs/common-contract-update/Common%20Services/common-contract.yaml#/components/schemas/ResponseInfo
+        fileStoreId:
+          type: string
+          format: uuid
+          minLength: 36
+          maxLength: 36
+
+    CaseBundleBulkRequest:
+      type: object
+      properties:
+        requestInfo:
+          $ref: https://raw.githubusercontent.com/egovernments/DIGIT-Specs/common-contract-update/Common%20Services/common-contract.yaml#/components/schemas/RequestInfo
+        tenantId:
+          type: string
+
+    CaseBundleBulkResponse:
+      type: object
+      properties:
+        responseInfo:
+          $ref: https://raw.githubusercontent.com/egovernments/DIGIT-Specs/common-contract-update/Common%20Services/common-contract.yaml#/components/schemas/ResponseInfo
+        status:
+          type: boolean
+
+    CaseBundleTracker:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+          readOnly: true
+          minLength: 36
+          maxLength: 36
+        startTime:
+          type: integer
+          format: int64
+          description: The date time of start of case bundle creation in epoch time (milliseconds)
+        endTime:
+          type: integer
+          format: int64
+          description: The date time of end of case bundle creation in epoch time (milliseconds)
+        pageCount:
+          type: integer
+          format: int32
+          description: the count of the page in the final PDF generated
+        errorLog:
+          type: string
+          description: error details, if any
+        auditDetails:
+          $ref: 'https://raw.githubusercontent.com/egovernments/DIGIT-Specs/common-contract-update/Common%20Services/common-contract.yaml#/components/schemas/AuditDetails'
+
+    BulkCaseBundleTracker:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+          readOnly: true
+          minLength: 36
+          maxLength: 36
+        startTime:
+          type: integer
+          format: int64
+          description: The date time of start of case bundle creation in epoch time (milliseconds)
+        endTime:
+          type: integer
+          format: int64
+          description: The date time of end of case bundle creation in epoch time (milliseconds)
+        caseCount:
+          type: integer
+          format: int32
+          description: the count of the cases retrieved from the index, whose bundle needs to be created
+        auditDetails:
+          $ref: 'https://raw.githubusercontent.com/egovernments/DIGIT-Specs/common-contract-update/Common%20Services/common-contract.yaml#/components/schemas/AuditDetails'

@@ -1,0 +1,87 @@
+{
+  "name": "case-bundle-pdf",
+  "tenantId": "KL",
+  "isInProcessing": false,
+  "caseID": null,
+  "isCaseRegistered": false,
+  "pdfCreatedDate": 0,
+  "fileStoreId": null,
+  "contentLastModified": 0,
+  "sections": [
+    {
+      "name": "titlepage",
+      "lineItems": [
+        {
+          "content": "cover",
+          "createPDF": true
+        }
+      ]
+    },
+    {
+      "name": "adiary"
+    },
+    {
+      "name": "pendingapplications"
+    },
+    {
+      "name": "complaint"
+    },
+    {
+      "name": "filings"
+    },
+    {
+      "name": "affidavit"
+    },
+    {
+      "name": "vakalat"
+    },
+    {
+      "name": "additionalfilings"
+    },
+    {
+      "name": "mandatorysubmissions"
+    },
+    {
+      "name": "complainantevidence"
+    },
+    {
+      "name": "313"
+    },
+    {
+      "name": "accusedstatement"
+    },
+    {
+      "name": "accusedevidence"
+    },
+    {
+      "name": "courtevidence"
+    },
+    {
+      "name": "courtnotes"
+    },
+    {
+      "name": "complainantnotes"
+    },
+    {
+      "name": "accusednotes"
+    },
+    {
+      "name": "applications"
+    },
+    {
+      "name": "baildocument"
+    },
+    {
+      "name": "memos"
+    },
+    {
+      "name": "processes"
+    },
+    {
+      "name": "paymentreceipts"
+    },
+    {
+      "name": "orders"
+    }
+  ]
+}

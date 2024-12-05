@@ -1,0 +1,191 @@
+@startuml
+autonumber
+skinparam responseMessageBelowArrow true
+
+title "Case Bundle - Case Index Generator"
+
+box DRISIT Services
+participant CaseBundleIndexBuilderSvc as CBIBS #gold
+participant CaseManagementService as CMS #gold
+participant CaseSvc as CS #gold
+participant CaseBundleSvc as CBS #gold
+end box
+
+box DIGIT Services #lightgray
+participant FilestoreSvc as FS #lightgreen
+participant PDFSvc as PS #lightgreen
+participant MasterDataSvc as MDS #lightgreen
+Database ESIndexer as ES #gray
+Database PostgreSQL as DB #gray
+end box
+
+CBIBS->CMS++:process Case section
+CMS->CS++: get case details (caseId)
+return caseDetails
+CMS->CBS++: processCase(caseId, indexJson, state)
+
+note right of CBS: Different sections below as per the case states being processed
+
+
+== State - PENDING_ADMISSION_HEARING ==
+note across: Case is registered. No more changes will happen to complaint and the documents submitted as part of the case. bundle related documented generated at this time, will be the final version - complaint + witness schedule + list of documents, 2 affidavits, and attached documents. Vakalat can change later also if the advocate changes
+
+note right of CBS: complaint section of Case Bundle, which also includes witness schedule and static list of documents
+CBS->MDS++: get record from case_bundle_master where "complaint" = section.name
+return sectionRow
+alt sectionRow.isActive = false
+  note right of CBS: section not to be processed. exit method
+end
+
+CBS->CBS: get complaintPDF from caseDetails as streamPDF (CourtCase.Documents.documentType = 'case.complaint.signed')
+alt sectionRow.docketPageRequired = true
+  CBS->CBS: get docketTitle
+  CBS->PS++: create docket PDF (item.sourceId, docketTitle)
+  return docketPDF
+  CBS->CBS: get streamPDF = merge (append) streamPDF into docketPDF
+end
+
+CBS->FS++: store streamPDF
+return streamPDF fileStoreId
+CBS->CBS: update indexJson with fileStoreId,
+note right of CBS
+  update section.name = complaint, in indexJson
+  update lineItem details
+    set Item.createPDF = false
+    set Item.sourceId = complaintPDF.fileStoreId
+    set Item.fileStoreId = streamPDF fileStroreId
+    set Item.sortParam = null
+    set Item.content = "complaint";
+end note
+
+
+note right of CBS: filings section of Case Bundle
+CBS->MDS++: get record from case_bundle_master where "filings" = section.name
+return sectionRow
+alt sectionRow.isActive = false
+  note right of CBS: section not to be processed. exit method
+end
+
+note over CBS: the case filing documents are available in Case.Documents and also in Artifacts.Documents. Need to pick from one of these places
+CBS->CBS: create list of attachments (filestoreID and documentType)
+CBS->CBS: sort the list (using sorton field from case_bundle_master master table)
+
+loop for each document in list of attachments
+
+  CBS->CBS: get documentPDF as streamPDF
+  CBS->CBS: create and set values for index LineItem
+  note right of CBS
+    set Item.sourceId = document .fileStoreId
+    set Item.sortParam = arrayindex
+    set Item.createPDF = false
+    set Item.content = "initialfiling;
+  end note
+
+  alt sectionRow.docketPageRequired = true
+    CBS->CBS: get docketTitle
+    CBS->PS++: create docket PDF (item.sourceId, docketTitle)
+    return docketPDF
+    CBS->CBS: streamPDF = merge (append) streamPDF into docketPDF
+    CBS->FS++: store streamPDF
+    return streamPDFId
+    CBS->CBS: set Item.fileStoreId = streamPDFId
+  else
+    CBS->CBS: set Item.fileStoreId = Item.sourceId
+  end
+  CBS->CBS: Append Item to indexJson.sections.name = "fillings"
+end
+
+
+
+note right of CBS: affidavit section  of Case Bundle
+CBS->MDS++: get record from case_bundle_master where "affidavit" = section.name
+return sectionRow
+alt sectionRow.isActive = false
+  note right of CBS: section not to be processed. exit method
+end
+
+note right of CBS: There are 2 affidavits
+
+CBS->CBS: get affidavitPDF from caseDetails as streamPDF where documentType = case.affidavit.223bnss
+alt sectionRow.docketPageRequired = true
+  CBS->CBS: get docketTitle
+  CBS->PS++: create docket PDF (item.sourceId, docketTitle)
+  return docketPDF
+  CBS->CBS: streamPDF = merge (append) streamPDF into docketPDF
+end
+
+CBS->FS++: store streamPDF
+return streamPDFId
+CBS->CBS: update indexJson with fileStoreId,
+note right of CBS
+  update section.name = complaint, in indexJson
+  update lineItem details
+    set Item.createPDF = false
+    set Item.sourceId = affidavitPDF.fileStoreId
+    set Item.fileStoreId = streamPDFId
+    set Item.sortParam = null
+    set Item.content = "affidavit;
+end note
+
+CBS->CBS: get affidavit 2 from caseDetails as streamPDF where documentType = case.affidavit.225bnss
+alt if affidavit 2 is present
+  note right of CBS: repeat the flow with affidavit 2
+end
+
+note right of CBS: vakalat section of Case Bundle
+CBS->MDS++: get record from case_bundle_master where "vakalat" = section.name
+return sectionRow
+alt sectionRow.isActive = false
+  note right of CBS: section not to be processed. exit method
+end
+CBS->CBS: build filestoreID list of Vakalats (filestoreID, partyType, active)
+note right of CBS
+  from caseDetails.representatives.representing.documents
+  where caseDetails.representatives.representing.documents.documentType LIKE case.vakalat
+  and record caseDetails.representatives.representing.isActive
+  and record caseDetails.representatives.representing.partyType
+  Organize as Active Complainant, Active Respondent, InActive vakalats
+end note
+
+loop for each vakalat filestore ID in vakalastList
+
+  CBS->CBS: get vakalatPDF from vakalat as streamPDF
+  CBS->CBS: create and set values for index LineItem
+  note right of CBS
+    set Item.sourceId = vakalat.fileStoreId
+    set Item.sortParam = null
+    set Item.createPDF = false
+    set Item.content = "vakalat;
+  end note
+
+  alt sectionRow.docketPageRequired = true
+    CBS->CBS: get docketTitle
+    CBS->PS++: create docket PDF (item.sourceId, docketTitle)
+    return docketPDF
+    CBS->CBS: streamPDF = merge (append) streamPDF into docketPDF
+    CBS->FS++: store streamPDF
+    return streamPDFId
+    CBS->CBS: set Item.fileStoreId = streamPDFId
+  else
+    CBS->CBS: set Item.fileStoreId = Item.sourceId
+  end
+  CBS->CBS: Append Item to indexJson.sections.name = "vakalat"
+end
+
+CBS->CBS: update indexJson.isRegistered = true
+
+== State - CASE_ADMITTED ==
+note across: case is getting admitted. A ST number will be generated. Need to mark that bundle PDF needs to be generated
+
+CBS->CBS: update indexJson.contentLastModified = current datetime in EPOCH (milliseconds)
+
+
+
+== State - CASE_REASSIGNED ==
+note across: the case has been sent back to litigant/advocate to fix errors. They can change any file. Hence need to mark complain, affidavit, vakalat and filings section to be redone
+CBS->CBS: update indexJson.isRegistered = false
+
+== Common Processing ==
+return indexJson
+CMS->ES: update index (indexJson, caseId)
+@enduml

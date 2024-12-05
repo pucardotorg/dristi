@@ -1,0 +1,107 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://dristi.pucar.org/schemas/case-bundle.json",
+  "$comment": "definition of the schema for Case Bundle",
+  "$version": "1.0",
+  "type": "object",
+  "required": ["name", "tenantId", "caseID", "pdfCreatedDate", "fileStoreId", "contentLastModified"],
+  "properties": {
+    "name": "case-bundle-pdf",
+    "tenantId": "KL",
+    "isInProcessing": {
+      "type": "boolean",
+      "description": "once this is under processing, mark as True, to avoid being picked up for processing again and again"
+    },
+    "caseID": {
+      "type": "string",
+      "format": "uuid",
+      "description": "the primary key of the case"
+    },
+    "isCaseRegistered": {
+      "type": "boolean",
+      "description": "till the case is registered the case bundle is created a bit differently. use this flag to distinguish"
+    },
+    "pdfCreatedDate": {
+      "type": "number",
+      "description": "Date the last time the case bundle PDF was created. Stored in EPOCH date time"
+    },
+    "fileStoreId": {
+      "type": "string",
+      "format": "uuid",
+      "description": "file store ID of the PDF bundle created. Use this to directly show anywhere if a newer version does not need to be created"
+    },
+    "contentLastModified": {
+      "type": "number",
+      "description": "Date the last time the case bundle index was updated. Stored in EPOCH date time. If updatedDate is greater than pdfCreatedDate, then new PDF needs to be generated, use the bundle section below to create the PDF"
+    },
+    "sections": {
+      "type": "array",
+      "description": "PRD - https://docs.google.com/document/d/1YQlB5ubGhSye3XktGU4INLLByGLkcRaW_JlLChLFlLM/edit",
+      "example": "https://docs.google.com/document/d/1G0Bo3PortRQrm3Y7k854IvCNhuqvq6AQU8FLpSf8_Qk/edit",
+      "items": {
+        "type": "object",
+        "required": [
+          "name",
+          "item"
+        ],
+        "properties": {
+          "name": {
+            "type": "string",
+            "description": "name of the section, case title, a Dairy, complaint PDF etc. this is only for easy understanding of what this section is about",
+            "example": "titlepage, pendingapplications, complaint"
+          },
+          "lineItems": {
+            "type": "array",
+            "required": [
+              "content",
+              "createPDF"
+            ],
+            "items": {
+              "type": "object",
+              "properties": {
+                "content": {
+                  "enum": [
+                    "cover",
+                    "complaint",
+                    "initialfilling",
+                    "affidavit",
+                    "vakalat",
+                    "application",
+                    "order",
+                    "task",
+                    "objection",
+                    "evidence",
+                    "notes",
+                    "submission",
+                    "notice",
+                    "summons",
+                    "warrant",
+                    "bail"
+                  ]
+                },
+                "createPDF": {
+                  "type": "boolean",
+                  "description": "true means need to create the PDF and use it. false (default) means PDF is available and just need to use it. use fileStoreId for it"
+                },
+                "sourceId": {
+                  "type": "string",
+                  "format": "uuid",
+                  "description": "file store ID of  original file, so that we don't duplicate"
+                },
+                "fileStoreId": {
+                  "type": "string",
+                  "format": "uuid",
+                  "description": "file store ID of the final PDF including docket page, if required. Use this to directly include in the bundle"
+                },
+                "sortParam": {
+                  "type": "string",
+                  "description": "parameter on which individual items will be sorted, could be EPOCH, could be cmpNumber, could be just specific sequence number"
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}
