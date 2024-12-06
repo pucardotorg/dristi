@@ -35,7 +35,7 @@
           "actions": [
             {
               "action": "E-SIGN",
-              "nextState": "COMPLETED",
+              "nextState": "SUBMITTED",
               "roles": [
                 "SUBMISSION_CREATOR",
                 "SYSTEM",
@@ -61,7 +61,7 @@
         },
         {
           "sla": null,
-          "state": "COMPLETED",
+          "state": "SUBMITTED",
           "applicationStatus": "ACTIVE",
           "isStateUpdatable": false,
           "docUploadRequired": false,

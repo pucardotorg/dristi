@@ -40,7 +40,7 @@ VU->DU: redirects to Document submission screen
 A->DU: Fill in the Document details and upload relevant documents
 A->DU: Click "Review Submission"
 DU->DRU: redirect to review screen
-DRU->ARS++: createArtifact(artifact payload, filestoreID, filingNumber)
+DRU->ARS++: createArtifact(artifact payload, filingNumber)
 ARS->ARUS++: generate ArtifactNumber (filingNumber)
 return artifactNumber
 ARS->W++: action "CREATE"
@@ -56,17 +56,20 @@ return PDF
 else single PDF uploaded
 note right of DRU: PDF already available. can use for preview directly
 end
-DRU->DRU: Preview PDF
-A->DRU: E-sign documemnt
-DRU->ES++: e-sign document
-return signed documemnt
 DRU->FS++: save document
+return fileStoreID
+DRU->ARS++: updateArtifact (fileStoreID)
+DRU->DRU: Preview PDF
+A->DRU: E-sign document
+DRU->ES++: e-sign document
+return signed document
+DRU->FS++: save signed document
 return filestoreID
 DRU->ARS++: updateArtifact (filestoreID)
 ARS->W++: action "E-SIGN"
 W->K: post state transition event
-return "COMPLETED"
+return "SUBMITTED"
 return 200 (artifact updated)
 ARS->NS++: send notification to other parties
-return
+return success
 @endum
