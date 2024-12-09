@@ -1,48 +1,92 @@
-#created using websequencedigrams.com
+@startuml
+autonumber
+skinparam responseMessageBelowArrow true
 
-title Create Order
+title "Create and Publish Order"
 
-UI->Order: Create Order
+Actor Judge as J
 
-Order->Case: Validate caseId
-Case-->Order: return true/false
-Order->UI: Return 400 : if caseId invalid
+participant OrderUI as OU
 
-Order->Order: enrich orderId
+box DRISIT Services
+participant OrderSvc as OS #gold
+participant CaseSvc as CS #gold
+participant TaskSvc as TS #gold
+participant ApplicationSvc as AS #gold
+end box
 
-alt if ordertype = summons/warrant
+box DIGIT Services #lightgray
+participant Workflow as W #lightgreen
+queue Kafka as K #lightgreen
+participant PersisterSvc as P #lightgreen
+Database PostgreSQL as DB #gray
+end box
+
+note right of J: Judge has logged in and picked a case for which order needs to be passed
+J->OU: Fill in the Order details
+
+OU->OS++: Create Order
+OS->CS++: Validate caseId
+return true/false
+OS->OU: Return 400 : if caseId invalid
+note right of OS: continue if caseId is valid
+OS->OS: enrich orderId
+
+opt if ordertype = summons/warrant
     loop for each address and delivery channel
-        Order->Task: Create Task for Summon
-        Task->Task: enrich taskId, orderId, caseId
-        Task->Order: Return 201 : new Task created
-        Order->Task: Update Task with Summons/Warrant details
-        Task->Order: Task updated
+        OS->TS++: Create Task for Summon
+        TS->TS: enrich taskId, orderId, caseId
+        return 201 : new Task created
+        OS->TS++: Update Task with Summons/Warrant details
+        return updated Task
     end
-else if ordertype = bail
-    Order->Task: Create Task for Bail
-    Task->Task: enrich taskId, orderId, caseId
-    Task->Order: Return 201 : new Task created
-    Order->Task: Update Task with BailS
-    Task->Order: Task updated
+else ordertype = bail
+    OS->TS++: Create Task for Bail
+    TS->TS: enrich taskId, orderId, caseId
+    return 201 : new Task created
+    OS->TS++: Update Task with BailS
+    return updated Task
 else
     loop for each Party
         loop for each order type
             loop for each document type
-            Order->Task: Create Task
-            Task->Task: enrich taskId, orderId, caseId
-            Task->Order: Return 201 : new Task created
-            Order->Task: Update Task with document, person details
-            Task->Order: Task updated
+            OS->TS++: Create Task
+            TS->TS: enrich taskId, orderId, caseId
+            return 201 : new Task created
+            OS->TS++: Update Task with document, person details
+            return updated Task
             end
         end
     end
 end
 
-Order->Workflow: get Order status
-Workflow-->Order: return Order status 'Drafted'
+OS->W++: get Order status
+return Order status 'Drafted'
+OS-> K++: Push Order payload to topic
+return
+return 201 : new Order created
 
-Order->UI: Return 201 : new Order created
+P-> K: Read payload
+P-> DB: Create records in DB
 
-Order -> Kafka: Push Order payload to topic
-Persister -> Kafka: Read payload
-Persister -> Postgres: Create records in DB
+note right of OU: Normal flow for e-sign and publishing of order
+OU->OS++: publish order
+opt ordertype = bail
+  note right of OS: When a bail order is passed, need to check if there is any unapproved bail application
+  OS->AS++:search application (type=bail, status=pending approval)
+  return bailApplication
+  opt valid bailApplication
+     note right of OS: update the bail Application as "approved/rejected" as per Order for bail status
+     AS->AS: update bailApplication
+  else null bailApplication
+     note right of OS: no action required, as there is no bail application
+  end
+end
+OS->W++: update Order status
+return Order status 'Published'
+return 200 order updated
+OS-> K++: Push Order payload to topic
+return
+P-> K: Read payload
+P-> DB: Create records in DB
+@endum
