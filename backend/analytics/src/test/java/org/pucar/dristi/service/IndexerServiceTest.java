@@ -1,4 +1,4 @@
-package dristi;
+package org.pucar.dristi.service;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.json.JSONArray;

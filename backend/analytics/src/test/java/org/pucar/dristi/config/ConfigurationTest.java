@@ -1,4 +1,4 @@
-package dristi;
+package org.pucar.dristi.config;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;

@@ -1,4 +1,4 @@
-package dristi;
+package org.pucar.dristi.util;
 
 import lombok.extern.slf4j.Slf4j;
 import org.json.JSONArray;

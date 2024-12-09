@@ -1,4 +1,4 @@
-package dristi;
+package org.pucar.dristi.web.models;
 
 import org.junit.jupiter.api.Test;
 import org.pucar.dristi.web.models.PendingTaskType;

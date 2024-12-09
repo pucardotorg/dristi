@@ -1,4 +1,4 @@
-package dristi;
+package org.pucar.dristi.util;
 
 import org.json.JSONArray;
 import org.json.JSONObject;

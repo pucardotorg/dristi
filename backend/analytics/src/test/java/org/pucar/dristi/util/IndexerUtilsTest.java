@@ -1,4 +1,4 @@
-package dristi;
+package org.pucar.dristi.util;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.jayway.jsonpath.JsonPath;

@@ -1,4 +1,4 @@
-package dristi;
+package org.pucar.dristi.web.models;
 
 import org.egov.common.contract.request.RequestInfo;
 import org.junit.jupiter.api.Test;
