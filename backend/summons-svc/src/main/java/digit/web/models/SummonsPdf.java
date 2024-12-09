@@ -5,6 +5,7 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.springframework.beans.factory.annotation.Value;
 
 @Data
 @AllArgsConstructor
@@ -17,6 +18,9 @@ public class SummonsPdf  {
 
     @JsonProperty("cnrNumber")
     private String cnrNumber;
+
+    @JsonProperty("cmpNumber")
+    private String cmpNumber;
 
     @JsonProperty("filingNumber")
     private String filingNumber;
@@ -80,4 +84,13 @@ public class SummonsPdf  {
 
     @JsonProperty("courtCaseNumber")
     private String courtCaseNumber;
+
+    @JsonProperty("courtUrl")
+    private String courtUrl;
+
+    @JsonProperty("courtContact")
+    private String courtContact;
+
+    @JsonProperty("barCouncilUrl")
+    private String barCouncilUrl;
 }

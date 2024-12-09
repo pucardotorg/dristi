@@ -262,11 +262,6 @@ export const sideMenuConfig = [
           },
         ],
         anyOneOfTheseMandatoryFields: [["firstName", "witnessDesignation"]],
-        ifMultipleAddressLocations: {
-          // using this for counting mandatory fields in case of multiple locations .
-          dataKey: "addressDetails",
-          mandatoryFields: ["addressDetails.pincode", "addressDetails.state", "addressDetails.district", "addressDetails.city"],
-        },
         initialMandatoryFieldCount: 0,
         dependentMandatoryFields: [],
         optionalFields: [
@@ -275,6 +270,10 @@ export const sideMenuConfig = [
           "phonenumbers.mobileNumber",
           "emails.emailId",
           "witnessAdditionalDetails.text",
+          "addressDetails.pincode",
+          "addressDetails.state",
+          "addressDetails.district",
+          "addressDetails.city",
           "addressDetails.locality",
         ],
         dependentOptionalFields: [],
@@ -333,6 +332,7 @@ export const sideMenuConfig = [
         dependentMandatoryFields: [
           { field: "barRegistrationNumber", dependentOn: "isAdvocateRepresenting", dependentOnKey: "showForm" },
           { field: "advocateName", dependentOn: "isAdvocateRepresenting", dependentOnKey: "showForm" },
+          { field: "numberOfAdvocate", dependentOn: "isAdvocateRepresenting", dependentOnKey: "showForm" },
           {
             field: "vakalatnamaFileUpload.document",
             dependentOn: "isAdvocateRepresenting",

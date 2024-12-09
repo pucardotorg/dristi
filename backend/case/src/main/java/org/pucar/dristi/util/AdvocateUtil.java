@@ -2,10 +2,8 @@ package org.pucar.dristi.util;
 
 import static org.pucar.dristi.config.ServiceConstants.ERROR_WHILE_FETCHING_FROM_ADVOCATE;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
+import java.util.stream.Collectors;
 
 import org.egov.common.contract.request.RequestInfo;
 import org.egov.tracer.model.CustomException;
@@ -89,6 +87,42 @@ public class AdvocateUtil {
 		List<Advocate> list = fetchAdvocatesById(requestInfo,advocateId);
 
 		return !list.isEmpty();
+	}
+
+	public Set<String> getAdvocate(RequestInfo requestInfo, List<String> advocateIds) {
+		StringBuilder uri = new StringBuilder();
+		uri.append(configs.getAdvocateHost()).append(configs.getAdvocatePath());
+
+		AdvocateSearchRequest advocateSearchRequest = new AdvocateSearchRequest();
+		advocateSearchRequest.setRequestInfo(requestInfo);
+		List<AdvocateSearchCriteria> criteriaList = new ArrayList<>();
+		for(String id: advocateIds){
+			AdvocateSearchCriteria advocateSearchCriteria = new AdvocateSearchCriteria();
+			advocateSearchCriteria.setId(id);
+			criteriaList.add(advocateSearchCriteria);
+		}
+		advocateSearchRequest.setCriteria(criteriaList);
+		Object response;
+		AdvocateListResponse advocateResponse;
+		try {
+			response = restTemplate.postForObject(uri.toString(), advocateSearchRequest, Map.class);
+			advocateResponse = mapper.convertValue(response, AdvocateListResponse.class);
+			log.info("Advocate response :: {}", advocateResponse);
+		} catch (Exception e) {
+			log.error("ERROR_WHILE_FETCHING_FROM_ADVOCATE", e);
+			throw new CustomException("ERROR_WHILE_FETCHING_FROM_ADVOCATE", e.getMessage());
+		}
+		List<Advocate> list = new ArrayList<>();
+
+		advocateResponse.getAdvocates().forEach(advocate -> {
+			List<Advocate> activeAdvocates = advocate.getResponseList().stream()
+					.filter(Advocate::getIsActive)
+					.toList();
+			list.addAll(activeAdvocates);
+		});
+
+
+		return list.stream().map(Advocate::getIndividualId).collect(Collectors.toSet());
 	}
 
 }

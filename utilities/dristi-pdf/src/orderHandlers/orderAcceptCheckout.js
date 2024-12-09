@@ -189,6 +189,8 @@ async function orderAcceptCheckout(req, res, qrCode) {
           judgeName: judgeDetails.name,
           courtSeal: judgeDetails.courtSeal,
           qrCodeUrl: base64Url,
+          orderHeading: mdmsCourtRoom.orderHeading,
+          judgeDesignation: judgeDetails.judgeDesignation,
         },
       ],
     };

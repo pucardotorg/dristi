@@ -66,6 +66,7 @@ public class TaskRowMapper implements ResultSetExtractor<List<Task>> {
                             .status(rs.getString("status"))
                             .referenceId(rs.getString("referenceId"))
                             .state(rs.getString("state"))
+                            .duedate(parseDateToLong(rs.getString("duedate")))
                             .assignedTo(getListFromJson(rs.getString("assignedto"), new TypeReference<List<AssignedTo>>(){}))
                             .isActive(Boolean.valueOf(rs.getString("isactive")))
                             .auditDetails(auditdetails)
@@ -111,6 +112,19 @@ public class TaskRowMapper implements ResultSetExtractor<List<Task>> {
             return objectMapper.readValue(jsonString, typeReference);
         } catch (Exception e) {
             throw new CustomException("Failed to convert JSON to " + typeReference.getType(), e.getMessage());
+        }
+    }
+
+    private Long parseDateToLong(String dateStr) {
+        if (dateStr == null || dateStr.trim().isEmpty()) {
+            return null;
+        }
+        try {
+            return Long.valueOf(dateStr);
+        } catch (NumberFormatException e) {
+            log.error("Invalid date format: {}", dateStr);
+            throw new CustomException("INVALID_DATE_FORMAT",
+                    "Date must be a valid timestamp: " + dateStr);
         }
     }
 }

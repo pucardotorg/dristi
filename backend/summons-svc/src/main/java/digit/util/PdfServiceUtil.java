@@ -93,6 +93,8 @@ public class PdfServiceUtil {
                 JsonNode caseDetails = caseUtil.searchCaseDetails(caseSearchRequest);
                 String accessCode = caseDetails.has("accessCode") ? caseDetails.get("accessCode").asText() : "";
                 String courtCaseNumber = caseDetails.has("courtCaseNumber") ? caseDetails.get("courtCaseNumber").asText() : "";
+                String cmpNumber = caseDetails.has("cmpNumber") ? caseDetails.get("cmpNumber").asText() : "";
+                summonsPdf.setCmpNumber(cmpNumber);
                 summonsPdf.setAccessCode(accessCode);
                 summonsPdf.setCourtCaseNumber(courtCaseNumber);
             }
@@ -201,6 +203,9 @@ public class PdfServiceUtil {
                 .respondentAddress(respondentAddress)
                 .complainantName(complainantName)
                 .complainantAddress(complainantAddress)
+                .courtUrl(config.getCourtUrl())
+                .courtContact(config.getCourtContact())
+                .barCouncilUrl(config.getBarCouncilUrl())
                 .build();
     }
 

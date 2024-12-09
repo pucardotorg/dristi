@@ -9,6 +9,7 @@ import org.egov.common.contract.workflow.ProcessInstanceRequest;
 import org.egov.common.contract.workflow.State;
 import org.egov.tracer.model.CustomException;
 import org.pucar.dristi.config.Configuration;
+import org.pucar.dristi.enrichment.ApplicationEnrichment;
 import org.pucar.dristi.kafka.Producer;
 import org.pucar.dristi.repository.ApplicationRepository;
 import org.pucar.dristi.web.models.*;
@@ -21,6 +22,8 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 
+import static org.pucar.dristi.config.ServiceConstants.PENDINGAPPROVAL;
+
 @Slf4j
 @Service
 public class PaymentUpdateService {
@@ -30,14 +33,16 @@ public class PaymentUpdateService {
     private final ApplicationRepository repository;
     private final Producer producer;
     private final Configuration configuration;
+    private final ApplicationEnrichment enrichment;
     private final List<String> allowedBusinessServices;
     @Autowired
-    public PaymentUpdateService(WorkflowService workflowService, ObjectMapper mapper, ApplicationRepository repository, Producer producer, Configuration configuration) {
+    public PaymentUpdateService(WorkflowService workflowService, ObjectMapper mapper, ApplicationRepository repository, Producer producer, Configuration configuration, ApplicationEnrichment enrichment) {
         this.workflowService = workflowService;
         this.mapper = mapper;
         this.repository = repository;
         this.producer = producer;
         this.configuration = configuration;
+        this.enrichment = enrichment;
        this.allowedBusinessServices= Arrays.asList(
                 configuration.getAsyncOrderSubBusinessServiceName(),
                 configuration.getAsyncOrderSubWithResponseBusinessServiceName(),
@@ -105,6 +110,9 @@ public class PaymentUpdateService {
                 applicationRequest.setApplication(application);
                 applicationRequest.setRequestInfo(requestInfo);
 
+                if (PENDINGAPPROVAL.equalsIgnoreCase(application.getStatus())){
+                    enrichment.enrichApplicationNumberByCMPNumber(applicationRequest);
+                }
                 producer.push(configuration.getApplicationUpdateStatusTopic(), applicationRequest);
             }
         } catch (Exception e) {

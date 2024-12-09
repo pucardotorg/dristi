@@ -1,6 +1,7 @@
-package org.pucar.dristi.web.models;
+package dristi;
 
 import org.junit.jupiter.api.Test;
+import org.pucar.dristi.web.models.PendingTaskType;
 
 import java.util.Arrays;
 import java.util.List;

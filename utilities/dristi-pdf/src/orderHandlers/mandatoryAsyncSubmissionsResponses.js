@@ -208,6 +208,8 @@ async function mandatoryAsyncSubmissionsResponses(req, res, qrCode) {
           designation: judgeDetails.designation,
           courtSeal: judgeDetails.courtSeal,
           qrCodeUrl: base64Url,
+          orderHeading: mdmsCourtRoom.orderHeading,
+          judgeDesignation: judgeDetails.judgeDesignation,
         },
       ],
     };

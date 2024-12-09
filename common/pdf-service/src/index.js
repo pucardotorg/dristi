@@ -115,12 +115,16 @@ var fontDescriptors = {
   BalooPaaji:{
     normal: "src/fonts/BalooPaaji2-Regular.ttf",
     bold: "src/fonts/BalooPaaji2-Bold.ttf"
+  },
+  MalayalamSangamMn:{
+    normal: "src/fonts/malayalam-sangam-mn.ttf",
+    bold: "src/fonts/malayalam-sangam-mn-bold.ttf"
   }
 };
 
 var defaultFontMapping = {
-  en_IN: 'default',
-  ml_IN: 'default',
+  en_IN: 'MalayalamSangamMn',
+  ml_IN: 'MalayalamSangamMn',
   hi_IN: 'default',
   pn_IN: 'BalooPaaji',
   od_IN: 'BalooBhaina',
@@ -906,8 +910,13 @@ export const createAndSave = async (
       locale = envVariables.DEFAULT_LOCALISATION_LOCALE;
 
     if(defaultFontMapping[locale] != 'default')
-      formatconfigCopy.defaultStyle.font = defaultFontMapping[locale];
-
+      formatconfigCopy = {
+        ...formatconfigCopy,
+        defaultStyle: {
+          font: defaultFontMapping[locale],
+        },
+      }
+      
     createPdfBinary(
       key,
       formatConfigByFile,
@@ -1344,7 +1353,12 @@ const prepareBulk = async (
           locale = envVariables.DEFAULT_LOCALISATION_LOCALE;
 
         if(defaultFontMapping[locale] != 'default')
-         formatconfigCopy.defaultStyle.font = defaultFontMapping[locale];
+          formatconfigCopy = {
+            ...formatconfigCopy,
+            defaultStyle: {
+              font: defaultFontMapping[locale],
+            },
+          }
 
         formatconfigCopy["content"] = formatObjectArrayObject;
         formatConfigByFile.push(formatconfigCopy);

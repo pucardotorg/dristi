@@ -39,9 +39,9 @@ function SelectSignature({ t, config, onSelect, formData = {}, errors }) {
       tenantId,
     },
     {},
-    "dristi",
-    true,
-    true
+    `dristi-${caseId}`,
+    caseId,
+    Boolean(caseId)
   );
 
   function setValue(configkey, value, input) {
@@ -74,6 +74,7 @@ function SelectSignature({ t, config, onSelect, formData = {}, errors }) {
 
   const caseDetails = useMemo(() => caseData?.criteria[0]?.responseList[0], [caseData]);
   const EsignFileStoreID = caseDetails?.additionalDetails?.signedCaseDocument;
+  const esignUrl = window?.globalConfigs?.getConfig("ESIGN_URL") || "https://es-staging.cdac.in/esignlevel2/2.1/form/signdoc";
   const handleAadharClick = async (data, name) => {
     try {
       localStorage.setItem("signStatus", JSON.stringify({ [config.key]: { [name]: [true] } }));
@@ -98,7 +99,7 @@ function SelectSignature({ t, config, onSelect, formData = {}, errors }) {
         localStorage.setItem("eSignWindowObject", JSON.stringify(eSignData));
         const form = document.createElement("form");
         form.method = "POST";
-        form.action = "https://es-staging.cdac.in/esignlevel1/2.1/form/signdoc";
+        form.action = esignUrl;
         const eSignRequestInput = document.createElement("input");
         eSignRequestInput.type = "hidden";
         eSignRequestInput.name = "eSignRequest";

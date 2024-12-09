@@ -52,7 +52,6 @@ import cloneDeep from "lodash/cloneDeep";
 import CorrectionsSubmitModal from "../../../components/CorrectionsSubmitModal";
 import { Urls } from "../../../hooks";
 import useGetStatuteSection from "../../../hooks/dristi/useGetStatuteSection";
-import useCasePdfGeneration from "../../../hooks/dristi/useCasePdfGeneration";
 import { getSuffixByBusinessCode, getTaxPeriodByBusinessService } from "../../../Utils";
 import useDownloadCasePdf from "../../../hooks/dristi/useDownloadCasePdf";
 import DocViewerWrapper from "../../employee/docViewerWrapper";
@@ -194,21 +193,6 @@ function EFilingCases({ path }) {
   const [pdfDetails, setPdfDetails] = useState(null);
   const { downloadPdf } = useDownloadCasePdf();
 
-  const { data: casePdf, isPdfLoading, refetch: refetchCasePDfGeneration } = useCasePdfGeneration(
-    {
-      criteria: [
-        {
-          caseId: caseId,
-        },
-      ],
-      tenantId,
-    },
-    {},
-    "dristi",
-    caseId,
-    false
-  );
-
   const [{ showSuccessToast, successMsg }, setSuccessToast] = useState({
     showSuccessToast: false,
     successMsg: "",
@@ -285,9 +269,9 @@ function EFilingCases({ path }) {
       tenantId,
     },
     {},
-    "dristi",
+    `dristi-${caseId}`,
     caseId,
-    caseId
+    Boolean(caseId)
   );
 
   const getAllKeys = useMemo(() => {
@@ -654,14 +638,42 @@ function EFilingCases({ path }) {
                         input?.key === "advocateDetails"
                           ? caseDetails?.additionalDetails?.[input?.key]?.formdata?.[0]?.data?.advocateName
                             ? caseDetails?.additionalDetails?.[input?.key]?.formdata
-                            : [{ data: { advocateName: "", barRegistrationNumber: "", vakalatnamaFileUpload: {} } }]
+                            : [
+                                {
+                                  data: {
+                                    advocateName: "",
+                                    barRegistrationNumber: "",
+                                    vakalatnamaFileUpload: {},
+                                    isAdvocateRepresenting: {
+                                      code: "NO",
+                                      name: "No",
+                                      showForm: true,
+                                      isEnabled: true,
+                                    },
+                                  },
+                                },
+                              ]
                           : caseDetails?.additionalDetails?.[input?.key]?.formdata || caseDetails?.caseDetails?.[input?.key]?.formdata || {};
                       if (isCaseReAssigned) {
                         dataobj =
                           input?.key === "advocateDetails"
                             ? errorCaseDetails?.additionalDetails?.[input?.key]?.formdata?.[0]?.data?.advocateName
                               ? errorCaseDetails?.additionalDetails?.[input?.key]?.formdata
-                              : [{ data: { advocateName: "", barRegistrationNumber: "", vakalatnamaFileUpload: {} } }]
+                              : [
+                                  {
+                                    data: {
+                                      advocateName: "",
+                                      barRegistrationNumber: "",
+                                      vakalatnamaFileUpload: {},
+                                      isAdvocateRepresenting: {
+                                        code: "NO",
+                                        name: "No",
+                                        showForm: true,
+                                        isEnabled: true,
+                                      },
+                                    },
+                                  },
+                                ]
                             : errorCaseDetails?.additionalDetails?.[input?.key]?.formdata ||
                               errorCaseDetails?.caseDetails?.[input?.key]?.formdata ||
                               {};
@@ -1508,7 +1520,7 @@ function EFilingCases({ path }) {
     if (
       formdata
         .filter((data) => data.isenabled)
-        .some((data) => advocateDetailsFileValidation({ formData: data?.data, selected, setShowErrorToast, setFormErrors: setFormErrors.current }))
+        .some((data) => advocateDetailsFileValidation({ formData: data?.data, selected, setShowErrorToast, setFormErrors: setFormErrors.current, t }))
     ) {
       return;
     }
@@ -1641,9 +1653,7 @@ function EFilingCases({ path }) {
     //   }
     // }
     else {
-      let res;
       let caseComplaintDocument = {};
-      let casePdfDocument = [];
       try {
         if (isCaseLocked) {
           setIsDisabled(true);
@@ -1651,10 +1661,7 @@ function EFilingCases({ path }) {
           const response = await axios.post(
             "/dristi-case-pdf/v1/fetchCaseComplaintPdf",
             {
-              cases: {
-                id: caseObject?.id,
-                tenantId: tenantId,
-              },
+              cases: caseObject,
               RequestInfo: {
                 authToken: Digit.UserService.getUser().access_token,
                 userInfo: Digit.UserService.getUser()?.info,
@@ -1667,7 +1674,12 @@ function EFilingCases({ path }) {
           const contentDisposition = response.headers["content-disposition"];
           const filename = contentDisposition ? contentDisposition.split("filename=")[1]?.replace(/['"]/g, "") : "caseCompliantDetails.pdf";
           const pdfFile = new File([response?.data], filename, { type: "application/pdf" });
-          const document = await onDocumentUpload(pdfFile, pdfFile?.name);
+          let document = {};
+          try {
+            document = await onDocumentUpload(pdfFile, pdfFile?.name);
+          } catch (error) {
+            throw error;
+          }
           const fileStoreId = document?.file?.files?.[0]?.fileStoreId;
 
           if (fileStoreId) {
@@ -1679,19 +1691,7 @@ function EFilingCases({ path }) {
           } else {
             throw new Error("FILE_STORE_ID_MISSING");
           }
-          res = await refetchCasePDfGeneration();
-          casePdfDocument = res?.data?.cases?.[0]?.documents
-            .filter((doc) =>
-              doc.additionalDetails?.fields?.some((field) => field.key === "FILE_CATEGORY" && field.value === "CASE_GENERATED_DOCUMENT")
-            )
-            .map((doc) => doc.fileStore);
-          if (res?.status === "error") {
-            setIsDisabled(false);
-            toast.error(t("CASE_PDF_ERROR"));
-            throw new Error("CASE_PDF_ERROR");
-          }
         }
-        // Await the result of updateCaseDetails
         await updateCaseDetails({
           t,
           isCompleted: true,
@@ -1707,7 +1707,6 @@ function EFilingCases({ path }) {
           setErrorCaseDetails,
           isCaseSignedState: isPendingESign || isPendingReESign,
           isSaveDraftEnabled: isCaseReAssigned || isPendingReESign || isPendingESign,
-          ...(res && { fileStoreId: casePdfDocument?.[0] }),
           ...(caseComplaintDocument && { caseComplaintDocument: caseComplaintDocument }),
           multiUploadList,
           scrutinyObj,
@@ -1738,9 +1737,10 @@ function EFilingCases({ path }) {
         } else if (extractCodeFromErrorMsg(error) === 413) {
           message = t("FAILED_TO_UPLOAD_FILE");
         }
+        toast.error(message);
         setIsDisabled(false);
         console.error("An error occurred:", error);
-        throw new Error(message);
+        return { error };
       }
     }
   };
@@ -1921,6 +1921,7 @@ function EFilingCases({ path }) {
             tenantId: tenantId,
             caseId: caseId,
             delayCondonation: delayCondonation,
+            filingNumber: caseDetails?.filingNumber,
           },
         ],
       },

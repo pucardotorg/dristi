@@ -72,7 +72,7 @@ public class IndividualMapper {
         if(name == null){
             return "";
         } else {
-            return name.getGivenName() + " " + name.getFamilyName();
+            return (name.getGivenName() == null ? "" : name.getGivenName()) + " " + (name.getOtherNames() == null ? "" : name.getOtherNames()) + " " + (name.getFamilyName() == null ? "" : name.getFamilyName());
         }
     }
 }

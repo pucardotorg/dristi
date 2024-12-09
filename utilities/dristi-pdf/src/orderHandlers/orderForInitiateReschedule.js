@@ -81,6 +81,7 @@ const orderForInitiateReschedule = async (req, res, qrCode) => {
       "Failed to query MDMS service for court room"
     );
     const mdmsCourtRoom = resMdms?.data?.mdms[0]?.data;
+    const judgeDetails = config.constants.judgeDetails;
     if (!mdmsCourtRoom) {
       return renderError(res, "Court room MDMS master not found", 404);
     }
@@ -184,7 +185,7 @@ const orderForInitiateReschedule = async (req, res, qrCode) => {
           Date: "Date from UI",
           Month: "Month from UI",
           Year: "Year from UI",
-          judgeSignature: "Judge Signature",
+          judgeSignature: judgeDetails.judgeSignature,
           designation: "Judge designation",
           courtSeal: "Court Seal",
           qrCodeUrl: base64Url,

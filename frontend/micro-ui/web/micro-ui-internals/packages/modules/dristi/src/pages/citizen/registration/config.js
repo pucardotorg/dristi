@@ -84,6 +84,7 @@ export const userTypeOptions = [
       "HEARING_ACCEPTOR",
       "USER_REGISTER",
       "ADVOCATE_VIEWER",
+      "ADVOCATE_APPLICATION_VIEWER",
       "PENDING_TASK_CREATOR",
     ],
     apiDetails: {
@@ -507,23 +508,19 @@ export const newConfig = [
               options: [
                 {
                   code: "AGREE_MESSAGE",
-                  name:
-                    "FIRST_TERMS_AND_CONDITIONS",
+                  name: "FIRST_TERMS_AND_CONDITIONS",
                 },
                 {
                   code: "PRIVACY_MESSAGE",
-                  name:
-                    "SECOND_TERMS_AND_CONDITIONS",
+                  name: "SECOND_TERMS_AND_CONDITIONS",
                 },
                 {
                   code: "LAWFUL_MESSAGE",
-                  name:
-                    "THIRD_TERMS_AND_CONDITIONS",
+                  name: "THIRD_TERMS_AND_CONDITIONS",
                 },
                 {
                   code: "MODIFICATION_MESSAGE",
-                  name:
-                    "FOURTH_TERMS_AND_CONDITIONS",
+                  name: "FOURTH_TERMS_AND_CONDITIONS",
                 },
               ],
             },

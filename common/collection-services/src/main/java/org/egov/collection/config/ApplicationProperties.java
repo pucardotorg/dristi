@@ -271,4 +271,7 @@ public class ApplicationProperties {
 
     @Value("${is.fractional.payment.allowed}")
     private Boolean isFractionalPaymentAllowed;
+
+    @Value("${role.payment.collector}")
+    private String paymentCollector;
 }

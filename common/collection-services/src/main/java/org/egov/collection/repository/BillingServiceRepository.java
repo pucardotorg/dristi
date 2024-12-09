@@ -8,6 +8,7 @@ import org.egov.collection.web.contract.BillRequest;
 import org.egov.collection.web.contract.BillResponse;
 import org.egov.collection.web.contract.factory.RequestInfoWrapper;
 import org.egov.common.contract.request.RequestInfo;
+import org.egov.common.contract.request.Role;
 import org.egov.tracer.model.CustomException;
 import org.egov.tracer.model.ServiceCallException;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -72,6 +73,8 @@ public class BillingServiceRepository {
                 .build()
                 .toUriString();
 
+        Role role = Role.builder().code(applicationProperties.getPaymentCollector()).tenantId(tenantId).build();
+        requestInfo.getUserInfo().getRoles().add(role);
         RequestInfoWrapper wrapper = new RequestInfoWrapper(requestInfo);
 
         try {

@@ -29,7 +29,7 @@ public class PoliceFeeService implements Payment {
     @Override
     public Calculation calculatePayment(RequestInfo requestInfo, SummonCalculationCriteria criteria) {
         SpeedPostConfigParams ePostConfigParams = taskUtil.getIPostFeesDefaultData(requestInfo, criteria.getTenantId());
-        Double courtFee = taskUtil.calculateCourtFees(ePostConfigParams);
+        Double courtFee = Math.ceil(taskUtil.calculateCourtFees(ePostConfigParams));
         return Calculation.builder()
                 .applicationId(criteria.getSummonId())
                 .tenantId(criteria.getTenantId())
@@ -46,7 +46,7 @@ public class PoliceFeeService implements Payment {
                 .filter(element -> taskType.equals(element.getType()))
                 .toList();
 
-        Double courtFees = taskUtil.calculateCourtFees(filteredTaskPayment.get(0));
+        Double courtFees = Math.ceil(taskUtil.calculateCourtFees(filteredTaskPayment.get(0)));
 
         return Calculation.builder()
                 .applicationId(criteria.getId())

@@ -97,6 +97,7 @@ export const userTypeOptions = [
       "TASK_VIEWER",
       "USER_REGISTER",
       "ADVOCATE_VIEWER",
+      "ADVOCATE_APPLICATION_VIEWER",
       "PENDING_TASK_CREATOR",
     ],
     apiDetails: {

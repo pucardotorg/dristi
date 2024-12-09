@@ -59,6 +59,7 @@ export const reviewCaseFileFormConfig = [
                   dependentOn: "complainantType.code",
                   dependentValue: "REPRESENTATIVE",
                   value: "complainantTypeOfEntity.name",
+                  isLocalizationRequired: true,
                 },
                 {
                   type: "text",
@@ -123,6 +124,7 @@ export const reviewCaseFileFormConfig = [
                   dependentOn: "respondentType.code",
                   dependentValue: "REPRESENTATIVE",
                   value: "respondentTypeOfEntity.name",
+                  isLocalizationRequired: true,
                 },
                 {
                   type: "text",
@@ -225,6 +227,7 @@ export const reviewCaseFileFormConfig = [
                   type: "text",
                   label: "POLICE_STATION",
                   value: "policeStation.code",
+                  isLocalizationRequired: true,
                 },
                 {
                   type: "date",
@@ -275,6 +278,7 @@ export const reviewCaseFileFormConfig = [
                   type: "text",
                   label: "CHEQUE_FOR_FULL_OR_PARTIAL_LIABILITY",
                   value: "liabilityType.name",
+                  isLocalizationRequired: true,
                 },
                 {
                   type: "amount",
@@ -430,6 +434,11 @@ export const reviewCaseFileFormConfig = [
                   value: "witnessAge",
                 },
                 {
+                  type: "text",
+                  label: "WITNESS_DESIGNATION",
+                  value: "witnessDesignation",
+                },
+                {
                   type: "address",
                   label: "ADDRESS",
                   value: "addressDetails",
@@ -511,6 +520,11 @@ export const reviewCaseFileFormConfig = [
                   type: "text",
                   label: "CS_BAR_REGISTRATION",
                   value: "barRegistrationNumber",
+                },
+                {
+                  type: "text",
+                  label: "NUMBER_OF_ADVOCATES",
+                  value: "numberOfAdvocate",
                 },
                 {
                   type: "image",

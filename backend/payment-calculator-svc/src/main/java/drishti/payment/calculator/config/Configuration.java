@@ -36,4 +36,14 @@ public class Configuration {
     @Value("${drishti.summon.pages.count}")
     private Integer numberOfPgOfSummon;
 
+    // Case Config
+    @Value("${egov.case.host}")
+    private String caseHost;
+
+    @Value("${egov.case.path}")
+    private String caseExistsPath;
+
+    @Value("${egov.case.search.path}")
+    private String caseSearchPath;
+
 }

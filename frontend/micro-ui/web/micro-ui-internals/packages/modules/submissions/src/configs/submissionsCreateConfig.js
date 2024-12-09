@@ -229,12 +229,6 @@ export const configsRescheduleRequest = [
               type: "TextAreaComponent",
             },
           ],
-          validation: {
-            customValidationFn: {
-              moduleName: "dristiSubmissions",
-              masterName: "alphaNumericValidation",
-            },
-          },
         },
       },
     ],
@@ -408,12 +402,6 @@ export const configsCheckoutRequest = [
               type: "TextAreaComponent",
             },
           ],
-          validation: {
-            customValidationFn: {
-              moduleName: "dristiSubmissions",
-              masterName: "alphaNumericValidation",
-            },
-          },
         },
       },
     ],
@@ -602,12 +590,6 @@ export const configsExtensionSubmissionDeadline = [
               type: "TextAreaComponent",
             },
           ],
-          validation: {
-            customValidationFn: {
-              moduleName: "dristiSubmissions",
-              masterName: "alphaNumericValidation",
-            },
-          },
         },
       },
     ],
@@ -633,12 +615,6 @@ export const configsExtensionSubmissionDeadline = [
               type: "TextAreaComponent",
             },
           ],
-          validation: {
-            customValidationFn: {
-              moduleName: "dristiSubmissions",
-              masterName: "alphaNumericValidation",
-            },
-          },
         },
       },
     ],
@@ -705,12 +681,6 @@ export const configsDocumentSubmission = [
               },
             },
           ],
-          validation: {
-            customValidationFn: {
-              moduleName: "dristiSubmissions",
-              masterName: "alphaNumericValidation",
-            },
-          },
           customStyle: { display: "flex", flexDirection: "column", alignItems: "flex-start" },
         },
       },
@@ -908,12 +878,6 @@ export const configsProductionOfDocuments = [
               type: "TextAreaComponent",
             },
           ],
-          validation: {
-            customValidationFn: {
-              moduleName: "dristiSubmissions",
-              masterName: "alphaNumericValidation",
-            },
-          },
         },
       },
     ],
@@ -939,12 +903,6 @@ export const configsProductionOfDocuments = [
               type: "TextAreaComponent",
             },
           ],
-          validation: {
-            customValidationFn: {
-              moduleName: "dristiSubmissions",
-              masterName: "alphaNumericValidation",
-            },
-          },
         },
       },
     ],
@@ -1088,12 +1046,6 @@ export const configsCaseWithdrawal = [
               type: "TextAreaComponent",
             },
           ],
-          validation: {
-            customValidationFn: {
-              moduleName: "dristiSubmissions",
-              masterName: "alphaNumericValidation",
-            },
-          },
         },
       },
     ],
@@ -1243,12 +1195,6 @@ export const configsCaseTransfer = [
               type: "TextAreaComponent",
             },
           ],
-          validation: {
-            customValidationFn: {
-              moduleName: "dristiSubmissions",
-              masterName: "alphaNumericValidation",
-            },
-          },
         },
       },
     ],
@@ -1370,12 +1316,6 @@ export const configsSettlement = [
               type: "TextAreaComponent",
             },
           ],
-          validation: {
-            customValidationFn: {
-              moduleName: "dristiSubmissions",
-              masterName: "alphaNumericValidation",
-            },
-          },
         },
       },
     ],
@@ -1414,12 +1354,6 @@ export const configsSurety = [
               type: "TextAreaComponent",
             },
           ],
-          validation: {
-            customValidationFn: {
-              moduleName: "dristiSubmissions",
-              masterName: "alphaNumericValidation",
-            },
-          },
         },
       },
       {
@@ -1529,12 +1463,6 @@ export const configsBailBond = [
               type: "TextAreaComponent",
             },
           ],
-          validation: {
-            customValidationFn: {
-              moduleName: "dristiSubmissions",
-              masterName: "alphaNumericValidation",
-            },
-          },
         },
       },
       {
@@ -1672,12 +1600,6 @@ export const configsOthers = [
               type: "TextAreaComponent",
             },
           ],
-          validation: {
-            customValidationFn: {
-              moduleName: "dristiSubmissions",
-              masterName: "alphaNumericValidation",
-            },
-          },
         },
       },
     ],

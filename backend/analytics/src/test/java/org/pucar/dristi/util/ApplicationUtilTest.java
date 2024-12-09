@@ -1,4 +1,4 @@
-package org.pucar.dristi.util;
+package dristi;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
@@ -15,6 +15,8 @@ import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.pucar.dristi.config.Configuration;
 import org.pucar.dristi.repository.ServiceRequestRepository;
+import org.pucar.dristi.util.ApplicationUtil;
+import org.pucar.dristi.util.Util;
 
 @Slf4j
 public class ApplicationUtilTest {

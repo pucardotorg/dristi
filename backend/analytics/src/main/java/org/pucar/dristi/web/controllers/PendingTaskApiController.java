@@ -1,4 +1,4 @@
-package org.pucar.dristi.web.controllers;
+package dristi;
 
 
 import io.swagger.v3.oas.annotations.Parameter;

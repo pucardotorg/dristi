@@ -1,4 +1,4 @@
-package org.pucar.dristi.service;
+package dristi;
 
 
 import lombok.extern.slf4j.Slf4j;

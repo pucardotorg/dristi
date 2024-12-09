@@ -1,4 +1,4 @@
-package org.pucar.dristi;
+package dristi;
 
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -50,7 +50,7 @@ public class Main {
 
 			// Disable hostname verification
 			HttpsURLConnection.setDefaultHostnameVerifier(new HostnameVerifier() {
-				public boolean verify(String hostname, javax.net.ssl.SSLSession sslSession) {
+				public boolean verify(String hostname, SSLSession sslSession) {
 					return true;
 				}
 			});

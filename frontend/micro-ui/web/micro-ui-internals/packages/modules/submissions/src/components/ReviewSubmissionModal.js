@@ -75,6 +75,7 @@ function ReviewSubmissionModal({
       application?.cnrNumber,
       SubmissionPreviewSubmissionTypeMap[application?.applicationType],
     ],
+    cacheTime: 0,
     queryFn: async () => {
       return Axios({
         method: "POST",

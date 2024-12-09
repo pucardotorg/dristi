@@ -87,9 +87,9 @@ const SummonsOrderComponent = ({ t, config, formData, onSelect, clearErrors }) =
       tenantId,
     },
     {},
-    "dristi",
+    `dristi-${filingNumber}`,
     filingNumber,
-    filingNumber
+    Boolean(filingNumber)
   );
   const caseDetails = useMemo(
     () => ({
@@ -218,11 +218,17 @@ const SummonsOrderComponent = ({ t, config, formData, onSelect, clearErrors }) =
   //     return values;
   //   }, []);
   // };
+  const displayPartyType = {
+    complainant: "COMPLAINANT_ATTENDEE",
+    respondent: "RESPONDENT_ATTENDEE",
+    witness: "WITNESS_ATTENDEE",
+    advocate: "ADVOCATE_ATTENDEE",
+  };
 
   const selectedParty = useMemo(() => {
     const partyData = formData?.[config.key]?.party?.data || {};
     const { firstName = "", lastName = "", partyType } = partyData;
-    const label = [firstName, lastName, partyType ? `(${partyType})` : ""].filter(Boolean).join(" ");
+    const label = [firstName, lastName, partyType ? `(${t(displayPartyType[partyType.toLowerCase()])})` : ""].filter(Boolean).join(" ");
     return formData[config.key]?.party
       ? {
           label,
@@ -334,7 +340,9 @@ const SummonsOrderComponent = ({ t, config, formData, onSelect, clearErrors }) =
               <Dropdown
                 t={t}
                 option={userList?.map((user) => ({
-                  label: [user?.data?.firstName, user?.data?.lastName, `(${user?.data?.partyType})`].filter(Boolean).join(" "),
+                  label: [user?.data?.firstName, user?.data?.lastName, `(${t(displayPartyType[user?.data?.partyType.toLowerCase()])})`]
+                    .filter(Boolean)
+                    .join(" "),
                   value: user,
                 }))}
                 optionKey="label"

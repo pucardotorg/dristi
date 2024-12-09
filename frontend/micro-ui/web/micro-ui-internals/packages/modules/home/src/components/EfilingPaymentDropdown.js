@@ -61,9 +61,9 @@ function EfilingPaymentBreakdown({ setShowModal, header, subHeader }) {
       tenantId,
     },
     {},
-    "dristi",
+    `dristi-${caseId}`,
     caseId,
-    caseId
+    Boolean(caseId)
   );
 
   const caseDetails = useMemo(
@@ -107,6 +107,7 @@ function EfilingPaymentBreakdown({ setShowModal, header, subHeader }) {
           tenantId: tenantId,
           caseId: caseId,
           delayCondonation: delayCondonation,
+          filingNumber: caseDetails?.filingNumber,
         },
       ],
     },
@@ -265,7 +266,7 @@ function EfilingPaymentBreakdown({ setShowModal, header, subHeader }) {
                     fontSize: "16px",
                     fontWeight: "700",
                     paddingTop: "12px",
-                    paddingRight: paymentCalculation.length >6 ? "28px" : "16px"
+                    paddingRight: paymentCalculation.length > 6 ? "28px" : "16px",
                   }}
                 >
                   <span>{item.key}</span>

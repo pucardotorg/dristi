@@ -101,4 +101,7 @@ public class PaymentConfiguration {
 
     @Value(("${isTest.enabled}"))
     private boolean isTest;
+
+    @Value("${challan.test.amount}")
+    private String challanTestAmount;
 }

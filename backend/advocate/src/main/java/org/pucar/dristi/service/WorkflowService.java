@@ -8,7 +8,6 @@ import org.egov.common.contract.request.User;
 import org.egov.common.contract.workflow.ProcessInstance;
 import org.egov.common.contract.workflow.ProcessInstanceRequest;
 import org.egov.common.contract.workflow.ProcessInstanceResponse;
-import org.egov.common.contract.workflow.State;
 import org.egov.tracer.model.CustomException;
 import org.pucar.dristi.config.Configuration;
 import org.pucar.dristi.repository.ServiceRequestRepository;
@@ -48,7 +47,9 @@ public class WorkflowService {
             ProcessInstance processInstance = getProcessInstanceForADV(advocate);
             ProcessInstanceRequest workflowRequest = new ProcessInstanceRequest(advocateRequest.getRequestInfo(), Collections.singletonList(processInstance));
             log.info("ProcessInstance Request :: {}", workflowRequest);
-            String applicationStatus=callWorkFlow(workflowRequest).getApplicationStatus();
+            ProcessInstance processInstanceResponse=callWorkFlow(workflowRequest);
+            advocate.setCurrentProcessInstance(processInstanceResponse);
+            String applicationStatus = processInstanceResponse.getState().getApplicationStatus();
             log.info("Application Status :: {}", applicationStatus);
             advocate.setStatus(applicationStatus);
         } catch(CustomException e){
@@ -59,13 +60,13 @@ public class WorkflowService {
             throw new CustomException(WORKFLOW_SERVICE_EXCEPTION,"Error updating workflow status: "+ e);
         }
     }
-    public State callWorkFlow(ProcessInstanceRequest workflowReq) {
+    public ProcessInstance callWorkFlow(ProcessInstanceRequest workflowReq) {
         try {
             StringBuilder url = new StringBuilder(config.getWfHost().concat(config.getWfTransitionPath()));
             Object optional = repository.fetchResult(url, workflowReq);
             log.info("Workflow Response :: {}", optional);
             ProcessInstanceResponse response = mapper.convertValue(optional, ProcessInstanceResponse.class);
-            return response.getProcessInstances().get(0).getState();
+            return response.getProcessInstances().get(0);
         } catch(CustomException e){
             throw e;
         } catch (Exception e) {
@@ -83,7 +84,9 @@ public class WorkflowService {
             ProcessInstance processInstance = getProcessInstanceForADVClerk(advocateClerk);
             ProcessInstanceRequest workflowRequest = new ProcessInstanceRequest(advocateClerkRequest.getRequestInfo(), Collections.singletonList(processInstance));
             log.info("ProcessInstance Request :: {}", workflowRequest);
-            String applicationStatus=callWorkFlow(workflowRequest).getApplicationStatus();
+            ProcessInstance processInstanceResponse=callWorkFlow(workflowRequest);
+            advocateClerk.setCurrentProcessInstance(processInstanceResponse);
+            String applicationStatus = processInstanceResponse.getState().getApplicationStatus();
             log.info("Application Status :: {}", applicationStatus);
             advocateClerk.setStatus(applicationStatus);
         } catch(CustomException e){

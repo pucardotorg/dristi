@@ -3,6 +3,7 @@ package org.pucar.dristi.service;
 
 import lombok.extern.slf4j.Slf4j;
 import org.egov.common.contract.request.RequestInfo;
+import org.egov.common.models.individual.Individual;
 import org.egov.tracer.model.CustomException;
 import org.pucar.dristi.config.Configuration;
 import org.pucar.dristi.enrichment.AdvocateRegistrationEnrichment;
@@ -12,11 +13,13 @@ import org.pucar.dristi.validators.AdvocateRegistrationValidator;
 import org.pucar.dristi.web.models.Advocate;
 import org.pucar.dristi.web.models.AdvocateRequest;
 import org.pucar.dristi.web.models.AdvocateSearchCriteria;
+import org.pucar.dristi.web.models.SmsTemplateData;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 import static org.pucar.dristi.config.ServiceConstants.*;
@@ -32,6 +35,10 @@ public class AdvocateService {
     private final Producer producer;
     private final Configuration config;
 
+    private final SmsNotificationService notificationService;
+
+    private final IndividualService individualService;
+
     @Autowired
     public AdvocateService(
             AdvocateRegistrationValidator validator,
@@ -39,13 +46,15 @@ public class AdvocateService {
             WorkflowService workflowService,
             AdvocateRepository advocateRepository,
             Producer producer,
-            Configuration config) {
+            Configuration config, SmsNotificationService notificationService, IndividualService individualService) {
         this.validator = validator;
         this.enrichmentUtil = enrichmentUtil;
         this.workflowService = workflowService;
         this.advocateRepository = advocateRepository;
         this.producer = producer;
         this.config = config;
+        this.notificationService = notificationService;
+        this.individualService = individualService;
     }
 
     public Advocate createAdvocate(AdvocateRequest body) {
@@ -171,6 +180,11 @@ public class AdvocateService {
 
             producer.push(config.getAdvocateUpdateTopic(), advocateRequest);
 
+            String messageCode = getMessageCode(advocateRequest.getAdvocate().getStatus());
+            if(messageCode != null){
+                callNotificationService(advocateRequest, messageCode);
+            }
+
             return advocateRequest.getAdvocate();
 
         } catch (CustomException e) {
@@ -181,6 +195,48 @@ public class AdvocateService {
             throw new CustomException(ADVOCATE_UPDATE_EXCEPTION, "Error occurred while updating advocate: " + e.getMessage());
         }
 
+    }
+    private String getMessageCode(String updatedStatus) {
+        if (updatedStatus.equalsIgnoreCase(ACTIVE)){
+            return ADVOCATE_REGISTERED;
+        }
+        return null;
+    }
+
+    public void callNotificationService(AdvocateRequest advocateRequest, String messageCode) {
+        try {
+
+            List<String> individualIds = Collections.singletonList(advocateRequest.getAdvocate().getIndividualId());
+
+            List<String> phonenumbers = callIndividualService(advocateRequest.getRequestInfo(), individualIds);
+            SmsTemplateData smsTemplateData = SmsTemplateData.builder()
+                    .tenantId(advocateRequest.getAdvocate().getTenantId()).build();
+            for (String number : phonenumbers) {
+                notificationService.sendNotification(advocateRequest.getRequestInfo(), smsTemplateData, messageCode, number);
+            }
+        } catch (Exception e) {
+            // Log the exception and continue the execution without throwing
+            log.error("Error occurred while sending notification: {}", e.toString());
+        }
+    }
+
+    private List<String> callIndividualService(RequestInfo requestInfo, List<String> individualIds) {
+
+        List<String> mobileNumber = new ArrayList<>();
+        try {
+            for(String id : individualIds){
+                List<Individual> individuals = individualService.getIndividualsByIndividualId(requestInfo, id);
+                if(individuals != null && individuals.get(0).getMobileNumber() != null){
+                    mobileNumber.add(individuals.get(0).getMobileNumber());
+                }
+            }
+        }
+        catch (Exception e) {
+            // Log the exception and continue the execution without throwing
+            log.error("Error occurred while sending notification: {}", e.toString());
+        }
+
+        return mobileNumber;
     }
 
     private Advocate validateExistingApplication(Advocate advocate) {

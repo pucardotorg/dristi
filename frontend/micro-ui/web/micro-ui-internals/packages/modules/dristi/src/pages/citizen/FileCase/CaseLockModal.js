@@ -70,21 +70,30 @@ function CaseLockModal({
 
   const handleSaveOnSubmit = async () => {
     setShowCaseLockingModal(false);
+
     if (!isAdvocateFilingCase) {
       if (state === CaseWorkflowState.CASE_REASSIGNED) {
+        const result = await onSubmit("EDIT_CASE", true);
+        if (result?.error) {
+          return;
+        }
         try {
-          await onSubmit("EDIT_CASE", true);
-          await createPendingTask({ name: t("PENDING_RE_E_SIGN_FOR_CASE"), status: "PENDING_RE_E-SIGN" }); // check status
+          await createPendingTask({ name: t("PENDING_RE_E_SIGN_FOR_CASE"), status: "PENDING_RE_E-SIGN" });
           history.push(`${path}/sign-complaint?filingNumber=${filingNumber}`);
         } catch (error) {
-          toast.error(error);
+          console.error("An error occurred:", error);
+          toast.error(t("SOMETHING_WENT_WRONG"));
         }
       } else {
+        const result = await onSubmit("SUBMIT_CASE", true);
+        if (result?.error) {
+          return;
+        }
         try {
-          await onSubmit("SUBMIT_CASE", true);
-          await createPendingTask({ name: t("PENDING_E_SIGN_FOR_CASE"), status: "PENDING_E-SIGN" }); // check status
+          await createPendingTask({ name: t("PENDING_E_SIGN_FOR_CASE"), status: "PENDING_E-SIGN" });
           history.push(`${path}/sign-complaint?filingNumber=${filingNumber}`);
         } catch (error) {
+          console.error("An error occurred:", error);
           toast.error(t("SOMETHING_WENT_WRONG"));
         }
       }
@@ -97,21 +106,29 @@ function CaseLockModal({
     setShowCaseLockingModal(false);
     if (state === CaseWorkflowState.CASE_REASSIGNED) {
       if (isAdvocateFilingCase) {
+        const result = await onSubmit("EDIT_CASE_ADVOCATE", true);
+        if (result?.error) {
+          return;
+        }
         try {
-          await onSubmit("EDIT_CASE_ADVOCATE", true);
           await createPendingTask({ name: t("PENDING_RE_UPLOAD_SIGNATURE_FOR_CASE"), status: "PENDING_RE_SIGN" }); // check status
           history.push(`${path}/sign-complaint?filingNumber=${filingNumber}`);
         } catch (error) {
+          console.error("An error occurred:", error);
           toast.error(t("SOMETHING_WENT_WRONG"));
         }
       }
     } else {
       if (isAdvocateFilingCase) {
+        const result = await onSubmit("SUBMIT_CASE_ADVOCATE", true);
+        if (result?.error) {
+          return;
+        }
         try {
-          await onSubmit("SUBMIT_CASE_ADVOCATE", true);
           await createPendingTask({ name: t("PENDING_UPLOAD_SIGNATURE_FOR_CASE"), status: "PENDING_SIGN" }); // check status
           history.push(`${path}/sign-complaint?filingNumber=${filingNumber}`);
         } catch (error) {
+          console.error("An error occurred:", error);
           toast.error(t("SOMETHING_WENT_WRONG"));
         }
       }

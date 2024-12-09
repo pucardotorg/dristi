@@ -70,36 +70,20 @@ export const DRISTIService = {
       params,
     }),
   caseCreateService: (data, tenantId) => {
-    const updatedData = {
-      ...data,
-      cases: {
-        ...data.cases,
-        judgeId: judgeId,
-        benchId: benchId,
-      },
-    };
     return Request({
       url: Urls.dristi.caseCreate,
       useCache: false,
       userService: true,
-      data: updatedData,
+      data: data,
       params: { tenantId },
     });
   },
   caseUpdateService: (data, tenantId) => {
-    const updatedData = {
-      ...data,
-      cases: {
-        ...data.cases,
-        judgeId: judgeId,
-        benchId: benchId,
-      },
-    };
     return Request({
       url: Urls.dristi.caseUpdate,
       useCache: false,
       userService: true,
-      data: updatedData,
+      data: data,
       params: { tenantId },
     });
   },

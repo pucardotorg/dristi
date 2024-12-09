@@ -27,6 +27,11 @@ public class EFillingCalculationCriteria {
     @JsonProperty("caseId")
     private String caseId;
 
+    @JsonProperty("filingNumber")
+    @NotNull(message = "Filing number cannot be null")
+    private String filingNumber = null;
+
     @JsonProperty("delayCondonation")
     private Long delayCondonation = 0L;
+
 }

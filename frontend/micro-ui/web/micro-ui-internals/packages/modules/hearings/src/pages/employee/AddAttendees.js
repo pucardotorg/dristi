@@ -33,14 +33,12 @@ const AddAttendees = ({
     if (!Array.isArray(attendees)) {
       return [];
     }
-    debugger;
     const uniqueAttendees = attendees.reduce((acc, attendee) => {
       if (!acc.some((item) => item?.individualId === attendee?.individualId)) {
         acc.push(attendee);
       }
       return acc;
     }, []);
-    debugger;
     return uniqueAttendees.map((attendee) => ({
       value: attendee.individualId || attendee.name,
       label: attendee.name,

@@ -133,7 +133,7 @@ components:
           $ref: 'https://raw.githubusercontent.com/egovernments/DIGIT-Specs/common-contract-update/Common%20Services/common-contract.yaml#/components/schemas/Pagination'
     TaskCriteria:
       type: object
-      description: can send in any one of the values. If multiple parameters are passed, then it will be a logical AND search
+      description: can send in any one of the values. If multiple parameters are passed, then it will be a logical AND search, referece and state should pass together
       properties:
         cnrNumber:
           type: string
@@ -151,6 +151,10 @@ components:
         status:
           type: string
         name:
+          type: string
+        state:
+          type: string
+        referenceId:
           type: string
     TaskRequest:
       type: object
@@ -207,7 +211,7 @@ components:
 
     TaskExists:
       type: object
-      description: can send in any one of the values and Exists value will be populated with true or false. If multiple paramters are passed, then it will be a logical AND search
+      description: can send in any one of the values and Exists value will be populated with true or false. If multiple paramters are passed, then it will be a logical AND search, referenceid and state should pass together
       properties:
         taskId:
           type: string
@@ -217,6 +221,10 @@ components:
         filingNumber:
           type: string
         cnrNumber:
+          type: string
+        referenceId:
+          type: string
+        state:
           type: string
         exists:
           type: boolean
@@ -307,6 +315,16 @@ components:
           $ref: 'https://raw.githubusercontent.com/egovernments/DIGIT-Specs/common-contract-update/Common%20Services/common-contract.yaml#/components/schemas/AuditDetails'
         workflow:
           $ref: 'https://raw.githubusercontent.com/egovernments/DIGIT-Specs/common-contract-update/Common%20Services/common-contract.yaml#/components/schemas/Workflow'
+        referenceId:
+          type: string
+          description: referenceId for generic task
+        state:
+          type: string
+          description: state where pending need to create
+        duedate:
+          type: integer
+          format: int64
+          description: due date of pending task
 
     Amount:
       type: object

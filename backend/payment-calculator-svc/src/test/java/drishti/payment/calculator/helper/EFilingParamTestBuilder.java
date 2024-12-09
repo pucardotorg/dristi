@@ -2,7 +2,10 @@ package drishti.payment.calculator.helper;
 
 import drishti.payment.calculator.web.models.EFilingParam;
 import drishti.payment.calculator.web.models.Range;
+import io.swagger.models.auth.In;
 
+import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.Map;
 
 
@@ -87,6 +90,17 @@ public class EFilingParamTestBuilder {
                                 .build()
                 ))
                 .build();
+        return this;
+    }
+
+    public EFilingParamTestBuilder withAdvocateFee() {
+        LinkedHashMap<String, HashMap<String, Integer>> advocateFees = new LinkedHashMap<>();
+        HashMap<String, Integer> advocateFee = new HashMap<>();
+        advocateFee.put("min", 0);
+        advocateFee.put("max", 1);
+        advocateFee.put("advocateFee", 100);
+        advocateFees.put("0-1", advocateFee);
+        this.builder.noOfAdvocateFees(advocateFees).build();
         return this;
     }
 }

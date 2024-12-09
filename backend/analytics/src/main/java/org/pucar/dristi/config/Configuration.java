@@ -1,4 +1,4 @@
-package org.pucar.dristi.config;
+package dristi;
 
 import jakarta.annotation.PostConstruct;
 import lombok.*;
@@ -159,6 +159,37 @@ public class Configuration {
 	@Value("${egov.order.business.services}")
 	private String orderBusinessServices;
 	private List<String> orderBusinessServiceList;
+
+	//Localization
+	@Value("${egov.localization.host}")
+	private String localizationHost;
+
+	@Value("${egov.localization.context.path}")
+	private String localizationContextPath;
+
+	@Value("${egov.localization.search.endpoint}")
+	private String localizationSearchEndpoint;
+
+	// SMSNotification
+	@Value("${egov.sms.notification.topic}")
+	private String smsNotificationTopic;
+
+	//Individual Service
+	@Value("${egov.individual.host}")
+	private String individualHost;
+
+	@Value("${egov.individual.search.path}")
+	private String individualSearchEndpoint;
+
+	@Value("${egov.sms.notification.pending.task.created.template.id}")
+	private String smsNotificationPendingTaskCreatedTemplateId;
+
+	// Advocate Config
+	@Value("${egov.advocate.host}")
+	private String advocateHost;
+
+	@Value("${egov.advocate.path}")
+	private String advocatePath;
 
 	@PostConstruct
 	public void init() {

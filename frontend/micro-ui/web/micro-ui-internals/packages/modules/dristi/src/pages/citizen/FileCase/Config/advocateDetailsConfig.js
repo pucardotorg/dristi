@@ -113,6 +113,24 @@ const advocateDetailsFormConfig = [
     dependentKey: { isAdvocateRepresenting: ["showForm"] },
     body: [
       {
+        type: "number",
+        label: "NUMBER_OF_ADVOCATES",
+        isMandatory: true,
+        populators: {
+          error: "FIRST_LAST_NAME_MANDATORY_MESSAGE",
+          validation: {
+            minLength: 1,
+          },
+          defaultValue: "1",
+          name: "numberOfAdvocate",
+        },
+      },
+    ],
+  },
+  {
+    dependentKey: { isAdvocateRepresenting: ["showForm"] },
+    body: [
+      {
         type: "component",
         component: "SelectCustomDragDrop",
         key: "vakalatnamaFileUpload",
@@ -131,6 +149,26 @@ const advocateDetailsFormConfig = [
               isMultipleUpload: true,
               downloadTemplateText: "VAKALATNAMA_TEMPLATE_TEXT",
               downloadTemplateLink: "https://www.jsscacs.edu.in/sites/default/files/Department%20Files/Number%20System%20.pdf",
+            },
+          ],
+        },
+      },
+    ],
+  },
+  {
+    dependentKey: { isAdvocateRepresenting: ["showForm"] },
+    body: [
+      {
+        type: "component",
+        component: "SelectCustomNote",
+        key: "addressDetailsNote",
+        populators: {
+          inputs: [
+            {
+              infoHeader: "CS_COMMON_NOTE",
+              infoText: "ADVOCATE_DETAIL_NOTE",
+              infoTooltipMessage: "ADVOCATE_DETAIL_NOTE",
+              type: "InfoComponent",
             },
           ],
         },

@@ -1,4 +1,4 @@
-package org.pucar.dristi.kafka;
+package dristi;
 
 import org.egov.tracer.kafka.CustomKafkaTemplate;
 import org.junit.jupiter.api.Test;
@@ -6,6 +6,7 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.pucar.dristi.kafka.Producer;
 
 import static org.mockito.Mockito.*;
 

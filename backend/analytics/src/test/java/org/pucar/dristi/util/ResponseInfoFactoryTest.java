@@ -1,9 +1,10 @@
-package org.pucar.dristi.util;
+package dristi;
 
 import org.egov.common.contract.request.RequestInfo;
 import org.egov.common.contract.response.ResponseInfo;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.pucar.dristi.util.ResponseInfoFactory;
 
 import static org.junit.jupiter.api.Assertions.*;
 

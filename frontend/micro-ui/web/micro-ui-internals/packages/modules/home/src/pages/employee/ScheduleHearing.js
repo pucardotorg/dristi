@@ -195,9 +195,9 @@ function ScheduleHearing({
       tenantId,
     },
     {},
-    "dristi",
+    `dristi-${filingNumber}`,
     filingNumber,
-    filingNumber
+    Boolean(filingNumber)
   );
   const caseDetails = useMemo(() => caseData?.criteria[0]?.responseList[0], [caseData]);
   const cnrNumber = useMemo(() => caseDetails?.cnrNumber, [caseDetails]);

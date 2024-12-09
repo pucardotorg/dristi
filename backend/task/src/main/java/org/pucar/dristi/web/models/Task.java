@@ -107,6 +107,9 @@ public class Task {
     @JsonProperty("state")
     private String state;
 
+    @JsonProperty("duedate")
+    private Long duedate;
+
 
     public Task addDocumentsItem(Document documentsItem) {
         this.documents.add(documentsItem);

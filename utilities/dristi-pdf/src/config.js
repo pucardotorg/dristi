@@ -283,12 +283,15 @@ module.exports = {
       name: "Court Centre, Kollam",
       place: "Kollam",
       state: "Kerala",
+      orderHeading: process.env.ORDER_HEADING || "Order Heading",
     },
     judgeDetails: {
       name: process.env.JUDGE_NAME || "Judge Name",
-      judgeSignature: "Judge Signature",
+      judgeSignature: "Signature",
       courtSeal: "Court Seal",
-      designation: "Judicial First Class Magistrate III",
+      designation: process.env.JUDGE_DESIGNATION || "Judge Designation",
+      judgeDesignation:
+        process.env.JUDGE_DESIGNATION_HEADER || "Judge Designation Header",
     },
   },
   workFlowState: {

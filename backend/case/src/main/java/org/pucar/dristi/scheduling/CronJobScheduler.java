@@ -66,7 +66,7 @@ public class CronJobScheduler {
     public void sendNotificationToPaymentPending() {
         if (config.getIsSMSEnabled()) {
             log.info("Starting Cron Job For Sending Notification To Payment Pending");
-            processNotifications("PAYMENT_PENDING", ServiceConstants.PAYMENT_PENDING);
+            processNotifications("PENDING_PAYMENT", ServiceConstants.PAYMENT_PENDING);
         }
     }
 

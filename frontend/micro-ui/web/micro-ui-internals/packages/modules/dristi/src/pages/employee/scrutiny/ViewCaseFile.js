@@ -1,21 +1,24 @@
 import { BackButton, CheckSvg, CloseSvg, EditIcon, FormComposerV2, Header, Loader, TextInput, Toast } from "@egovernments/digit-ui-react-components";
-import React, { useEffect, useMemo, useState } from "react";
+import React, { useMemo, useState } from "react";
 import { Redirect, useHistory, useLocation } from "react-router-dom";
 import ReactTooltip from "react-tooltip";
-import { CaseWorkflowAction } from "../../../Utils/caseWorkflow";
+import Button from "../../../components/Button";
 import CustomCaseInfoDiv from "../../../components/CustomCaseInfoDiv";
 import Modal from "../../../components/Modal";
 import SendCaseBackModal from "../../../components/SendCaseBackModal";
 import SuccessModal from "../../../components/SuccessModal";
+import useDownloadCasePdf from "../../../hooks/dristi/useDownloadCasePdf";
 import useSearchCaseService from "../../../hooks/dristi/useSearchCaseService";
 import { CustomArrowDownIcon, FileDownloadIcon, FlagIcon } from "../../../icons/svgIndex";
 import { DRISTIService } from "../../../services";
+import { CaseWorkflowAction } from "../../../Utils/caseWorkflow";
+import downloadPdfWithLink from "../../../Utils/downloadPdfWithLink";
 import { formatDate } from "../../citizen/FileCase/CaseType";
 import { reviewCaseFileFormConfig } from "../../citizen/FileCase/Config/reviewcasefileconfig";
 
-import Button from "../../../components/Button";
-import useDownloadCasePdf from "../../../hooks/dristi/useDownloadCasePdf";
-import useGetStatuteSection from "../../../hooks/dristi/useGetStatuteSection";
+const judgeId = window?.globalConfigs?.getConfig("JUDGE_ID") || "JUDGE_ID";
+const courtId = window?.globalConfigs?.getConfig("COURT_ID") || "COURT_ID";
+const benchId = window?.globalConfigs?.getConfig("BENCH_ID") || "BENCH_ID";
 
 const downloadButtonStyle = {
   backgroundColor: "white",
@@ -66,9 +69,7 @@ function ViewCaseFile({ t, inViewCase = false }) {
 
   const { downloadPdf } = useDownloadCasePdf();
 
-  const { data: requiredDocumentsData, isLoading: isLoadingRequiredDocumentsData } = useGetStatuteSection("case", [{ name: "RequiredDocuments" }]);
-  const RequiredDocuments = requiredDocumentsData?.RequiredDocuments;
-  const requiredDocumentsPdfNIA = RequiredDocuments?.filter((item) => item?.caseType === "NIA-138")?.[0];
+  const checkListLink = "/pucar-filestore/kl/ScrutinyCheckList.pdf";
 
   const onFormValueChange = (setValue, formData, formState, reset, setError, clearErrors, trigger, getValues) => {
     if (JSON.stringify(formData) !== JSON.stringify(formdata.data)) {
@@ -116,7 +117,7 @@ function ViewCaseFile({ t, inViewCase = false }) {
       tenantId,
     },
     {},
-    "dristi",
+    `dristi-${caseId}`,
     caseId,
     Boolean(caseId)
   );
@@ -162,7 +163,10 @@ function ViewCaseFile({ t, inViewCase = false }) {
   }
 
   const fileStoreId = useMemo(() => {
-    return caseDetails?.documents?.filter((doc) => doc?.key === "case.complaint.signed")?.map((doc) => doc?.fileStore)?.[0];
+    return (
+      caseDetails?.documents?.filter((doc) => doc?.key === "case.complaint.signed")?.map((doc) => doc?.fileStore)?.[0] ||
+      caseDetails?.additionalDetails?.signedCaseDocument
+    );
   }, [caseDetails]);
 
   const newScrutinyData = useMemo(() => {
@@ -321,6 +325,7 @@ function ViewCaseFile({ t, inViewCase = false }) {
             action,
             ...(action === CaseWorkflowAction.SEND_BACK && { assignes: assignees }),
           },
+          ...(action === CaseWorkflowAction.VALIDATE && { judgeId, courtId, benchId }),
         },
         tenantId,
       },
@@ -601,7 +606,7 @@ function ViewCaseFile({ t, inViewCase = false }) {
                   <h3 className="item-text">
                     {t("CS_REFERENCE_RELATED_FIELDS")}{" "}
                     <span
-                      onClick={() => downloadPdf(tenantId, requiredDocumentsPdfNIA?.scrutinityFileStoreId)}
+                      onClick={async () => await downloadPdfWithLink(checkListLink, "ScrutinyCheckList")}
                       style={{ color: "#007e7e", textDecoration: "underline", cursor: "pointer" }}
                     >
                       {t("CS_HERE")}

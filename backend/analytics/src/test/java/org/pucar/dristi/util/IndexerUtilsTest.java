@@ -1,4 +1,4 @@
-package org.pucar.dristi.util;
+package dristi;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.jayway.jsonpath.JsonPath;
@@ -11,6 +11,15 @@ import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.pucar.dristi.config.Configuration;
 import org.pucar.dristi.config.MdmsDataConfig;
+import org.pucar.dristi.util.*;
+import org.pucar.dristi.util.ApplicationUtil;
+import org.pucar.dristi.util.CaseOverallStatusUtil;
+import org.pucar.dristi.util.CaseUtil;
+import org.pucar.dristi.util.EvidenceUtil;
+import org.pucar.dristi.util.HearingUtil;
+import org.pucar.dristi.util.IndexerUtils;
+import org.pucar.dristi.util.OrderUtil;
+import org.pucar.dristi.util.TaskUtil;
 import org.pucar.dristi.web.models.PendingTask;
 import org.pucar.dristi.web.models.PendingTaskType;
 import org.springframework.http.*;
@@ -18,6 +27,7 @@ import org.springframework.test.util.ReflectionTestUtils;
 import org.springframework.web.client.ResourceAccessException;
 import org.springframework.web.client.RestTemplate;
 
+import java.time.Clock;
 import java.util.*;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -27,7 +37,7 @@ import static org.pucar.dristi.config.ServiceConstants.*;
 public class IndexerUtilsTest {
 
     @InjectMocks
-    private IndexerUtils indexerUtils;
+    private org.pucar.dristi.util.IndexerUtils indexerUtils;
 
     @Mock
     private RestTemplate restTemplate;
@@ -48,6 +58,9 @@ public class IndexerUtilsTest {
     private TaskUtil taskUtil;
 
     @Mock
+    private Clock clock;
+
+    @Mock
     private ApplicationUtil applicationUtil;
 
     @Mock
@@ -66,7 +79,7 @@ public class IndexerUtilsTest {
     public void setUp() {
         MockitoAnnotations.openMocks(this);
         ReflectionTestUtils.setField(indexerUtils, "mdmsDataConfig", mdmsDataConfig);
-
+        when(clock.millis()).thenReturn(1000000000L); // Fixed mock time
     }
 
     private static PendingTask getPendingTask() {
@@ -89,10 +102,10 @@ public class IndexerUtilsTest {
 
     @Test
     public void testIsNullOrEmpty() {
-        assertTrue(IndexerUtils.isNullOrEmpty(null));
-        assertTrue(IndexerUtils.isNullOrEmpty(""));
-        assertTrue(IndexerUtils.isNullOrEmpty(" "));
-        assertFalse(IndexerUtils.isNullOrEmpty("test"));
+        assertTrue(org.pucar.dristi.util.IndexerUtils.isNullOrEmpty(null));
+        assertTrue(org.pucar.dristi.util.IndexerUtils.isNullOrEmpty(""));
+        assertTrue(org.pucar.dristi.util.IndexerUtils.isNullOrEmpty(" "));
+        assertFalse(org.pucar.dristi.util.IndexerUtils.isNullOrEmpty("test"));
     }
 
     @Test
@@ -193,7 +206,7 @@ public class IndexerUtilsTest {
                 + "\"businessService\": \"entityType\","
                 + "\"businessId\": \"referenceId\","
                 + "\"state\": {\"state\":\"status\", \"actions\":[{\"roles\" : [\"role\"]}]},"
-                + "\"stateSla\": 123,"
+                + "\"stateSla\": 86400,"
                 + "\"businesssServiceSla\": 456,"
                 + "\"assignes\": [\"user1\"],"
                 + "\"assignedRoles\": [\"role\"],"
@@ -202,6 +215,7 @@ public class IndexerUtilsTest {
                 + "}";
         JSONObject requestInfo = new JSONObject();
 
+
         when(config.getIndex()).thenReturn("index");
         when(caseOverallStatusUtil.checkCaseOverAllStatus(anyString(), anyString(), anyString(), anyString(), anyString(), any()))
                 .thenReturn(new Object());
@@ -209,7 +223,7 @@ public class IndexerUtilsTest {
 
         String expected = String.format(
                 ES_INDEX_HEADER_FORMAT + ES_INDEX_DOCUMENT_FORMAT,
-                "index", "referenceId", "id", "name", "entityType", "referenceId", "status", "[\"user1\"]", "[\"role\"]", "null", "null", false, 123L, 456L, "{\"key\":\"value\"}"
+                "index", "referenceId", "id", "name", "entityType", "referenceId", "status", "[\"user1\"]", "[\"role\"]", "null", "null", false, ONE_DAY_DURATION_MILLIS+1000000000L, 456L, "{\"key\":\"value\"}"
         );
 
         PendingTaskType pendingTaskType = PendingTaskType.builder().isgeneric(false).pendingTask("name").state("status").triggerAction(List.of("action")).build();

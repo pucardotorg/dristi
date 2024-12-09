@@ -67,6 +67,8 @@ const ApplicationDetails = ({ location, match }) => {
   const [message, setMessage] = useState(null);
   const [reasons, setReasons] = useState(null);
   const [isAction, setIsAction] = useState(false);
+  const [showApproveModal, setShowApproveModal] = useState(false);
+
   const { data: individualData, isLoading: isGetUserLoading } = window?.Digit.Hooks.dristi.useGetIndividualUser(
     {
       Individual: {
@@ -83,7 +85,9 @@ const ApplicationDetails = ({ location, match }) => {
     individualData?.Individual,
   ]);
 
-  const isAdvocateViewer = useMemo(() => userRoles?.includes("ADVOCATE_APPLICATION_VIEWER"), [userRoles]);
+  const isAdvocateApplicationViewer = useMemo(() => userRoles?.includes("ADVOCATE_APPLICATION_VIEWER"), [userRoles]);
+
+  const isAdvocateViewer = useMemo(() => userRoles?.includes("ADVOCATE_VIEWER"), [userRoles]);
 
   const identifierIdDetails = useMemo(
     () => JSON.parse(individualData?.Individual?.[0]?.additionalFields?.fields?.find((obj) => obj.key === "identifierIdDetails")?.value || "{}"),
@@ -157,13 +161,14 @@ const ApplicationDetails = ({ location, match }) => {
       })
       .catch(() => {
         setShowModal(false);
+        setShowApproveModal(false);
         setShowInfoModal({ isOpen: true, status: "ES_API_ERROR" });
       });
   }
 
   function onActionSelect(action) {
     if (action === "APPROVE") {
-      takeAction(action);
+      setShowApproveModal(true);
     }
     if (action === "REJECT") {
       setShowModal(true);
@@ -234,7 +239,7 @@ const ApplicationDetails = ({ location, match }) => {
     return applicationNo || applicationNumber ? ` ${t("APPLICATION_NUMBER")} ${applicationNo || applicationNumber}` : "My Application";
   }, [applicationNo, applicationNumber, t]);
 
-  if (!isAdvocateViewer) {
+  if (!isAdvocateApplicationViewer) {
     history.push(`/${window?.contextPath}/citizen/dristi/home`);
   }
 
@@ -251,7 +256,7 @@ const ApplicationDetails = ({ location, match }) => {
             <DocumentDetailCard cardData={personalData} />
             {type === "advocate" && userType !== "ADVOCATE_CLERK" && <DocumentDetailCard cardData={barDetails} />}
           </div>
-          {!applicationNo && (
+          {isAdvocateViewer && (
             <div className="action-button-application">
               <SubmitBar
                 label={t("Go_Back_Home")}
@@ -292,6 +297,22 @@ const ApplicationDetails = ({ location, match }) => {
                 <CardText style={{ margin: "2px 0px" }}>{t(`REASON_FOR_REJECTION`)}</CardText>
                 <TextArea rows={"3"} onChange={(e) => setReasons(e.target.value)} style={{ maxWidth: "100%", height: "auto" }}></TextArea>
               </Card>
+            </Modal>
+          )}
+          {showApproveModal && (
+            <Modal
+              headerBarMain={<Heading label={t("CONFIRM_APPROVE_ADVOCATE_APPLICATION_HEADER")} />}
+              headerBarEnd={<CloseBtn onClick={() => setShowApproveModal(false)} />}
+              actionCancelLabel={t("CS_BACK")} 
+              actionCancelOnSubmit={() => {
+                setShowApproveModal(false);
+              }}
+              actionSaveLabel={t("CS_COMMON_CONFIRM")}
+              actionSaveOnSubmit={() => {
+                takeAction("APPROVE");
+              }}
+            >
+              <div style={{padding:"20px 0px"}}>{t(`CONFIRM_APPROVE_ADVOCATE_APPLICATION_TEXT`)}</div>
             </Modal>
           )}
           {showInfoModal?.isOpen && (

@@ -33,10 +33,12 @@ public class TreasuryEnrichment {
 
         String challanAmount;
         if (config.isTest()) {
-            challanAmount = String.valueOf(4);
+            challanAmount = String.valueOf(config.getChallanTestAmount());
         } else {
             challanAmount = String.valueOf(challanData.getTotalDue());
         }
+        log.info("Challan Amount: {}", challanAmount);
+        log.info("eTreasury in test mode: {}", config.isTest());
         String noOfHeads = String.valueOf(1);
         List<HeadDetails> headDetailsList = new ArrayList<>();
         HeadDetails headDetails  = HeadDetails.builder()

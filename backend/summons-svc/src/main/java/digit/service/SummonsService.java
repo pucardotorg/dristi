@@ -160,7 +160,7 @@ public class SummonsService {
                 workflow = Workflow.builder().action("NOT_DELIVERED").build();
             }
         } else if (task.getTaskType().equalsIgnoreCase(NOTICE)) {
-            if (request.getSummonsDelivery().getDeliveryStatus().equals(DeliveryStatus.EXECUTED)) {
+            if (request.getSummonsDelivery().getDeliveryStatus().equals(DeliveryStatus.DELIVERED)) {
                 workflow = Workflow.builder().action("SERVED").build();
             } else {
                 workflow = Workflow.builder().action("NOT_SERVED").build();

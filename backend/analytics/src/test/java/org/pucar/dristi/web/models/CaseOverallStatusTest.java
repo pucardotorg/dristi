@@ -1,7 +1,8 @@
-package org.pucar.dristi.web.models;
+package dristi;
 
 import org.egov.common.contract.models.AuditDetails;
 import org.junit.jupiter.api.Test;
+import org.pucar.dristi.web.models.CaseOverallStatus;
 
 import static org.junit.jupiter.api.Assertions.*;
 

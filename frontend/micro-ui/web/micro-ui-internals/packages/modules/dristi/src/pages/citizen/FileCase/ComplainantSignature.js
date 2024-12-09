@@ -234,7 +234,7 @@ const ComplainantSignature = ({ path }) => {
     {},
     `case-details-${filingNumber}`,
     filingNumber,
-    filingNumber
+    Boolean(filingNumber)
   );
 
   const caseDetails = useMemo(
@@ -388,6 +388,7 @@ const ComplainantSignature = ({ path }) => {
             tenantId: tenantId,
             caseId: caseId,
             delayCondonation: delayCondonation,
+            filingNumber: caseDetails?.filingNumber,
           },
         ],
       },

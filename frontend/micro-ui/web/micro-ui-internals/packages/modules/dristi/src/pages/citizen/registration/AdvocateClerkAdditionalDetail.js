@@ -148,7 +148,7 @@ function AdvocateClerkAdditionalDetail({ params, setParams, path, config, pathOn
 
     if (formData?.clientDetails?.barRegistrationNumber) {
       const advocateDetail = await getUserForAdvocateUUID(formData?.clientDetails?.barRegistrationNumber);
-      if (advocateDetail?.advocates[0]?.responseList?.length !== 0) {
+      if (advocateDetail?.advocates[0]?.responseList?.length !== 0 && advocateDetail?.advocates[0]?.responseList[0]?.isActive === true) {
         setFormErrors.current("barRegistrationNumber", { message: t("DUPLICATE_BAR_REGISTRATION") });
         return;
       }
@@ -157,7 +157,7 @@ function AdvocateClerkAdditionalDetail({ params, setParams, path, config, pathOn
       ...params,
       formData: formData,
     });
-    if (!params?.Individual?.[0]?.individualId) history.push(`/digit-ui/citizen/dristi/home/registration/terms-condition`);
+    history.push(`/digit-ui/citizen/dristi/home/registration/terms-condition`);
   };
   if (!params?.IndividualPayload) {
     history.push(pathOnRefresh);

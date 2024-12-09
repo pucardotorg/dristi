@@ -800,7 +800,7 @@ const SubmissionsCreate = ({ path }) => {
     service: entityType,
     path,
     caseDetails,
-    totalAmount: "4",
+    totalAmount: "2",
     scenario,
   });
 
@@ -826,7 +826,7 @@ const SubmissionsCreate = ({ path }) => {
             demandDetails: [
               {
                 taxHeadMasterCode: taxHeadMasterCode,
-                taxAmount: 4,
+                taxAmount: 2,
                 collectionAmount: 0,
               },
             ],

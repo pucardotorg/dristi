@@ -4,6 +4,7 @@ package org.drishti.esign.web.controllers;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.enums.ParameterIn;
 import io.swagger.v3.oas.annotations.media.Schema;
+import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
 import lombok.extern.slf4j.Slf4j;
 import org.drishti.esign.service.ESignService;
@@ -31,9 +32,9 @@ public class EsignApiController {
     }
 
     @PostMapping("/v1/_esign")
-    public ResponseEntity<ESignResponse> eSignDoc(@Parameter(in = ParameterIn.DEFAULT, description = "ESign Doc Details and Request Info", required = true, schema = @Schema()) @Valid @RequestBody ESignRequest request) {
+    public ResponseEntity<ESignResponse> eSignDoc(@Parameter(in = ParameterIn.DEFAULT, description = "ESign Doc Details and Request Info", required = true, schema = @Schema()) @Valid @RequestBody ESignRequest request, HttpServletRequest servletRequeste) {
         log.info("api=/v1/_esign, result = IN_PROGRESS");
-        ESignXmlForm eSignXmlForm = eSignService.signDoc(request);
+        ESignXmlForm eSignXmlForm = eSignService.signDoc(request,servletRequeste);
         ESignResponse response = ESignResponse.builder().responseInfo(ResponseInfoFactory.createResponseInfoFromRequestInfo(request.getRequestInfo(), true))
                 .eSignForm(eSignXmlForm).build();
         log.info("api=/v1/_esign, result = SUCCESS");

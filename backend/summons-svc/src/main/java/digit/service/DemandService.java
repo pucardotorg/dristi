@@ -12,6 +12,7 @@ import lombok.extern.slf4j.Slf4j;
 import net.minidev.json.JSONArray;
 import org.egov.common.contract.models.RequestInfoWrapper;
 import org.egov.common.contract.request.RequestInfo;
+import org.egov.common.contract.request.Role;
 import org.egov.tracer.model.CustomException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -232,6 +233,7 @@ public class DemandService {
                 .businessService(businessService)
                 .taxPeriodFrom(config.getTaxPeriodFrom()).taxPeriodTo(config.getTaxPeriodTo())
                 .demandDetails(demandDetailList)
+                .billExpiryTime(TWO_YEARS_IN_MILLISECOND)
                 .additionalDetails(additionalDetails)
                 .build();
         return demand;
@@ -310,6 +312,8 @@ public class DemandService {
     public BillResponse getBillWithMultipleConsumerCode(RequestInfo requestInfo, Set<String> consumerCodes, Task task, String businessService) {
         String uri = buildFetchBillURI(task.getTenantId(), consumerCodes, businessService);
 
+        Role role = Role.builder().code(config.getPaymentCollector()).tenantId(config.getEgovStateTenantId()).build();
+        requestInfo.getUserInfo().getRoles().add(role);
         RequestInfoWrapper requestInfoWrapper = RequestInfoWrapper.builder().requestInfo(requestInfo).build();
         Object response = repository.fetchResult(new StringBuilder(uri), requestInfoWrapper);
 

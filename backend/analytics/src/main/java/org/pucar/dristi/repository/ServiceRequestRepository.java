@@ -1,4 +1,4 @@
-package org.pucar.dristi.repository;
+package dristi;
 
 
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -15,6 +15,11 @@ import org.springframework.http.MediaType;
 import org.springframework.stereotype.Repository;
 import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.RestTemplate;
+
+import java.util.Map;
+
+import static org.pucar.dristi.config.ServiceConstants.EXTERNAL_SERVICE_EXCEPTION;
+import static org.pucar.dristi.config.ServiceConstants.SEARCHER_SERVICE_EXCEPTION;
 
 @Repository
 @Slf4j
@@ -46,6 +51,21 @@ public class ServiceRequestRepository {
 			throw new ServiceCallException(e.getResponseBodyAsString());
 		} catch (Exception e) {
 			log.error(ServiceConstants.SEARCHER_SERVICE_EXCEPTION, uri, request, e);
+		}
+
+		return response;
+	}
+
+	public Object fetchResult(StringBuilder uri, Object request) {
+		mapper.configure(SerializationFeature.FAIL_ON_EMPTY_BEANS, false);
+		Object response = null;
+		try {
+			response = restTemplate.postForObject(uri.toString(), request, Map.class);
+		} catch (HttpClientErrorException e) {
+			log.error(EXTERNAL_SERVICE_EXCEPTION + " URI: {}", uri, e);
+			throw new ServiceCallException(e.getResponseBodyAsString());
+		} catch (Exception e) {
+			log.error(SEARCHER_SERVICE_EXCEPTION, e);
 		}
 
 		return response;

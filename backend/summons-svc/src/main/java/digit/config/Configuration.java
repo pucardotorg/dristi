@@ -1,5 +1,6 @@
 package digit.config;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.*;
 import org.egov.tracer.config.TracerConfiguration;
 import org.springframework.beans.factory.annotation.Value;
@@ -260,4 +261,15 @@ public class Configuration {
     @Value("${role.system.admin}")
     private String systemAdmin;
 
+    @Value("${role.payment.collector}")
+    private String paymentCollector;
+
+    @Value("${dristi.court.url}")
+    private String courtUrl;
+
+    @Value("${dristi.court.contact}")
+    private String courtContact;
+
+    @Value("${dristi.barcouncil.url}")
+    private String barCouncilUrl;
 }

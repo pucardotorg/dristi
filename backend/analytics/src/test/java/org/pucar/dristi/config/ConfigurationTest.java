@@ -1,7 +1,8 @@
-package org.pucar.dristi.config;
+package dristi;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.pucar.dristi.config.Configuration;
 import org.springframework.test.util.ReflectionTestUtils;
 
 import java.util.Arrays;

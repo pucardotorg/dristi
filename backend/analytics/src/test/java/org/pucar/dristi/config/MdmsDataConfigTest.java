@@ -1,4 +1,4 @@
-package org.pucar.dristi.config;
+package dristi;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import net.minidev.json.JSONArray;
@@ -9,6 +9,8 @@ import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
+import org.pucar.dristi.config.Configuration;
+import org.pucar.dristi.config.MdmsDataConfig;
 import org.pucar.dristi.util.MdmsUtil;
 import org.pucar.dristi.web.models.CaseOutcomeType;
 import org.pucar.dristi.web.models.CaseOverallStatusType;

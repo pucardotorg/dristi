@@ -24,6 +24,9 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
+import static org.pucar.dristi.config.ServiceConstants.*;
+import static org.pucar.dristi.config.ServiceConstants.FSO_VALIDATED;
+
 @Slf4j
 @Service
 public class PaymentUpdateService {
@@ -40,15 +43,22 @@ public class PaymentUpdateService {
 
     private CacheService cacheService;
 
+    private NotificationService notificationService;
+
+    private CaseService caseService;
+
+
+
     @Autowired
     public PaymentUpdateService(WorkflowService workflowService, ObjectMapper mapper, CaseRepository repository,
-                                Producer producer, Configuration configuration, CacheService cacheService) {
+                                Producer producer, Configuration configuration, CacheService cacheService, CaseService caseService) {
         this.workflowService = workflowService;
         this.mapper = mapper;
         this.repository = repository;
         this.producer = producer;
         this.configuration = configuration;
         this.cacheService = cacheService;
+        this.caseService = caseService;
     }
 
     public void process(Map<String, Object> record) {
@@ -112,11 +122,14 @@ public class PaymentUpdateService {
             CaseRequest caseRequest = new CaseRequest();
             caseRequest.setRequestInfo(requestInfo);
             caseRequest.setCases(courtCase);
-
+            if(UNDER_SCRUTINY.equalsIgnoreCase(courtCase.getStatus())) {
+                caseService.callNotificationService(caseRequest, CASE_PAYMENT_COMPLETED);
+            }
             producer.push(configuration.getCaseUpdateStatusTopic(),caseRequest);
             cacheService.save(requestInfo.getUserInfo().getTenantId() + ":" + courtCase.getId().toString(), courtCase);
 
         });
     }
+
 
 }

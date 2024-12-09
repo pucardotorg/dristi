@@ -45,6 +45,9 @@ public class Configuration {
     @Value("${egov.case.path}")
     private String casePath;
 
+    @Value("${egov.case.search.path}")
+    private String caseSearchPath;
+
     //Workflow Config
     @Value("${egov.workflow.host}")
     private String wfHost;
@@ -135,4 +138,34 @@ public class Configuration {
 
     @Value("${egov.documenttype.path}")
     private String documentTypePath;
+
+    //Localization
+    @Value("${egov.localization.host}")
+    private String localizationHost;
+
+    @Value("${egov.localization.context.path}")
+    private String localizationContextPath;
+
+    @Value("${egov.localization.search.endpoint}")
+    private String localizationSearchEndpoint;
+
+    @Value("${egov.sms.notification.admission.hearing.scheduled.template.id}")
+    private String smsNotificationAdmissionHearingScheduledTemplateId;
+
+    @Value("${egov.sms.notification.judge.issue.order.template.id}")
+    private String smsNotificationJudgeIssueOrderTemplateId;
+
+    //Individual Service
+    @Value("${egov.individual.host}")
+    private String individualHost;
+
+    @Value("${egov.individual.search.path}")
+    private String individualSearchEndpoint;
+
+    //advocate
+    @Value("${egov.advocate.host}")
+    private String advocateHost;
+
+    @Value("${egov.advocate.path}")
+    private String advocatePath;
 }

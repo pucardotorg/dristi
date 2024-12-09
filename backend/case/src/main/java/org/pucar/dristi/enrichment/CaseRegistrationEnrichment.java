@@ -316,7 +316,12 @@ public class CaseRegistrationEnrichment {
 
         boolean isJudge = roles.stream()
                 .anyMatch(role -> JUDGE_ROLE.equals(role.getCode()));
-        if (isJudge) {
+
+        boolean isBenchClerk = roles.stream()
+                .anyMatch(role -> BENCH_CLERK.equals(role.getCode()));
+
+        // TO DO- Need to enhance this after HRMS integration
+        if (isJudge || isBenchClerk) {
             for (CaseCriteria element : searchRequest.getCriteria()) {
                 element.setJudgeId(JUDGE_ID);
             }
