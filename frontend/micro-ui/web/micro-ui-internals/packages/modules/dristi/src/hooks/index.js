@@ -73,6 +73,7 @@ export const Urls = {
     taskDocuments: "/task/v1/document/search",
     summonsPayment: "/payment-calculator/v1/_calculate",
     repondentPincodeSearch: "/payment-calculator/hub/v1/_search",
+    downloadCaseBundle: "/casemanagement/casemanager/case/v1/_buildcasebundle",
   },
   case: {
     addWitness: "/case/v1/add/witness",
