@@ -40,7 +40,7 @@ VU->DU: redirects to Document submission screen
 A->DU: Fill in the Document details and upload relevant documents
 A->DU: Click "Review Submission"
 DU->DRU: redirect to review screen
-DRU->ARS++: createArtifact(artifact payload, filingNumber)
+DRU->ARS++: createArtifact(artifact payload, filingNumber, filingType = direct)
 ARS->ARUS++: generate ArtifactNumber (filingNumber)
 return artifactNumber
 ARS->W++: action "CREATE"
