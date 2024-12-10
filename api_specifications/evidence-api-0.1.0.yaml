@@ -173,6 +173,11 @@ components:
           type: string
           description: Represents the legal classification of the artifact, such as sworn statement, affidavit, testimony, etc.
           example: AFFIDAVIT, DEPOSITION, SWORN_STATEMENT, OTHER etc..
+        filingType:
+          type: string
+          format: uuid
+          example: master data values - caseFiling, application, direct
+          description: master data for submission type as per the values mentioned in example. caseFiling to be used for all documents uploaded at the time of case e-filing. application is for submissions along with application and direct for documents directly uploaded. 
         sourceType:
           type: string
           description: Represents the legal classification of the source, such as COMPLAINANT, ACCUSED, COURT.
