@@ -1,0 +1,39 @@
+[
+  {
+    "tenantId": "kl",
+    "moduleName": "common-masters",
+    "masterName": "FilingType",
+    "mdmsPayload": [
+      {
+        "tenantId": "kl",
+        "schemaCode": "common-masters.FilingType",
+        "data": {
+          "id": 1,
+          "displayName": "CaseFiling",
+          "code": "CASE_FILING"
+        },
+        "isActive": true
+      },
+      {
+        "tenantId": "kl",
+        "schemaCode": "common-masters.FilingType",
+        "data": {
+          "id": 2,
+          "displayName": "Application",
+          "code": "APPLICATION"
+        },
+        "isActive": true
+      },
+      {
+        "tenantId": "kl",
+        "schemaCode": "common-masters.FilingType",
+        "data": {
+          "id": 3,
+          "displayName": "Direct",
+          "code": "DIRECT"
+        },
+        "isActive": true
+      }
+    ]
+  }
+]

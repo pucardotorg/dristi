@@ -64,6 +64,9 @@ public class EvidenceRowMapper implements ResultSetExtractor<List<Artifact>> {
                             }))
                             .comments(getObjectFromJson(rs.getString("comments"), new TypeReference<List<Comment>>() {
                             }))
+                            .isVoid(rs.getBoolean("isVoid"))
+                            .reason(rs.getString("reason"))
+                            .filingType(rs.getString("filingType"))
                             .file(getObjectFromJson(rs.getString("file"), new TypeReference<Document>(){}))
                             .createdDate(rs.getLong("createdDate"))
                             .isActive(rs.getBoolean("isActive"))

@@ -58,7 +58,9 @@ class EvidenceRowMapperTest {
         when(rs.getLong("createdtime")).thenReturn(1609459200000L);
         when(rs.getString("lastmodifiedby")).thenReturn("user2");
         when(rs.getLong("lastmodifiedtime")).thenReturn(1609545600000L);
-
+        when(rs.getString("reason")).thenReturn("reason1");
+        when(rs.getBoolean("isVoid")).thenReturn(true);
+        when(rs.getString("filingType")).thenReturn("filingType");
         PGobject artifactDetailsObject = new PGobject();
         artifactDetailsObject.setType("jsonb");
         artifactDetailsObject.setValue("{\"key\":\"value\"}");

@@ -57,6 +57,12 @@ public class Configuration {
 	@Value("${egov.mdms.search.endpoint}")
 	private String mdmsEndPoint;
 
+	@Value("${egov.mdms.filingtype.module}")
+	private String filingTypeModule;
+
+	@Value("${egov.mdms.filingtype.master}")
+	private String filingTypeMaster;
+
 	// HRMS
 	@Value("${egov.hrms.host}")
 	private String hrmsHost;
@@ -94,6 +100,12 @@ public class Configuration {
 
 	@Value("${egov.workflow.businessservice.name}")
 	private String businessServiceName;
+
+	@Value("${egov.workflow.submission.businessservice.name}")
+	private String submissionBusinessServiceName;
+
+	@Value("${egov.workflow.submission.businessservice.module}")
+	private String submissionBusinessServiceModule;
 
 	// Case Config
 	@Value("${egov.case.host}")

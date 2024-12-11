@@ -1,0 +1,37 @@
+[
+  {
+    "tenantId": "kl",
+    "moduleName": "common-masters",
+    "masterName": "FilingType",
+    "mdmsPayload": {
+      "tenantId": "kl",
+      "code": "common-masters.FilingType",
+      "description": null,
+      "definition": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "id",
+          "code",
+          "displayName"
+        ],
+        "x-unique": [
+          "id"
+        ],
+        "properties": {
+          "id": {
+            "type": "integer"
+          },
+          "code":{
+            "type":"string"
+          },
+          "displayName":{
+            "type":"string"
+          }
+        },
+        "additionalProperties": false
+      },
+      "isActive": true
+    }
+  }
+]

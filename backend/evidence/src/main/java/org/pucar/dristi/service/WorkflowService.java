@@ -17,8 +17,9 @@ import org.springframework.util.CollectionUtils;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Objects;
 
-import static org.pucar.dristi.config.ServiceConstants.WORKFLOW_SERVICE_EXCEPTION;
+import static org.pucar.dristi.config.ServiceConstants.*;
 
 @Component
 @Slf4j
@@ -35,9 +36,9 @@ public class WorkflowService {
         this.config = config;
     }
 
-    public void updateWorkflowStatus(EvidenceRequest evidenceRequest) {
+    public void updateWorkflowStatus(EvidenceRequest evidenceRequest, String filingType) {
             try {
-                ProcessInstance processInstance = getProcessInstanceForArtifact(evidenceRequest.getArtifact());
+                ProcessInstance processInstance = getProcessInstanceForArtifact(evidenceRequest.getArtifact(), filingType);
                 ProcessInstanceRequest workflowRequest = new ProcessInstanceRequest(evidenceRequest.getRequestInfo(), Collections.singletonList(processInstance));
                 String state=callWorkFlow(workflowRequest).getState();
                 evidenceRequest.getArtifact().setStatus(state);
@@ -61,15 +62,15 @@ public class WorkflowService {
             throw new CustomException(WORKFLOW_SERVICE_EXCEPTION,e.toString());
         }
     }
-    ProcessInstance getProcessInstanceForArtifact(Artifact artifact) {
+    ProcessInstance getProcessInstanceForArtifact(Artifact artifact, String filingType) {
         try {
             Workflow workflow = artifact.getWorkflow();
             ProcessInstance processInstance = new ProcessInstance();
             processInstance.setBusinessId(artifact.getArtifactNumber());
             processInstance.setAction(workflow.getAction());
-            processInstance.setModuleName(config.getBusinessServiceModule());
+            processInstance.setModuleName(getBusinessModule(filingType));
             processInstance.setTenantId(artifact.getTenantId());
-            processInstance.setBusinessService(config.getBusinessServiceName());
+            processInstance.setBusinessService(getBusinessServiceName(filingType));
             processInstance.setDocuments(workflow.getDocuments());
             processInstance.setComment(workflow.getComments());
             if (!CollectionUtils.isEmpty(workflow.getAssignes())) {
@@ -89,6 +90,23 @@ public class WorkflowService {
             throw new CustomException(WORKFLOW_SERVICE_EXCEPTION, e.toString());
         }
     }
+
+    private String getBusinessModule(String filingType) {
+        if (filingType.equalsIgnoreCase(SUBMISSION)){
+            return config.getSubmissionBusinessServiceModule();
+        } else {
+            return config.getBusinessServiceModule();
+        }
+    }
+
+    private String getBusinessServiceName(String filingType) {
+        if (filingType.equalsIgnoreCase(SUBMISSION)){
+            return config.getSubmissionBusinessServiceName();
+        } else {
+            return config.getBusinessServiceName();
+        }
+    }
+
     public Workflow getWorkflowFromProcessInstance(ProcessInstance processInstance) {
         if(processInstance == null) {
             return null;

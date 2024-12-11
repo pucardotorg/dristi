@@ -118,6 +118,15 @@ public class Artifact {
 
 	private String status = null;
 
+	@JsonProperty("filingType")
+	private String filingType = null;
+
+	@JsonProperty("isVoid")
+	private Boolean isVoid = false;
+
+	@JsonProperty("reason")
+	private String reason = null;
+
 	@JsonProperty("file")
 
 	@Valid

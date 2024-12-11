@@ -68,13 +68,13 @@ public class WorkflowServiceTest {
         when(repository.fetchResult(any(StringBuilder.class), any())).thenThrow(new CustomException());
 
         // Execute the method
-        assertThrows(CustomException.class, () -> workflowService.updateWorkflowStatus(evidenceRequest));
+        assertThrows(CustomException.class, () -> workflowService.updateWorkflowStatus(evidenceRequest, "filingType"));
 
         // Mock repository.fetchResult to throw generic Exception
         when(repository.fetchResult(any(StringBuilder.class), any())).thenThrow(new RuntimeException("Generic Exception"));
 
         // Execute the method
-        assertThrows(CustomException.class, () -> workflowService.updateWorkflowStatus(evidenceRequest));
+        assertThrows(CustomException.class, () -> workflowService.updateWorkflowStatus(evidenceRequest, "filingType"));
     }
 
     @Test
@@ -212,7 +212,7 @@ public class WorkflowServiceTest {
         evidenceRequest.setArtifact(artifact);
 
         // Execute the method
-        ProcessInstance processInstance = workflowService.getProcessInstanceForArtifact(artifact);
+        ProcessInstance processInstance = workflowService.getProcessInstanceForArtifact(artifact, "filingType");
 
         // Assertions
         assertNotNull(processInstance);
@@ -235,7 +235,7 @@ public class WorkflowServiceTest {
         evidenceRequest.setArtifact(artifact);
 
         // Execute the method
-        ProcessInstance processInstance = workflowService.getProcessInstanceForArtifact(artifact);
+        ProcessInstance processInstance = workflowService.getProcessInstanceForArtifact(artifact, "filingType");
 
         // Assertions
         assertNotNull(processInstance);
@@ -260,7 +260,7 @@ public class WorkflowServiceTest {
 
         // Invoke the method and verify the exception
         CustomException exception = assertThrows(CustomException.class, () -> {
-            workflowService.getProcessInstanceForArtifact(artifact);
+            workflowService.getProcessInstanceForArtifact(artifact, "filingType");
         });
 
         assertEquals("CUSTOM_ERROR", exception.getCode());
@@ -277,7 +277,7 @@ public class WorkflowServiceTest {
 
         // Invoke the method and verify the exception
         CustomException exception = assertThrows(CustomException.class, () -> {
-            workflowService.getProcessInstanceForArtifact(artifact);
+            workflowService.getProcessInstanceForArtifact(artifact, "filingType");
         });
 
         assertEquals("WORKFLOW_SERVICE_EXCEPTION", exception.getCode());

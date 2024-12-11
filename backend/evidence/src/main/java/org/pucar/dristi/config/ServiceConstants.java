@@ -57,10 +57,14 @@ public class ServiceConstants {
 	public static final String MDMS_DATA_NOT_FOUND = "MDMS_DATA_NOT_FOUND";
 	public static final String PUBLISHED_STATE = "PUBLISHED";
 	public static final String ABATED_STATE = "ABATED";
+	public static final String DELETED_STATE = "DELETED";
+	public static final String SUBMITTED_STATE = "SUBMITTED";
 	public static final String ARTIFACT_ID_NAME = "artifact.artifact_number";
 	public static final String AFFIDAVIT = "AFFIDAVIT";
 	public static final String DOCUMENTARY = "DOCUMENTARY";
 	public static final String DEPOSITION = "DEPOSITION";
+	public static final String SUBMISSION = "DIRECT";
+	public static final String CASE_FILING = "CASE_FILING";
 	public static final String CASE_EXCEPTION = "CASE_EXCEPTION";
 	public static final String ORDER_EXCEPTION = "ORDER_EXCEPTION";
 	public static final String APPLICATION_EXCEPTION = "APPLICATION_EXCEPTION";
