@@ -488,7 +488,7 @@ async function processPendingAdmissionCase({
           .filter(Boolean)
           .join(" ");
         const docketNameOfAdvocate = courtCase.representatives?.find((adv) =>
-          adv.representing?.any(
+          adv.representing?.some(
             (party) => party.partyType === "complainant.primary"
           )
         )?.additionalDetails?.advocateName;
