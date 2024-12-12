@@ -93,7 +93,7 @@ function ReviewDocumentSubmissionModal({
             docHeight={"fit-content"}
             tenantId={tenantId}
             showDownloadOption={false}
-            docViewerStyle={{ maxWidth: "100%", width: "100%" }}
+            docViewerStyle={{ maxWidth: "100%", width: "100%", padding: "0px 16px 24px 16px" }}
             fileStoreId={
               currentSubmissionStatus === SubmissionDocumentWorkflowState.PENDING_ESIGN && (signedDisplayFileStoreId || combinedFileStoreId)
             }
@@ -108,7 +108,17 @@ function ReviewDocumentSubmissionModal({
 
   return (
     <Modal
-      headerBarMain={<Heading label={!isSignedHeading ? t("REVIEW_SUBMISSION_DOCUMENT_HEADING") : t("VIEW_SIGNED_SUBMISSION")} />}
+      headerBarMain={
+        <Heading
+          label={
+            currentSubmissionStatus !== SubmissionDocumentWorkflowState.PENDING_ESIGN
+              ? t("REVIEW_SUBMISSION_DOCUMENT_HEADING")
+              : !isSignedHeading
+                ? t("SIGN_SUBMISSION")
+                : t("VIEW_SIGNED_SUBMISSION")
+          }
+        />
+      }
       headerBarEnd={<CloseBtn t={t} onClick={handleGoBack} handleDownload={handleDownloadReviewModal} />}
       actionCancelLabel={currentSubmissionStatus !== SubmissionDocumentWorkflowState.PENDING_ESIGN && t("SUBMISSION_DOCUMENT_BACK")}
       actionCancelOnSubmit={handleGoBack}
@@ -128,7 +138,7 @@ function ReviewDocumentSubmissionModal({
       style={{ backgroundColor: "#007E7E" }}
     >
       <div className="review-submission-appl-body-main" style={{ display: "flex", justifyContent: "space-between", flexDirection: "column" }}>
-        <div className="application-details" style={{ alignItems: "center" }}>
+        <div className="application-details" style={{ alignItems: "center", padding: "0px 12px 0 24px" }}>
           <div className="application-view" style={{ width: "100%" }}>
             {showDocument}
           </div>

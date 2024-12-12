@@ -258,9 +258,9 @@ const SubmissionDocuments = ({ path }) => {
         const documentsFile =
           signedDocumentUploadedID !== "" || localStorageID
             ? {
-                documentType: "SIGNED",
-                fileStore: signedDocumentUploadedID || localStorageID,
-              }
+              documentType: "SIGNED",
+              fileStore: signedDocumentUploadedID || localStorageID,
+            }
             : null;
 
         localStorage.removeItem("fileStoreId");
@@ -390,12 +390,12 @@ const SubmissionDocuments = ({ path }) => {
         `}
       </style>
 
-      <div className="citizen create-submission" style={{ width: "50%", padding: "24px 24px 24px 40px" }}>
+      <div className="citizen create-submission" style={{ padding: "24px 24px 24px 40px" }}>
         {" "}
         <Header> {t(submissionDocumentDetailsConfig.header)}</Header>
         <div style={{ lineHeight: "24px" }}> {t(submissionDocumentDetailsConfig.subText1)}</div>
         <div style={{ marginBottom: "10px" }}> {t(submissionDocumentDetailsConfig.subText2)}</div>
-        <div style={{ minHeight: "550px", overflowY: "auto", marginTop: "15px" }}>
+        <div style={{ minHeight: "550px", overflowY: "auto", marginTop: "15px", width: "50%" }}>
           <FormComposerV2
             label={t("REVIEW_SUBMISSION_DOCS")}
             config={modifiedFormConfig}
