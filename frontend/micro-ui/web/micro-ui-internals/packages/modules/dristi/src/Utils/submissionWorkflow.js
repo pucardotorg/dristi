@@ -20,3 +20,8 @@ export const SubmissionWorkflowState = {
   ABATED: "ABATED",
   REJECTED: "REJECTED",
 };
+
+export const SubmissionDocumentsWorkflowState = {
+  PENDING_ESIGN: "PENDING_E-SIGN",
+  SUBMITTED: "SUBMITTED",
+};

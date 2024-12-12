@@ -27,8 +27,9 @@ import useGetStatuteSection from "./dristi/useGetStatuteSection.js";
 import useDownloadCasePdf from "./dristi/useDownloadCasePdf.js";
 import useWorkflowDetails from "./dristi/useWorkflowDetails.js";
 import useSummonsPaymentBreakUp from "./dristi/useSummonsPaymentBreakUp.js";
-import { extractFeeMedium, getTaskType, combineMultipleFiles } from "../Utils/index.js";
+import { extractFeeMedium, getTaskType, combineMultipleFiles, getFilingType } from "../Utils/index.js";
 import useRepondentPincodeDetails from "./dristi/useRepondentPincodeDetails.js";
+import downloadPdfFromFile from "../Utils/downloadPdfFromFile.js";
 
 export const Urls = {
   Authenticate: "/user/oauth/token",
@@ -109,6 +110,7 @@ const dristi = {
   useDownloadCasePdf,
   useSummonsPaymentBreakUp,
   useRepondentPincodeDetails,
+  downloadPdfFromFile,
 };
 
 const Hooks = {
@@ -116,7 +118,7 @@ const Hooks = {
 };
 
 const Utils = {
-  dristi: { extractFeeMedium, getTaskType, combineMultipleFiles },
+  dristi: { extractFeeMedium, getTaskType, combineMultipleFiles, getFilingType },
 };
 export const CustomizedHooks = {
   Hooks,

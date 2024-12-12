@@ -140,6 +140,11 @@ export const extractFeeMedium = (feeName) => {
   return feeMediums?.[feeName?.toLowerCase()] || "";
 };
 
+export const getFilingType = (filingTypes, displayName) => {
+  const filingType = filingTypes?.find((type) => type?.displayName === displayName);
+  return filingType ? filingType?.code : null;
+};
+
 export const documentsTypeMapping = {
   complainantId: "COMPLAINANT_ID_PROOF",
   complainantCompanyDetailsUpload: "AUTHORIZED_COMPLAINANT_COMPANY_REPRESENTATIVE",
@@ -157,6 +162,7 @@ export const documentsTypeMapping = {
   swornStatement: "case.affidavit.223bnss",
   SelectUploadDocWithName: "case.docs",
   vakalatnamaFileUpload: "VAKALATNAMA_DOC",
+  submissionDocuments: "SUBMISSION_DOCUMENTS",
 };
 
 export const getFileByFileStoreId = async (uri) => {
@@ -220,4 +226,13 @@ export const combineMultipleFiles = async (pdfFilesArray, finalFileName = "combi
 
 export const cleanString = (input) => {
   return input.trim().replace(/\s+/g, " ");
+};
+
+export const getDate = (value) => {
+  const date = new Date(value);
+  const day = date.getDate().toString().padStart(2, "0");
+  const month = (date.getMonth() + 1).toString().padStart(2, "0"); // Month is zero-based
+  const year = date.getFullYear();
+  const formattedDate = `${day}-${month}-${year}`;
+  return formattedDate;
 };

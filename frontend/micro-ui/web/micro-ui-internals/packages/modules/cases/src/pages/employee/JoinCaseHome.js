@@ -36,6 +36,7 @@ import {
 import { Urls } from "@egovernments/digit-ui-module-dristi/src/hooks";
 import { getAdvocates } from "@egovernments/digit-ui-module-dristi/src/pages/citizen/FileCase/EfilingValidationUtils";
 import { Urls as hearingUrls } from "../../../../hearings/src/hooks/services/Urls";
+import { getFilingType } from "@egovernments/digit-ui-module-dristi/src/Utils";
 
 const CloseBtn = (props) => {
   return (
@@ -311,6 +312,12 @@ const JoinCaseHome = ({ refreshInbox, setShowSubmitResponseModal, setResponsePen
     }
     setIsSearchingCase(false);
   };
+
+  const { data: filingTypeData, isLoading: isFilingTypeLoading } = Digit.Hooks.dristi.useGetStatuteSection("common-masters", [
+    { name: "FilingType" },
+  ]);
+
+  const filingType = useMemo(() => getFilingType(filingTypeData?.FilingType, "CaseFiling"), [filingTypeData?.FilingType]);
 
   function findNextHearings(objectsList) {
     const now = new Date();
@@ -1587,6 +1594,7 @@ const JoinCaseHome = ({ refreshInbox, setShowSubmitResponseModal, setResponsePen
                       fileName: data?.fileName,
                       documentName: data?.documentName,
                     },
+                    filingType: filingType,
                     workflow: {
                       action: "TYPE DEPOSITION",
                       documents: [
@@ -1793,6 +1801,7 @@ const JoinCaseHome = ({ refreshInbox, setShowSubmitResponseModal, setResponsePen
                       fileName: data?.fileName,
                       documentName: data?.documentName,
                     },
+                    filingType: filingType,
                     workflow: {
                       action: "TYPE DEPOSITION",
                       documents: [
@@ -2328,6 +2337,7 @@ const JoinCaseHome = ({ refreshInbox, setShowSubmitResponseModal, setResponsePen
                     "CASE_VIEWER",
                     "EVIDENCE_CREATOR",
                     "EVIDENCE_VIEWER",
+                    "EVIDENCE_EDITOR",
                     "APPLICATION_CREATOR",
                     "APPLICATION_VIEWER",
                     "HEARING_VIEWER",

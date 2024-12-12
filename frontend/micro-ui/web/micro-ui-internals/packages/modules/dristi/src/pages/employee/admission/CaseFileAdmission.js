@@ -20,7 +20,7 @@ import {
 import { reviewCaseFileFormConfig } from "../../citizen/FileCase/Config/reviewcasefileconfig";
 import { getAllAssignees } from "../../citizen/FileCase/EfilingValidationUtils";
 import AdmissionActionModal from "./AdmissionActionModal";
-import { generateUUID } from "../../../Utils";
+import { generateUUID, getFilingType } from "../../../Utils";
 import { documentTypeMapping } from "../../citizen/FileCase/Config";
 import ScheduleHearing from "../AdmittedCases/ScheduleHearing";
 import { SubmissionWorkflowAction } from "../../../Utils/submissionWorkflow";
@@ -95,6 +95,12 @@ function CaseFileAdmission({ t, path }) {
   });
 
   const filingNumber = useMemo(() => caseDetails?.filingNumber, [caseDetails?.filingNumber]);
+
+  const { data: filingTypeData, isLoading: isFilingTypeLoading } = Digit.Hooks.dristi.useGetStatuteSection("common-masters", [
+    { name: "FilingType" },
+  ]);
+
+  const filingType = useMemo(() => getFilingType(filingTypeData?.FilingType, "CaseFiling"), [filingTypeData?.FilingType]);
 
   const { data: hearingDetails } = Digit.Hooks.hearings.useGetHearings(
     {
@@ -614,6 +620,7 @@ function CaseFileAdmission({ t, path }) {
                         fileName: docFile?.fileName,
                         documentName: docFile?.documentName,
                       },
+                      filingType: filingType,
                       workflow: {
                         action: "TYPE DEPOSITION",
                         documents: [

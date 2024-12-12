@@ -928,6 +928,7 @@ export const createIndividualUser = async ({ data, documentData, tenantId }) => 
             "CASE_VIEWER",
             "EVIDENCE_CREATOR",
             "EVIDENCE_VIEWER",
+            "EVIDENCE_EDITOR",
             "APPLICATION_CREATOR",
             "APPLICATION_VIEWER",
             "HEARING_VIEWER",
@@ -1224,6 +1225,7 @@ export const updateCaseDetails = async ({
   multiUploadList,
   scrutinyObj,
   caseComplaintDocument,
+  filingType,
 }) => {
   const data = {};
   setIsDisabled(true);
@@ -2055,6 +2057,7 @@ export const updateCaseDetails = async ({
                             name: docWithNameData?.docName,
                           },
                         },
+                        filingType: filingType,
                         workflow: {
                           action: "TYPE DEPOSITION",
                           documents: [

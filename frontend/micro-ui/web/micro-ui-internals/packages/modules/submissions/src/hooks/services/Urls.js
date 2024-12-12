@@ -9,5 +9,10 @@ export const Urls = {
     submissionPreviewPdf: "/egov-pdf/application",
     taskCreate: "/task/v1/create",
   },
+  evidence: {
+    evidenceSearch: "/evidence/v1/_search",
+    evidenceCreate: "/evidence/v1/_create",
+    evidenceUpdate: "/evidence/v1/_update",
+  },
   FileFetchById: "/filestore/v1/files/id",
 };

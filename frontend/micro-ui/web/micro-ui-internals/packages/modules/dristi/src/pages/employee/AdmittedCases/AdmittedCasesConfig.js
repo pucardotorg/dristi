@@ -448,7 +448,7 @@ export const TabSearchconfig = {
           },
         },
         masterName: "commonUiConfig",
-        moduleName: "SearchIndividualConfig",
+        moduleName: "FilingsConfig",
         minParametersForSearchForm: 0,
         tableFormJsonPath: "requestParam",
         filterFormJsonPath: "requestBody.Individual",
@@ -538,21 +538,24 @@ export const TabSearchconfig = {
           uiConfig: {
             columns: [
               {
-                label: "DOCUMENT_TYPE",
+                label: "FILING_NAME",
                 jsonPath: "artifactType",
                 additionalCustomization: true,
               },
               {
-                label: "ARTIFACT_NUMBER",
+                label: "FILING_ID",
                 jsonPath: "artifactNumber",
               },
               {
-                label: "EVIDENCE_NUMBER",
-                jsonPath: "evidenceNumber",
+                label: "TYPE",
+                additionalCustomization: true,
               },
               {
-                label: "SOURCE",
-                jsonPath: "sourceType",
+                label: "STAGE",
+                additionalCustomization: true,
+              },
+              {
+                label: "STATUS",
                 additionalCustomization: true,
               },
               {
@@ -560,13 +563,12 @@ export const TabSearchconfig = {
                 jsonPath: "owner",
               },
               {
-                label: "DATE_ADDED",
-                jsonPath: "auditdetails.createdTime",
+                label: "FILE",
+                jsonPath: "file",
                 additionalCustomization: true,
               },
               {
-                label: "FILE",
-                jsonPath: "file",
+                label: "CS_ACTIONS",
                 additionalCustomization: true,
               },
             ],

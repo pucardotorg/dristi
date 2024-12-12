@@ -200,10 +200,10 @@ export const DRISTIService = {
   customApiService: (url, data, params, useCache = false, userService = true) =>
     Request({
       url: url,
-      useCache: useCache,
-      userService: true,
       data,
       params,
+      useCache,
+      userService,
     }),
   addWitness: (data, params) =>
     Request({

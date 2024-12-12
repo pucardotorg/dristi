@@ -10,7 +10,7 @@ const OverlayDropdown = ({ column, row, master, module }) => {
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const history = useHistory();
 
-  const dropdownItems = Digit.Customizations[master]?.[module]?.dropDownItems?.(row) || [];
+  const dropdownItems = Digit.Customizations[master]?.[module]?.dropDownItems?.(row, column) || [];
 
   const toggleDropdown = () => {
     setIsDropdownOpen(!isDropdownOpen);
@@ -50,10 +50,10 @@ const OverlayDropdown = ({ column, row, master, module }) => {
                 style={{ padding: "10px", cursor: "pointer", color: item.disabled ? "grey" : "black" }}
                 onClick={() => {
                   setIsDropdownOpen(false);
-                  return !item.disabled && item.action(history, column, row);
+                  return !item.disabled && item.action(history, column, row, item);
                 }}
               >
-                {item.label}
+                {t(item.label)}
               </li>
             ))}
         </ul>

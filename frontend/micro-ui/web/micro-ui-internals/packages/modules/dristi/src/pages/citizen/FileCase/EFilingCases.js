@@ -52,7 +52,7 @@ import cloneDeep from "lodash/cloneDeep";
 import CorrectionsSubmitModal from "../../../components/CorrectionsSubmitModal";
 import { Urls } from "../../../hooks";
 import useGetStatuteSection from "../../../hooks/dristi/useGetStatuteSection";
-import { getSuffixByBusinessCode, getTaxPeriodByBusinessService } from "../../../Utils";
+import { getFilingType, getSuffixByBusinessCode, getTaxPeriodByBusinessService } from "../../../Utils";
 import useDownloadCasePdf from "../../../hooks/dristi/useDownloadCasePdf";
 import DocViewerWrapper from "../../employee/docViewerWrapper";
 import CaseLockModal from "./CaseLockModal";
@@ -273,6 +273,12 @@ function EFilingCases({ path }) {
     caseId,
     Boolean(caseId)
   );
+
+  const { data: filingTypeData, isLoading: isFilingTypeLoading } = Digit.Hooks.dristi.useGetStatuteSection("common-masters", [
+    { name: "FilingType" },
+  ]);
+
+  const filingType = useMemo(() => getFilingType(filingTypeData?.FilingType, "CaseFiling"), [filingTypeData?.FilingType]);
 
   const getAllKeys = useMemo(() => {
     const keys = [];
@@ -1710,6 +1716,7 @@ function EFilingCases({ path }) {
           ...(caseComplaintDocument && { caseComplaintDocument: caseComplaintDocument }),
           multiUploadList,
           scrutinyObj,
+          filingType: filingType,
         });
 
         if (resetFormData.current) {
@@ -1760,6 +1767,7 @@ function EFilingCases({ path }) {
       setErrorCaseDetails,
       multiUploadList,
       scrutinyObj,
+      filingType: filingType,
     })
       .then(() => {
         refetchCaseData().then(() => {
@@ -1834,6 +1842,7 @@ function EFilingCases({ path }) {
       isSaveDraftEnabled: isCaseReAssigned || isPendingReESign || isPendingESign,
       multiUploadList,
       scrutinyObj,
+      filingType: filingType,
     })
       .then(() => {
         if (!isCaseReAssigned) {

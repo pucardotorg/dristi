@@ -9,6 +9,7 @@ import { CustomAddIcon } from "../icons/svgIndex";
 import Button from "./Button";
 import { CaseWorkflowState } from "../Utils/caseWorkflow";
 import { DRISTIService } from "../services";
+import { getFilingType } from "../Utils";
 
 function SelectUploadDocWithName({ t, config, formData = {}, onSelect }) {
   const [documentData, setDocumentData] = useState(formData?.[config.key] ? formData?.[config.key] : []);
@@ -53,6 +54,12 @@ function SelectUploadDocWithName({ t, config, formData = {}, onSelect }) {
       </p>
     </div>
   );
+
+  const { data: filingTypeData, isLoading: isFilingTypeLoading } = Digit.Hooks.dristi.useGetStatuteSection("common-masters", [
+    { name: "FilingType" },
+  ]);
+
+  const filingType = useMemo(() => getFilingType(filingTypeData?.FilingType, "CaseFiling"), [filingTypeData?.FilingType]);
 
   const handleFileChange = (file, input, index) => {
     let currentDocumentDataCopy = structuredClone(documentData);
@@ -101,6 +108,7 @@ function SelectUploadDocWithName({ t, config, formData = {}, onSelect }) {
           tenantId,
           artifactId: currentDocumentDataCopy?.[index].document?.[0]?.artifactId,
           comments: [],
+          filingType: filingType,
           workflow: {
             action: "ABANDON",
           },

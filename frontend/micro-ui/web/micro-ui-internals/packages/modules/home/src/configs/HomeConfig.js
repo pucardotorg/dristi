@@ -24,6 +24,7 @@ export const userTypeOptions = [
       "CASE_VIEWER",
       "EVIDENCE_CREATOR",
       "EVIDENCE_VIEWER",
+      "EVIDENCE_EDITOR",
       "APPLICATION_CREATOR",
       "APPLICATION_VIEWER",
       "HEARING_VIEWER",
@@ -50,6 +51,7 @@ export const userTypeOptions = [
       "CASE_VIEWER",
       "EVIDENCE_CREATOR",
       "EVIDENCE_VIEWER",
+      "EVIDENCE_EDITOR",
       "APPLICATION_CREATOR",
       "APPLICATION_VIEWER",
       "HEARING_VIEWER",
@@ -83,6 +85,7 @@ export const userTypeOptions = [
       "CASE_VIEWER",
       "EVIDENCE_CREATOR",
       "EVIDENCE_VIEWER",
+      "EVIDENCE_EDITOR",
       "APPLICATION_CREATOR",
       "APPLICATION_VIEWER",
       "HEARING_VIEWER",
@@ -691,6 +694,20 @@ export const pendingTaskForNoticeActions = {
   },
 };
 
+export const pendingTaskForDocumentSubmissionActions = {
+  PENDINGESIGN_SUBMIT_DOCUMENT: {
+    actorName: ["LITIGANT/ADVOCATE"],
+    actionName: "Esign the Document Submission",
+    redirectDetails: {
+      url: "/submissions/submissions-document",
+      params: [
+        { key: "filingNumber", value: "filingNumber" },
+        { key: "artifactNumber", value: "referenceId" },
+      ],
+    },
+  },
+};
+
 export const selectTaskType = {
   "case-default": pendingTaskCaseActions,
   "hearing-default": pendingTaskHearingActions,
@@ -701,4 +718,5 @@ export const selectTaskType = {
   "artifact-default": pendingTaskForArtifactActions,
   "task-summons": pendingTaskForSummonsActions,
   "task-notice": pendingTaskForNoticeActions,
+  "voluntary-document-submission": pendingTaskForDocumentSubmissionActions,
 };
