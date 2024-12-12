@@ -1,6 +1,4 @@
 package org.pucar.dristi.web.models;
-<<<<<<<< HEAD:backend/advocate/src/main/java/org/pucar/dristi/web/models/Advocate.java
-========
 
 import java.util.ArrayList;
 import java.util.List;
@@ -10,7 +8,6 @@ import org.egov.common.contract.models.AuditDetails;
 import org.egov.common.contract.models.Document;
 import org.egov.common.contract.models.Workflow;
 import org.springframework.validation.annotation.Validated;
->>>>>>>> 4f8e4f9b5e6a1285c4346a08556437f45f037598:backend/case/src/main/java/org/pucar/dristi/web/models/Advocate.java
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.validation.Valid;
@@ -52,15 +49,10 @@ public class Advocate {
 	@JsonProperty("applicationNumber")
 	@Size(min = 2, max = 64)
 	private String applicationNumber = null;
-<<<<<<<< HEAD:backend/advocate/src/main/java/org/pucar/dristi/web/models/Advocate.java
 
 	@JsonProperty("status")
 	private String status=null;
 
-========
-	@JsonProperty("status")
-	private String status=null;
->>>>>>>> 4f8e4f9b5e6a1285c4346a08556437f45f037598:backend/case/src/main/java/org/pucar/dristi/web/models/Advocate.java
 	@JsonProperty("barRegistrationNumber")
 	@Size(min = 2, max = 64)
 	private String barRegistrationNumber = null;
@@ -94,8 +86,4 @@ public class Advocate {
 	@JsonProperty("additionalDetails")
 	private Object additionalDetails = null;
 
-<<<<<<<< HEAD:backend/advocate/src/main/java/org/pucar/dristi/web/models/Advocate.java
-
-========
->>>>>>>> 4f8e4f9b5e6a1285c4346a08556437f45f037598:backend/case/src/main/java/org/pucar/dristi/web/models/Advocate.java
 }
