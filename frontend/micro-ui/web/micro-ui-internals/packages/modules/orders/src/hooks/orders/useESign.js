@@ -61,7 +61,7 @@ const useESign = () => {
     [parsedObj]
   );
 
-  const checkSignStatus = (name, formData, uploadModalConfig, onSelect, setIsSigned) => {
+  const checkSignStatus = (name, formData, uploadModalConfig, onSelect, setIsSigned, setIsSignedHeading) => {
     const setValue = (value, input) => {
       if (Array.isArray(input)) {
         onSelect(uploadModalConfig.key, {
@@ -85,6 +85,7 @@ const useESign = () => {
       if (isSignSuccess === "success" && matchedSignStatus) {
         setValue({ aadharsignature: name }, ["aadharsignature"]);
         setIsSigned(true);
+        setIsSignedHeading && setIsSignedHeading(true);
       }
 
       localStorage.removeItem("signStatus");

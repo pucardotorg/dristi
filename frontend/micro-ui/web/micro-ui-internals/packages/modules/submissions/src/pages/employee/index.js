@@ -51,7 +51,7 @@ const App = ({ path, stateCode, userType, tenants }) => {
         </React.Fragment>
         <PrivateRoute path={`${path}/submissions-response`} component={() => <SubmissionsResponse></SubmissionsResponse>} />
         <PrivateRoute path={`${path}/submissions-create`} component={() => <SubmissionsCreate path={path} />} />
-        <PrivateRoute path={`${path}/submissions-document`} component={() => <SubmissionDocuments path={path} />} />
+        <PrivateRoute path={`${path}/submit-document`} component={() => <SubmissionDocuments path={path} />} />
         <PrivateRoute path={`${path}/submissions-search`} component={() => <SubmissionsSearch></SubmissionsSearch>} />
       </AppContainer>
     </Switch>

@@ -426,7 +426,7 @@ const AdmittedCases = () => {
       const documentStatus = docObj?.[0]?.artifactList?.status;
       if (isCitizen) {
         if (documentStatus === "PENDING_E-SIGN" && documentCreatedByUuid === userInfo?.uuid) {
-          history.push(`/digit-ui/citizen/submissions/submissions-document?filingNumber=${filingNumber}&artifactNumber=${artifactNumber}`);
+          history.push(`/digit-ui/citizen/submissions/submit-document?filingNumber=${filingNumber}&artifactNumber=${artifactNumber}`);
         }
         if (
           [SubmissionWorkflowState.PENDINGPAYMENT, SubmissionWorkflowState.PENDINGESIGN, SubmissionWorkflowState.PENDINGSUBMISSION].includes(status)
@@ -1571,7 +1571,7 @@ const AdmittedCases = () => {
     if (option.value === "RAISE_APPLICATION") {
       history.push(`/digit-ui/citizen/submissions/submissions-create?filingNumber=${filingNumber}`);
     } else if (option.value === "SUBMIT_DOCUMENTS") {
-      history.push(`/digit-ui/citizen/submissions/submissions-document?filingNumber=${filingNumber}`);
+      history.push(`/digit-ui/citizen/submissions/submit-document?filingNumber=${filingNumber}`);
     }
   };
 

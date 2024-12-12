@@ -699,7 +699,7 @@ export const pendingTaskForDocumentSubmissionActions = {
     actorName: ["LITIGANT/ADVOCATE"],
     actionName: "Esign the Document Submission",
     redirectDetails: {
-      url: "/submissions/submissions-document",
+      url: "/submissions/submit-document",
       params: [
         { key: "filingNumber", value: "filingNumber" },
         { key: "artifactNumber", value: "referenceId" },
