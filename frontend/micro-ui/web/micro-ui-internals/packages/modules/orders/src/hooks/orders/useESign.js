@@ -90,7 +90,7 @@ const useESign = () => {
       localStorage.removeItem("signStatus");
       localStorage.removeItem("name");
       localStorage.removeItem("isSignSuccess");
-      localStorage.removeItem("signStatus");
+      localStorage.removeItem("esignProcess");
     }
   };
 
@@ -123,6 +123,7 @@ const useESign = () => {
       localStorage.removeItem("signStatus");
       localStorage.removeItem("name");
       localStorage.removeItem("isSignSuccess");
+      localStorage.removeItem("esignProcess");
     }
   };
 

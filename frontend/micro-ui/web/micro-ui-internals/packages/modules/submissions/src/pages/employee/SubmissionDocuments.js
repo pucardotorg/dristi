@@ -258,9 +258,9 @@ const SubmissionDocuments = ({ path }) => {
         const documentsFile =
           signedDocumentUploadedID !== "" || localStorageID
             ? {
-              documentType: "SIGNED",
-              fileStore: signedDocumentUploadedID || localStorageID,
-            }
+                documentType: "SIGNED",
+                fileStore: signedDocumentUploadedID || localStorageID,
+              }
             : null;
 
         localStorage.removeItem("fileStoreId");
@@ -343,14 +343,11 @@ const SubmissionDocuments = ({ path }) => {
   };
 
   useEffect(() => {
-    const isSignSuccess = localStorage.getItem("isSignSuccess");
-    // const applicationPDF = localStorage.getItem("applicationPDF");
-    if (isSignSuccess) {
+    const esignProcess = localStorage.getItem("esignProcess");
+    if (esignProcess) {
       setShowReviewModal(true);
-      // setShowsignatureModal(true);
-      // setApplicationPdfFileStoreId(applicationPDF);
       localStorage.removeItem("esignProcess");
-      localStorage.removeItem("applicationPDF");
+      localStorage.removeItem("combineDocumentsPdf");
     }
   }, []);
 
