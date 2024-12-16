@@ -543,16 +543,14 @@ async function processPendingAdmissionCase({
   // update vakalatnamas
   const vakalatnamaSection = filterCaseBundleBySection(
     caseBundleMaster,
-    "affidavit"
+    "vakalat"
   );
 
   if (vakalatnamaSection && Array.isArray(courtCase.representatives)) {
     const vakalats = courtCase.representatives
       .map((representative) => {
         const representation = representative.representing[0];
-        const fileStoreId =
-          representative?.additionalDetails?.document?.[0]
-            ?.vakalatnamaFileUpload?.fileStore;
+        const fileStoreId = representative?.documents?.[0]?.fileStore;
         if (!fileStoreId) {
           return null;
         }

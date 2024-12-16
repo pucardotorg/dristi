@@ -2220,8 +2220,8 @@ export const updateCaseDetails = async ({
         })
     );
     let representatives = [];
-    if (updatedFormData?.filter((item) => item.isenabled).some((data) => data?.data?.isAdvocateRepresenting?.code === "YES")) {
-      representatives = updatedFormData
+    if (newFormData?.filter((item) => item.isenabled).some((data) => data?.data?.isAdvocateRepresenting?.code === "YES")) {
+      representatives = newFormData
         .filter((item) => item.isenabled)
         .map((data, index) => {
           return {
@@ -2247,6 +2247,7 @@ export const updateCaseDetails = async ({
                 ]
               : [],
             advocateId: data?.data?.advocateBarRegNumberWithName?.[0]?.advocateId,
+            documents: data?.data?.vakalatnamaFileUpload?.document,
             additionalDetails: {
               advocateName: data?.data?.advocateBarRegNumberWithName?.[0]?.advocateName,
               uuid: advocateDetails?.[data?.data?.advocateBarRegNumberWithName?.[0]?.advocateId],
