@@ -351,22 +351,37 @@ const SubmissionDocuments = ({ path }) => {
   }, []);
 
   const modifiedFormConfig = useMemo(() => {
+    const applyUiChanges = (config) => {
+      return {
+        ...config,
+        body: config?.body.map((body) => {
+          if (body?.labelChildren === "optional") {
+            body.labelChildren = <span style={{ color: "#77787B" }}>&nbsp;{`${t("CS_IS_OPTIONAL")}`}</span>;
+          }
+          return {
+            ...body,
+          };
+        }),
+      };
+    };
+
     if (!artifactNumber) {
-      return submissionDocumentDetailsConfig.formConfig;
+      return submissionDocumentDetailsConfig.formConfig?.map(applyUiChanges);
     } else {
       const formConfig = JSON.parse(JSON.stringify(submissionDocumentDetailsConfig.formConfig));
 
-      formConfig.forEach((config) => {
+      formConfig.forEach((config, index) => {
         if (config.body && Array.isArray(config.body)) {
           config.body.forEach((item) => {
             item.disable = true;
           });
         }
+        formConfig[index] = applyUiChanges(config);
       });
 
       return formConfig;
     }
-  }, [artifactNumber]);
+  }, [artifactNumber, t]);
 
   if (loader || isFilingTypeLoading || isEvidenceLoading) {
     return <Loader />;

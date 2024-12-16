@@ -58,13 +58,14 @@ const SelectMultiUpload = ({ t, config, onSelect, formData = {}, errors, setErro
         alignItems: "center",
         justifyContent: "center",
         padding: "4px 8px",
-        cursor: "pointer",
         fontFamily: "Arial, sans-serif",
         fontSize: "14px",
         color: "#007E7E",
         height: "40px",
         gap: "4px",
         width: "100%",
+        opacity: !config?.disable ? 1 : 0.5,
+        cursor: !config?.disable ? "pointer" : "default",
       }}
     >
       <UploadIcon
@@ -154,27 +155,26 @@ const SelectMultiUpload = ({ t, config, onSelect, formData = {}, errors, setErro
                 margin: "0px",
               }}
             />
-            {!config?.disable && (
-              <FileUploader
-                disabled={config?.disable}
-                handleChange={(data) => handleAddFiles(data, input, currentValue)}
-                name="file"
-                types={input?.fileTypes}
-                children={dragDropJSX}
-                key={input?.name}
-              />
-            )}
+            <FileUploader
+              disabled={config?.disable}
+              handleChange={(data) => handleAddFiles(data, input, currentValue)}
+              name="file"
+              types={input?.fileTypes}
+              children={dragDropJSX}
+              key={input?.name}
+            />
           </div>
           <div className="upload-guidelines-div">
             {input?.fileTypes && input?.maxFileSize ? (
               <p>
-                {`${t("CS_COMMON_CHOOSE_FILE")} ${input?.fileTypes.length > 1
+                {`${t("CS_COMMON_CHOOSE_FILE")} ${
+                  input?.fileTypes.length > 1
                     ? `${input?.fileTypes
-                      .slice(0, -1)
-                      .map((type) => `.${type.toLowerCase()}`)
-                      .join(", ")} ${t("CS_COMMON_OR")} .${input?.fileTypes[input?.fileTypes.length - 1].toLowerCase()}`
+                        .slice(0, -1)
+                        .map((type) => `.${type.toLowerCase()}`)
+                        .join(", ")} ${t("CS_COMMON_OR")} .${input?.fileTypes[input?.fileTypes.length - 1].toLowerCase()}`
                     : `.${input?.fileTypes[0].toLowerCase()}`
-                  }. ${t("CS_MAX_UPLOAD")} ${input.maxFileSize}MB`}
+                }. ${t("CS_MAX_UPLOAD")} ${input.maxFileSize}MB`}
               </p>
             ) : (
               <p>{input.uploadGuidelines}</p>
