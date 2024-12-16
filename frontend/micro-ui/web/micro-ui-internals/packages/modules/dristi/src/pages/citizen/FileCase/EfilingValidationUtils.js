@@ -624,6 +624,10 @@ export const respondentValidation = ({
         return false;
       }
     }
+    if (!formDataCopy?.respondentType?.code) {
+      setShowErrorToast(true);
+      return true;
+    }
   }
 
   const respondentMobileNUmbers = formData?.phonenumbers?.textfieldValue;
