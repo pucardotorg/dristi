@@ -1,34 +1,25 @@
-package org.pucar.dristi.web.models;
+package org.pucar.dristi.web;
 
-import java.util.Objects;
-
-import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonValue;
-import io.swagger.v3.oas.annotations.media.Schema;
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Size;
+import lombok.*;
+import org.pucar.dristi.web.models.CaseSummary;
 
 import java.util.ArrayList;
 import java.util.List;
 
-import org.springframework.validation.annotation.Validated;
-import jakarta.validation.Valid;
-import jakarta.validation.constraints.*;
-import lombok.AllArgsConstructor;
-import lombok.NoArgsConstructor;
-import lombok.Data;
-import lombok.Builder;
-
-/**
- * this is a summary representation of CourtCase object. A limited set of fields, formatted appropriately are returned. Since the object already exists, there are no field level rules set for this summary object
- */
-@Schema(description = "this is a summary representation of CourtCase object. A limited set of fields, formatted appropriately are returned. Since the object already exists, there are no field level rules set for this summary object")
-@Validated
-@jakarta.annotation.Generated(value = "org.egov.codegen.SpringBootCodegen", date = "2024-12-03T13:11:23.212020900+05:30[Asia/Calcutta]")
-@Data
+@Getter
+@Setter
+@ToString
+@EqualsAndHashCode
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-public class CaseSummary {
+public class OpenApiCaseSummary {
+
     @JsonProperty("cnrNumber")
     @NotNull
 
@@ -58,8 +49,8 @@ public class CaseSummary {
     private Long registrationDate = null;
 
     @JsonProperty("nextHearingDate")
-
     private Long nextHearingDate = null;
+
     @JsonProperty("caseType")
     @NotNull
 
@@ -96,7 +87,7 @@ public class CaseSummary {
 
     private String advocateRespondent = null;
 
-    public CaseSummary addStatutesAndSectionsItem(Object statutesAndSectionsItem) {
+    public OpenApiCaseSummary addStatutesAndSectionsItem(Object statutesAndSectionsItem) {
         this.statutesAndSections.add(statutesAndSectionsItem);
         return this;
     }

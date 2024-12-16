@@ -112,7 +112,7 @@ public class WorkflowUtil {
         processInstance.setModuleName(wfModuleName);
         processInstance.setTenantId(tenantId);
         processInstance.setBusinessService(getBusinessService(requestInfo, tenantId, businessServiceCode).getBusinessService());
-        processInstance.setDocuments(workflow.getVerificationDocuments());
+        processInstance.setDocuments(workflow.getDocuments());
         processInstance.setComment(workflow.getComments());
 
         if(!CollectionUtils.isEmpty(workflow.getAssignes())) {
@@ -150,7 +150,7 @@ public class WorkflowUtil {
                 .action(processInstance.getAction())
                 .assignes(userIds)
                 .comments(processInstance.getComment())
-                .verificationDocuments(processInstance.getDocuments())
+                .documents(processInstance.getDocuments() != null ? processInstance.getDocuments() : Collections.emptyList())
                 .build();
 
             businessIdToWorkflow.put(processInstance.getBusinessId(), workflow);

@@ -46,5 +46,13 @@ public class ServiceConstants {
     public static final String TENANTID = "?tenantId=";
     public static final String BUSINESS_SERVICES = "&businessServices=";
 
+    public static final String HEARING_SERVICE_EXCEPTION = "Exception while fetching hearing details from hearing service: ";
+    public static final String HEARING_SCHEDULED_STATUS = "SCHEDULED";
+    public static final String REGISTRATION_DATE = "registrationDate";
+
+    public static final String CASE_TYPE_CMP = "CMP";
+    public static final String CASE_TYPE_ST = "ST";
+    public static final String CASE_TYPE_EXCEPTION = "CASE_TYPE_EXCEPTION";
+
 
 }

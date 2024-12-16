@@ -4,6 +4,7 @@ package org.pucar.dristi.repository;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import lombok.extern.slf4j.Slf4j;
+import org.egov.tracer.model.CustomException;
 import org.egov.tracer.model.ServiceCallException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
@@ -40,6 +41,7 @@ public class ServiceRequestRepository {
             throw new ServiceCallException(e.getResponseBodyAsString());
         }catch(Exception e) {
             log.error(SEARCHER_SERVICE_EXCEPTION,e);
+            throw new CustomException(SEARCHER_SERVICE_EXCEPTION,e.getMessage());
         }
 
         return response;

@@ -6,7 +6,9 @@ import org.egov.common.contract.request.RequestInfo;
 import org.egov.tracer.model.CustomException;
 import org.pucar.dristi.repository.querybuilder.CaseQueryBuilder;
 import org.pucar.dristi.repository.querybuilder.CaseSummaryQueryBuilder;
+import org.pucar.dristi.repository.querybuilder.OpenApiCaseSummaryQueryBuilder;
 import org.pucar.dristi.repository.rowmapper.*;
+import org.pucar.dristi.web.OpenApiCaseSummary;
 import org.pucar.dristi.web.models.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
@@ -27,6 +29,9 @@ public class CaseRepository {
     private final CaseSummaryQueryBuilder caseSummaryQueryBuilder;
     private final CaseSummaryRowMapper caseSummaryRowMapper;
     private final CaseQueryBuilder queryBuilder;
+    private final OpenApiCaseSummaryQueryBuilder openApiCaseSummaryQueryBuilder;
+    private final OpenApiCaseSummaryRowMapper openApiCaseSummaryRowMapper;
+    private final OpenApiCaseListRowMapper openApiCaseListRowMapper;
     private final JdbcTemplate jdbcTemplate;
     private final CaseRowMapper rowMapper;
     private final DocumentRowMapper caseDocumentRowMapper;
@@ -42,7 +47,7 @@ public class CaseRepository {
 
 
     @Autowired
-    public CaseRepository(CaseQueryBuilder queryBuilder, JdbcTemplate jdbcTemplate, CaseRowMapper rowMapper, DocumentRowMapper caseDocumentRowMapper, LinkedCaseDocumentRowMapper linkedCaseDocumentRowMapper, LitigantDocumentRowMapper litigantDocumentRowMapper, RepresentiveDocumentRowMapper representativeDocumentRowMapper, RepresentingDocumentRowMapper representingDocumentRowMapper, LinkedCaseRowMapper linkedCaseRowMapper, LitigantRowMapper litigantRowMapper, StatuteSectionRowMapper statuteSectionRowMapper, RepresentativeRowMapper representativeRowMapper, RepresentingRowMapper representingRowMapper, CaseSummaryQueryBuilder caseSummaryQueryBuilder, CaseSummaryRowMapper caseSummaryRowMapper) {
+    public CaseRepository(CaseQueryBuilder queryBuilder, JdbcTemplate jdbcTemplate, CaseRowMapper rowMapper, DocumentRowMapper caseDocumentRowMapper, LinkedCaseDocumentRowMapper linkedCaseDocumentRowMapper, LitigantDocumentRowMapper litigantDocumentRowMapper, RepresentiveDocumentRowMapper representativeDocumentRowMapper, RepresentingDocumentRowMapper representingDocumentRowMapper, LinkedCaseRowMapper linkedCaseRowMapper, LitigantRowMapper litigantRowMapper, StatuteSectionRowMapper statuteSectionRowMapper, RepresentativeRowMapper representativeRowMapper, RepresentingRowMapper representingRowMapper, CaseSummaryQueryBuilder caseSummaryQueryBuilder, CaseSummaryRowMapper caseSummaryRowMapper, OpenApiCaseSummaryQueryBuilder openApiCaseSummaryQueryBuilder, OpenApiCaseSummaryRowMapper openApiCaseSummaryRowMapper, OpenApiCaseListRowMapper openApiCaseListRowMapper) {
         this.queryBuilder = queryBuilder;
         this.jdbcTemplate = jdbcTemplate;
         this.rowMapper = rowMapper;
@@ -58,6 +63,9 @@ public class CaseRepository {
         this.representingRowMapper = representingRowMapper;
         this.caseSummaryQueryBuilder = caseSummaryQueryBuilder;
         this.caseSummaryRowMapper = caseSummaryRowMapper;
+        this.openApiCaseSummaryQueryBuilder = openApiCaseSummaryQueryBuilder;
+        this.openApiCaseSummaryRowMapper = openApiCaseSummaryRowMapper;
+        this.openApiCaseListRowMapper = openApiCaseListRowMapper;
     }
 
     private static void extractRepresentingIds(CaseCriteria caseCriteria, List<String> idsRepresenting) {
@@ -445,5 +453,93 @@ public class CaseRepository {
         }
 
 
+    }
+
+    public OpenApiCaseSummary getCaseSummaryByCnrNumber(OpenApiCaseSummaryRequest request) {
+
+        try {
+            List<Object> preparedStmtList = new ArrayList<>();
+            List<Integer> preparedStmtArgList = new ArrayList<>();
+
+            String caseBaseQuery = "";
+            caseBaseQuery = openApiCaseSummaryQueryBuilder.getCaseBaseQuery(request, preparedStmtList, preparedStmtArgList);
+            String OpenApiCaseSummaryQuery = openApiCaseSummaryQueryBuilder.getCaseSummarySearchQuery(caseBaseQuery);
+            log.info("Final case base query :: {}", OpenApiCaseSummaryQuery);
+            if (preparedStmtList.size() != preparedStmtArgList.size()) {
+                log.info("Arg size :: {}, and ArgType size :: {}", preparedStmtList.size(), preparedStmtArgList.size());
+                throw new CustomException(CASE_SUMMARY_SEARCH_QUERY_EXCEPTION, "Arg and ArgType size mismatch ");
+            }
+
+            List<OpenApiCaseSummary> list = jdbcTemplate.query(OpenApiCaseSummaryQuery, preparedStmtList.toArray(), preparedStmtArgList.stream().mapToInt(Integer::intValue).toArray(), openApiCaseSummaryRowMapper);
+
+            if (list != null && !list.isEmpty()) {
+                if (list.size() > 1) {
+                    throw new CustomException(CASE_SUMMARY_SEARCH_QUERY_EXCEPTION, "Multiple cases found for the given CNR number");
+                }
+                else {
+                    return list.get(0);
+                }
+            }
+
+        } catch (Exception e) {
+            throw new CustomException(CASE_SUMMARY_SEARCH_QUERY_EXCEPTION, "Error occurred while retrieving data from the database");
+        }
+        return null;
+    }
+
+    public List<CaseListLineItem> getCaseSummaryListByCaseType(OpenApiCaseSummaryRequest request) {
+
+        try {
+            List<Object> preparedStmtList = new ArrayList<>();
+            List<Integer> preparedStmtArgList = new ArrayList<>();
+
+            String caseBaseQuery = "";
+            caseBaseQuery = openApiCaseSummaryQueryBuilder.getCaseBaseQuery(request, preparedStmtList, preparedStmtArgList);
+            caseBaseQuery = openApiCaseSummaryQueryBuilder.addOrderByQuery(caseBaseQuery, request.getPagination());
+            if (request.getPagination() != null) {
+                Integer totalRecords = getTotalCount(caseBaseQuery, preparedStmtList);
+                request.getPagination().setTotalCount(Double.valueOf(totalRecords));
+                caseBaseQuery = openApiCaseSummaryQueryBuilder.addPaginationQuery(caseBaseQuery, preparedStmtList, request.getPagination(), preparedStmtArgList);
+            }
+            if (preparedStmtList.size() != preparedStmtArgList.size()) {
+                log.info("Arg size :: {}, and ArgType size :: {}", preparedStmtList.size(), preparedStmtArgList.size());
+                throw new CustomException(CASE_SUMMARY_SEARCH_QUERY_EXCEPTION, "Arg and ArgType size mismatch ");
+            }
+
+            return jdbcTemplate.query(caseBaseQuery, preparedStmtList.toArray(), preparedStmtArgList.stream().mapToInt(Integer::intValue).toArray(), openApiCaseListRowMapper);
+        } catch (Exception e) {
+            throw new CustomException(CASE_SUMMARY_SEARCH_QUERY_EXCEPTION, "Error occurred while retrieving data from the database");
+        }
+    }
+
+    public OpenApiCaseSummary getCaseSummaryByCaseNumber(OpenApiCaseSummaryRequest request) {
+        try {
+            List<Object> preparedStmtList = new ArrayList<>();
+            List<Integer> preparedStmtArgList = new ArrayList<>();
+
+            String caseBaseQuery = "";
+            caseBaseQuery = openApiCaseSummaryQueryBuilder.getCaseBaseQuery(request, preparedStmtList, preparedStmtArgList);
+            String OpenApiCaseSummaryQuery = openApiCaseSummaryQueryBuilder.getCaseSummarySearchQuery(caseBaseQuery);
+            log.info("Final case base query :: {}", OpenApiCaseSummaryQuery);
+            if (preparedStmtList.size() != preparedStmtArgList.size()) {
+                log.info("Arg size :: {}, and ArgType size :: {}", preparedStmtList.size(), preparedStmtArgList.size());
+                throw new CustomException(CASE_SUMMARY_SEARCH_QUERY_EXCEPTION, "Arg and ArgType size mismatch ");
+            }
+
+            List<OpenApiCaseSummary> list = jdbcTemplate.query(OpenApiCaseSummaryQuery, preparedStmtList.toArray(), preparedStmtArgList.stream().mapToInt(Integer::intValue).toArray(), openApiCaseSummaryRowMapper);
+
+            if (list != null && !list.isEmpty()) {
+                if (list.size() > 1) {
+                    throw new CustomException(CASE_SUMMARY_SEARCH_QUERY_EXCEPTION, "Multiple cases found for the given case number");
+                }
+                else {
+                    return list.get(0);
+                }
+            }
+
+        } catch (Exception e) {
+            throw new CustomException(CASE_SUMMARY_SEARCH_QUERY_EXCEPTION, "Error occurred while retrieving data from the database");
+        }
+        return null;
     }
 }

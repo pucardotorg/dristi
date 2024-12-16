@@ -10,6 +10,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.pucar.dristi.service.CaseService;
 import org.pucar.dristi.service.WitnessService;
 import org.pucar.dristi.util.ResponseInfoFactory;
+import org.pucar.dristi.web.OpenApiCaseSummary;
 import org.pucar.dristi.web.models.*;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -244,6 +245,33 @@ public class CaseApiControllerTest {
         assertEquals(mockResponseInfo, responseEntity.getBody().getResponseInfo());
         verify(caseService).getCaseSummary(caseSummaryRequest);
         verify(responseInfoFactory).createResponseInfoFromRequestInfo(eq(requestInfo), eq(true));
+    }
+
+    @Test
+    public void caseV1SearchCnrNumberPostSuccess() {
+
+        OpenApiCaseSummaryRequest openApiCaseSummary = new OpenApiCaseSummaryRequest();
+        openApiCaseSummary.setCnrNumber("cnrNumber");
+        ResponseEntity<OpenApiCaseSummaryResponse> responseEntity = caseApiController.caseV1SearchCnrNumber(openApiCaseSummary);
+        assertEquals(HttpStatus.OK, responseEntity.getStatusCode());
+    }
+
+    @Test
+    public void caseV1SearchCaseTypeSuccess() {
+
+        OpenApiCaseSummaryRequest openApiCaseSummary = new OpenApiCaseSummaryRequest();
+        openApiCaseSummary.setCaseType("caseType");
+        ResponseEntity<OpenApiCaseListResponse> responseEntity = caseApiController.caseV1SearchCaseType(openApiCaseSummary);
+        assertEquals(HttpStatus.OK, responseEntity.getStatusCode());
+    }
+
+    @Test
+    public void caseV1caseSearchCaseNumberSuccess() {
+
+        OpenApiCaseSummaryRequest openApiCaseSummary = new OpenApiCaseSummaryRequest();
+        openApiCaseSummary.setCaseNumber(10);
+        ResponseEntity<OpenApiCaseSummaryResponse> responseEntity = caseApiController.caseV1SearchCaseNumber(openApiCaseSummary);
+        assertEquals(HttpStatus.OK, responseEntity.getStatusCode());
     }
 
 

@@ -1,6 +1,7 @@
 package org.pucar.dristi.web.models;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -21,7 +22,7 @@ import lombok.Builder;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-public class CaseListResponse {
+public class OpenApiCaseListResponse {
     @JsonProperty("responseInfo")
 
     @Valid
@@ -37,7 +38,7 @@ public class CaseListResponse {
     private Pagination pagination;
 
 
-    public CaseListResponse addCaseListItem(CaseListLineItem caseListItem) {
+    public OpenApiCaseListResponse addCaseListItem(CaseListLineItem caseListItem) {
         if (this.caseList == null) {
             this.caseList = new ArrayList<>();
         }
