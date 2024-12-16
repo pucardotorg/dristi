@@ -107,6 +107,9 @@ const DocumentModal = ({ config, setShow, currentStep, documentStyle = {} }) => 
       popUpStyleMain={documentStyle}
       isDisabled={isDisabled}
       textStyle={submitButtonTextStyle}
+      style={
+        config?.isStepperModal ? (config.steps[step]?.actionSaveLableType === "WARNING" ? { backgroundColor: "#BB2C2F", border: "none" } : {}) : {}
+      }
     >
       {config?.isStepperModal ? config?.steps[step]?.modalBody || config?.modalBody : config?.modalBody}
     </Modal>

@@ -172,6 +172,8 @@ const AdmittedCases = () => {
   const [toastStatus, setToastStatus] = useState({ alreadyShown: false });
   const [showVoidModal, setShowVoidModal] = useState(false);
   const [downloadCasePdfLoading, setDownloadCasePdfLoading] = useState(false);
+  const [voidReason, setVoidReason] = useState("");
+
   const history = useHistory();
   const isCitizen = userRoles.includes("CITIZEN");
   const OrderWorkflowAction = Digit.ComponentRegistryService.getComponent("OrderWorkflowActionEnum") || {};
@@ -221,7 +223,7 @@ const AdmittedCases = () => {
   const {
     isLoading: isWorkFlowLoading,
     data: workFlowDetails,
-    revalidate: revalidateWorkflow = () => { },
+    revalidate: revalidateWorkflow = () => {},
     isFetching: isWorkFlowFetching,
   } = useWorkflowDetails({
     tenantId,
@@ -257,9 +259,9 @@ const AdmittedCases = () => {
 
     return section && subsection
       ? `${section
-        ?.split(" ")
-        ?.map((splitString) => splitString.charAt(0))
-        ?.join("")} S${subsection}`
+          ?.split(" ")
+          ?.map((splitString) => splitString.charAt(0))
+          ?.join("")} S${subsection}`
       : "";
   }, [caseDetails?.statutesAndSections]);
 
@@ -383,37 +385,44 @@ const AdmittedCases = () => {
     setShowOtherMenu(false);
   };
 
+  const onSuccess = async (response, data) => {
+    showToast({
+      isError: false,
+      message: !data?.body?.artifact?.isEvidence ? t("SUCCESSFULLY_UNMARKED_MESSAGE") : t("SUCCESSFULLY_MARKED_MESSAGE"),
+    });
+    refetchCaseData();
+  };
+
+  const onError = async (error, data) => {
+    showToast({
+      isError: true,
+      message: !data?.body?.artifact?.isEvidence ? t("UNSUCCESSFULLY_UNMARKED_MESSAGE") : t("UNSUCCESSFULLY_MARKED_MESSAGE"),
+    });
+  };
+
   const handleMarkEvidence = async (documentSubmission, isEvidence) => {
-    try {
-      await evidenceUpdateMutation.mutate(
-        {
-          url: Urls.dristi.evidenceUpdate,
-          params: {},
-          body: {
-            artifact: {
-              ...documentSubmission?.[0].artifactList,
-              isEvidence,
-              filingNumber: filingNumber,
-            },
-          },
-          config: {
-            enable: true,
+    await evidenceUpdateMutation.mutate(
+      {
+        url: Urls.dristi.evidenceUpdate,
+        params: {},
+        body: {
+          artifact: {
+            ...documentSubmission?.[0].artifactList,
+            isEvidence: !isEvidence,
+            isVoid: false,
+            reason: "",
+            filingNumber: filingNumber,
           },
         },
-        {}
-      );
-      showToast(true);
-      setToastDetails({
-        isError: false,
-        message: isEvidence ? t("SUCCESSFULLY_UNMARKED_MESSAGE") : t("SUCCESSFULLY_MARKED_MESSAGE"),
-      });
-    } catch (error) {
-      showToast(true);
-      setToastDetails({
-        isError: true,
-        message: isEvidence ? t("UNSUCCESSFULLY_UNMARKED_MESSAGE") : t("UNSUCCESSFULLY_MARKED_MESSAGE"),
-      });
-    }
+        config: {
+          enable: true,
+        },
+      },
+      {
+        onSuccess,
+        onError,
+      }
+    );
   };
 
   const configList = useMemo(() => {
@@ -421,7 +430,7 @@ const AdmittedCases = () => {
       const applicationNumber = docObj?.[0]?.applicationList?.applicationNumber;
       const status = docObj?.[0]?.applicationList?.status;
       const createdByUuid = docObj?.[0]?.applicationList?.statuteSection?.auditdetails?.createdBy;
-      const documentCreatedByUuid = docObj?.[0]?.artifactList.auditdetails.createdBy;
+      const documentCreatedByUuid = docObj?.[0]?.artifactList?.auditdetails?.createdBy;
       const artifactNumber = docObj?.[0]?.artifactList?.artifactNumber;
       const documentStatus = docObj?.[0]?.artifactList?.status;
       if (isCitizen) {
@@ -433,7 +442,8 @@ const AdmittedCases = () => {
         ) {
           if (createdByUuid === userInfo?.uuid) {
             history.push(
-              `/digit-ui/${isCitizen ? "citizen" : "employee"
+              `/digit-ui/${
+                isCitizen ? "citizen" : "employee"
               }/submissions/submissions-create?filingNumber=${filingNumber}&applicationNumber=${applicationNumber}`
             );
           }
@@ -497,32 +507,34 @@ const AdmittedCases = () => {
         },
       ];
       if ("mark_as_evidence" === item.id || "unmark_as_evidence" === item.id) {
-        await handleMarkEvidence(docObj, documentSubmission?.[0].artifactList?.isEvidence);
-        setUpdateCounter((prevCount) => prevCount + 1);
+        await handleMarkEvidence(docObj, row?.isEvidence);
       } else if ("mark_as_void" === item.id || "view_reason_for_voiding" === item.id) {
-        setShowVoidModal(true);
         setDocumentSubmission(docObj);
+        setVoidReason(row?.reason);
+        setShowVoidModal(true);
+      } else if ("download_filing" === item.id) {
+        downloadPdf(tenantId, row?.file?.fileStore);
       }
     };
 
     return TabSearchconfig?.TabSearchconfig.map((tabConfig) => {
       return tabConfig.label === "Parties"
         ? {
-          ...tabConfig,
-          apiDetails: {
-            ...tabConfig.apiDetails,
-            requestBody: {
-              ...tabConfig.apiDetails.requestBody,
-              criteria: [
-                {
-                  filingNumber: filingNumber,
-                },
-              ],
+            ...tabConfig,
+            apiDetails: {
+              ...tabConfig.apiDetails,
+              requestBody: {
+                ...tabConfig.apiDetails.requestBody,
+                criteria: [
+                  {
+                    filingNumber: filingNumber,
+                  },
+                ],
+              },
             },
-          },
-        }
+          }
         : tabConfig.label === "Orders"
-          ? {
+        ? {
             ...tabConfig,
             apiDetails: {
               ...tabConfig.apiDetails,
@@ -565,220 +577,220 @@ const AdmittedCases = () => {
                   columns: tabConfig.sections.searchResult.uiConfig.columns.map((column) => {
                     return column.label === "ORDER_TYPE"
                       ? {
-                        ...column,
-                        clickFunc: orderSetFunc,
-                      }
+                          ...column,
+                          clickFunc: orderSetFunc,
+                        }
                       : column;
                   }),
                 },
               },
             },
           }
-          : tabConfig.label === "Hearings"
-            ? {
-              ...tabConfig,
-              apiDetails: {
-                ...tabConfig.apiDetails,
-                requestBody: {
-                  ...tabConfig.apiDetails.requestBody,
-                  criteria: {
-                    filingNumber: filingNumber,
-                    tenantId: tenantId,
-                  },
+        : tabConfig.label === "Hearings"
+        ? {
+            ...tabConfig,
+            apiDetails: {
+              ...tabConfig.apiDetails,
+              requestBody: {
+                ...tabConfig.apiDetails.requestBody,
+                criteria: {
+                  filingNumber: filingNumber,
+                  tenantId: tenantId,
                 },
               },
-              sections: {
-                ...tabConfig.sections,
-                search: {
-                  ...tabConfig.sections.search,
-                  uiConfig: {
-                    ...tabConfig.sections.search.uiConfig,
-                    fields: [
-                      {
-                        label: "PARTIES",
-                        isMandatory: false,
-                        key: "parties",
-                        type: "dropdown",
-                        populators: {
-                          name: "parties",
-                          optionsKey: "name",
-                          options: caseRelatedData.parties.map((party) => {
-                            return { code: removeInvalidNameParts(party.name), name: removeInvalidNameParts(party.name) };
-                          }),
-                        },
-                      },
-                      ...tabConfig.sections.search.uiConfig.fields,
-                    ],
-                  },
-                },
-                searchResult: {
-                  ...tabConfig.sections.searchResult,
-                  uiConfig: {
-                    ...tabConfig.sections.searchResult.uiConfig,
-                    columns: tabConfig.sections.searchResult.uiConfig.columns.map((column) => {
-                      return column.label === "CS_ACTIONS"
-                        ? {
-                          ...column,
-                          clickFunc: takeActionFunc,
-                        }
-                        : column;
-                    }),
-                  },
-                },
-              },
-            }
-            : tabConfig.label === "History"
-              ? {
-                ...tabConfig,
-                apiDetails: {
-                  ...tabConfig.apiDetails,
-                  requestBody: {
-                    ...tabConfig.apiDetails.requestBody,
-                    filingNumber: filingNumber,
-                    tenantId: tenantId,
-                  },
-                },
-              }
-              : tabConfig.label === "Filings"
-                ? {
-                  ...tabConfig,
-                  apiDetails: {
-                    ...tabConfig.apiDetails,
-                    requestBody: {
-                      ...tabConfig.apiDetails.requestBody,
-                      criteria: {
-                        caseId: caseId,
-                        filingNumber: filingNumber,
-                        tenantId: tenantId,
-                      },
-                    },
-                  },
-                  sections: {
-                    ...tabConfig.sections,
-                    search: {
-                      ...tabConfig.sections.search,
-                      uiConfig: {
-                        ...tabConfig.sections.search.uiConfig,
-                        fields: [
-                          {
-                            label: "OWNER",
-                            isMandatory: false,
-                            key: "owner",
-                            type: "dropdown",
-                            populators: {
-                              name: "owner",
-                              optionsKey: "name",
-                              options: caseRelatedData.parties.map((party) => {
-                                return { code: removeInvalidNameParts(party.name), name: removeInvalidNameParts(party.name), value: party.individualId };
-                              }),
-                            },
-                          },
-                          ...tabConfig.sections.search.uiConfig.fields,
-                        ],
-                      },
-                    },
-                    searchResult: {
-                      ...tabConfig.sections.searchResult,
-                      uiConfig: {
-                        ...tabConfig.sections.searchResult.uiConfig,
-                        columns: tabConfig.sections.searchResult.uiConfig.columns.map((column) => {
-                          switch (column.label) {
-                            case "FILE":
-                            case "FILING_NAME": {
-                              return {
-                                ...column,
-                                clickFunc: docSetFunc,
-                              };
-                            }
-                            case "CS_ACTIONS": {
-                              return {
-                                ...column,
-                                clickFunc: handleFilingAction,
-                              };
-                            }
-                            default: {
-                              return column;
-                            }
-                          }
+            },
+            sections: {
+              ...tabConfig.sections,
+              search: {
+                ...tabConfig.sections.search,
+                uiConfig: {
+                  ...tabConfig.sections.search.uiConfig,
+                  fields: [
+                    {
+                      label: "PARTIES",
+                      isMandatory: false,
+                      key: "parties",
+                      type: "dropdown",
+                      populators: {
+                        name: "parties",
+                        optionsKey: "name",
+                        options: caseRelatedData.parties.map((party) => {
+                          return { code: removeInvalidNameParts(party.name), name: removeInvalidNameParts(party.name) };
                         }),
                       },
                     },
-                  },
-                }
-                : tabConfig.label === "Applications"
-                  ? {
-                    ...tabConfig,
-                    apiDetails: {
-                      ...tabConfig.apiDetails,
-                      requestBody: {
-                        ...tabConfig.apiDetails.requestBody,
-                        criteria: {
-                          filingNumber: filingNumber,
-                          tenantId: tenantId,
-                        },
+                    ...tabConfig.sections.search.uiConfig.fields,
+                  ],
+                },
+              },
+              searchResult: {
+                ...tabConfig.sections.searchResult,
+                uiConfig: {
+                  ...tabConfig.sections.searchResult.uiConfig,
+                  columns: tabConfig.sections.searchResult.uiConfig.columns.map((column) => {
+                    return column.label === "CS_ACTIONS"
+                      ? {
+                          ...column,
+                          clickFunc: takeActionFunc,
+                        }
+                      : column;
+                  }),
+                },
+              },
+            },
+          }
+        : tabConfig.label === "History"
+        ? {
+            ...tabConfig,
+            apiDetails: {
+              ...tabConfig.apiDetails,
+              requestBody: {
+                ...tabConfig.apiDetails.requestBody,
+                filingNumber: filingNumber,
+                tenantId: tenantId,
+              },
+            },
+          }
+        : tabConfig.label === "Documents"
+        ? {
+            ...tabConfig,
+            apiDetails: {
+              ...tabConfig.apiDetails,
+              requestBody: {
+                ...tabConfig.apiDetails.requestBody,
+                criteria: {
+                  caseId: caseId,
+                  filingNumber: filingNumber,
+                  tenantId: tenantId,
+                },
+              },
+            },
+            sections: {
+              ...tabConfig.sections,
+              search: {
+                ...tabConfig.sections.search,
+                uiConfig: {
+                  ...tabConfig.sections.search.uiConfig,
+                  fields: [
+                    {
+                      label: "OWNER",
+                      isMandatory: false,
+                      key: "owner",
+                      type: "dropdown",
+                      populators: {
+                        name: "owner",
+                        optionsKey: "name",
+                        options: caseRelatedData.parties.map((party) => {
+                          return { code: removeInvalidNameParts(party.name), name: removeInvalidNameParts(party.name), value: party.individualId };
+                        }),
                       },
                     },
-                    sections: {
-                      ...tabConfig.sections,
-                      search: {
-                        ...tabConfig.sections.search,
-                        uiConfig: {
-                          ...tabConfig.sections.search.uiConfig,
-                          fields: [
-                            {
-                              label: "OWNER",
-                              isMandatory: false,
-                              key: "owner",
-                              type: "dropdown",
-                              populators: {
-                                name: "owner",
-                                optionsKey: "name",
-                                options: caseRelatedData.parties.map((party) => {
-                                  return {
-                                    code: removeInvalidNameParts(party.name),
-                                    name: removeInvalidNameParts(party.name),
-                                    value: party.additionalDetails?.uuid,
-                                  };
-                                }),
-                              },
-                            },
-                            ...tabConfig.sections.search.uiConfig.fields,
-                          ],
-                        },
-                      },
-                      searchResult: {
-                        ...tabConfig.sections.searchResult,
-                        uiConfig: {
-                          ...tabConfig.sections.searchResult.uiConfig,
-                          columns: tabConfig.sections.searchResult.uiConfig.columns.map((column) => {
-                            return column.label === "DOCUMENT_TEXT" || column.label === "SUBMISSION_TYPE"
-                              ? {
-                                ...column,
-                                clickFunc: docSetFunc,
-                              }
-                              : column.label === "OWNER"
-                                ? {
-                                  ...column,
-                                  parties: caseRelatedData.parties,
-                                }
-                                : column;
-                          }),
-                        },
+                    ...tabConfig.sections.search.uiConfig.fields,
+                  ],
+                },
+              },
+              searchResult: {
+                ...tabConfig.sections.searchResult,
+                uiConfig: {
+                  ...tabConfig.sections.searchResult.uiConfig,
+                  columns: tabConfig.sections.searchResult.uiConfig.columns.map((column) => {
+                    switch (column.label) {
+                      case "FILE":
+                      case "FILING_NAME": {
+                        return {
+                          ...column,
+                          clickFunc: docSetFunc,
+                        };
+                      }
+                      case "CS_ACTIONS": {
+                        return {
+                          ...column,
+                          clickFunc: handleFilingAction,
+                        };
+                      }
+                      default: {
+                        return column;
+                      }
+                    }
+                  }),
+                },
+              },
+            },
+          }
+        : tabConfig.label === "Submissions"
+        ? {
+            ...tabConfig,
+            apiDetails: {
+              ...tabConfig.apiDetails,
+              requestBody: {
+                ...tabConfig.apiDetails.requestBody,
+                criteria: {
+                  filingNumber: filingNumber,
+                  tenantId: tenantId,
+                },
+              },
+            },
+            sections: {
+              ...tabConfig.sections,
+              search: {
+                ...tabConfig.sections.search,
+                uiConfig: {
+                  ...tabConfig.sections.search.uiConfig,
+                  fields: [
+                    {
+                      label: "OWNER",
+                      isMandatory: false,
+                      key: "owner",
+                      type: "dropdown",
+                      populators: {
+                        name: "owner",
+                        optionsKey: "name",
+                        options: caseRelatedData.parties.map((party) => {
+                          return {
+                            code: removeInvalidNameParts(party.name),
+                            name: removeInvalidNameParts(party.name),
+                            value: party.additionalDetails?.uuid,
+                          };
+                        }),
                       },
                     },
-                  }
-                  : {
-                    ...tabConfig,
-                    apiDetails: {
-                      ...tabConfig.apiDetails,
-                      requestParam: {
-                        ...tabConfig.apiDetails?.requestParam,
-                        filingNumber: filingNumber,
-                        cnrNumber,
-                        applicationNumber: "",
-                      },
-                    },
-                  };
+                    ...tabConfig.sections.search.uiConfig.fields,
+                  ],
+                },
+              },
+              searchResult: {
+                ...tabConfig.sections.searchResult,
+                uiConfig: {
+                  ...tabConfig.sections.searchResult.uiConfig,
+                  columns: tabConfig.sections.searchResult.uiConfig.columns.map((column) => {
+                    return column.label === "DOCUMENT_TEXT" || column.label === "SUBMISSION_TYPE"
+                      ? {
+                          ...column,
+                          clickFunc: docSetFunc,
+                        }
+                      : column.label === "OWNER"
+                      ? {
+                          ...column,
+                          parties: caseRelatedData.parties,
+                        }
+                      : column;
+                  }),
+                },
+              },
+            },
+          }
+        : {
+            ...tabConfig,
+            apiDetails: {
+              ...tabConfig.apiDetails,
+              requestParam: {
+                ...tabConfig.apiDetails?.requestParam,
+                filingNumber: filingNumber,
+                cnrNumber,
+                applicationNumber: "",
+              },
+            },
+          };
     });
   }, [caseId, caseRelatedData, cnrNumber, filingNumber, history, isCitizen, tenantId, userInfo]);
 
@@ -789,52 +801,58 @@ const AdmittedCases = () => {
 
   const indexOfActiveTab = newTabSearchConfig?.TabSearchconfig?.findIndex((tabData) => tabData.label === activeTab);
 
-  const [voidReason, setVoidReason] = useState("");
   const [defaultValues, setDefaultValues] = useState(defaultSearchValues); // State to hold default values for search fields
   const config = useMemo(() => {
     return newTabSearchConfig?.TabSearchconfig?.[indexOfActiveTab];
   }, [indexOfActiveTab, newTabSearchConfig?.TabSearchconfig]); // initially setting first index config as default from jsonarray
 
   const voidModalConfig = useMemo(() => {
-    const handleMarkAsVoid = async (documentSubmission, isVoid) => {
-      try {
-        await evidenceUpdateMutation.mutate(
-          {
-            url: Urls.dristi.evidenceUpdate,
-            params: {},
-            body: {
-              artifact: {
-                ...documentSubmission?.[0].artifactList,
-                filingNumber: filingNumber,
-                isVoid,
-                reason: voidReason,
-                workflow: null,
-              },
-            },
-            config: {
-              enable: true,
-            },
-          },
-          {}
-        );
-        showToast(true);
-        setToastDetails({
-          isError: false,
-          message: isVoid ? "SUCCESSFULLY_UNMARKED_AS_VOID_MESSAGE" : "SUCCESSFULLY_MARKED_AS_VOID_MESSAGE",
-        });
-        setShowVoidModal(false);
-      } catch (error) {
-        showToast(true);
-        setToastDetails({
-          isError: true,
-          message: isVoid ? "UNSUCCESSFULLY_UNMARKED_AS_VOID_MESSAGE" : "UNSUCCESSFULLY_MARKED_AS_VOID_MESSAGE",
-        });
-        setShowVoidModal(false);
-      }
+    if (!showVoidModal) return {};
+
+    const onSuccess = async (response, data) => {
+      showToast({
+        isError: false,
+        message: !data?.body?.artifact?.isVoid ? "SUCCESSFULLY_UNMARKED_AS_VOID_MESSAGE" : "SUCCESSFULLY_MARKED_AS_VOID_MESSAGE",
+      });
+      refetchCaseData();
+      setShowVoidModal(false);
     };
 
-    if (!showVoidModal) return {};
+    const onError = async (error, data) => {
+      showToast({
+        isError: true,
+        message: !data?.body?.artifact?.isVoid ? "UNSUCCESSFULLY_UNMARKED_AS_VOID_MESSAGE" : "UNSUCCESSFULLY_MARKED_AS_VOID_MESSAGE",
+      });
+    };
+
+    const handleMarkAsVoid = async (documentSubmission, isVoid) => {
+      await evidenceUpdateMutation.mutate(
+        {
+          url: Urls.dristi.evidenceUpdate,
+          params: {},
+          body: {
+            artifact: {
+              ...documentSubmission?.[0].artifactList,
+              filingNumber: filingNumber,
+              isVoid,
+              isEvidence: false,
+              reason: isVoid ? voidReason : "",
+              workflow: null,
+            },
+          },
+          config: {
+            enable: true,
+          },
+        },
+        {
+          onSuccess,
+          onError,
+        }
+      );
+    };
+
     const handleClose = () => {
+      refetchCaseData();
       setShowVoidModal(false);
     };
 
@@ -843,40 +861,48 @@ const AdmittedCases = () => {
       heading: {
         label: "view_reason_for_voiding" === documentSubmission?.[0]?.itemType ? t("REASON_FOR_VOIDING") : t("ARE_YOU_SURE_TO_MARK_AS_VOID"),
       },
-      isStepperModal: false,
+      isStepperModal: true,
       actionSaveLabel:
         userType === "citizen"
           ? undefined
           : "view_reason_for_voiding" === documentSubmission?.[0]?.itemType
-            ? t("UNMARK_AS_VOID")
-            : "unmark_void_submission" === documentSubmission?.[0]?.itemType
-              ? t("MARK_VOID_CONFIRM")
-              : t("MARK_AS_VOID"),
+          ? t("UNMARK_AS_VOID")
+          : "unmark_void_submission" === documentSubmission?.[0]?.itemType
+          ? t("MARK_VOID_CONFIRM")
+          : t("MARK_AS_VOID"),
       actionCancelLabel: t("MARK_VOID_CANCEL"),
       actionCancelOnSubmit: handleClose,
-      actionSaveOnSubmit: () => {
-        if (documentSubmission[0].itemType === "view_reason_for_voiding") {
-          handleMarkAsVoid(documentSubmission, false);
-          setDocumentSubmission(
-            documentSubmission?.map((item) => {
-              return { ...item, itemType: "unmark_void_submission" };
-            })
-          );
-        } else {
-          handleMarkAsVoid(documentSubmission, true);
-        }
-      },
-      modalBody: (
-        <VoidSubmissionBody
-          t={t}
-          documentSubmission={documentSubmission}
-          setVoidReason={setVoidReason}
-          voidReason={documentSubmission[0].itemType === "view_reason_for_voiding" ? documentSubmission?.[0]?.artifactList?.reason : voidReason}
-          disabled={documentSubmission[0].itemType === "view_reason_for_voiding"}
-        />
-      ),
+      steps: [
+        {
+          actionSaveLableType: "mark_as_void" === documentSubmission?.[0]?.itemType ? "WARNING" : null,
+          modalBody: (
+            <VoidSubmissionBody
+              t={t}
+              documentSubmission={documentSubmission}
+              setVoidReason={setVoidReason}
+              voidReason={voidReason}
+              disabled={"view_reason_for_voiding" === documentSubmission[0].itemType || "unmark_void_submission" === documentSubmission[0].itemType}
+            />
+          ),
+          async: true,
+          isDisabled: !Boolean(voidReason),
+          actionSaveOnSubmit: async () => {
+            if (documentSubmission[0].itemType === "unmark_void_submission") {
+              await handleMarkAsVoid(documentSubmission, false);
+            } else if (documentSubmission[0].itemType === "view_reason_for_voiding") {
+              setDocumentSubmission(
+                documentSubmission?.map((item) => {
+                  return { ...item, itemType: "unmark_void_submission" };
+                })
+              );
+            } else {
+              await handleMarkAsVoid(documentSubmission, true);
+            }
+          },
+        },
+      ],
     };
-  }, [documentSubmission, evidenceUpdateMutation, filingNumber, showVoidModal, t, userType, voidReason]);
+  }, [documentSubmission, evidenceUpdateMutation, filingNumber, refetchCaseData, showVoidModal, t, userType, voidReason]);
 
   const tabData = useMemo(() => {
     return newTabSearchConfig?.TabSearchconfig?.map((configItem, index) => ({
@@ -1020,7 +1046,10 @@ const AdmittedCases = () => {
           console.error("Error while creating order", error);
           showToast({ isError: true, message: "ORDER_CREATION_FAILED" });
         });
-    } catch (error) { }
+    } catch (error) {
+      console.error("Error while fetching Hearing Data", error);
+      showToast({ isError: true, message: "ERROR_WHILE_FETCH_HEARING_DETAILS" });
+    }
   };
 
   const caseInfo = [
@@ -1523,8 +1552,9 @@ const AdmittedCases = () => {
                   code: "INITIATING_RESCHEDULING_OF_HEARING_DATE",
                   name: "ORDER_TYPE_INITIATING_RESCHEDULING_OF_HEARING_DATE",
                 },
-                originalHearingDate: `${date.getFullYear()}-${date.getMonth() < 9 ? `0${date.getMonth() + 1}` : date.getMonth() + 1}-${date.getDate() < 10 ? `0${date.getDate()}` : date.getDate()
-                  }`,
+                originalHearingDate: `${date.getFullYear()}-${date.getMonth() < 9 ? `0${date.getMonth() + 1}` : date.getMonth() + 1}-${
+                  date.getDate() < 10 ? `0${date.getDate()}` : date.getDate()
+                }`,
               },
             },
           },
@@ -1537,7 +1567,10 @@ const AdmittedCases = () => {
               tab: "Orders",
             });
           })
-          .catch((err) => { });
+          .catch((err) => {
+            console.error("Error while creating order", err);
+            showToast({ isError: true, message: "ORDER_CREATION_FAILED" });
+          });
       }
     } else {
       setShowModal(true);
@@ -2054,7 +2087,7 @@ const AdmittedCases = () => {
               </div> */}
             </div>
           )}
-          {userRoles.includes("ORDER_CREATOR") && config?.label === "Applications" && (
+          {userRoles.includes("ORDER_CREATOR") && config?.label === "Submissions" && (
             <div style={{ display: "flex", gap: "10px" }}>
               <div
                 onClick={() => handleSelect(t("MANDATORY_SUBMISSIONS_RESPONSES"))}
@@ -2067,7 +2100,7 @@ const AdmittedCases = () => {
               </div> */}
             </div>
           )}
-          {isCitizen && config?.label === "Applications" && (
+          {isCitizen && config?.label === "Submissions" && (
             <div style={{ display: "flex", gap: "10px" }}>
               {showMakeSubmission && (
                 <div

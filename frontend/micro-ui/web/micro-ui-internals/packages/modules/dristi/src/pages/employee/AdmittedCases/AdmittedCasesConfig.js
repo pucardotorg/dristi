@@ -288,7 +288,7 @@ export const TabSearchconfig = {
       },
     },
     {
-      label: "Applications",
+      label: "Submissions",
       displayLabel: "APPLICATIONS_TAB",
       type: "search",
       customHookName: "dristi.useApplicationDetails",
@@ -429,7 +429,7 @@ export const TabSearchconfig = {
       },
     },
     {
-      label: "Filings",
+      label: "Documents",
       displayLabel: "FILINGS_TAB",
       type: "search",
       customHookName: "dristi.useEvidenceDetails",

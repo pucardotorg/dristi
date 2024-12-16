@@ -40,7 +40,7 @@ const HearingSideCard = ({ hearingId, caseId, filingNumber }) => {
             onClick={() => handleNavigate("dristi/home/view-case", { tab: "Orders" })}
           />
           <Button
-            label={t("SUBMISSIONS")}
+            label={t("APPLICATIONS")}
             variation={"default"}
             style={{
               border: "1px solid",

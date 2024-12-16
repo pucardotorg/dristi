@@ -1052,7 +1052,7 @@ export const UICustomizations = {
           return <Evidence userRoles={userRoles} rowData={row} colData={column} t={t} />;
         case "STATUS":
           //Need to change the shade as per the value
-          return row?.status ? <CustomChip text={t(row?.status)} shade={"green"} /> : "";
+          return row?.isVoid ? "VOID" : row?.status ? <CustomChip text={t(row?.status)} shade={"green"} /> : "";
         case "OWNER":
           return removeInvalidNameParts(value);
         case "CS_ACTIONS":
@@ -1067,14 +1067,14 @@ export const UICustomizations = {
       return [
         ...((userInfo.roles.map((role) => role.code).includes("JUDGE_ROLE") ||
           userInfo.roles.map((role) => role.code).includes("COURT_ROOM_MANAGER")) &&
-        row.status === "SUBMITTED" &&
-        !Boolean(row?.isVoid)
+        !row?.isVoid &&
+        row?.filingType === "DIRECT"
           ? [
               {
                 label: "MARK_AS_VOID",
                 id: "mark_as_void",
                 hide: false,
-                disabled: false,
+                disabled: row?.status !== "SUBMITTED",
                 action: column.clickFunc,
               },
             ]
@@ -1085,7 +1085,7 @@ export const UICustomizations = {
                 label: "MARK_AS_EVIDENCE",
                 id: "mark_as_evidence",
                 hide: false,
-                disabled: false,
+                disabled: row?.isVoid || (row?.status !== "SUBMITTED" && row?.filingType === "DIRECT"),
                 action: column.clickFunc,
               },
             ]
@@ -1101,7 +1101,7 @@ export const UICustomizations = {
               },
             ]
           : []),
-        ...(row?.isVoid
+        ...(row?.isVoid && row?.filingType === "DIRECT"
           ? [
               {
                 label: "VIEW_REASON_FOR_VOIDING",
@@ -1117,7 +1117,7 @@ export const UICustomizations = {
           label: "DOWNLOAD_FILING",
           id: "download_filing",
           hide: false,
-          disabled: false,
+          disabled: row?.status !== "SUBMITTED" && row?.filingType === "DIRECT",
           action: column.clickFunc,
         },
       ];
