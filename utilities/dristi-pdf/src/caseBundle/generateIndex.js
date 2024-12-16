@@ -162,9 +162,9 @@ async function applyDocketToDocument(
         docketCourtName: config.constants.mdmsCourtRoom.name,
         docketComplainantName,
         docketAccusedName: [
-          respondent.firstName,
-          respondent.middleName,
-          respondent.lastName,
+          respondent.respondentFirstName,
+          respondent.respondentMiddleName,
+          respondent.respondentLastName,
         ]
           .filter(Boolean)
           .join(" "),
@@ -240,7 +240,12 @@ async function processPendingAdmissionCase({
       courtCase.courtCaseNumber ||
       courtCase.cmpNumber ||
       courtCase.filingNumber;
-    const data = { Data: [{ coverCaseName, coverCaseType, coverCaseNumber }] };
+    const coverYear = (
+      courtCase?.filingDate ? new Date(courtCase?.filingDate) : new Date()
+    )?.getFullYear();
+    const data = {
+      Data: [{ coverCaseName, coverCaseType, coverCaseNumber, coverYear }],
+    };
     const caseCoverPdfResponse = await create_pdf_v2(
       tenantId,
       "cover-page-pdf",
