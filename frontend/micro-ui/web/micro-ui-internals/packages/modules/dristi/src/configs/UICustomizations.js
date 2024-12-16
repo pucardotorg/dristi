@@ -1052,7 +1052,24 @@ export const UICustomizations = {
           return <Evidence userRoles={userRoles} rowData={row} colData={column} t={t} />;
         case "STATUS":
           //Need to change the shade as per the value
-          return row?.isVoid ? "VOID" : row?.status ? <CustomChip text={t(row?.status)} shade={"green"} /> : "";
+          return row?.isVoid ? (
+            <div
+              style={{
+                padding: "5px 10px",
+                fontFamily: "Roboto",
+                fontSize: "14px",
+                fontWeight: 400,
+                lineHeight: "16.41px",
+                color: "#231F20",
+              }}
+            >
+              {t("VOID")}
+            </div>
+          ) : row?.status ? (
+            <CustomChip text={t(row?.status)} shade={"green"} />
+          ) : (
+            ""
+          );
         case "OWNER":
           return removeInvalidNameParts(value);
         case "CS_ACTIONS":
