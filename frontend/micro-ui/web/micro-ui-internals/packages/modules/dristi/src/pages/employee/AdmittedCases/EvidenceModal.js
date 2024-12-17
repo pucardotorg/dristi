@@ -87,6 +87,7 @@ const EvidenceModal = ({
         return false;
       }
       if (modalType === "Documents") {
+        if (documentSubmission?.[0]?.artifactList?.isVoid) return false;
         return true;
       }
       return (

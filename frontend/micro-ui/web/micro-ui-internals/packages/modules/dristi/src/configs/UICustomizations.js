@@ -1096,13 +1096,16 @@ export const UICustomizations = {
               },
             ]
           : []),
-        ...(userInfo.roles.map((role) => role.code).includes("JUDGE_ROLE") && !row.isEvidence
+        ...(userInfo.roles.map((role) => role.code).includes("JUDGE_ROLE") &&
+        !row.isEvidence &&
+        !row?.isVoid &&
+        !(row?.status !== "SUBMITTED" && row?.filingType === "DIRECT")
           ? [
               {
                 label: "MARK_AS_EVIDENCE",
                 id: "mark_as_evidence",
                 hide: false,
-                disabled: row?.isVoid || (row?.status !== "SUBMITTED" && row?.filingType === "DIRECT"),
+                disabled: false,
                 action: column.clickFunc,
               },
             ]
