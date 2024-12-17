@@ -280,7 +280,9 @@ module.exports = {
 
   constants: {
     mdmsCourtRoom: {
-      name: "Court Centre, Kollam",
+      name:
+        process.env.ORDER_HEADING ||
+        "In The Special Court Of Judicial Magistrate of the First Class , for the trial of cases under section 138 of NI Act , 1881 at Kollam ( \"24X7 ON Court\" )",
       place: "Kollam",
       state: "Kerala",
       orderHeading: process.env.ORDER_HEADING || "Order Heading",
