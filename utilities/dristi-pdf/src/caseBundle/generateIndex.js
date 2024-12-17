@@ -426,7 +426,7 @@ async function processPendingAdmissionCase({
         const mergedFilingDocumentFileStoreId = await applyDocketToDocument(
           documentFileStoreId,
           {
-            docketApplicationType: section.name,
+            docketApplicationType: `${section.name.toUpperCase()} - ${section.Items}`,
             docketCounselFor: "COMPLAINANT",
             docketNameOfFiling: docketComplainantName,
             docketNameOfAdvocate: docketNameOfAdvocate || docketComplainantName,
@@ -501,7 +501,7 @@ async function processPendingAdmissionCase({
         const mergedFilingDocumentFileStoreId = await applyDocketToDocument(
           documentFileStoreId,
           {
-            docketApplicationType: section.name,
+            docketApplicationType: `${section.name.toUpperCase()} - ${section.Items}`,
             docketCounselFor: "COMPLAINANT",
             docketNameOfFiling: docketComplainantName,
             docketNameOfAdvocate: docketNameOfAdvocate || docketComplainantName,
@@ -584,7 +584,7 @@ async function processPendingAdmissionCase({
           const mergedVakalatDocumentFileStoreId = await applyDocketToDocument(
             vakalat.fileStoreId,
             {
-              docketApplicationType: section.name,
+              docketApplicationType: `${section.name.toUpperCase()} - ${section.Items}`,
               docketCounselFor: vakalat.partyType.includes("complainant")
                 ? "COMPLAINANT"
                 : "RESPONDENT",
