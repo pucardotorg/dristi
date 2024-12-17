@@ -1,7 +1,0 @@
-org.pucar.dristi.web.models.HearingListResponse#addHearingListItem(Lorg/pucar/dristi/web/models/Hearing;)Lorg/pucar/dristi/web/models/HearingListResponse;
-false
-82c52786fca27b70f0e230c1593cf046
-java.util.ArrayList#<init>()V
-java.util.ArrayList#instance-init#
-==
-add java.util.List#add(Ljava/lang/Object;)Z

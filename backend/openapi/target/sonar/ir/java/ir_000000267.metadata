@@ -1,7 +1,0 @@
-org.pucar.dristi.web.controllers.OpenapiApiController#getCaseByCaseNumber(Ljava/lang/String;Ljava/lang/Integer;Ljava/lang/String;Ljava/lang/Integer;)Lorg/springframework/http/ResponseEntity;
-false
-befb454ef54584ab7c450114dcbbaad7
-org.springframework.http.ResponseEntity#<init>(Ljava/lang/Object;Lorg/springframework/http/HttpStatusCode;)V
-org.springframework.http.ResponseEntity#instance-init#
-==
-getCaseByCaseNumber org.pucar.dristi.service.OpenApiService#getCaseByCaseNumber(Ljava/lang/String;Ljava/lang/Integer;Ljava/lang/String;Ljava/lang/Integer;)Lorg/pucar/dristi/web/models/CaseSummaryResponse;

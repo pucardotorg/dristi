@@ -1,4 +1,0 @@
-org.pucar.dristi.Main#main([Ljava/lang/String;)V
-false
-d40e74addb8af02d1b2b715f0fa71eaa
-org.springframework.boot.SpringApplication#run(Ljava/lang/Class;[Ljava/lang/String;)Lorg/springframework/context/ConfigurableApplicationContext;

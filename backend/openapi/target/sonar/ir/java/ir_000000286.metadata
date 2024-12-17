@@ -1,7 +1,0 @@
-org.pucar.dristi.web.models.CaseListResponse#addCaseListItem(Lorg/pucar/dristi/web/models/CaseListLineItem;)Lorg/pucar/dristi/web/models/CaseListResponse;
-false
-6ac746a70dd730251e5d628257d48ff2
-java.util.ArrayList#<init>()V
-java.util.ArrayList#instance-init#
-==
-add java.util.List#add(Ljava/lang/Object;)Z
