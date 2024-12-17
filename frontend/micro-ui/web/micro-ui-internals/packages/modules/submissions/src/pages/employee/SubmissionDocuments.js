@@ -292,15 +292,18 @@ const SubmissionDocuments = ({ path }) => {
 
   const handleOpenReview = async () => {
     try {
-      if (![SubmissionDocumentWorkflowState.PENDING_ESIGN, SubmissionDocumentWorkflowState.SUBMITTED].includes(currentSubmissionStatus)) {
+      if (
+        ![SubmissionDocumentWorkflowState.PENDING_ESIGN, SubmissionDocumentWorkflowState.SUBMITTED].includes(currentSubmissionStatus) &&
+        formdata?.submissionDocuments?.uploadedDocs?.length !== 0
+      ) {
         const combinedDocumentFile = await combineMultipleFiles(
           formdata?.submissionDocuments?.uploadedDocs,
           `${t("COMBINED_DOC")}.pdf`,
           "submissionDocuments"
         );
         setCombinedDocumentFile(combinedDocumentFile);
+        setShowReviewModal(true);
       }
-      setShowReviewModal(true);
     } catch (error) {
       console.error("Error occured", error);
       setShowErrorToast({ label: t("SOMETHING_WENT_WRONG"), error: true });
@@ -368,8 +371,7 @@ const SubmissionDocuments = ({ path }) => {
     if (!artifactNumber) {
       return submissionDocumentDetailsConfig.formConfig?.map(applyUiChanges);
     } else {
-      const formConfig = JSON.parse(JSON.stringify(submissionDocumentDetailsConfig.formConfig));
-
+      const formConfig = submissionDocumentDetailsConfig.formConfig;
       formConfig.forEach((config, index) => {
         if (config.body && Array.isArray(config.body)) {
           config.body.forEach((item) => {
