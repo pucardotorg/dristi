@@ -1,4 +1,4 @@
-package dristi;
+package org.pucar.dristi.repository;
 
 
 import com.fasterxml.jackson.databind.ObjectMapper;

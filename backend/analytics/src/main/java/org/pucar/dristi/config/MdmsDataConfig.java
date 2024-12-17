@@ -1,4 +1,4 @@
-package dristi;
+package org.pucar.dristi.config;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.annotation.PostConstruct;

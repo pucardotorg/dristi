@@ -48,6 +48,9 @@ public class CourtCase {
     //@Size(min = 2, max = 512)
     private String caseTitle = null;
 
+    @JsonProperty("caseType")
+    private String caseType = null;
+
     @JsonProperty("isActive")
     private Boolean isActive = true;
 
@@ -59,9 +62,15 @@ public class CourtCase {
     //@Size(min = 2, max = 64)
     private String filingNumber = null;
 
+    @JsonProperty("advocateCount")
+    private Integer advocateCount = null;
+
     @JsonProperty("courtCaseNumber")
     //@Size(min=10,max=24)
     private String courtCaseNumber = null;
+
+    @JsonProperty("cmpNumber")
+    private String cmpNumber = null;
 
     @JsonProperty("caseNumber")
 

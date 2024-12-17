@@ -1,4 +1,4 @@
-package dristi;
+package org.pucar.dristi.util;
 
 
 import com.fasterxml.jackson.core.JsonProcessingException;

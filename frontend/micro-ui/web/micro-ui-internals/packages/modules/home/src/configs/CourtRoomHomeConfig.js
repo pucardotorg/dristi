@@ -123,7 +123,7 @@ export const TabCourtRoomSearchConfig = {
           tenantId: "pg",
           criteria: [
             {
-              stage: [],
+              stage: ["Pre-Trial", "Trial", "Post-Trial"],
               status: [
                 "PENDING_REGISTRATION",
                 "PENDING_ADMISSION",
@@ -426,7 +426,7 @@ export const TabCourtRoomSearchConfig = {
                 component: "CustomSortComponent",
                 isMandatory: false,
                 disable: false,
-                name: "Sort by",
+                name: "Filed",
                 key: "sortCaseListByDate",
                 sortBy: "createdtime",
                 ascText: "First",
@@ -493,6 +493,7 @@ export const TabCourtRoomSearchConfig = {
               },
             ],
           },
+
           show: true,
         },
         searchResult: {

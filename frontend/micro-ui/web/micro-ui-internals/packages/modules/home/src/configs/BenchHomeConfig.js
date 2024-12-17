@@ -111,7 +111,7 @@ export const TabBenchSearchConfig = {
           tenantId: "pg",
           criteria: [
             {
-              stage: [],
+              stage: ["Pre-Trial", "Trial", "Post-Trial"],
               status: [
                 "PENDING_REGISTRATION",
                 "PENDING_ADMISSION",
@@ -165,6 +165,7 @@ export const TabBenchSearchConfig = {
                 type: "dropdown",
                 disable: false,
                 populators: {
+                  name: "substage",
                   optionsKey: "code",
                   mdmsConfig: {
                     masterName: "SubStage",
@@ -186,7 +187,7 @@ export const TabBenchSearchConfig = {
                 isMandatory: false,
                 disable: false,
                 populators: {
-                  name: "filingNumber",
+                  name: "caseSearchText",
                   error: "BR_PATTERN_ERR_MSG",
                   validation: {
                     pattern: {},
@@ -321,7 +322,7 @@ export const TabBenchSearchConfig = {
                 isMandatory: false,
                 disable: false,
                 populators: {
-                  name: "filingNumber",
+                  name: "caseSearchText",
                   error: "BR_PATTERN_ERR_MSG",
                   validation: {
                     pattern: {},
@@ -413,7 +414,7 @@ export const TabBenchSearchConfig = {
                 component: "CustomSortComponent",
                 isMandatory: false,
                 disable: false,
-                name: "Sort by",
+                name: "Filed",
                 key: "sortCaseListByDate",
                 sortBy: "createdtime",
                 ascText: "First",
@@ -470,7 +471,7 @@ export const TabBenchSearchConfig = {
                 isMandatory: false,
                 disable: false,
                 populators: {
-                  name: "filingNumber",
+                  name: "caseSearchText",
                   error: "BR_PATTERN_ERR_MSG",
                   validation: {
                     pattern: {},
@@ -615,7 +616,7 @@ export const TabBenchSearchConfig = {
                 isMandatory: false,
                 disable: false,
                 populators: {
-                  name: "filingNumber",
+                  name: "caseSearchText",
                   error: "BR_PATTERN_ERR_MSG",
                   validation: {
                     pattern: {},

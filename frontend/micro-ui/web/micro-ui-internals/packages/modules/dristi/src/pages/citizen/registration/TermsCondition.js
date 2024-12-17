@@ -143,7 +143,12 @@ const TermsCondition = ({ t, config, params, setParams, pathOnRefresh }) => {
               },
             ],
             additionalDetails: {
-              username: getFullName(" ", params?.name?.firstName, params?.name?.middleName, params?.name?.lastName),
+              username: getFullName(
+                " ",
+                params?.Individual?.[0]?.name?.givenName,
+                params?.Individual?.[0]?.name?.otherNames,
+                params?.Individual?.[0]?.name?.familyName
+              ),
               userType: userType,
             },
             ...userType?.clientDetails?.selectUserType?.apiDetails?.AdditionalFields?.reduce((res, curr) => {
@@ -321,7 +326,12 @@ const TermsCondition = ({ t, config, params, setParams, pathOnRefresh }) => {
                   },
                 ],
                 additionalDetails: {
-                  username: getFullName(" ", oldData?.name?.firstName, oldData?.name?.middleName, oldData?.name?.lastName),
+                  username: getFullName(
+                    " ",
+                    params?.Individual?.[0]?.name?.givenName,
+                    params?.Individual?.[0]?.name?.otherNames,
+                    params?.Individual?.[0]?.name?.familyName
+                  ),
                   userType: params?.userType,
                 },
                 ...data?.selectUserType?.apiDetails?.AdditionalFields?.reduce((res, curr) => {

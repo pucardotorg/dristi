@@ -1,4 +1,4 @@
-package dristi;
+package org.pucar.dristi.service;
 
 import org.egov.common.contract.request.RequestInfo;
 import org.egov.tracer.model.CustomException;

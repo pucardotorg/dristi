@@ -116,10 +116,10 @@ public class IcopsService {
 
     public AuthResponse generateAuthToken(String serviceName, String serviceKey, String authType) throws Exception {
         try {
-            authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(serviceName, serviceKey));
+            authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(authType, new ServiceCredential(serviceName, serviceKey)));
             return jwtUtil.generateToken(serviceName);
         } catch (AuthenticationException e) {
-            throw new Exception("Invalid Service Credentials");
+            throw new Exception("Invalid Authentication Credentials");
         }
     }
 

@@ -1,15 +1,14 @@
-package dristi;
+package org.pucar.dristi.web.models;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
-import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.egov.common.contract.request.RequestInfo;
-import org.pucar.dristi.web.models.AdvocateSearchCriteria;
 import org.springframework.validation.annotation.Validated;
 
+import javax.validation.Valid;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -24,7 +23,7 @@ import java.util.List;
 @Builder
 public class AdvocateSearchRequest {
 	@JsonProperty("RequestInfo")
-	@javax.validation.Valid
+	@Valid
 	private RequestInfo requestInfo = null;
 
 	@JsonProperty("tenantId")
@@ -34,9 +33,5 @@ public class AdvocateSearchRequest {
 	@Valid
 	private List<AdvocateSearchCriteria> criteria = new ArrayList<>();
 
-	public AdvocateSearchRequest addCriteriaItem(AdvocateSearchCriteria criteriaItem) {
-		this.criteria.add(criteriaItem);
-		return this;
-	}
 
 }

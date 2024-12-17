@@ -1,4 +1,4 @@
-package dristi;
+package org.pucar.dristi.web.models;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;

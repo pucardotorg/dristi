@@ -1,4 +1,4 @@
-package dristi;
+package org.pucar.dristi.kafka.consumer;
 
 import org.apache.kafka.clients.consumer.ConsumerRecord;
 import org.junit.jupiter.api.Assertions;

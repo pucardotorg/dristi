@@ -1,4 +1,4 @@
-package dristi;
+package org.pucar.dristi.kafka;
 
 import org.egov.tracer.kafka.CustomKafkaTemplate;
 import org.junit.jupiter.api.Test;

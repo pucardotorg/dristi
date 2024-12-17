@@ -26,7 +26,6 @@ function SubmissionSignatureModal({ t, handleProceed, handleCloseSignaturePopup,
         inputs: [
           {
             name: name,
-            documentHeader: "CS_ADD_SIGNATURE",
             type: "DragDropComponent",
             uploadGuidelines: "Ensure the image is not blurry and under 5MB.",
             maxFileSize: 5,

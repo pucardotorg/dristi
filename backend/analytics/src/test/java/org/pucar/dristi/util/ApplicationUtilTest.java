@@ -1,4 +1,4 @@
-package dristi;
+package org.pucar.dristi.util;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;

@@ -29,6 +29,7 @@ import org.pucar.dristi.web.models.analytics.Outcome;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
+import org.springframework.util.ObjectUtils;
 
 import java.util.*;
 import java.util.stream.Collectors;
@@ -127,7 +128,9 @@ public class CaseService {
             for (CaseCriteria criteria : caseCriteriaList) {
                 CourtCase courtCase = null;
                 if (!criteria.getDefaultFields() && criteria.getCaseId() != null) {
+                    log.info("Searching in redis :: {}",criteria.getCaseId());
                     courtCase = searchRedisCache(caseSearchRequests.getRequestInfo(), criteria.getCaseId());
+                    log.info("Redis Response :: {}",courtCase);
                 }
                 if (courtCase != null) {
                     criteria.setResponseList(Collections.singletonList(courtCase));
@@ -210,6 +213,59 @@ public class CaseService {
         } catch (Exception e) {
             log.error("Error occurred while updating case :: {}", e.toString());
             throw new CustomException(UPDATE_CASE_ERR, "Exception occurred while updating case: " + e.getMessage());
+        }
+
+    }
+
+    public CourtCase editCase(CaseRequest caseRequest) {
+
+        try {
+            validator.validateEditCase(caseRequest);
+
+            CourtCase courtCase = searchRedisCache(caseRequest.getRequestInfo(), String.valueOf(caseRequest.getCases().getId()));
+
+            if (courtCase == null) {
+                log.debug("CourtCase not found in Redis cache for caseId :: {}", caseRequest.getCases().getId());
+                List<CaseCriteria> existingApplications = caseRepository.getCases(Collections.singletonList(CaseCriteria.builder().caseId(String.valueOf(caseRequest.getCases().getId())).build()), caseRequest.getRequestInfo());
+
+                if (existingApplications.get(0).getResponseList().isEmpty()){
+                    log.debug("CourtCase not found in DB for caseId :: {}", caseRequest.getCases().getId());
+                    throw new CustomException(VALIDATION_ERR, "Case Application does not exist");
+                }else{
+                    courtCase = existingApplications.get(0).getResponseList().get(0);
+                }
+            }
+
+            CourtCase decryptedCourtCase = encryptionDecryptionUtil.decryptObject(courtCase, CASE_DECRYPT_SELF, CourtCase.class, caseRequest.getRequestInfo());
+
+            AuditDetails auditDetails = courtCase.getAuditdetails();
+            auditDetails.setLastModifiedTime(System.currentTimeMillis());
+            auditDetails.setLastModifiedBy(caseRequest.getRequestInfo().getUserInfo().getUuid());
+
+            decryptedCourtCase.setAdditionalDetails(caseRequest.getCases().getAdditionalDetails());
+            decryptedCourtCase.setCaseTitle(caseRequest.getCases().getCaseTitle());
+            decryptedCourtCase.setAuditdetails(auditDetails);
+
+            caseRequest.setCases(decryptedCourtCase);
+
+            log.info("Encrypting :: {}", caseRequest);
+
+            caseRequest.setCases(encryptionDecryptionUtil.encryptObject(caseRequest.getCases(), "CourtCase", CourtCase.class));
+            cacheService.save(caseRequest.getCases().getTenantId() + ":" + caseRequest.getCases().getId(), caseRequest.getCases());
+
+            producer.push(config.getCaseEditTopic(), caseRequest);
+
+            CourtCase cases = encryptionDecryptionUtil.decryptObject(caseRequest.getCases(), null, CourtCase.class, caseRequest.getRequestInfo());
+            cases.setAccessCode(null);
+
+            return cases;
+
+
+        } catch (CustomException e) {
+            throw e;
+        } catch (Exception e) {
+            log.error("Error occurred while editing case :: {}", e.toString());
+            throw new CustomException(EDIT_CASE_ERR, "Exception occurred while editing case: " + e.getMessage());
         }
 
     }
@@ -691,6 +747,7 @@ public class CaseService {
     public CourtCase searchRedisCache(RequestInfo requestInfo, String caseId) {
         try {
             Object value = cacheService.findById(getRedisKey(requestInfo, caseId));
+            log.info("Redis data received :: {}",value);
             if (value != null) {
                 String caseObject = objectMapper.writeValueAsString(value);
                 return objectMapper.readValue(caseObject, CourtCase.class);

@@ -1,4 +1,4 @@
-package dristi;
+package org.pucar.dristi.kafka.consumer;
 
 import org.apache.kafka.clients.consumer.ConsumerConfig;
 import org.apache.kafka.common.serialization.StringDeserializer;

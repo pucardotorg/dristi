@@ -5,6 +5,8 @@ import { FlagIcon } from "../icons/svgIndex";
 import DocViewerWrapper from "../pages/employee/docViewerWrapper";
 import ReactTooltip from "react-tooltip";
 
+const MemoDocViewerWrapper = React.memo(DocViewerWrapper);
+
 const LocationIcon = () => (
   <svg width="10" height="14" viewBox="0 0 10 14" fill="none" xmlns="http://www.w3.org/2000/svg">
     <path
@@ -513,7 +515,7 @@ const CustomReviewCardRow = ({
                                     });
                                 }}
                               >
-                                <DocViewerWrapper
+                                <MemoDocViewerWrapper
                                   key={`${file.fileStore}-${index}`}
                                   fileStoreId={data?.fileStore}
                                   displayFilename={data?.fileName}
@@ -546,7 +548,7 @@ const CustomReviewCardRow = ({
                                       });
                                   }}
                                 >
-                                  <DocViewerWrapper
+                                  <MemoDocViewerWrapper
                                     key={`${file.fileStore}-${index}`}
                                     fileStoreId={data?.fileStore}
                                     displayFilename={data?.fileName}
@@ -570,7 +572,7 @@ const CustomReviewCardRow = ({
                             handleImageClick(configKey, name, dataIndex, value[fileIndex], data, [value[fileIndex]], dataError);
                           }}
                         >
-                          <DocViewerWrapper
+                          <MemoDocViewerWrapper
                             key={`${value}-${file?.name}`}
                             fileStoreId={file?.fileStore}
                             displayFilename={file?.fileName}

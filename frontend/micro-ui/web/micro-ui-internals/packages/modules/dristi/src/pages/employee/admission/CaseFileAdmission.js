@@ -131,8 +131,6 @@ function CaseFileAdmission({ t, path }) {
     [nextActions]
   );
 
-  console.log(workFlowDetails, nextActions);
-
   const formConfig = useMemo(() => {
     if (!caseDetails) return null;
     return [
@@ -355,19 +353,26 @@ function CaseFileAdmission({ t, path }) {
   const onSubmit = async () => {
     switch (primaryAction.action) {
       case "REGISTER":
-        if (isDelayCondonation) {
-          try {
-            setLoader(true);
-            await handleCreateDelayCondonation();
-            setLoader(false);
-          } catch (error) {
-            setShowErrorToast("INTERNAL_ERROR_OCCURRED");
-            setLoader(false);
-            break;
+        try {
+          if (isDelayCondonation) {
+            try {
+              setLoader(true);
+              setIsDisabled(true);
+              await handleCreateDelayCondonation();
+            } catch (error) {
+              setShowErrorToast("INTERNAL_ERROR_OCCURRED");
+              setIsDisabled(false);
+              throw new Error("Delay condonation application creation failed: " + error.message);
+            }
           }
+          await handleRegisterCase();
+          setCreateAdmissionOrder(true);
+          setLoader(false);
+        } catch (error) {
+          setShowErrorToast("INTERNAL_ERROR_OCCURRED");
+          console.error("some error occurred:", error);
+          setLoader(false);
         }
-        handleRegisterCase();
-        setCreateAdmissionOrder(true);
         break;
       case "ADMIT":
         if (caseDetails?.status === "ADMISSION_HEARING_SCHEDULED") {
@@ -540,6 +545,7 @@ function CaseFileAdmission({ t, path }) {
   };
 
   const handleRegisterCase = async () => {
+    setIsDisabled(true);
     setCaseADmitLoader(true);
     const individualId = await fetchBasicUserInfo();
     let documentList = [];
@@ -652,6 +658,7 @@ function CaseFileAdmission({ t, path }) {
         ],
       });
       setModalInfo({ ...modalInfo, page: 4 });
+      setIsDisabled(false);
       setShowModal(true);
     });
   };

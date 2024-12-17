@@ -206,6 +206,7 @@ public class PdfServiceUtil {
                 .courtUrl(config.getCourtUrl())
                 .courtContact(config.getCourtContact())
                 .barCouncilUrl(config.getBarCouncilUrl())
+                .courtAddress(config.getCourtAddress())
                 .build();
     }
 
@@ -258,7 +259,12 @@ public class PdfServiceUtil {
             DateTimeFormatter formatter = DateTimeFormatter.ofPattern("MMMM yyyy", Locale.ENGLISH);
             String formattedMonthYear = dateTime.format(formatter);
 
-            return String.format("%s day of %s", day, formattedMonthYear);
+            return switch (day) {
+                case "1" -> String.format("%sst day of %s", day, formattedMonthYear);
+                case "2" -> String.format("%snd day of %s", day, formattedMonthYear);
+                case "3" -> String.format("%srd day of %s", day, formattedMonthYear);
+                default -> String.format("%sth day of %s", day, formattedMonthYear);
+            };
         } catch (Exception e) {
             log.error("Failed to get Date in String format from : {}", millis);
             return "";

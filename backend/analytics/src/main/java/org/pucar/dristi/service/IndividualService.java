@@ -1,4 +1,4 @@
-package dristi;
+package org.pucar.dristi.service;
 
 import lombok.extern.slf4j.Slf4j;
 import org.egov.common.contract.request.RequestInfo;
