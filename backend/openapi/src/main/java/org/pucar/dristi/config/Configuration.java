@@ -105,9 +105,6 @@ public class Configuration {
     @Value("${case.service.searchbycasenumber.endpoint}")
     private String caseServiceSearchByCaseNumberEndpoint;
 
-    @Value("${app.zone.id}")
-    private String zoneId;
-
     @Value("${hearing.service.host}")
     private String hearingServiceHost;
 
