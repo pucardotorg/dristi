@@ -1,0 +1,9 @@
+java.util.Arrays#copyOfRange([ZII)[Z
+true
+798f43d60f9f8e1fd87e943ea39c6eef
+java.lang.ArrayIndexOutOfBoundsException#<init>()V
+java.lang.ArrayIndexOutOfBoundsException#instance-init#
+java.lang.IllegalArgumentException#<init>()V
+java.lang.IllegalArgumentException#instance-init#
+java.lang.NullPointerException#<init>()V
+java.lang.NullPointerException#instance-init#

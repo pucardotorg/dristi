@@ -1,0 +1,3 @@
+org.pucar.dristi.repository.ServiceRequestRepository#<init>(Lcom/fasterxml/jackson/databind/ObjectMapper;Lorg/springframework/web/client/RestTemplate;)V
+false
+610eea272709257787fadbf11967f8d1

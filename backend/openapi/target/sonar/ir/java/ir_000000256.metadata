@@ -1,0 +1,5 @@
+org.pucar.dristi.web.models.Hearing#addDocumentsItem(Lorg/egov/common/contract/models/Document;)Lorg/pucar/dristi/web/models/Hearing;
+false
+96bb2273a42a98532906691efdb7bc01
+==
+add java.util.List#add(Ljava/lang/Object;)Z

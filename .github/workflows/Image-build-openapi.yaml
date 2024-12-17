@@ -50,7 +50,7 @@ jobs:
         with:
           sarif_file: reports/dependency-check-report.sarif
         if: always()
-      - name: Build and analyze for e-sign-svc
+      - name: Build and analyze for openapi
         env:
           GITHUB_TOKEN: ${{ secrets.GHUB_TOKEN }}
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
@@ -82,7 +82,7 @@ jobs:
       - name: Build and Push Docker image for openapi
         if: (github.event_name == 'push' && (startsWith(github.ref, 'refs/heads/develop') || startsWith(github.ref, 'refs/heads/release/') || startsWith(github.ref, 'refs/heads/hotfix/') || startsWith(github.ref, 'refs/tags/v'))) || github.event_name == 'workflow_dispatch'
         run: |
-          docker build --build-arg WORK_DIR="backend/e-sign-svc" -t pucarsolutionsdev.azurecr.io/pucar_openapi:${{ env.VERSION }}-${{ env.commit_hash }} -f build/maven/Dockerfile .
+          docker build --build-arg WORK_DIR="backend/openapi" -t pucarsolutionsdev.azurecr.io/pucar_openapi:${{ env.VERSION }}-${{ env.commit_hash }} -f build/maven/Dockerfile .
           docker push pucarsolutionsdev.azurecr.io/pucar_openapi:${{ env.VERSION }}-${{ env.commit_hash }}
 
   Workflow_Trigger:

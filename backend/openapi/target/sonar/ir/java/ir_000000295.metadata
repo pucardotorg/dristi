@@ -1,0 +1,13 @@
+org.pucar.dristi.service.OpenApiService#getCaseByCnrNumber(Ljava/lang/String;Ljava/lang/String;)Lorg/pucar/dristi/web/models/CaseSummaryResponse;
+false
+8dfa1320f009d201ca4840d53be0f337
+java.lang.RuntimeException#<init>(Ljava/lang/String;)V
+java.lang.RuntimeException#instance-init#
+java.lang.StringBuilder#<init>(Ljava/lang/String;)V
+java.lang.StringBuilder#append(Ljava/lang/Object;)Ljava/lang/StringBuilder;
+java.lang.StringBuilder#instance-init#
+==
+!unknownMethod! !unknownMethod!
+convertValue com.fasterxml.jackson.databind.ObjectMapper#convertValue(Ljava/lang/Object;Ljava/lang/Class;)Ljava/lang/Object;
+enrichNextHearingDate org.pucar.dristi.service.OpenApiService#enrichNextHearingDate(Ljava/lang/String;)Ljava/lang/Long;
+fetchResult org.pucar.dristi.repository.ServiceRequestRepository#fetchResult(Ljava/lang/StringBuilder;Ljava/lang/Object;)Ljava/lang/Object;

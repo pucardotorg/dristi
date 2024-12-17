@@ -1,0 +1,10 @@
+org.pucar.dristi.util.UserUtil#getCitizenRole(Ljava/lang/String;)Lorg/egov/common/contract/request/Role;
+false
+f361028fe8c7416178571f5b5e5a6681
+org.egov.common.contract.request.Role#builder()Lorg/egov/common/contract/request/Role$RoleBuilder;
+==
+build org.egov.common.contract.request.Role$RoleBuilder#build()Lorg/egov/common/contract/request/Role;
+getStateLevelTenant org.pucar.dristi.util.UserUtil#getStateLevelTenant(Ljava/lang/String;)Ljava/lang/String;
+setCode org.egov.common.contract.request.Role#setCode(Ljava/lang/String;)V
+setName org.egov.common.contract.request.Role#setName(Ljava/lang/String;)V
+setTenantId org.egov.common.contract.request.Role#setTenantId(Ljava/lang/String;)V

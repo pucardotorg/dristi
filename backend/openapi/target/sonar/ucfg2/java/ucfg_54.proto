@@ -1,0 +1,86 @@
+
+horg.pucar.dristi.util.UserUtil#getCitizenRole(Ljava/lang/String;)Lorg/egov/common/contract/request/Role;q
+g/home/bhcp0191/pucar/dristi-solutions/backend/openapi/src/main/java/org/pucar/dristi/util/UserUtil.java| |("1*¨
+1} }(Ò
+Ó
+} }("7
+%01org.egov.common.contract.request.Role$RoleBuilder"borg.egov.common.contract.request.Role#builder()Lorg/egov/common/contract/request/Role$RoleBuilder;*E
+
+__unknown_file ()"'
+%org.egov.common.contract.request.Role¸˘
+} }(*+
+%1%org.egov.common.contract.request.Role"`org.egov.common.contract.request.Role$RoleBuilder#build()Lorg/egov/common/contract/request/Role;*U
+
+__unknown_file (9
+7
+%01org.egov.common.contract.request.Role$RoleBuilder2build()ç
+ä
+} }(+-
+role%org.egov.common.contract.request.Role"__id*I
+
+__unknown_file (-
++
+%1%org.egov.common.contract.request.RoleS
+Q
+~ ~("
+%2java.lang.String"__id*'
+
+__unknown_file (	
+CITIZEN˝˙
+~ ~(#
+
+%3void"Borg.egov.common.contract.request.Role#setCode(Ljava/lang/String;)V*K
+
+__unknown_file (/
+-
+role%org.egov.common.contract.request.Role*4
+
+__unknown_file (
+
+%2java.lang.String2setCode(Ljava/lang/String;)S
+Q
+ ("
+%4java.lang.String"__id*'
+
+__unknown_file (	
+Citizen˝˙
+ (#
+
+%5void"Borg.egov.common.contract.request.Role#setName(Ljava/lang/String;)V*K
+
+__unknown_file (/
+-
+role%org.egov.common.contract.request.Role*4
+
+__unknown_file (
+
+%4java.lang.String2setName(Ljava/lang/String;)¶£
+
+Ä Ä(6
+%6java.lang.String"Xorg.pucar.dristi.util.UserUtil#getStateLevelTenant(Ljava/lang/String;)Ljava/lang/String;*>
+
+__unknown_file (" 
+org.pucar.dristi.util.UserUtil*:
+
+__unknown_file (
+
+tenantIdjava.lang.String2'getStateLevelTenant(Ljava/lang/String;)áÑ
+
+Ä Ä(7
+
+%7void"Forg.egov.common.contract.request.Role#setTenantId(Ljava/lang/String;)V*K
+
+__unknown_file (/
+-
+role%org.egov.common.contract.request.Role*4
+
+__unknown_file (
+
+%6java.lang.String2setTenantId(Ljava/lang/String;)"=
+
+Å Å(/
+-
+role%org.egov.common.contract.request.Role:(
+|  |(/
+tenantIdjava.lang.StringB" 
+org.pucar.dristi.util.UserUtil

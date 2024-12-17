@@ -1,0 +1,61 @@
+
+Oorg.pucar.dristi.util.WorkflowUtil#getWorkflow(Ljava/util/List;)Ljava/util/Map;w
+k/home/bhcp0191/pucar/dristi-solutions/backend/openapi/src/main/java/org/pucar/dristi/util/WorkflowUtil.javaä! ä(,"1*´
+1
+å5 å(D:8
+
+å9 å(B
+%0java.util.HashMap"java.util.HashMaph
+f
+
+å5 å(D
+%1"java.util.HashMap#<init>()V*5
+
+__unknown_file (
+
+%0java.util.HashMapr
+p
+
+å å(E%
+businessIdToWorkflowjava.util.Map"__id*5
+
+__unknown_file (
+
+%0java.util.HashMapö
+ó
+
+é! ù(	!
+%2java.util.function.Consumer"__declareFunction*S
+
+__unknown_file (75
+3__sonar_lambda_1$org.pucar.dristi.util.WorkflowUtil•
+¢
+
+__unknown_file (;
+!
+%2java.util.function.Consumer"
+businessIdToWorkflow"__id*C
+
+__unknown_file ('
+%
+businessIdToWorkflowjava.util.MapÉÄ
+
+é ù(
+
+%25void":java.lang.Iterable#forEach(Ljava/util/function/Consumer;)V*@
+
+__unknown_file ($
+"
+processInstancesjava.util.List*?
+
+__unknown_file (#
+!
+%2java.util.function.Consumer2&forEach(Ljava/util/function/Consumer;)"5
+
+ü ü($'
+%
+businessIdToWorkflowjava.util.Map:0
+
+ä- ä(S"
+processInstancesjava.util.ListB&$
+"org.pucar.dristi.util.WorkflowUtilH

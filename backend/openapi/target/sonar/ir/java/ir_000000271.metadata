@@ -1,0 +1,30 @@
+org.pucar.dristi.util.IdgenUtil#getIdList(Lorg/egov/common/contract/request/RequestInfo;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/Integer;)Ljava/util/List;
+false
+35b5bf2c0f400799a6bc4b9437e8010b
+java.lang.StringBuilder#<init>(Ljava/lang/String;)V
+java.lang.StringBuilder#append(Ljava/lang/Object;)Ljava/lang/StringBuilder;
+java.lang.StringBuilder#instance-init#
+java.util.ArrayList#<init>()V
+java.util.ArrayList#instance-init#
+java.util.stream.Collectors#toList()Ljava/util/stream/Collector;
+org.egov.common.contract.idgen.IdGenerationRequest#builder()Lorg/egov/common/contract/idgen/IdGenerationRequest$IdGenerationRequestBuilder;
+org.egov.common.contract.idgen.IdRequest#builder()Lorg/egov/common/contract/idgen/IdRequest$IdRequestBuilder;
+org.egov.tracer.model.CustomException#<init>(Ljava/lang/String;Ljava/lang/String;)V
+org.egov.tracer.model.CustomException#instance-init#
+org.springframework.util.CollectionUtils#isEmpty(Ljava/util/Collection;)Z
+==
+!unknownMethod! !unknownMethod!
+add java.util.List#add(Ljava/lang/Object;)Z
+build org.egov.common.contract.idgen.IdGenerationRequest$IdGenerationRequestBuilder#build()Lorg/egov/common/contract/idgen/IdGenerationRequest;
+build org.egov.common.contract.idgen.IdRequest$IdRequestBuilder#build()Lorg/egov/common/contract/idgen/IdRequest;
+collect java.util.stream.Stream#collect(Ljava/util/stream/Collector;)Ljava/lang/Object;
+convertValue com.fasterxml.jackson.databind.ObjectMapper#convertValue(Ljava/lang/Object;Ljava/lang/Class;)Ljava/lang/Object;
+fetchResult org.pucar.dristi.repository.ServiceRequestRepository#fetchResult(Ljava/lang/StringBuilder;Ljava/lang/Object;)Ljava/lang/Object;
+format org.egov.common.contract.idgen.IdRequest$IdRequestBuilder#format(Ljava/lang/String;)Lorg/egov/common/contract/idgen/IdRequest$IdRequestBuilder;
+getIdResponses org.egov.common.contract.idgen.IdGenerationResponse#getIdResponses()Ljava/util/List;
+idName org.egov.common.contract.idgen.IdRequest$IdRequestBuilder#idName(Ljava/lang/String;)Lorg/egov/common/contract/idgen/IdRequest$IdRequestBuilder;
+idRequests org.egov.common.contract.idgen.IdGenerationRequest$IdGenerationRequestBuilder#idRequests(Ljava/util/List;)Lorg/egov/common/contract/idgen/IdGenerationRequest$IdGenerationRequestBuilder;
+map java.util.stream.Stream#map(Ljava/util/function/Function;)Ljava/util/stream/Stream;
+requestInfo org.egov.common.contract.idgen.IdGenerationRequest$IdGenerationRequestBuilder#requestInfo(Lorg/egov/common/contract/request/RequestInfo;)Lorg/egov/common/contract/idgen/IdGenerationRequest$IdGenerationRequestBuilder;
+stream java.util.Collection#stream()Ljava/util/stream/Stream;
+tenantId org.egov.common.contract.idgen.IdRequest$IdRequestBuilder#tenantId(Ljava/lang/String;)Lorg/egov/common/contract/idgen/IdRequest$IdRequestBuilder;

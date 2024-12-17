@@ -1,0 +1,7 @@
+org.pucar.dristi.web.controllers.OpenapiApiController#getCaseListByCaseType(Ljava/lang/String;Ljava/lang/Integer;Ljava/lang/String;Ljava/lang/Integer;Ljava/lang/Integer;Ljava/lang/String;)Lorg/springframework/http/ResponseEntity;
+false
+1f76de60d53cb26529253b8602567728
+org.springframework.http.ResponseEntity#<init>(Ljava/lang/Object;Lorg/springframework/http/HttpStatusCode;)V
+org.springframework.http.ResponseEntity#instance-init#
+==
+getCaseListByCaseType org.pucar.dristi.service.OpenApiService#getCaseListByCaseType(Ljava/lang/String;Ljava/lang/Integer;Ljava/lang/String;Ljava/lang/Integer;Ljava/lang/Integer;Ljava/lang/String;)Lorg/pucar/dristi/web/models/CaseListResponse;
