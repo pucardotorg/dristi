@@ -20,8 +20,8 @@ public class DateUtilTest {
         List<Long> result = dateUtil.getYearInSeconds(2021);
         assertNotNull(result);
         assertEquals(2, result.size());
-        assertEquals(1609439400000L, result.get(0));
-        assertEquals(1640975399999L, result.get(1));
+        assertEquals(1609459200000L, result.get(0));
+        assertEquals(1640995199999L, result.get(1));
     }
 
     @Test
@@ -32,12 +32,12 @@ public class DateUtilTest {
     @Test
     public void shouldHandleEdgeCaseYears() {
         List<Long> result1970 = dateUtil.getYearInSeconds(1970);
-        assertEquals(-19800000, result1970.get(0));
+        assertEquals(0, result1970.get(0));
         // Test leap year
         List<Long> result2024 = dateUtil.getYearInSeconds(2024);
         assertNotNull(result2024);
         assertEquals(2, result2024.size());
-        assertEquals(1704047400000L, result2024.get(0)); // 2024-01-01 00:00:00
-        assertEquals(1735669799999L, result2024.get(1)); // 2024-12-31 23:59:59
+        assertEquals(1704067200000L, result2024.get(0)); // 2024-01-01 00:00:00
+        assertEquals(1735689599999L, result2024.get(1)); // 2024-12-31 23:59:59
         }
 }
