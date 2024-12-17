@@ -164,7 +164,7 @@ public class EvidenceService {
 
     void enrichBasedOnStatus(EvidenceRequest evidenceRequest) {
         String status = evidenceRequest.getArtifact().getStatus();
-        if (PUBLISHED_STATE.equalsIgnoreCase(status) || SUBMITTED_STATE.equalsIgnoreCase(status)) {
+        if (PUBLISHED_STATE.equalsIgnoreCase(status)) {
             evidenceEnrichment.enrichEvidenceNumber(evidenceRequest);
         } else if (ABATED_STATE.equalsIgnoreCase(status)) {
             evidenceEnrichment.enrichIsActive(evidenceRequest);
