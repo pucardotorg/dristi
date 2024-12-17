@@ -1,0 +1,11 @@
+/home/bhcp0191/pucar/dristi-solutions/backend/openapi/src/test/java/org/pucar/dristi/service/OpenApiServiceTest.java
+/home/bhcp0191/pucar/dristi-solutions/backend/openapi/src/test/java/org/pucar/dristi/util/UserUtilTest.java
+/home/bhcp0191/pucar/dristi-solutions/backend/openapi/src/test/java/org/pucar/dristi/util/MdmsUtilTest.java
+/home/bhcp0191/pucar/dristi-solutions/backend/openapi/src/test/java/org/pucar/dristi/util/DateUtilTest.java
+/home/bhcp0191/pucar/dristi-solutions/backend/openapi/src/test/java/org/pucar/dristi/util/ResponseInfoFactoryTest.java
+/home/bhcp0191/pucar/dristi-solutions/backend/openapi/src/test/java/org/pucar/dristi/util/UrlShortenerUtilTest.java
+/home/bhcp0191/pucar/dristi-solutions/backend/openapi/src/test/java/org/pucar/dristi/util/IdgenUtilTest.java
+/home/bhcp0191/pucar/dristi-solutions/backend/openapi/src/test/java/org/pucar/dristi/util/WorkflowUtilTest.java
+/home/bhcp0191/pucar/dristi-solutions/backend/openapi/src/test/java/org/pucar/dristi/repository/ServiceRequestRepositoryTest.java
+/home/bhcp0191/pucar/dristi-solutions/backend/openapi/src/test/java/org/pucar/dristi/web/controllers/OpenapiApiControllerTest.java
+/home/bhcp0191/pucar/dristi-solutions/backend/openapi/src/test/java/org/pucar/dristi/TestConfiguration.java
