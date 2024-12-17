@@ -23,7 +23,7 @@ public class OpenApiCaseSummaryQueryBuilder {
 
     private static final String CASE_SUMMARY_QUERY = "SELECT uc.id as id, uc.tenantid as tenantid, uc.casenumber as casenumber, uc.casetitle as casetitle, " +
             "       uc.filingnumber as filingnumber, uc.cnrNumber as cnrNumber, uc.outcome as outcome, " +
-            "       uc.cmpnumber, uc.courtid as courtid, uc.benchid as benchid, uc.casetype, " +
+            "       uc.cmpnumber,uc.courtcasenumber, uc.courtid as courtid, uc.benchid as benchid, uc.casetype, " +
             "       uc.judgeid as judgeid, uc.stage as stage, uc.substage as substage, uc.filingdate as filingdate, " +
             "       uc.registrationdate as registrationdate, uc.status as status, uc.isactive as isactive, " +
             "       uc.casecategory as casecategory, uc.createdby as createdby, uc.lastmodifiedby as lastmodifiedby, " +
@@ -124,9 +124,7 @@ public class OpenApiCaseSummaryQueryBuilder {
             }
             if (searchCriteria.getCaseNumber() != null) {
                 addWhereClause(query, firstCriteria);
-                query.append("cases.cmpnumber LIKE 'CMP/%/").append(searchCriteria.getCaseNumber()).append("'");
-                preparedStatementValues.add(searchCriteria.getCaseNumber());
-                preparedStatementValueTypes.add(Types.INTEGER);
+                query.append("cases.cmpnumber = 'CMP/").append(searchCriteria.getCaseNumber()).append("/").append(searchCriteria.getYear()).append("'");
                 firstCriteria = false;
             }
         }
@@ -138,7 +136,7 @@ public class OpenApiCaseSummaryQueryBuilder {
             }
             if (searchCriteria.getCaseNumber() != null) {
                 addWhereClause(query, firstCriteria);
-                query.append("cases.courtcasenumber LIKE 'ST/").append(searchCriteria.getCaseNumber()).append("/").append(searchCriteria.getYear()).append("'");
+                query.append("cases.courtcasenumber = 'ST/").append(searchCriteria.getCaseNumber()).append("/").append(searchCriteria.getYear()).append("'");
                 firstCriteria = false;
             }
         }

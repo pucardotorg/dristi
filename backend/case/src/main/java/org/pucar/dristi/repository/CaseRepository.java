@@ -480,11 +480,13 @@ public class CaseRepository {
                     return list.get(0);
                 }
             }
+            else {
+                throw new CustomException(CASE_SUMMARY_SEARCH_QUERY_EXCEPTION, "No case found for the given CNR number");
+            }
 
         } catch (Exception e) {
             throw new CustomException(CASE_SUMMARY_SEARCH_QUERY_EXCEPTION, "Error occurred while retrieving data from the database");
         }
-        return null;
     }
 
     public List<CaseListLineItem> getCaseSummaryListByCaseType(OpenApiCaseSummaryRequest request) {
@@ -536,10 +538,12 @@ public class CaseRepository {
                     return list.get(0);
                 }
             }
+            else {
+                throw new CustomException(CASE_SUMMARY_SEARCH_QUERY_EXCEPTION, "No case found for the given case number");
+            }
 
         } catch (Exception e) {
             throw new CustomException(CASE_SUMMARY_SEARCH_QUERY_EXCEPTION, "Error occurred while retrieving data from the database");
         }
-        return null;
     }
 }

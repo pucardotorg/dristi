@@ -67,7 +67,7 @@ class OpenApiCaseSummaryQueryBuilderTest {
 
         assertNotNull(query);
         assertTrue(query.contains("cases.caseType = ?"));
-        assertEquals(2, preparedStatementValues.size());
+        assertEquals(1, preparedStatementValues.size());
         assertEquals("CMP", preparedStatementValues.get(0));
         assertEquals(Types.VARCHAR, preparedStatementValueTypes.get(0));
     }
