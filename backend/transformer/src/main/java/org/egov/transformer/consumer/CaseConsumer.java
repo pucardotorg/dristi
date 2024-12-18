@@ -4,6 +4,7 @@ import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.kafka.clients.consumer.ConsumerRecord;
+import org.egov.common.contract.models.AuditDetails;
 import org.egov.transformer.config.TransformerProperties;
 import org.egov.transformer.models.*;
 import org.egov.transformer.producer.TransformerProducer;
@@ -67,6 +68,11 @@ public class CaseConsumer {
         fetchAndPublishCaseForOverAllStatus(payload, transformerProperties.getUpdateCaseTopic());
     }
 
+    @KafkaListener(topics = {"${transformer.consumer.edit.case.topic}"})
+    public void editCase(ConsumerRecord<String, Object> payload, @Header(KafkaHeaders.RECEIVED_TOPIC) String topic) {
+        fetchAndPublishEditCase(payload, transformerProperties.getUpdateCaseTopic());
+    }
+
     @KafkaListener(topics = {"${transformer.consumer.case.outcome.topic}"})
     public void updateCaseOutcome(ConsumerRecord<String, Object> payload,
                                   @Header(KafkaHeaders.RECEIVED_TOPIC) String topic) {
@@ -111,6 +117,28 @@ public class CaseConsumer {
             caseRequest.setCases(courtCase);
             logger.info("Transformed Object: {} ", objectMapper.writeValueAsString(courtCase));
             producer.push(updateCaseTopic, caseRequest);
+        } catch (Exception exception) {
+            log.error("error in saving case", exception);
+        }
+    }
+
+    private void fetchAndPublishEditCase(ConsumerRecord<String, Object> payload, String updateCaseTopic) {
+        try {
+            CaseRequest caseRequest = (objectMapper.readValue((String) payload.value(), new TypeReference<CaseRequest>() {}));
+            logger.info("Received Object: {} ", objectMapper.writeValueAsString(caseRequest.getCases()));
+            CourtCase courtCaseElasticSearch = caseService.fetchCase(caseRequest.getCases().getFilingNumber());
+            courtCaseElasticSearch.setAdditionalDetails(caseRequest.getCases().getAdditionalDetails());
+            courtCaseElasticSearch.setCaseTitle(caseRequest.getCases().getCaseTitle());
+
+            AuditDetails auditDetails = courtCaseElasticSearch.getAuditdetails();
+            auditDetails.setLastModifiedTime(caseRequest.getCases().getAuditdetails().getLastModifiedTime());
+            auditDetails.setLastModifiedBy(caseRequest.getRequestInfo().getUserInfo().getUuid());
+            courtCaseElasticSearch.setAuditdetails(auditDetails);
+
+            CaseRequest updatedElasticSearchCaseRequest = new CaseRequest();
+            updatedElasticSearchCaseRequest.setCases(courtCaseElasticSearch);
+            logger.info("Transformed Object: {} ", objectMapper.writeValueAsString(courtCaseElasticSearch));
+            producer.push(updateCaseTopic, updatedElasticSearchCaseRequest);
         } catch (Exception exception) {
             log.error("error in saving case", exception);
         }

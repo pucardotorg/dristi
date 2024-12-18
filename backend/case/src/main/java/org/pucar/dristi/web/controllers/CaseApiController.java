@@ -103,6 +103,16 @@ public class CaseApiController {
         return new ResponseEntity<>(addWitnessResponse, HttpStatus.OK);
     }
 
+    @PostMapping(value = "/v1/admin/edit_case")
+    public ResponseEntity<CaseResponse> caseV1Edit(
+            @Parameter(in = ParameterIn.DEFAULT, description = "Details for editing few fields in the court case + RequestInfo meta data.", required = true, schema = @Schema()) @Valid @RequestBody CaseRequest body) {
+
+        CourtCase cases = caseService.editCase(body);
+        ResponseInfo responseInfo = responseInfoFactory.createResponseInfoFromRequestInfo(body.getRequestInfo(), true);
+        CaseResponse caseResponse = CaseResponse.builder().cases(Collections.singletonList(cases)).responseInfo(responseInfo).build();
+        return new ResponseEntity<>(caseResponse, HttpStatus.OK);
+    }
+
     @PostMapping(value = "/witness/v1/_create")
     public ResponseEntity<WitnessResponse> caseWitnessV1CreatePost(
             @Parameter(in = ParameterIn.DEFAULT, description = "Details for the witness + RequestInfo meta data.", required = true, schema = @Schema()) @Valid @RequestBody WitnessRequest body) {

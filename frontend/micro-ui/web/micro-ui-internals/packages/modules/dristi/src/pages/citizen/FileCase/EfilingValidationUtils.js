@@ -10,6 +10,7 @@ import { efilingDocumentKeyAndTypeMapping } from "./Config/efilingDocumentKeyAnd
 export const showDemandNoticeModal = ({ selected, setValue, formData, setError, clearErrors, index, setServiceOfDemandNoticeModal, caseDetails }) => {
   if (selected === "demandNoticeDetails") {
     const totalCheques = caseDetails?.caseDetails?.["chequeDetails"]?.formdata && caseDetails?.caseDetails?.["chequeDetails"]?.formdata.length;
+    const chequeDetails = caseDetails?.caseDetails?.["chequeDetails"]?.formdata?.[0]?.data;
     for (const key in formData) {
       switch (key) {
         case "dateOfService":
@@ -42,6 +43,12 @@ export const showDemandNoticeModal = ({ selected, setValue, formData, setError, 
         case "dateOfDispatch":
           if (new Date(formData?.dateOfDispatch).getTime() > new Date().getTime()) {
             setError("dateOfDispatch", { message: "CS_DATE_ERROR_MSG" });
+          } else if (
+            formData?.dateOfDispatch &&
+            chequeDetails?.issuanceDate &&
+            new Date(chequeDetails?.issuanceDate).getTime() > new Date(formData?.dateOfDispatch).getTime()
+          ) {
+            setError("dateOfDispatch", { message: "CS_DISPATCH_DATE_ERROR_MSG" });
           } else {
             clearErrors("dateOfDispatch");
           }
@@ -78,7 +85,7 @@ export const validateDateForDelayApplication = ({ selected, setValue, caseDetail
     }
     if (
       caseDetails?.caseDetails?.["demandNoticeDetails"]?.formdata?.some(
-        (data) => new Date(data?.data?.dateOfAccrual).getTime() + 30 * 24 * 60 * 60 * 1000 < new Date().getTime()
+        (data) => new Date(data?.data?.dateOfAccrual).getTime() + 31 * 24 * 60 * 60 * 1000 < new Date().getTime()
       )
     ) {
       setValue("delayCondonationType", {
@@ -89,7 +96,7 @@ export const validateDateForDelayApplication = ({ selected, setValue, caseDetail
       });
     } else if (
       caseDetails?.caseDetails?.["demandNoticeDetails"]?.formdata?.some(
-        (data) => new Date(data?.data?.dateOfAccrual).getTime() + 30 * 24 * 60 * 60 * 1000 >= new Date().getTime()
+        (data) => new Date(data?.data?.dateOfAccrual).getTime() + 31 * 24 * 60 * 60 * 1000 >= new Date().getTime()
       )
     ) {
       setValue("delayCondonationType", {
@@ -1210,6 +1217,16 @@ const updateComplaintDocInCaseDoc = (docList, complaintDoc) => {
   return newDocList;
 };
 
+const calculateTotalChequeAmount = (formData) => {
+  let totalChequeAmount = 0;
+  for (let i = 0; i < formData?.length; i++) {
+    if (formData[i]?.data?.chequeAmount) {
+      totalChequeAmount = totalChequeAmount + parseInt(formData[i].data.chequeAmount);
+    }
+  }
+  return totalChequeAmount.toString();
+};
+
 export const updateCaseDetails = async ({
   t,
   isCompleted,
@@ -1222,7 +1239,6 @@ export const updateCaseDetails = async ({
   pageConfig,
   setFormDataValue,
   action = "SAVE_DRAFT",
-  fileStoreId,
   isSaveDraftEnabled = false,
   isCaseSignedState = false,
   setErrorCaseDetails = () => {},
@@ -1838,12 +1854,13 @@ export const updateCaseDetails = async ({
       debtLiabilityDetails: {
         ...caseDetails?.caseDetails?.debtLiabilityDetails,
         formdata: caseDetails?.caseDetails?.debtLiabilityDetails?.formdata?.map((data) => {
-          if (data?.data?.liabilityType?.code === "FULL_LIABILITY" && newFormData?.[0]) {
+          if (data?.data?.liabilityType?.code === "FULL_LIABILITY" && newFormData) {
+            const totalChequeAmount = calculateTotalChequeAmount(newFormData);
             return {
               ...data,
               data: {
                 ...data.data,
-                totalAmount: newFormData[0].data.chequeAmount,
+                totalAmount: totalChequeAmount,
               },
             };
           } else return data;
@@ -1881,13 +1898,14 @@ export const updateCaseDetails = async ({
           } else {
             updateCaseDocuments(docType, false);
           }
+          const totalChequeAmount = calculateTotalChequeAmount(caseDetails?.caseDetails?.chequeDetails?.formdata);
           return {
             ...data,
             data: {
               ...data.data,
               ...debtDocumentData,
               ...(data?.data?.liabilityType?.code === "FULL_LIABILITY" && {
-                totalAmount: caseDetails?.caseDetails?.chequeDetails?.formdata?.[0]?.data?.chequeAmount,
+                totalAmount: totalChequeAmount,
               }),
             },
           };

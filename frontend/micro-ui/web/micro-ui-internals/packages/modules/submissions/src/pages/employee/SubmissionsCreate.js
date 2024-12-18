@@ -536,7 +536,12 @@ const SubmissionsCreate = ({ path }) => {
       },
     });
   };
-
+  const cleanString = (input) => {
+    return input
+      .replace(/\b(null|undefined)\b/g, "")
+      .replace(/\s+/g, " ")
+      .trim();
+  };
   const createSubmission = async () => {
     try {
       let documentsList = [];
@@ -629,7 +634,7 @@ const SubmissionsCreate = ({ path }) => {
               }),
             isResponseRequired: orderDetails && !isExtension ? orderDetails?.orderDetails.isResponseRequired?.code === true : true,
             ...(hearingId && { hearingId }),
-            owner: caseDetails?.additionalDetails?.payerName,
+            owner: cleanString(userInfo?.name),
           },
           documents,
           onBehalfOf: [isCitizen ? onBehalfOfuuid : userInfo?.uuid],

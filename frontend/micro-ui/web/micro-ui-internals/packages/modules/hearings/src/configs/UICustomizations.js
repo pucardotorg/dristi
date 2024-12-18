@@ -152,6 +152,7 @@ export const UICustomizations = {
             label: "View transcript",
             id: "view_transcript",
             hide: false,
+            disabled: true,
             action: (history) => {
               alert("Not Yet Implemented");
             },
@@ -160,6 +161,7 @@ export const UICustomizations = {
             label: "View witness deposition",
             id: "view_witness",
             hide: false,
+            disabled: true,
             action: (history) => {
               alert("Not Yet Implemented");
             },
@@ -168,6 +170,7 @@ export const UICustomizations = {
             label: "View pending task",
             id: "view_pending_tasks",
             hide: true,
+            disabled: true,
             action: (history) => {
               alert("Not Yet Implemented");
             },
@@ -215,6 +218,7 @@ export const UICustomizations = {
             label: "View transcript",
             id: "view_transcript",
             hide: false,
+            disabled: true,
             action: (history) => {
               alert("Not Yet Implemented");
             },
@@ -223,6 +227,7 @@ export const UICustomizations = {
             label: "View witness deposition",
             id: "view_witness",
             hide: false,
+            disabled: true,
             action: (history) => {
               alert("Not Yet Implemented");
             },
@@ -231,6 +236,7 @@ export const UICustomizations = {
             label: "View pending task",
             id: "view_pending_tasks",
             hide: true,
+            disabled: true,
             action: (history) => {
               alert("Not Yet Implemented");
             },

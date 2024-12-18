@@ -1,13 +1,5 @@
 package org.pucar.dristi.web.models;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.UUID;
-
-import org.egov.common.contract.models.AuditDetails;
-import org.egov.common.contract.models.Document;
-import org.egov.common.contract.models.Workflow;
-import org.springframework.validation.annotation.Validated;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.validation.Valid;

@@ -150,7 +150,7 @@ export const rolesToConfigMapping = [
     },
   },
   {
-    roles: ["CASE_VIEWER", "BENCHCLERK_ROLE"],
+    roles: ["CASE_VIEWER", "BENCH_CLERK"],
     config: TabBenchSearchConfig,
     isCourtOfficer: true,
     onRowClickRoute: {

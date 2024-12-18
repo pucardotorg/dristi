@@ -38,7 +38,7 @@ export const reviewCaseFileFormConfig = [
                   label: "DESIGNATION",
                   dependentOn: "complainantType.code",
                   dependentValue: "REPRESENTATIVE",
-                  value: "complainantVerification.complainantDesignation",
+                  value: "complainantDesignation",
                 },
                 {
                   type: "image",

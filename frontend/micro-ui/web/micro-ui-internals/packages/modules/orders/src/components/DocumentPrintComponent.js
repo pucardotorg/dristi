@@ -7,7 +7,6 @@ import { useTranslation } from "react-i18next";
 const DocumentPrintComponent = ({ documents }) => {
   const tenantId = window?.Digit.ULBService.getCurrentTenantId();
   const { t } = useTranslation();
-
   return (
     <div className="print-documents-container" style={{ gap: 4, display: "flex", width: "100%", justifyContent: "space-between" }}>
       <div className="print-documents-heading" style={{ paddingLeft: 4, fontSize: 17 }}>{`Print Documents (${documents?.length})`}</div>

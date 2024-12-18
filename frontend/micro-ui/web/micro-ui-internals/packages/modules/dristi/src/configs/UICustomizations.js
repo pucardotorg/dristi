@@ -329,7 +329,7 @@ export const UICustomizations = {
           const differenceInDays = Math.ceil(differenceInTime / (1000 * 3600 * 24));
           return <span>{differenceInDays}</span>;
         case "USER_NAME":
-          const displayName = `${value?.givenName || ""} ${value?.familyName || ""} ${value?.otherNames || ""}`;
+          const displayName = `${value?.givenName || ""} ${value?.otherNames || ""} ${value?.familyName || ""}`;
           return displayName;
         default:
           return t("ES_COMMON_NA");

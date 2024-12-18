@@ -264,6 +264,7 @@ public class Configuration {
     @Value("${role.payment.collector}")
     private String paymentCollector;
 
+    //court configs
     @Value("${dristi.court.url}")
     private String courtUrl;
 
@@ -272,4 +273,7 @@ public class Configuration {
 
     @Value("${dristi.barcouncil.url}")
     private String barCouncilUrl;
+
+    @Value("${dristi.court.address}")
+    private String courtAddress;
 }

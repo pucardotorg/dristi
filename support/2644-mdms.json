@@ -1,0 +1,61 @@
+[
+  {
+  "mastername": "roles",
+  "moduleName": "ACCESSCONTROL-ROLES",
+  "mdmsPayload": [
+    {
+      "tenantId": "kl",
+      "schemaCode": "ACCESSCONTROL-ROLES.roles",
+      "uniqueIdentifier": null,
+      "data": {
+        "code": "SUPPORT_ADMIN",
+        "name": "Support Admin",
+        "description": "Role for support admin to access particular APIs"
+      },
+      "isActive": true
+    }
+  ]
+  },
+
+  {
+    "mastername": "roleactions",
+    "moduleName": "ACCESSCONTROL-ROLEACTIONS",
+    "mdmsPayload": [
+      {
+        "tenantId": "kl",
+        "schemaCode": "ACCESSCONTROL-ROLEACTIONS.roleactions",
+        "uniqueIdentifier": null,
+        "data": {
+          "rolecode": "SUPPORT_ADMIN",
+          "actionid": 2700,
+          "actioncode": "2700",
+          "tenantId": "kl"
+        },
+        "isActive": true
+      }
+    ]
+  },
+  {
+    "mastername": "actions-test",
+    "moduleName": "ACCESSCONTROL-ACTIONS-TEST",
+    "mdmsPayload": [
+      {
+        "tenantId": "kl",
+        "schemaCode": "ACCESSCONTROL-ACTIONS-TEST.actions-test",
+        "uniqueIdentifier": null,
+        "data": {
+          "id": 2700,
+          "name": "Edit Case",
+          "url": "/case/v1/admin/edit_case",
+          "displayName": "Edit Case",
+          "orderNumber": 0,
+          "enabled": false,
+          "serviceCode": "case",
+          "code": "null",
+          "path": ""
+        },
+        "isActive": true
+      }
+    ]
+  }
+]

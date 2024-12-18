@@ -18,12 +18,6 @@ const mdmsProxy = createProxyMiddleware({
   secure: false,
 });
 
-const pucarAssetProxy = createProxyMiddleware({
-  target: "https://pucarfilestore.blob.core.windows.net",
-  changeOrigin: true,
-  secure: false,
-});
-
 module.exports = function (app) {
   ["/mdms-v2/v2/_create"].forEach((location) => app.use(location, mdmsProxy));
   [
@@ -124,7 +118,4 @@ module.exports = function (app) {
   ].forEach((location) => app.use(location, createProxy));
   ["/pb-egov-assets"].forEach((location) => app.use(location, assetsProxy));
   ["/mdms-v2/v2/_create"].forEach((location) => app.use(location, mdmsProxy));
-  ["/pucar-filestore/kl/ScrutinyCheckList.pdf", "/pucar-filestore/kl/RequiredDocumentsList.pdf"].forEach((location) =>
-    app.use(location, pucarAssetProxy)
-  );
 };

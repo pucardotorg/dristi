@@ -903,7 +903,7 @@ function EFilingCases({ path }) {
               if (selected === "delayApplications") {
                 if (
                   caseDetails?.caseDetails?.["demandNoticeDetails"]?.formdata?.some(
-                    (data) => new Date(data?.data?.dateOfAccrual).getTime() + 30 * 24 * 60 * 60 * 1000 < new Date().getTime()
+                    (data) => new Date(data?.data?.dateOfAccrual).getTime() + 31 * 24 * 60 * 60 * 1000 < new Date().getTime()
                   ) &&
                   body?.key === "delayCondonationType"
                 ) {

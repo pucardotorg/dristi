@@ -88,7 +88,7 @@ function SelectCustomTextArea({ t, config, formData = {}, onSelect, errors }) {
             handleChange(data, input);
           }}
           rows={input?.rows || 5}
-          maxLength={input?.maxLength || 400}
+          maxLength={input?.maxLength || 1000}
           className={`custom-textarea-style${errors[config.key] ? " alert-error-border" : ""}`}
           placeholder={t(input?.placeholder)}
           disabled={config.disable}

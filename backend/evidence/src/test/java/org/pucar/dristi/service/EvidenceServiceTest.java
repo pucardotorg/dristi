@@ -95,6 +95,8 @@ class EvidenceServiceTest {
 
         verify(validator).validateEvidenceRegistration(evidenceRequest);
         verify(evidenceEnrichment).enrichEvidenceRegistration(evidenceRequest);
+        verify(workflowService).updateWorkflowStatus(evidenceRequest);
+        verify(producer).push(config.getEvidenceCreateTopic(), evidenceRequest);
 
         assertEquals(artifact, result);
     }
@@ -178,6 +180,17 @@ class EvidenceServiceTest {
         evidenceService.enrichBasedOnStatus(evidenceRequest);
 
         verify(evidenceEnrichment).enrichIsActive(evidenceRequest);
+    }
+
+    @Test
+    void testCreateEvidence_Exception() {
+        doThrow(new CustomException("ERROR", "Custom Error")).when(validator).validateEvidenceRegistration(any());
+
+        CustomException exception = assertThrows(CustomException.class, () -> {
+            evidenceService.createEvidence(evidenceRequest);
+        });
+
+        assertEquals("ERROR", exception.getCode());
     }
 
     @Test

@@ -176,7 +176,7 @@ components:
         filingType:
           type: string
           example: master data values - caseFiling, application, direct
-          description: master data for submission type as per the values mentioned in example. caseFiling to be used for all documents uploaded at the time of case e-filing. application is for submissions along with application and direct for documents directly uploaded. 
+          description: master data for submission type as per the values mentioned in example. caseFiling to be used for all documents uploaded at the time of case e-filing. application is for submissions along with application and direct for documents directly uploaded.
         sourceType:
           type: string
           description: Represents the legal classification of the source, such as COMPLAINANT, ACCUSED, COURT.
@@ -187,7 +187,7 @@ components:
         sourceName:
           type: string
           description: Users who may not be part of the system who've given evidence. SourceID or name is mandatory
-          example: Mr. Peter, Assistant DGP
+          example: Mr. Sundar, Assistant DGP
         applicableTo:
           type: array
           description: An array of individualIds of the litigants for whom this evidence has been provided. 
@@ -216,7 +216,9 @@ components:
           maxLength: 256
         status:
           type: string
-          description: The current status of the case as pulled from the Workflow service. Workflow service will hold the entire history of the case.
+          description: >-
+            The current status of the case as pulled from the Workflow service.
+            Workflow service will hold the entire history of the case.
         file:
           $ref: >-
               https://raw.githubusercontent.com/egovernments/DIGIT-Specs/common-contract-update/Common%20Services/common-contract.yaml#/components/schemas/Document
@@ -318,7 +320,7 @@ components:
         ResponseInfo:
           $ref: 'https://raw.githubusercontent.com/egovernments/DIGIT-Specs/common-contract-update/Common%20Services/common-contract.yaml#/components/schemas/ResponseInfo'
         tenantId:
-          type: string    
+          type: string
         artifacts:
           type: array
           description: his is an output field and will contain the list of artifacts found as per the search criteria

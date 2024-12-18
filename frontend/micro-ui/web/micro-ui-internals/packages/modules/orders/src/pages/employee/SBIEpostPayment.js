@@ -74,7 +74,7 @@ const SBIEpostPayment = () => {
           caseInfo: [
             {
               key: "Case Name & ID",
-              value: `${caseDetails?.caseTitle} + ${caseDetails?.filingNumber}`,
+              value: `${caseDetails?.caseTitle} & ${caseDetails?.filingNumber}`,
               copyData: false,
             },
             {

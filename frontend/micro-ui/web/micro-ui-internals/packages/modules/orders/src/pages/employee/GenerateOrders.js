@@ -250,7 +250,7 @@ const GenerateOrders = () => {
           const fullName = removeInvalidNameParts(item?.additionalDetails?.fullName);
           return {
             code: fullName,
-            name: fullName,
+            name: `${fullName} (Complainant)`,
             uuid: allAdvocates[item?.additionalDetails?.uuid],
             individualId: item?.individualId,
             isJoined: true,
@@ -268,7 +268,7 @@ const GenerateOrders = () => {
           const fullName = removeInvalidNameParts(item?.additionalDetails?.fullName);
           return {
             code: fullName,
-            name: fullName,
+            name: `${fullName} (Accused)`,
             uuid: allAdvocates[item?.additionalDetails?.uuid],
             isJoined: true,
             partyType: "respondent",
@@ -283,7 +283,7 @@ const GenerateOrders = () => {
         ?.filter((data) => !data?.data?.respondentVerification?.individualDetails?.individualId)
         ?.map((data) => {
           const fullName = constructFullName(data?.data?.respondentFirstName, data?.data?.respondentMiddleName, data?.data?.respondentLastName);
-          return { code: fullName, name: fullName, uuid: data?.data?.uuid, isJoined: false, partyType: "respondent" };
+          return { code: fullName, name: `${fullName} (Accused)`, uuid: data?.data?.uuid, isJoined: false, partyType: "respondent" };
         }) || []
     );
   }, [caseDetails]);
@@ -292,7 +292,7 @@ const GenerateOrders = () => {
     return (
       caseDetails?.additionalDetails?.witnessDetails?.formdata?.map((data) => {
         const fullName = constructFullName(data?.data?.firstName, data?.data?.middleName, data?.data?.lastName);
-        return { code: fullName, name: fullName, uuid: data?.data?.uuid, partyType: "witness" };
+        return { code: fullName, name: `${fullName} (Witness)`, uuid: data?.data?.uuid, partyType: "witness" };
       }) || []
     );
   }, [caseDetails]);

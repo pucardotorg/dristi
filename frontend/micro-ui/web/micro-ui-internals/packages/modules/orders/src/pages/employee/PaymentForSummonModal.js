@@ -459,7 +459,7 @@ const PaymentForSummonModal = ({ path }) => {
         : addressDetails;
     return [
       { key: "Issued to", value: name },
-      { key: "Next Hearing Date", value: formatDate(new Date(hearingsData?.HearingList?.[0]?.startTime)) },
+      { key: "Next Hearing Date", value: formatDate(new Date(hearingsData?.HearingList?.[0]?.startTime), "DD-MM-YYYY") },
       {
         key: "Delivery Channel",
         value: `Post (${formattedAddress})`,
