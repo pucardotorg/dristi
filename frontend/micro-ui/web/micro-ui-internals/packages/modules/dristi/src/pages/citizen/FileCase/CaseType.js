@@ -250,7 +250,7 @@ function CaseType({ t }) {
                                   individualDetails: {
                                     individualId: individualId,
                                     document: identifierIdDetails?.fileStoreId
-                                      ? [{ name: idType, fileStore: identifierIdDetails?.fileStoreId, documentName: identifierIdDetails?.filename }]
+                                      ? [{ fileName: idType, fileStore: identifierIdDetails?.fileStoreId, documentName: identifierIdDetails?.filename }]
                                       : null,
                                     "addressDetails-select": {
                                       pincode: pincode,
