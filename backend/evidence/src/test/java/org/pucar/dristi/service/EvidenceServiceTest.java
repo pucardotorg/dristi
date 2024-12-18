@@ -95,7 +95,7 @@ class EvidenceServiceTest {
 
         verify(validator).validateEvidenceRegistration(evidenceRequest);
         verify(evidenceEnrichment).enrichEvidenceRegistration(evidenceRequest);
-        verify(workflowService).updateWorkflowStatus(evidenceRequest);
+        verify(workflowService).updateWorkflowStatus(evidenceRequest, artifact.getFilingType());
         verify(producer).push(config.getEvidenceCreateTopic(), evidenceRequest);
 
         assertEquals(artifact, result);
