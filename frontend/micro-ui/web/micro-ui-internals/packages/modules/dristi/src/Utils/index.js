@@ -147,9 +147,9 @@ export const getFilingType = (filingTypes, displayName) => {
 
 export const documentsTypeMapping = {
   complainantId: "COMPLAINANT_ID_PROOF",
-  complainantCompanyDetailsUpload: "AUTHORIZED_COMPLAINANT_COMPANY_REPRESENTATIVE",
+  complainantCompanyDetailsUpload: "case.authorizationproof.complainant",
   inquiryAffidavitFileUpload: "case.affidavit.225bnss",
-  AccusedCompanyDetailsUpload: "AUTHORIZED_ACCUSED_COMPANY_REPRESENTATIVE",
+  AccusedCompanyDetailsUpload: "case.authorizationproof.accused",
   bouncedChequeFileUpload: "case.cheque",
   depositChequeFileUpload: "case.cheque.depositslip",
   returnMemoFileUpload: "case.cheque.returnmemo",
