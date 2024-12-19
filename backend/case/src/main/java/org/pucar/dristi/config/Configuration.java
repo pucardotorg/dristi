@@ -206,7 +206,7 @@ public class Configuration {
 	@Value("${egov.sms.notification.case.submit.template.id}")
 	private String smsNotificationCaseSubmittedTemplateId;
 
-	@Value(("${egov.sms.notification.case.payment.complete.template.id}"))
+	@Value("${egov.sms.notification.case.payment.complete.template.id}")
 	private String smsNotificationCasePaymentCompletionTemplateId;
 
 	@Value("${egov.sms.notification.case.fso.validate.template.id}")
@@ -226,6 +226,9 @@ public class Configuration {
 
 	@Value("${egov.sms.notification.advocate.join.case.template.id}")
 	private String smsNotificationAdvocateJoinCaseTemplateId;
+
+    @Value("${egov.sms.notification.case.admitted.template.id}")
+    private String smsNotificationCaseAdmittedTemplateId;
 
 
 	@Value("${notification.sms.enabled}")

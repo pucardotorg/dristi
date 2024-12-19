@@ -155,6 +155,7 @@ public class ServiceConstants {
     public static final String ERRORS_IDENTIFIED_CASE_FILE = "ERRORS_IDENTIFIED_CASE_FILE";
     public static final String ADMISSION_HEARING_SCHEDULED = "ADMISSION_HEARING_SCHEDULED";
     public static final String CASE_ADMITTED = "CASE_ADMITTED";
+    public static final String PENDING_RESPONSE = "PENDING_RESPONSE";
     public static final String HEARING_REJECTED = "HEARING_REJECTED";
     public static final String HIGH_COURT_LOCALIZATION_CODE = "HIGH_COURT_KERALA";
     public static final String NOTIFICATION_ENG_LOCALE_CODE = "en_IN";

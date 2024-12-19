@@ -82,6 +82,9 @@ public class SmsNotificationService {
         else if(messageCode.equalsIgnoreCase(ADVOCATE_CASE_JOIN)){
             pushNotification(smsTemplateData, message, mobileNumber, config.getSmsNotificationAdvocateJoinCaseTemplateId());
         }
+        else if(messageCode.equalsIgnoreCase(CASE_ADMITTED)){
+            pushNotification(smsTemplateData, message, mobileNumber, config.getSmsNotificationCaseAdmittedTemplateId());
+        }
     }
 
     private void pushNotification(SmsTemplateData smsTemplateData, String message, String mobileNumber, String templateId) {
