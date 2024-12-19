@@ -121,10 +121,7 @@ public class OrderRegistrationService {
             String orderType = body.getOrder().getOrderType();
             producer.push(config.getUpdateOrderKafkaTopic(), body);
 
-            String messageCode = updatedState != null ? getMessageCode(orderType, updatedState) : null;
-            if(messageCode != null){
-                callNotificationService(body, messageCode);
-            }
+            callNotificationService(body, updatedState, orderType);
 
             return body.getOrder();
 
@@ -145,36 +142,49 @@ public class OrderRegistrationService {
         caseSearchRequest.addCriteriaItem(caseCriteria);
         return caseSearchRequest;
     }
-    private String getMessageCode(String orderType, String updatedStatus) {
+    private String getMessageCode(String orderType, String updatedStatus, String caseStatus) {
 
-         if(orderType.equalsIgnoreCase(SCHEDULE_OF_HEARING_DATE) && updatedStatus.equalsIgnoreCase(PUBLISHED)){
+        if(caseStatus.equalsIgnoreCase(CASE_ADMITTED) && orderType.equalsIgnoreCase(SCHEDULE_OF_HEARING_DATE) && updatedStatus.equalsIgnoreCase(PUBLISHED)){
+            return NEXT_HEARING_SCHEDULED;
+        }
+        if(orderType.equalsIgnoreCase(SCHEDULE_OF_HEARING_DATE) && updatedStatus.equalsIgnoreCase(PUBLISHED)){
             return ADMISSION_HEARING_SCHEDULED;
         }
-         if (updatedStatus.equalsIgnoreCase(PUBLISHED)){
+        if(orderType.equalsIgnoreCase(WARRANT) && updatedStatus.equalsIgnoreCase(PUBLISHED)){
+            return WARRANT_ISSUED;
+        }
+//        if(orderType.equalsIgnoreCase(NOTICE) && updatedStatus.equalsIgnoreCase(PUBLISHED)){
+//            return NOTICE_ISSUED;
+//        }
+        if (updatedStatus.equalsIgnoreCase(PUBLISHED)){
              return ORDER_ISSUED;
          }
         return null;
     }
 
-    private void callNotificationService(OrderRequest orderRequest, String messageCode) {
+    private void callNotificationService(OrderRequest orderRequest, String updatedState, String orderType) {
 
         try {
             CaseSearchRequest caseSearchRequest = createCaseSearchRequest(orderRequest.getRequestInfo(), orderRequest.getOrder());
             JsonNode caseDetails = caseUtil.searchCaseDetails(caseSearchRequest);
-            JsonNode litigants = caseUtil.getLitigants(caseDetails);
-            Set<String> individualIds = caseUtil.getIndividualIds(litigants);
-            JsonNode representatives = caseUtil.getRepresentatives(caseDetails);
-            Set<String> representativeIds = caseUtil.getAdvocateIds(representatives);
+            String caseStatus = caseDetails.has("status") ? caseDetails.get("status").asText() : "";
 
-            if(!representativeIds.isEmpty()){
-                representativeIds = advocateUtil.getAdvocate(orderRequest.getRequestInfo(),representativeIds.stream().toList());
-            }
-            individualIds.addAll(representativeIds);
+            String messageCode = updatedState != null ? getMessageCode(orderType, updatedState, caseStatus) : null;
+            assert messageCode != null;
+
+            JsonNode rootNode = caseDetails.get("additionalDetails");
 
             Object additionalDetailsObject = orderRequest.getOrder().getAdditionalDetails();
             String jsonData = objectMapper.writeValueAsString(additionalDetailsObject);
             JsonNode orderData = objectMapper.readTree(jsonData);
             String hearingDate = orderData.path("formdata").path("hearingDate").asText();
+
+            String receiver = null;
+            if(messageCode.equalsIgnoreCase(NOTICE_ISSUED) || messageCode.equalsIgnoreCase(WARRANT_ISSUED)) {
+                receiver = ACCUSED;
+            }
+
+            Set<String> individualIds = extractIndividualIds(rootNode, receiver);
 
             Set<String> phonenumbers = callIndividualService(orderRequest.getRequestInfo(), individualIds);
 
@@ -236,4 +246,58 @@ public class OrderRegistrationService {
         return mobileNumber;
     }
 
+    public  Set<String> extractIndividualIds(JsonNode rootNode, String receiver) {
+        Set<String> individualIds = new HashSet<>();
+
+        JsonNode respondentDetailsNode = rootNode.path("respondentDetails")
+                .path("formdata");
+        if (respondentDetailsNode.isArray()) {
+            for (JsonNode respondentNode : respondentDetailsNode) {
+                JsonNode respondentVerificationNode = respondentNode.path("data")
+                        .path("respondentVerification")
+                        .path("individualDetails");
+                if (!respondentVerificationNode.isMissingNode()) {
+                    String individualId = respondentVerificationNode.path("individualId").asText();
+                    if (!individualId.isEmpty() && (null == receiver || receiver.equalsIgnoreCase(ACCUSED))) {
+                        individualIds.add(individualId);
+                    }
+                }
+            }
+        }
+
+        JsonNode complainantDetailsNode = rootNode.path("complainantDetails")
+                .path("formdata");
+        if (complainantDetailsNode.isArray()) {
+            for (JsonNode complainantNode : complainantDetailsNode) {
+                JsonNode complainantVerificationNode = complainantNode.path("data")
+                        .path("complainantVerification")
+                        .path("individualDetails");
+                if (!complainantVerificationNode.isMissingNode()) {
+                    String individualId = complainantVerificationNode.path("individualId").asText();
+                    if (!individualId.isEmpty() && (null == receiver || receiver.equalsIgnoreCase(COMPLAINANT))) {
+                        individualIds.add(individualId);
+                    }
+                }
+            }
+        }
+
+        JsonNode advocateDetailsNode = rootNode.path("advocateDetails")
+                .path("formdata");
+        if (advocateDetailsNode.isArray()) {
+            for (JsonNode advocateNode : advocateDetailsNode) {
+                JsonNode advocateListNode = advocateNode.path("data")
+                        .path("advocateBarRegNumberWithName");
+                if (advocateListNode.isArray()) {
+                    for (JsonNode advocateInfoNode : advocateListNode) {
+                        String individualId = advocateInfoNode.path("individualId").asText();
+                        if (!individualId.isEmpty() && (null == receiver || receiver.equalsIgnoreCase(COMPLAINANT))) {
+                            individualIds.add(individualId);
+                        }
+                    }
+                }
+            }
+        }
+
+        return individualIds;
+    }
 }

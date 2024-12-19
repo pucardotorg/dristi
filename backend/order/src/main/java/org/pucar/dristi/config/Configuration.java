@@ -155,6 +155,15 @@ public class Configuration {
     @Value("${egov.sms.notification.judge.issue.order.template.id}")
     private String smsNotificationJudgeIssueOrderTemplateId;
 
+    @Value("${egov.sms.notification.warrant.issued.template.id}")
+    private String smsNotificationWarrantIssuedTemplateId;
+
+    @Value("${egov.sms.notification.notice.issued.template.id}")
+    private String smsNotificationNoticeIssuedTemplateId;
+
+    @Value("${egov.sms.notification.next.hearing.scheduled.template.id}")
+    private String smsNotificationNextHearingScheduledTemplateId;
+
     //Individual Service
     @Value("${egov.individual.host}")
     private String individualHost;

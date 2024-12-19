@@ -83,4 +83,13 @@ public class ServiceConstants {
 
     public static final String INDIVIDUAL_UTILITY_EXCEPTION = "INDIVIDUAL_UTILITY_EXCEPTION";
 
+    public static final String WARRANT = "WARRANT";
+    public static final String WARRANT_ISSUED = "WARRANT_ISSUED";
+
+    public static final String NOTICE = "NOTICE";
+    public static final String NOTICE_ISSUED = "NOTICE_ISSUED";
+    public static final String CASE_ADMITTED = "CASE_ADMITTED";
+    public static final String NEXT_HEARING_SCHEDULED = "NEXT_HEARING_SCHEDULED";
+    public static final String ACCUSED = "ACCUSED";
+    public static final String COMPLAINANT = "COMPLAINANT";
 }

@@ -18,6 +18,8 @@ import java.util.*;
 
 import static org.pucar.dristi.config.ServiceConstants.ERROR_WHILE_FETCHING_FROM_CASE;
 
+import static org.pucar.dristi.config.ServiceConstants.ERROR_WHILE_FETCHING_FROM_CASE;
+
 @Slf4j
 @Component
 public class CaseUtil {

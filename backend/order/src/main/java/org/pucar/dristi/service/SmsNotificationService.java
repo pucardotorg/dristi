@@ -62,6 +62,15 @@ public class SmsNotificationService {
         if(messageCode.equalsIgnoreCase(ORDER_ISSUED)){
             pushNotification(templateData, message, mobileNumber, config.getSmsNotificationJudgeIssueOrderTemplateId());
         }
+        if(messageCode.equalsIgnoreCase(NOTICE_ISSUED)){
+            pushNotification(templateData, message, mobileNumber, config.getSmsNotificationNoticeIssuedTemplateId());
+        }
+        if(messageCode.equalsIgnoreCase(WARRANT_ISSUED)){
+            pushNotification(templateData, message, mobileNumber, config.getSmsNotificationWarrantIssuedTemplateId());
+        }
+        if(messageCode.equalsIgnoreCase(NEXT_HEARING_SCHEDULED)){
+            pushNotification(templateData, message, mobileNumber, config.getSmsNotificationNextHearingScheduledTemplateId());
+        }
     }
 
     private void pushNotification(SmsTemplateData templateData, String message, String mobileNumber, String templateId) {
@@ -102,7 +111,7 @@ public class SmsNotificationService {
      * Gets the message from localization
      *
      * @param requestInfo
-     * @param courtCase
+     * @param templateData
      * @param msgCode
      * @return
      */
