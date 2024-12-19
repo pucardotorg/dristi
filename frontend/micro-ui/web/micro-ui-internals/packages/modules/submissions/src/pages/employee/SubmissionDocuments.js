@@ -354,36 +354,33 @@ const SubmissionDocuments = ({ path }) => {
   }, []);
 
   const modifiedFormConfig = useMemo(() => {
-    const applyUiChanges = (config) => {
-      return {
-        ...config,
-        body: config?.body.map((body) => {
-          if (body?.labelChildren === "optional") {
-            body.labelChildren = <span style={{ color: "#77787B" }}>&nbsp;{`${t("CS_IS_OPTIONAL")}`}</span>;
-          }
+    const applyUiChanges = (config) => ({
+      ...config,
+      body: config?.body?.map((body) => {
+        if (body?.labelChildren === "optional") {
           return {
             ...body,
+            labelChildren: <span style={{ color: "#77787B" }}>&nbsp;{`${t("CS_IS_OPTIONAL")}`}</span>,
           };
-        }),
-      };
-    };
-
-    if (!artifactNumber) {
-      return submissionDocumentDetailsConfig.formConfig?.map(applyUiChanges);
-    } else {
-      const formConfig = submissionDocumentDetailsConfig.formConfig;
-      formConfig.forEach((config, index) => {
-        if (config.body && Array.isArray(config.body)) {
-          config.body.forEach((item) => {
-            item.disable = true;
-          });
         }
-        formConfig[index] = applyUiChanges(config);
-      });
-
-      return formConfig;
+        return body;
+      }),
+    });
+  
+    const originalFormConfig = submissionDocumentDetailsConfig.formConfig;
+  
+    if (!artifactNumber) {
+      return originalFormConfig?.map((config) => applyUiChanges(config));
+    } else {
+      return originalFormConfig?.map((config) =>
+        applyUiChanges({
+          ...config,
+          body: config?.body?.map((item) => ({ ...item, disable: true })),
+        })
+      );
     }
   }, [artifactNumber, t]);
+  
 
   if (loader || isFilingTypeLoading || isEvidenceLoading) {
     return <Loader />;
