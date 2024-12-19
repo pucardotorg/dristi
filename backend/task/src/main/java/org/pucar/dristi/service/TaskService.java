@@ -214,7 +214,7 @@ public class TaskService {
             SmsTemplateData smsTemplateData = SmsTemplateData.builder()
                     .courtCaseNumber(caseDetails.has("courtCaseNumber") ? caseDetails.get("courtCaseNumber").asText() : "")
                     .cmpNumber(caseDetails.has("cmpNumber") ? caseDetails.get("cmpNumber").asText() : "")
-                    .accusedName(taskDetails.path("respondentDetails").path("name").asText())
+                    .accusedName(taskDetails.has("respondentDetails") ? taskDetails.path("respondentDetails").path("name").asText() : "")
                     .tenantId(taskRequest.getTask().getTenantId()).build();
 
             for (String number : phoneNumbers) {
@@ -267,7 +267,7 @@ public class TaskService {
         List<Individual> individuals = individualService.getIndividuals(requestInfo, new ArrayList<>(ids));
         for(Individual individual : individuals) {
             if (individual.getMobileNumber() != null) {
-                mobileNumber.add(individuals.get(0).getMobileNumber());
+                mobileNumber.add(individual.getMobileNumber());
             }
         }
         return mobileNumber;
