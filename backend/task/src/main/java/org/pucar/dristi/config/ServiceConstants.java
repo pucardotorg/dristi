@@ -95,9 +95,11 @@ public class ServiceConstants {
 
     public static final String REQUEST_INFO = "RequestInfo";
     public static final String DELIVERED = "DELIVERED";
+    public static final String RE_ISSUE = "RE_ISSUE";
     public static final String NOTICE_DELIVERED = "NOTICE_DELIVERED";
     public static final String NOTICE_NOT_DELIVERED = "NOTICE_NOT_DELIVERED";
-    public static final String RE_ISSUE = "RE_ISSUE";
+    public static final String SUMMONS_DELIVERED = "SUMMONS_DELIVERED";
+    public static final String SUMMONS_NOT_DELIVERED = "SUMMONS_NOT_DELIVERED";
 
     public static final String NOTIFICATION_ENG_LOCALE_CODE = "en_IN";
 

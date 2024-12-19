@@ -18,6 +18,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -203,12 +204,10 @@ public class TaskService {
         try {
             JsonNode caseDetails = caseUtil.searchCaseDetails(taskRequest.getRequestInfo(), taskRequest.getTask().getTenantId(), null, taskRequest.getTask().getFilingNumber(), null);
 
-            JsonNode caseAdditionalDetails = caseDetails.get("additionalDetails");
-
             Object taskDetailsObject = taskRequest.getTask().getTaskDetails();
             JsonNode taskDetails = objectMapper.readTree(objectMapper.writeValueAsString(taskDetailsObject));
 
-            Set<String> individualIds = extractComplainantIndividualIds(caseAdditionalDetails);
+            Set<String> individualIds = extractComplainantIndividualIds(caseDetails);
 
             Set<String> phoneNumbers = callIndividualService(taskRequest.getRequestInfo(), individualIds);
 
@@ -227,49 +226,47 @@ public class TaskService {
         }
     }
 
-    public  Set<String> extractComplainantIndividualIds(JsonNode rootNode) {
-        Set<String> individualIds = new HashSet<>();
+    public  Set<String> extractComplainantIndividualIds(JsonNode caseDetails) {
 
-        JsonNode complainantDetailsNode = rootNode.path("complainantDetails")
-                .path("formdata");
-        if (complainantDetailsNode.isArray()) {
-            for (JsonNode complainantNode : complainantDetailsNode) {
-                JsonNode complainantVerificationNode = complainantNode.path("data")
-                        .path("complainantVerification")
-                        .path("individualDetails");
-                if (!complainantVerificationNode.isMissingNode()) {
-                    String individualId = complainantVerificationNode.path("individualId").asText();
-                    if (!individualId.isEmpty()) {
-                        individualIds.add(individualId);
+        JsonNode litigantNode = caseDetails.get("litigants");
+        JsonNode representativeNode = caseDetails.get("representatives");
+        Set<String> uuids = new HashSet<>();
+
+        if (litigantNode.isArray()) {
+            for (JsonNode node : litigantNode) {
+                if (!node.get("partyType").asText().contains("complainant")) {
+                    String uuid = node.path("additionalDetails").get("uuid").asText();
+                    if (!uuid.isEmpty() ) {
+                        uuids.add(uuid);
                     }
                 }
             }
         }
-        JsonNode advocateDetailsNode = rootNode.path("advocateDetails")
-                .path("formdata");
-        if (advocateDetailsNode.isArray()) {
-            for (JsonNode advocateNode : advocateDetailsNode) {
-                JsonNode advocateListNode = advocateNode.path("data")
-                        .path("advocateBarRegNumberWithName");
-                if (advocateListNode.isArray()) {
-                    for (JsonNode advocateInfoNode : advocateListNode) {
-                        String individualId = advocateInfoNode.path("individualId").asText();
-                        if (!individualId.isEmpty()) {
-                            individualIds.add(individualId);
+
+        if (representativeNode.isArray()) {
+            for (JsonNode advocateNode : representativeNode) {
+                JsonNode representingNode = advocateNode.get("representing");
+                if (representingNode.isArray()) {
+                    if(representingNode.get(0).get("partyType").asText().contains("complainant")) {
+                        String uuid = advocateNode.path("additionalDetails").get("uuid").asText();
+                        if (!uuid.isEmpty() ) {
+                            uuids.add(uuid);
                         }
+
                     }
                 }
             }
         }
-        return individualIds;
+        return uuids;
     }
 
-    private Set<String> callIndividualService(RequestInfo requestInfo, Set<String> individualIds) {
+    private Set<String> callIndividualService(RequestInfo requestInfo, Set<String> ids) {
 
         Set<String> mobileNumber = new HashSet<>();
-        for(String id : individualIds){
-            List<Individual> individuals = individualService.getIndividualsByIndividualId(requestInfo, id);
-            if(individuals.get(0).getMobileNumber() != null){
+
+        List<Individual> individuals = individualService.getIndividuals(requestInfo, new ArrayList<>(ids));
+        for(Individual individual : individuals) {
+            if (individual.getMobileNumber() != null) {
                 mobileNumber.add(individuals.get(0).getMobileNumber());
             }
         }
@@ -283,6 +280,12 @@ public class TaskService {
         }
         if (NOTICE.equalsIgnoreCase(taskType) && RE_ISSUE.equalsIgnoreCase(status)) {
             return NOTICE_NOT_DELIVERED;
+        }
+        if (SUMMON.equalsIgnoreCase(taskType) && DELIVERED.equalsIgnoreCase(status)) {
+            return SUMMONS_DELIVERED;
+        }
+        if (SUMMON.equalsIgnoreCase(taskType) && RE_ISSUE.equalsIgnoreCase(status)) {
+            return SUMMONS_NOT_DELIVERED;
         }
         return null;
     }

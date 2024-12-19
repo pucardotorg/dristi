@@ -29,16 +29,17 @@ public class IndividualService {
         this.config = config;
     }
 
-    public List<Individual> getIndividualsByIndividualId(RequestInfo requestInfo, String individualId) throws CustomException {
+    public List<Individual> getIndividuals(RequestInfo requestInfo, List<String> uuids) throws CustomException {
         try {
             IndividualSearchRequest individualSearchRequest = new IndividualSearchRequest();
             individualSearchRequest.setRequestInfo(requestInfo);
             IndividualSearch individualSearch = new IndividualSearch();
-            individualSearch.setIndividualId(individualId);
+            individualSearch.setUserUuid(uuids);
             individualSearchRequest.setIndividual(individualSearch);
-            StringBuilder uri = buildIndividualSearchUri(requestInfo, Collections.singletonList(individualId));
+            StringBuilder uri = buildIndividualSearchUri(requestInfo, uuids);
             List<Individual> individual = individualUtils.getIndividualByIndividualId(individualSearchRequest, uri);
             if (individual != null) {
+
                 return individual;
             } else {
                 log.error("No individuals found");

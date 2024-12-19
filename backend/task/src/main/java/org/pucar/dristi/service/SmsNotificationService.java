@@ -55,10 +55,14 @@ public class SmsNotificationService {
 
     private void pushNotificationBasedOnNotificationStatus(SmsTemplateData templateData, String messageCode, String message, String mobileNumber) {
 
-         if(messageCode.equalsIgnoreCase(NOTICE_DELIVERED)){
+        if(messageCode.equalsIgnoreCase(NOTICE_DELIVERED)){
             pushNotification(templateData, message, mobileNumber, config.getSmsNotificationNoticeDeliveredTemplateId());
         } else if(messageCode.equalsIgnoreCase(NOTICE_NOT_DELIVERED)){
             pushNotification(templateData, message, mobileNumber, config.getSmsNotificationNoticeNotDeliveredTemplateId());
+        } else if(messageCode.equalsIgnoreCase(SUMMONS_DELIVERED)){
+            pushNotification(templateData, message, mobileNumber, config.getSmsNotificationSummonsDeliveredTemplateId());
+        } else if(messageCode.equalsIgnoreCase(SUMMONS_NOT_DELIVERED)){
+            pushNotification(templateData, message, mobileNumber, config.getSmsNotificationSummonsNotDeliveredTemplateId());
         }
     }
 
