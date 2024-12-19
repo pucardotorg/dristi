@@ -114,6 +114,9 @@ public class Configuration {
 	@Value("${egov.case.path}")
 	private String caseExistsPath;
 
+	@Value("${egov.case.search.path}")
+	private String caseSearchPath;
+
 	// Application Config
 	@Value("${egov.application.host}")
 	private String applicationHost;
@@ -185,5 +188,25 @@ public class Configuration {
 
 	@Value("${egov.idgen.artifactConfig}")
 	private String artifactConfig;
+
+	//Localization
+	@Value("${egov.localization.host}")
+	private String localizationHost;
+
+	@Value("${egov.localization.context.path}")
+	private String localizationContextPath;
+
+	@Value("${egov.localization.search.endpoint}")
+	private String localizationSearchEndpoint;
+
+	//Individual Service
+	@Value("${egov.individual.host}")
+	private String individualHost;
+
+	@Value("${egov.individual.search.path}")
+	private String individualSearchEndpoint;
+
+	@Value("${egov.sms.notification.document.marked.exhibit.template.id}")
+	private String smsNotificationDocumentMarkedExhibitTemplateId;
 
 }

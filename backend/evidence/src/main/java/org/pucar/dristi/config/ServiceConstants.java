@@ -78,4 +78,11 @@ public class ServiceConstants {
 	public static final String ERROR_WHILE_FETCHING_FROM_ORDER = "ERROR_WHILE_FETCHING_FROM_ORDER_SERVICE";
 	public static final String ERROR_WHILE_FETCHING_FROM_HEARING = "ERROR_WHILE_FETCHING_FROM_HEARING";
 
+	public static final String NOTIFICATION_ENG_LOCALE_CODE = "en_IN";
+	public static final String NOTIFICATION_MODULE_CODE = "notification";
+	public static final String NOTIFICATION_LOCALIZATION_CODES_JSONPATH = "$.messages.*.code";
+	public static final String NOTIFICATION_LOCALIZATION_MSGS_JSONPATH = "$.messages.*.message";
+	public static final String INDIVIDUAL_UTILITY_EXCEPTION = "INDIVIDUAL_UTILITY_EXCEPTION";
+	public static final String DOCUMENT_MARKED_EXHIBIT = "DOCUMENT_MARKED_EXHIBIT";
+
 }
