@@ -56,7 +56,7 @@ public class SmsNotificationService {
 
     private void pushNotificationBasedOnNotificationStatus(SmsTemplateData templateData, String messageCode, String message, String mobileNumber) {
 
-     if(messageCode.equalsIgnoreCase(ADMISSION_HEARING_SCHEDULED)){
+        if(messageCode.equalsIgnoreCase(ADMISSION_HEARING_SCHEDULED)){
             pushNotification(templateData, message, mobileNumber, config.getSmsNotificationAdmissionHearingScheduledTemplateId());
         }
         if(messageCode.equalsIgnoreCase(ORDER_ISSUED)){
@@ -67,6 +67,18 @@ public class SmsNotificationService {
         }
         if(messageCode.equalsIgnoreCase(WARRANT_ISSUED)){
             pushNotification(templateData, message, mobileNumber, config.getSmsNotificationWarrantIssuedTemplateId());
+        }
+        if(messageCode.equalsIgnoreCase(HEARING_RESCHEDULED)){
+            pushNotification(templateData, message, mobileNumber, config.getSmsNotificationHearingReScheduledTemplateId());
+        }
+        if(messageCode.equalsIgnoreCase(SUMMONS_ISSUED)){
+            pushNotification(templateData, message, mobileNumber, config.getSmsNotificationSummonsIssuedTemplateId());
+        }
+        if(messageCode.equalsIgnoreCase(ORDER_PUBLISHED)){
+            pushNotification(templateData, message, mobileNumber, config.getSmsNotificationOrderPublishedTemplateId());
+        }
+        if(messageCode.equalsIgnoreCase(EVIDENCE_REQUESTED)){
+            pushNotification(templateData, message, mobileNumber, config.getSmsNotificationEvidenceRequestedTemplateId());
         }
         if(messageCode.equalsIgnoreCase(NEXT_HEARING_SCHEDULED)){
             pushNotification(templateData, message, mobileNumber, config.getSmsNotificationNextHearingScheduledTemplateId());

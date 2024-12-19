@@ -164,6 +164,18 @@ public class Configuration {
     @Value("${egov.sms.notification.next.hearing.scheduled.template.id}")
     private String smsNotificationNextHearingScheduledTemplateId;
 
+    @Value("${egov.sms.notification.summons.issued.template.id}")
+    private String smsNotificationSummonsIssuedTemplateId;
+
+    @Value("${egov.sms.notification.hearing.reScheduled.template.id}")
+    private String smsNotificationHearingReScheduledTemplateId;
+
+    @Value("${egov.sms.notification.order.published.template.id}")
+    private String smsNotificationOrderPublishedTemplateId;
+
+    @Value("${egov.sms.notification.evidence.requested.template.id}")
+    private String smsNotificationEvidenceRequestedTemplateId;
+
     //Individual Service
     @Value("${egov.individual.host}")
     private String individualHost;
