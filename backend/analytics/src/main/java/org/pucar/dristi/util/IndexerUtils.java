@@ -265,31 +265,71 @@ public class IndexerUtils {
         );
     }
 
-    private Set<String> callIndividualService(RequestInfo requestInfo, Set<String> individualIds) {
+	public static List<String> extractIndividualIds(JsonNode rootNode) {
+		List<String> individualIds = new ArrayList<>();
 
-        Set<String> mobileNumber = new HashSet<>();
-        for(String id : individualIds){
-            List<Individual> individuals = individualService.getIndividualsByIndividualId(requestInfo, id);
-            if(individuals.get(0).getMobileNumber() != null){
-                mobileNumber.add(individuals.get(0).getMobileNumber());
-            }
-        }
-        return mobileNumber;
-    }
 
-    private org.pucar.dristi.web.models.SmsTemplateData enrichSmsTemplateData(Map<String, String> details) {
-        return SmsTemplateData.builder()
-                .cmpNumber(details.get("cmpNumber"))
-                .efilingNumber(details.get("filingNumber")).build();
-    }
+		JsonNode complainantDetailsNode = rootNode.path("complainantDetails")
+				.path("formdata");
+		if (complainantDetailsNode.isArray()) {
+			for (JsonNode complainantNode : complainantDetailsNode) {
+				JsonNode complainantVerificationNode = complainantNode.path("data")
+						.path("complainantVerification")
+						.path("individualDetails");
+				if (!complainantVerificationNode.isMissingNode()) {
+					String individualId = complainantVerificationNode.path("individualId").asText();
+					if (!individualId.isEmpty()) {
+						individualIds.add(individualId);
+					}
+				}
+			}
+		}
 
-    public org.pucar.dristi.web.models.CaseSearchRequest createCaseSearchRequest(RequestInfo requestInfo, String filingNumber) {
-        org.pucar.dristi.web.models.CaseSearchRequest caseSearchRequest = new CaseSearchRequest();
-        caseSearchRequest.setRequestInfo(requestInfo);
-        org.pucar.dristi.web.models.CaseCriteria caseCriteria = CaseCriteria.builder().filingNumber(filingNumber).defaultFields(false).build();
-        caseSearchRequest.addCriteriaItem(caseCriteria);
-        return caseSearchRequest;
-    }
+		JsonNode advocateDetailsNode = rootNode.path("advocateDetails")
+				.path("formdata");
+		if (advocateDetailsNode.isArray()) {
+			for (JsonNode advocateNode : advocateDetailsNode) {
+				JsonNode advocateListNode = advocateNode.path("data")
+						.path("advocateBarRegNumberWithName");
+				if (advocateListNode.isArray()) {
+					for (JsonNode advocateInfoNode : advocateListNode) {
+						String individualId = advocateInfoNode.path("individualId").asText();
+						if (!individualId.isEmpty()) {
+							individualIds.add(individualId);
+						}
+					}
+				}
+			}
+		}
+
+		return individualIds;
+	}
+
+	private List<String> callIndividualService(RequestInfo requestInfo, List<String> individualIds) {
+
+		List<String> mobileNumber = new ArrayList<>();
+		for(String id : individualIds){
+			List<Individual> individuals = individualService.getIndividualsByIndividualId(requestInfo, id);
+			if(individuals.get(0).getMobileNumber() != null){
+				mobileNumber.add(individuals.get(0).getMobileNumber());
+			}
+		}
+		return mobileNumber;
+	}
+
+	private SmsTemplateData enrichSmsTemplateData(Map<String, String> details) {
+		return SmsTemplateData.builder()
+				.cmpNumber(details.get("cmpNumber")).build();
+	}
+
+	public CaseSearchRequest createCaseSearchRequest(RequestInfo requestInfo, String filingNumber) {
+		CaseSearchRequest caseSearchRequest = new CaseSearchRequest();
+		caseSearchRequest.setRequestInfo(requestInfo);
+		CaseCriteria caseCriteria = CaseCriteria.builder().filingNumber(filingNumber).defaultFields(false).build();
+		caseSearchRequest.addCriteriaItem(caseCriteria);
+		return caseSearchRequest;
+	}
+
 
 
     public Map<String, String> processEntity(String entityType, String referenceId, String status, String action, Object object, JSONObject requestInfo) {
