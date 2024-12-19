@@ -94,5 +94,18 @@ public class ServiceConstants {
     public static final String ERROR_WHILE_FETCHING_FROM_CASE ="ERROR_WHILE_FETCHING_FROM_CASE";
 
     public static final String REQUEST_INFO = "RequestInfo";
+    public static final String DELIVERED = "DELIVERED";
+    public static final String NOTICE_DELIVERED = "NOTICE_DELIVERED";
+    public static final String NOTICE_NOT_DELIVERED = "NOTICE_NOT_DELIVERED";
+    public static final String RE_ISSUE = "RE_ISSUE";
+
+    public static final String NOTIFICATION_ENG_LOCALE_CODE = "en_IN";
+
+    public static final String NOTIFICATION_MODULE_CODE = "notification";
+    public static final String NOTIFICATION_LOCALIZATION_CODES_JSONPATH = "$.messages.*.code";
+    public static final String NOTIFICATION_LOCALIZATION_MSGS_JSONPATH = "$.messages.*.message";
+
+    public static final String INDIVIDUAL_UTILITY_EXCEPTION = "INDIVIDUAL_UTILITY_EXCEPTION";
+
 
 }

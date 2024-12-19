@@ -176,4 +176,27 @@ public class Configuration {
 
     @Value("${egov.case.search.endpoint}")
     private String caseSearchPath;
+
+    //Localization
+    @Value("${egov.localization.host}")
+    private String localizationHost;
+
+    @Value("${egov.localization.context.path}")
+    private String localizationContextPath;
+
+    @Value("${egov.localization.search.endpoint}")
+    private String localizationSearchEndpoint;
+
+    @Value("${egov.sms.notification.notice.delivered.template.id}")
+    private String smsNotificationNoticeDeliveredTemplateId;
+
+    @Value("${egov.sms.notification.notice.delivery.failed.template.id}")
+    private String smsNotificationNoticeNotDeliveredTemplateId;
+
+    //Individual Service
+    @Value("${egov.individual.host}")
+    private String individualHost;
+
+    @Value("${egov.individual.search.path}")
+    private String individualSearchEndpoint;
 }
