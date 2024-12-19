@@ -4,6 +4,8 @@ package org.pucar.dristi.config;
 import org.springframework.stereotype.Component;
 
 import java.math.BigDecimal;
+import java.util.Arrays;
+import java.util.List;
 
 
 @Component
@@ -81,5 +83,41 @@ public class ServiceConstants {
     public static final String INVALID_FILESTORE_ID = "INVALID_FILESTORE_ID";
     public static final String INVALID_DOCUMENT_DETAILS = "Invalid document details";
     public static final String DELAY_CONDONATION = "DELAY_CONDONATION";
+
+    public static final String INDIVIDUAL_UTILITY_EXCEPTION = "INDIVIDUAL_UTILITY_EXCEPTION";
+    public static final String NOTIFICATION_ENG_LOCALE_CODE = "en_IN";
+    public static final String NOTIFICATION_MODULE_CODE = "notification";
+    public static final String NOTIFICATION_LOCALIZATION_CODES_JSONPATH = "$.messages.*.code";
+    public static final String NOTIFICATION_LOCALIZATION_MSGS_JSONPATH = "$.messages.*.message";
+    public static final String RESPONDENT = "RESPONDENT";
+    public static final String COMPLAINANT = "COMPLAINANT";
+    public static final String PENDINGREVIEW = "PENDINGREVIEW";
+    public static final String PENDINGRESPONSE = "PENDINGRESPONSE";
+    public static final String RE_SCHEDULE = "RE_SCHEDULE";
+    public static final String RESCHEDULE_REQUEST_SUBMITTED = "RESCHEDULE_REQUEST_SUBMITTED";
+    public static final String CHECKOUT_REQUEST = "CHECKOUT_REQUEST";
+    public static final String PRODUCTION_DOCUMENTS = "PRODUCTION_DOCUMENTS";
+    public static final String EXTENSION_SUBMISSION_DEADLINE = "EXTENSION_SUBMISSION_DEADLINE";
+    public static final String OTHERS = "OTHERS";
+    public static final String EXTENSION_SUBMISSION_DEADLINE_SUBMITTED = "EXTENSION_SUBMISSION_DEADLINE_SUBMITTED";
+    public static final String EXTENSION_SUBMISSION_DEADLINE_REJECTED = "EXTENSION_SUBMISSION_DEADLINE_REJECTED";
+    public static final String EXTENSION_SUBMISSION_DEADLINE_ACCEPTED = "EXTENSION_SUBMISSION_DEADLINE_ACCEPTED";
+    public static final String RESCHEDULE_REQUEST_REJECTED = "RESCHEDULE_REQUEST_REJECTED_REQUESTING_PARTY,RESCHEDULE_REQUEST_REJECTED_OPPONENT_PARTY";
+    public static final String RESCHEDULE_REQUEST_ACCEPTED = "RESCHEDULE_REQUEST_ACCEPTED_REQUESTING_PARTY,RESCHEDULE_REQUEST_ACCEPTED_OPPONENT_PARTY";
+    public static final String RESCHEDULE_REQUEST_REJECTED_REQUESTING_PARTY = "RESCHEDULE_REQUEST_REJECTED_REQUESTING_PARTY";
+    public static final String RESCHEDULE_REQUEST_REJECTED_OPPONENT_PARTY = "RESCHEDULE_REQUEST_REJECTED_OPPONENT_PARTY";
+    public static final String RESCHEDULE_REQUEST_ACCEPTED_REQUESTING_PARTY = "RESCHEDULE_REQUEST_ACCEPTED_REQUESTING_PARTY";
+    public static final String RESCHEDULE_REQUEST_ACCEPTED_OPPONENT_PARTY = "RESCHEDULE_REQUEST_ACCEPTED_OPPONENT_PARTY";
+    public static final String CHECKOUT_REQUEST_ACCEPTED = "CHECKOUT_REQUEST_ACCEPTED";
+    public static final String CHECKOUT_REQUEST_REJECTED = "CHECKOUT_REQUEST_REJECTED";
+    public static final String EVIDENCE_SUBMITTED = "EVIDENCE_SUBMITTED";
+    public static final String RESPONSE_REQUIRED = "RESPONSE_REQUIRED";
+    public static final String VOLUNTARY_SUBMISSION_SUBMITTED = "VOLUNTARY_SUBMISSION_SUBMITTED";
+    public static final String VARIABLE_SUBMISSION_SUBMITTED = "VARIABLE_SUBMISSION_SUBMITTED";
+    public static final String VOLUNTARY_SUBMISSION_REJECTED = "VOLUNTARY_SUBMISSION_REJECTED";
+    public static final String VARIABLE_SUBMISSION_REJECTED = "VARIABLE_SUBMISSION_REJECTED";
+    public static final String VOLUNTARY_SUBMISSION_ACCEPTED = "VOLUNTARY_SUBMISSION_ACCEPTED";
+    public static final String VARIABLE_SUBMISSION_ACCEPTED = "VARIABLE_SUBMISSION_ACCEPTED";
+    public static final List<String> DEFINED_VOLUNTARY_SUBMISSIONS = Arrays.asList("RE_SCHEDULE","CHECKOUT_REQUEST", "EXTENSION_SUBMISSION_DEADLINE");
 
 }

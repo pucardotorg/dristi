@@ -8,6 +8,7 @@ import org.pucar.dristi.config.Configuration;
 import org.pucar.dristi.enrichment.ApplicationEnrichment;
 import org.pucar.dristi.kafka.Producer;
 import org.pucar.dristi.repository.ApplicationRepository;
+import org.pucar.dristi.util.SmsNotificationUtil;
 import org.pucar.dristi.validator.ApplicationValidator;
 import org.pucar.dristi.web.models.*;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -28,6 +29,7 @@ public class ApplicationService {
     private final WorkflowService workflowService;
     private final Configuration config;
     private final Producer producer;
+    private final SmsNotificationUtil smsNotificationUtil;
 
     @Autowired
     public ApplicationService(
@@ -36,13 +38,14 @@ public class ApplicationService {
             ApplicationRepository applicationRepository,
             WorkflowService workflowService,
             Configuration config,
-            Producer producer) {
+            Producer producer, SmsNotificationUtil smsNotificationUtil) {
         this.validator = validator;
         this.enrichmentUtil = enrichmentUtil;
         this.applicationRepository = applicationRepository;
         this.workflowService = workflowService;
         this.config = config;
         this.producer = producer;
+        this.smsNotificationUtil = smsNotificationUtil;
     }
 
     public Application createApplication(ApplicationRequest body) {
@@ -82,6 +85,7 @@ public class ApplicationService {
                 enrichmentUtil.enrichApplicationNumberByCMPNumber(applicationRequest);
             }
 
+            smsNotificationUtil.callNotificationService(applicationRequest, application.getStatus(), application.getApplicationType());
             producer.push(config.getApplicationUpdateTopic(), applicationRequest);
 
             return applicationRequest.getApplication();

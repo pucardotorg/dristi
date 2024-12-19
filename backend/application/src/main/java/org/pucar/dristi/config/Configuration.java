@@ -162,4 +162,75 @@ public class Configuration {
     @Value("${egov.workflow.delay.condonation.business.service.name}")
     private String delayCondonationBusinessServiceName;
 
+    //Localization
+    @Value("${egov.localization.host}")
+    private String localizationHost;
+
+    @Value("${egov.localization.context.path}")
+    private String localizationContextPath;
+
+    @Value("${egov.localization.search.endpoint}")
+    private String localizationSearchEndpoint;
+
+    //Individual Service
+    @Value("${egov.individual.host}")
+    private String individualHost;
+
+    @Value("${egov.individual.search.path}")
+    private String individualSearchEndpoint;
+
+    @Value("${egov.sms.notification.checkout.request.rejected.template.id}")
+    private String smsNotificationCheckoutRequestRejectedTemplateId;
+
+    @Value("${egov.sms.notification.checkout.request.accepted.template.id}")
+    private String smsNotificationCheckoutRequestAcceptedTemplateId;
+
+    @Value("${egov.sms.notification.extension.deadline.request.submitted.template.id}")
+    private String smsNotificationExtensionApplicationSubmittedTemplateId;
+
+    @Value("${egov.sms.notification.extension.deadline.request.rejected.template.id}")
+    private String smsNotificationExtensionApplicationRejectedTemplateId;
+
+    @Value("${egov.sms.notification.extension.deadline.request.accepted.template.id}")
+    private String smsNotificationExtensionApplicationAcceptedTemplateId;
+
+    @Value("${egov.sms.notification.reschedule.request.submitted.template.id}")
+    private String smsNotificationRescheduleRequestSubmittedTemplateId;
+
+    @Value("${egov.sms.notification.reschedule.request.rejected.template.id}")
+    private String smsNotificationRescheduleRequestRejectedTemplateId;
+
+    @Value("${egov.sms.notification.reschedule.request.accepted.template.id}")
+    private String smsNotificationRescheduleRequestAcceptedTemplateId;
+
+    @Value("${egov.sms.notification.reschedule.request.rejected.opponent.template.id}")
+    private String smsNotificationRescheduleRequestRejectedOpponentTemplateId;
+
+    @Value("${egov.sms.notification.reschedule.request.accepted.opponent.template.id}")
+    private String smsNotificationRescheduleRequestAcceptedOpponentTemplateId;
+
+    @Value("${egov.sms.notification.variable.submission.submitted.template.id}")
+    private String smsNotificationVariableSubmissionSubmittedTemplateId;
+
+    @Value("${egov.sms.notification.variable.submission.rejected.template.id}")
+    private String smsNotificationVariableSubmissionRejectedTemplateId;
+
+    @Value("${egov.sms.notification.variable.submission.accepted.template.id}")
+    private String smsNotificationVariableSubmissionAcceptedTemplateId;
+
+    @Value("${egov.sms.notification.voluntary.submission.submitted.template.id}")
+    private String smsNotificationVoluntarySubmissionSubmittedTemplateId;
+
+    @Value("${egov.sms.notification.voluntary.submission.rejected.template.id}")
+    private String smsNotificationVoluntarySubmissionRejectedTemplateId;
+
+    @Value("${egov.sms.notification.voluntary.submission.accepted.template.id}")
+    private String smsNotificationVoluntarySubmissionAcceptedTemplateId;
+
+    @Value("${egov.sms.notification.evidence.submitted.template.id}")
+    private String smsNotificationEvidenceSubmittedTemplateId;
+
+    @Value("${egov.sms.notification.response.required.template.id}")
+    private String smsNotificationResponseRequiredTemplateId;
+
 }
