@@ -69,6 +69,60 @@ public class EvidenceQueryBuilder {
         }
     }
 
+    public String getCitizenQuery(List<String> statusList, EvidenceSearchCriteria searchCriteria, List<Object> preparedStmtList, List<Integer> preparedStmtArgList) {
+        StringBuilder queryBuilder = new StringBuilder();
+        String loggedInUserUuid = searchCriteria.getUserUuid();
+
+        if (searchCriteria.getOwner() == null) {
+            queryBuilder.append(" AND ( ");
+            queryBuilder.append(addCitizenCriteria(loggedInUserUuid, searchCriteria.getFilingNumber(), preparedStmtList, preparedStmtArgList));
+            queryBuilder.append(getStatusQuery(statusList, preparedStmtList, preparedStmtArgList));
+            queryBuilder.append(" )) ");
+        }
+
+        else if(!searchCriteria.getOwner().toString().equals(loggedInUserUuid)) {
+            queryBuilder.append(getStatusQuery(statusList, preparedStmtList, preparedStmtArgList));
+        }
+
+        return queryBuilder.toString();
+    }
+
+    private String addCitizenCriteria(String loggedInUserUuid, String filingNumber, List<Object> preparedStmtList, List<Integer> preparedStmtArgList) {
+        StringBuilder queryBuilder = new StringBuilder();
+        queryBuilder.append(" art.createdBy = ? ");
+        preparedStmtList.add(loggedInUserUuid);
+        preparedStmtArgList.add(Types.VARCHAR);
+
+        queryBuilder.append(" OR ( art.createdBy <> ? ");
+        preparedStmtList.add(loggedInUserUuid);
+        preparedStmtArgList.add(Types.VARCHAR);
+
+        queryBuilder.append(" AND art.filingNumber = ? ");
+        preparedStmtList.add(filingNumber);
+        preparedStmtArgList.add(Types.VARCHAR);
+
+        return queryBuilder.toString();
+    }
+
+    public String getStatusQuery(List<String> statusList, List<Object> preparedStmtList, List<Integer> preparedStmtArgsList) {
+        StringBuilder queryBuilder = new StringBuilder(" AND ");
+
+        if (statusList != null && !statusList.isEmpty()) {
+            queryBuilder.append(" (status NOT IN (");
+            for (int i = 0; i < statusList.size(); i++) {
+                queryBuilder.append("?");
+                if (i < statusList.size() - 1) {
+                    queryBuilder.append(", ");
+                }
+                preparedStmtList.add(statusList.get(i));
+                preparedStmtArgsList.add(java.sql.Types.VARCHAR);
+            }
+            queryBuilder.append(" ) OR ");
+        }
+        queryBuilder.append(" status IS NULL )");
+
+        return queryBuilder.toString();
+    }
     void addArtifactPartialCriteria(String criteria, StringBuilder query, List<Object> preparedStmtList, boolean firstCriteria, List<Integer> preparedStmtArgList) {
         if (criteria != null && !criteria.isEmpty()) {
             addClauseIfRequired(query, firstCriteria);

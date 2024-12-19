@@ -35,6 +35,8 @@ public class ServiceConstants {
 	public static final String INVALID_DATE_FORMAT_MESSAGE = "Failed to parse date format in user";
 	public static final String CITIZEN_UPPER = "CITIZEN";
 	public static final String CITIZEN_LOWER = "Citizen";
+	public static final String EMPLOYEE_UPPER = "EMPLOYEE";
+	public static final String PENDING_E_SIGN = "PENDING_E-SIGN";
 	public static final String USER = "user";
 	public static final String COMMENT_ADD_ERR = "COMMENT_ADD_ERR";
 	public static final String COMPLAINANT = "COMPLAINANT";

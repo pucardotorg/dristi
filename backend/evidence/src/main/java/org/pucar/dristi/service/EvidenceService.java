@@ -6,6 +6,7 @@ import net.minidev.json.JSONArray;
 import net.minidev.json.JSONObject;
 import org.egov.common.contract.models.AuditDetails;
 import org.egov.common.contract.request.RequestInfo;
+import org.egov.common.contract.request.User;
 import org.egov.tracer.model.CustomException;
 import org.pucar.dristi.config.Configuration;
 import org.pucar.dristi.enrichment.EvidenceEnrichment;
@@ -103,6 +104,7 @@ public class EvidenceService {
     public List<Artifact> searchEvidence(RequestInfo requestInfo, EvidenceSearchCriteria evidenceSearchCriteria, Pagination pagination) {
         try {
             // Fetch applications from database according to the given search criteria
+            enrichEvidenceSearch(requestInfo, evidenceSearchCriteria);
             List<Artifact> artifacts = repository.getArtifacts(evidenceSearchCriteria, pagination);
 
             // If no applications are found matching the given criteria, return an empty list
@@ -117,6 +119,21 @@ public class EvidenceService {
         }
     }
 
+    private void enrichEvidenceSearch(RequestInfo requestInfo, EvidenceSearchCriteria searchCriteria) {
+        if(requestInfo.getUserInfo() != null) {
+            User userInfo = requestInfo.getUserInfo();
+            String userType = userInfo.getType();
+            switch (userType.toUpperCase()) {
+                case CITIZEN_UPPER -> {
+                    searchCriteria.setIsCitizen(true);
+                    searchCriteria.setUserUuid(userInfo.getUuid());
+                }
+                case EMPLOYEE_UPPER -> {
+                    searchCriteria.setIsCourtEmployee(true);
+                }
+            }
+        }
+    }
     public Artifact updateEvidence(EvidenceRequest evidenceRequest) {
         try {
             Artifact existingApplication = validateExistingEvidence(evidenceRequest);
