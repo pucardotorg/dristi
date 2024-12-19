@@ -242,7 +242,7 @@ public class IndexerUtils {
                 }
                 individualIds.addAll(representativeIds);
                 org.pucar.dristi.web.models.SmsTemplateData smsTemplateData = enrichSmsTemplateData(details);
-                Set<String> phonenumbers = callIndividualService(request, individualIds);
+                List<String> phonenumbers = callIndividualService(request, new ArrayList<>(individualIds));
                 for (String number : phonenumbers) {
                     notificationService.sendNotification(request, smsTemplateData, PENDING_TASK_CREATED, number);
                 }
