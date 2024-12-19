@@ -165,4 +165,17 @@ public class Configuration {
 
     @Value("${egov.idgen.hearingFormat}")
     private String hearingFormat;
+
+    //Localization
+    @Value("${egov.localization.host}")
+    private String localizationHost;
+
+    @Value("${egov.localization.context.path}")
+    private String localizationContextPath;
+
+    @Value("${egov.localization.search.endpoint}")
+    private String localizationSearchEndpoint;
+
+    @Value("${egov.sms.notification.hearing.adjourned.template.id}")
+    private String smsNotificationHearingAdjournedTemplateId;
 }

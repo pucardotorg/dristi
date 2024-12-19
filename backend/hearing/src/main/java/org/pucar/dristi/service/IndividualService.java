@@ -73,11 +73,11 @@ public class IndividualService {
             return Collections.emptyList();
         }
     }
-    private StringBuilder buildIndividualSearchUri(RequestInfo requestInfo, int limit, int offset) {
+    private StringBuilder buildIndividualSearchUri(RequestInfo requestInfo, List<String> individualId) {
         return new StringBuilder(config.getIndividualHost())
                 .append(config.getIndividualSearchEndpoint())
-                .append("?limit=").append(limit)
-                .append("&offset=").append(offset)
+                .append("?limit=").append(individualId.size())
+                .append("&offset=0")
                 .append("&tenantId=").append(requestInfo.getUserInfo().getTenantId())
                 .append("&includeDeleted=true");
     }

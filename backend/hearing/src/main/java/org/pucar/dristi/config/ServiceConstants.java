@@ -74,5 +74,14 @@ public class ServiceConstants {
     public static final String PDF_UTILITY_EXCEPTION = "PDF_UTILITY_EXCEPTION";
     public static final String WITNESS_DEPOSITION_UPDATE_EXCEPTION = "Exception while uploading witness deposition pdf";
 
+    public static final String ACCUSED = "ACCUSED";
+    public static final String COMPLAINANT = "COMPLAINANT";
+    public static final String COMPLETED = "COMPLETED";
+    public static final String HEARING_ADJOURNED = "HEARING_ADJOURNED";
+    public static final String NOTIFICATION_ENG_LOCALE_CODE = "en_IN";
+    public static final String NOTIFICATION_MODULE_CODE = "notification";
+    public static final String NOTIFICATION_LOCALIZATION_CODES_JSONPATH = "$.messages.*.code";
+    public static final String NOTIFICATION_LOCALIZATION_MSGS_JSONPATH = "$.messages.*.message";
+
 
 }
