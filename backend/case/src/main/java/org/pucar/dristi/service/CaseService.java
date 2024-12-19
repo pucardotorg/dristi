@@ -10,7 +10,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.egov.common.contract.models.AuditDetails;
 import org.egov.common.contract.request.RequestInfo;
 import org.egov.common.contract.request.User;
-import org.egov.common.models.individual.Individual;
 import org.egov.tracer.model.CustomException;
 import org.jetbrains.annotations.NotNull;
 import org.pucar.dristi.config.Configuration;
@@ -271,21 +270,21 @@ public class CaseService {
 
     }
 
-//    public void callNotificationService(CaseRequest caseRequest, String messageCode) {
-//        try {
-//            CourtCase courtCase = caseRequest.getCases();
-//            Set<String> IndividualIds = getLitigantIndividualId(courtCase);
-//            getAdvocateIndividualId(caseRequest, IndividualIds);
-//            Set<String> phonenumbers = callIndividualService(caseRequest.getRequestInfo(), IndividualIds);
-//            SmsTemplateData smsTemplateData = enrichSmsTemplateData(caseRequest.getCases());
-//            for (String number : phonenumbers) {
-//                notificationService.sendNotification(caseRequest.getRequestInfo(), smsTemplateData, messageCode, number);
-//            }
-//        } catch (Exception e) {
-//            // Log the exception and continue the execution without throwing
-//            log.error("Error occurred while sending notification: {}", e.toString());
-//        }
-//    }
+    public void callNotificationService(CaseRequest caseRequest, String messageCode) {
+        try {
+            CourtCase courtCase = caseRequest.getCases();
+            Set<String> IndividualIds = getLitigantIndividualId(courtCase);
+            getAdvocateIndividualId(caseRequest, IndividualIds);
+            Set<String> phonenumbers = callIndividualService(caseRequest.getRequestInfo(), IndividualIds);
+            SmsTemplateData smsTemplateData = enrichSmsTemplateData(caseRequest.getCases());
+            for (String number : phonenumbers) {
+                notificationService.sendNotification(caseRequest.getRequestInfo(), smsTemplateData, messageCode, number);
+            }
+        } catch (Exception e) {
+            // Log the exception and continue the execution without throwing
+            log.error("Error occurred while sending notification: {}", e.toString());
+        }
+    }
 
     private void getAdvocateIndividualId(CaseRequest caseRequest, Set<String> individualIds) {
 
@@ -338,30 +337,31 @@ public class CaseService {
         return mobileNumber;
     }
 
-    public void callNotificationService(CaseRequest caseRequest, String messageCode) {
-        try {
-            CourtCase courtCase = caseRequest.getCases();
-            Object additionalDetailsObject = courtCase.getAdditionalDetails();
-            String jsonData = objectMapper.writeValueAsString(additionalDetailsObject);
-            JsonNode rootNode = objectMapper.readTree(jsonData);
-
-            List<String> individualIds = extractIndividualIds(rootNode);
-
-            List<String> phonenumbers = callIndividualService(caseRequest.getRequestInfo(), individualIds);
-            SmsTemplateData smsTemplateData = enrichSmsTemplateData(caseRequest.getCases());
-            for (String number : phonenumbers) {
-                notificationService.sendNotification(caseRequest.getRequestInfo(), smsTemplateData, messageCode, number);
-            }
-        } catch (Exception e) {
-            // Log the exception and continue the execution without throwing
-            log.error("Error occurred while sending notification: {}", e.toString());
-        }
-    }
+//    public void callNotificationService(CaseRequest caseRequest, String messageCode) {
+//        try {
+//            CourtCase courtCase = caseRequest.getCases();
+//            Object additionalDetailsObject = courtCase.getAdditionalDetails();
+//            String jsonData = objectMapper.writeValueAsString(additionalDetailsObject);
+//            JsonNode rootNode = objectMapper.readTree(jsonData);
+//
+//            List<String> individualIds = extractIndividualIds(rootNode);
+//
+//            List<String> phonenumbers = callIndividualService(caseRequest.getRequestInfo(), individualIds);
+//            SmsTemplateData smsTemplateData = enrichSmsTemplateData(caseRequest.getCases());
+//            for (String number : phonenumbers) {
+//                notificationService.sendNotification(caseRequest.getRequestInfo(), smsTemplateData, messageCode, number);
+//            }
+//        } catch (Exception e) {
+//            // Log the exception and continue the execution without throwing
+//            log.error("Error occurred while sending notification: {}", e.toString());
+//        }
+//    }
 
     private SmsTemplateData enrichSmsTemplateData(CourtCase cases) {
         return SmsTemplateData.builder()
                 .courtCaseNumber(cases.getCourtCaseNumber())
                 .cnrNumber(cases.getCnrNumber())
+                .cmpNumber(cases.getCmpNumber())
                 .efilingNumber(cases.getFilingNumber())
                 .tenantId(cases.getTenantId()).build();
     }
