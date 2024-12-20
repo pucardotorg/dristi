@@ -73,12 +73,19 @@ public class CaseUtil {
 		try {
 			response = restTemplate.postForObject(uri.toString(), caseSearchRequest, Map.class);
 			JsonNode jsonNode = mapper.readTree(mapper.writeValueAsString(response));
-			caseList = jsonNode.get("criteria").get(0).get("responseList");
+			JsonNode criteria = jsonNode.get("criteria");
+			if (criteria == null || criteria.isEmpty() || !criteria.get(0).has("responseList")) {
+				throw new CustomException(ERROR_WHILE_FETCHING_FROM_CASE, "Invalid response structure");
+			}
+			caseList = criteria.get(0).get("responseList");
+			if (caseList.isEmpty()) {
+				return null;
+			}
+			return caseList.get(0);
 		} catch (Exception e) {
 			log.error(ERROR_WHILE_FETCHING_FROM_CASE, e);
 			throw new CustomException(ERROR_WHILE_FETCHING_FROM_CASE, e.getMessage());
 		}
-		return caseList;
 	}
 
 	public JsonNode getLitigants(JsonNode caseList) {

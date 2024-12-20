@@ -202,8 +202,11 @@ public class TaskService {
 
     private void callNotificationService(TaskRequest taskRequest, String messageCode) {
         try {
-            JsonNode caseDetails = caseUtil.searchCaseDetails(taskRequest.getRequestInfo(), taskRequest.getTask().getTenantId(), null, taskRequest.getTask().getFilingNumber(), null);
-
+            JsonNode caseList = caseUtil.searchCaseDetails(taskRequest.getRequestInfo(), taskRequest.getTask().getTenantId(), null, taskRequest.getTask().getFilingNumber(), null);
+            if(caseList.isEmpty()) {
+                throw new CustomException(ERROR_WHILE_FETCHING_FROM_CASE, "Case Not Found!");
+            }
+            JsonNode caseDetails = caseList.get(0);
             Object taskDetailsObject = taskRequest.getTask().getTaskDetails();
             JsonNode taskDetails = objectMapper.readTree(objectMapper.writeValueAsString(taskDetailsObject));
 

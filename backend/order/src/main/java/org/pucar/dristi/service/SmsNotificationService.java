@@ -113,6 +113,7 @@ public class SmsNotificationService {
         smsDetails.put("cmpNumber", smsTemplateData.getCmpNumber());
         smsDetails.put("hearingDate", smsTemplateData.getHearingDate());
         smsDetails.put("tenantId", smsTemplateData.getTenantId());
+        smsDetails.put("submissionDate", smsTemplateData.getSubmissionDate());
         smsDetails.put("mobileNumber", mobileNumber);
 
         return smsDetails;

@@ -179,7 +179,7 @@ public class OrderRegistrationService {
             String jsonData = objectMapper.writeValueAsString(additionalDetailsObject);
             JsonNode additionalData = objectMapper.readTree(jsonData);
             JsonNode formData = additionalData.path("formdata");
-            String submissionType = formData.has("documentType") ? formData.path("documentType").path("value").asText() : null;
+            String submissionType = formData.has("documentType") ? formData.path("documentType").path("value").asText() : "";
             boolean hearingCompleted = formData.has("lastHearingTranscript");
 
 
