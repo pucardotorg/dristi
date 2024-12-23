@@ -1,0 +1,28 @@
+[
+  {
+    "tenantId": "kl",
+    "moduleName": "common-masters",
+    "masterName": "PendingTaskType",
+    "mdmsPayload": [
+      {
+        "tenantId": "kl",
+        "schemaCode": "common-masters.PendingTaskType",
+        "data":{
+          "id": "18",
+          "actor": "Judge/CMO",
+          "state": "PENDINGAPPROVAL",
+          "isgeneric": false,
+          "pendingTask": "Review Delay Condonation application",
+          "closerAction": [
+            "REJECT", "APPROVE", "ABANDON"
+          ],
+          "triggerAction": [
+            "CREATE"
+          ],
+          "workflowModule": "delay-condonation-submission"
+        },
+        "isActive": true
+      }
+    ]
+  }
+]
