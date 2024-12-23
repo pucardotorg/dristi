@@ -114,7 +114,7 @@ public class WorkflowServiceTest {
         when(mockApplication.getReferenceId()).thenReturn(null);
 
         // Act
-        String result = workflowService.getBusinessServiceFromAppplication(mockApplication);
+        String result = workflowService.getBusinessServiceFromAppplication(mockApplication, new RequestInfo());
 
         // Assert
         assertEquals(config.getAsyncVoluntarySubBusinessServiceName(), result);
@@ -127,7 +127,7 @@ public class WorkflowServiceTest {
         when(mockApplication.isResponseRequired()).thenReturn(true);
 
         // Act
-        String result = workflowService.getBusinessServiceFromAppplication(mockApplication);
+        String result = workflowService.getBusinessServiceFromAppplication(mockApplication, new RequestInfo());
 
         // Assert
         assertEquals(config.getAsyncOrderSubWithResponseBusinessServiceName(), result);
@@ -140,7 +140,7 @@ public class WorkflowServiceTest {
         when(mockApplication.isResponseRequired()).thenReturn(false);
 
         // Act
-        String result = workflowService.getBusinessServiceFromAppplication(mockApplication);
+        String result = workflowService.getBusinessServiceFromAppplication(mockApplication, new RequestInfo());
 
         // Assert
         assertEquals(config.getAsyncOrderSubBusinessServiceName(), result);

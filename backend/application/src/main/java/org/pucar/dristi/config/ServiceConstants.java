@@ -44,6 +44,7 @@ public class ServiceConstants {
     public static final String INVALID_DATE_FORMAT_CODE = "INVALID_DATE_FORMAT";
     public static final String INVALID_DATE_FORMAT_MESSAGE = "Failed to parse date format in user";
     public static final String CITIZEN_UPPER = "CITIZEN";
+    public static final String JUDGE_ROLE = "JUDGE_ROLE";
     public static final String CITIZEN_LOWER = "Citizen";
     public static final String USER = "user";
 

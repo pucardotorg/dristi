@@ -48,7 +48,7 @@ public class WorkflowService {
     public void updateWorkflowStatus(ApplicationRequest applicationRequest) {
         Application application = applicationRequest.getApplication();
         try {
-                ProcessInstance processInstance = getProcessInstance(application);
+                ProcessInstance processInstance = getProcessInstance(application , applicationRequest.getRequestInfo());
                 ProcessInstanceRequest workflowRequest = new ProcessInstanceRequest(applicationRequest.getRequestInfo(), Collections.singletonList(processInstance));
                 log.info("ProcessInstance Request :: {}", workflowRequest);
                 String state=callWorkFlow(workflowRequest).getState();
@@ -76,7 +76,7 @@ public class WorkflowService {
         }
     }
 
-    private ProcessInstance getProcessInstance(Application application) {
+    private ProcessInstance getProcessInstance(Application application, RequestInfo requestInfo) {
         try {
             Workflow workflow = application.getWorkflow();
             ProcessInstance processInstance = new ProcessInstance();
@@ -84,7 +84,7 @@ public class WorkflowService {
             processInstance.setAction(workflow.getAction());
             processInstance.setModuleName("pucar");
             processInstance.setTenantId(application.getTenantId());
-            processInstance.setBusinessService(getBusinessServiceFromAppplication(application));
+            processInstance.setBusinessService(getBusinessServiceFromAppplication(application, requestInfo));
             processInstance.setDocuments(workflow.getDocuments());
             processInstance.setComment(workflow.getComments());
             if (!CollectionUtils.isEmpty(workflow.getAssignes())) {
@@ -99,11 +99,11 @@ public class WorkflowService {
             throw new CustomException(WORKFLOW_SERVICE_EXCEPTION,e.getMessage());
         }
     }
-    String getBusinessServiceFromAppplication(Application application) {
-        if(DELAY_CONDONATION.equalsIgnoreCase(application.getApplicationType())){
+    String getBusinessServiceFromAppplication(Application application, RequestInfo requestInfo) {
+        if(DELAY_CONDONATION.equalsIgnoreCase(application.getApplicationType()) && isJudge(requestInfo)){
             return config.getDelayCondonationBusinessServiceName();
         }else{
-            if(application.getReferenceId() == null){
+            if((DELAY_CONDONATION.equalsIgnoreCase(application.getApplicationType()) && isCitizen(requestInfo))|| application.getReferenceId() == null){
                 return config.getAsyncVoluntarySubBusinessServiceName();
             }
             else if(application.isResponseRequired()){
@@ -114,6 +114,14 @@ public class WorkflowService {
             }
         }
 
+    }
+
+    private boolean isJudge(RequestInfo requestInfo) {
+        return requestInfo.getUserInfo().getRoles().stream().anyMatch(role->JUDGE_ROLE.equalsIgnoreCase(role.getCode()));
+    }
+
+    private boolean isCitizen(RequestInfo requestInfo) {
+        return requestInfo.getUserInfo().getRoles().stream().anyMatch(role->CITIZEN_UPPER.equalsIgnoreCase(role.getCode()));
     }
 
     public ProcessInstance getCurrentWorkflow(RequestInfo requestInfo, String tenantId, String businessId) {
