@@ -17,6 +17,8 @@ import useGetHearingLink from "../../hooks/hearings/useGetHearingLink";
 import isEmpty from "lodash/isEmpty";
 
 import TranscriptComponent from "./Transcription";
+import TasksComponent from "../../../../home/src/components/TaskComponent";
+import { SubmissionWorkflowState } from "@egovernments/digit-ui-module-dristi/src/Utils/submissionWorkflow";
 const SECOND = 1000;
 
 const InsideHearingMainPage = () => {
@@ -39,6 +41,8 @@ const InsideHearingMainPage = () => {
   const [filingNumber, setFilingNumber] = useState("");
   const [witnessModalOpen, setWitnessModalOpen] = useState(false);
   const [signedDocumentUploadID, setSignedDocumentUploadID] = useState("");
+  const [isItemPending, setIsItemPending] = useState(false);
+
   const { t } = useTranslation();
 
   const onCancel = () => {
@@ -56,6 +60,8 @@ const InsideHearingMainPage = () => {
     history.push(`/${contextPath}/${userType}/home/pending-task`);
   }
 
+  const userInfo = Digit?.UserService?.getUser?.()?.info;
+  const userInfoType = useMemo(() => (userInfo?.type === "CITIZEN" ? "citizen" : "employee"), [userInfo]);
   const userRoles = Digit?.UserService?.getUser?.()?.info?.roles || [];
 
   const userHasRole = (userRole) => {
@@ -120,6 +126,35 @@ const InsideHearingMainPage = () => {
     filingNumber,
     Boolean(filingNumber)
   );
+
+  const { data: applicationData, isLoading: isApplicationLoading } = Digit.Hooks.submissions.useSearchSubmissionService(
+    {
+      criteria: {
+        filingNumber,
+        tenantId,
+      },
+      tenantId,
+    },
+    {},
+    filingNumber + "allApplications",
+    filingNumber
+  );
+
+  const isDelayApplicationPending = useMemo(() => {
+    return Boolean(
+      applicationData?.applicationList?.some(
+        (item) => item?.applicationType === "DELAY_CONDONATION" && item?.status === SubmissionWorkflowState.PENDINGAPPROVAL
+      )
+    );
+  }, [applicationData]);
+
+  const isCaseInRegistrationStage = useMemo(() => {
+    return caseData?.criteria?.[0]?.responseList?.[0]?.substage === "REGISTRATION";
+  }, [caseData]);
+
+  const delayCondonationData = useMemo(() => caseData?.criteria?.[0]?.responseList?.[0]?.caseDetails?.delayApplications?.formdata?.[0]?.data, [
+    caseData,
+  ]);
 
   useEffect(() => {
     if (hearingsData) {
@@ -319,6 +354,8 @@ const InsideHearingMainPage = () => {
 
   const attendanceCount = useMemo(() => hearing?.attendees?.filter((attendee) => attendee.wasPresent)?.length || 0, [hearing]);
   const [isRecording, setIsRecording] = useState(false);
+  const [taskType, setTaskType] = useState({});
+
   const IsSelectedWitness = useMemo(() => {
     return !isEmpty(selectedWitness);
   }, [selectedWitness]);
@@ -335,6 +372,8 @@ const InsideHearingMainPage = () => {
             filingNumber={filingNumber}
             onAddParty={onClickAddWitness}
             hearingLink={hearingVcLink}
+            delayCondonationData={delayCondonationData}
+            isDelayApplicationPending={isDelayApplicationPending}
           ></EvidenceHearingHeader>
         </React.Fragment>
         {activeTab === "Witness Deposition" && (
@@ -489,6 +528,15 @@ const InsideHearingMainPage = () => {
             setTranscriptText={setTranscriptText}
           />
         )}
+        <TasksComponent
+          taskType={taskType}
+          setTaskType={setTaskType}
+          isLitigant={userRoles.includes("CITIZEN")}
+          uuid={userInfo?.uuid}
+          userInfoType={userInfoType}
+          filingNumber={filingNumber}
+          inCase={true}
+        />
       </div>
       <ActionBar>
         <div
@@ -574,7 +622,10 @@ const InsideHearingMainPage = () => {
               <Button
                 label={t("END_HEARING")}
                 variation={"primary"}
-                onButtonClick={handleEndHearingModal}
+                onButtonClick={() => {
+                  if (isDelayApplicationPending || isCaseInRegistrationStage) setIsItemPending(true);
+                  handleEndHearingModal();
+                }}
                 style={{ boxShadow: "none", backgroundColor: "#BB2C2F", border: "none", padding: "10px", width: "166px" }}
                 textStyles={{
                   fontFamily: "Roboto",
@@ -643,6 +694,7 @@ const InsideHearingMainPage = () => {
           transcriptText={transcriptText}
           disableTextArea={disableTextArea}
           setTranscriptText={setTranscriptText}
+          isItemPending={isItemPending}
         />
       )}
     </div>

@@ -46,6 +46,22 @@ const stateSla = {
   NOTICE: 3 * 24 * 3600 * 1000,
 };
 
+const delayCondonationStylsMain = {
+  padding: "6px 8px",
+  borderRadius: "999px",
+  backgroundColor: "#E9A7AA",
+};
+
+const delayCondonationTextStyle = {
+  margin: "0px",
+  fontFamily: "Roboto",
+  fontSize: "14px",
+  fontWeight: 400,
+  lineHeight: "16.41px",
+  textAlign: "center",
+  color: "#231F20",
+};
+
 const casePrimaryActions = [
   { action: "REGISTER", label: "CS_REGISTER" },
   { action: "ADMIT", label: "CS_ADMIT_CASE" },
@@ -173,6 +189,7 @@ const AdmittedCases = () => {
   const [showVoidModal, setShowVoidModal] = useState(false);
   const [downloadCasePdfLoading, setDownloadCasePdfLoading] = useState(false);
   const [voidReason, setVoidReason] = useState("");
+  const [isDelayApplicationPending, setIsDelayApplicationPending] = useState(false);
 
   const history = useHistory();
   const isCitizen = userRoles.includes("CITIZEN");
@@ -212,6 +229,8 @@ const AdmittedCases = () => {
     Boolean(caseId)
   );
   const caseDetails = useMemo(() => caseData?.criteria?.[0]?.responseList?.[0] || {}, [caseData]);
+  const delayCondonationData = useMemo(() => caseDetails?.caseDetails?.delayApplications?.formdata?.[0]?.data, [caseDetails]);
+
   const cnrNumber = useMemo(() => caseDetails?.cnrNumber || "", [caseDetails]);
 
   const showTakeAction = useMemo(() => userRoles.includes("ORDER_CREATOR") && !isCitizen && relevantStatuses.includes(caseDetails?.status), [
@@ -236,14 +255,21 @@ const AdmittedCases = () => {
 
   const nextActions = useMemo(() => workFlowDetails?.nextActions || [{}], [workFlowDetails]);
 
-  const primaryAction = useMemo(
-    () => casePrimaryActions?.find((action) => nextActions?.some((data) => data.action === action?.action)) || { action: "", label: "" },
-    [nextActions]
-  );
-  const secondaryAction = useMemo(
-    () => caseSecondaryActions?.find((action) => nextActions?.some((data) => data.action === action?.action)) || { action: "", label: "" },
-    [nextActions]
-  );
+  const primaryAction = useMemo(() => {
+    const action = casePrimaryActions?.find((action) => nextActions?.some((data) => data.action === action?.action)) || { action: "", label: "" };
+    if (isDelayApplicationPending && action.action === "ADMIT") {
+      action.label = "CS_ADMIT_APPROVE_DCA";
+    }
+    return action;
+  }, [nextActions, isDelayApplicationPending]);
+
+  const secondaryAction = useMemo(() => {
+    const action = caseSecondaryActions?.find((action) => nextActions?.some((data) => data.action === action?.action)) || { action: "", label: "" };
+    if (isDelayApplicationPending && action.action === "REJECT") {
+      action.label = "CS_REJECT_APPROVE_DCA";
+    }
+    return action;
+  }, [nextActions, isDelayApplicationPending]);
   const tertiaryAction = useMemo(
     () => caseTertiaryActions?.find((action) => nextActions?.some((data) => data.action === action?.action)) || { action: "", label: "" },
     [nextActions]
@@ -327,8 +353,6 @@ const AdmittedCases = () => {
       ) || [],
     [applicationData, onBehalfOfuuid]
   );
-
-  const [isDelayApplicationPending, setIsDelayApplicationPending] = useState(false);
 
   useMemo(() => {
     setIsDelayApplicationPending(
@@ -1449,10 +1473,10 @@ const AdmittedCases = () => {
       case "REGISTER":
         break;
       case "ADMIT":
-        if (isDelayApplicationPending) {
-          setShowPendingDelayApplication(true);
-          break;
-        }
+        // if (isDelayApplicationPending) {
+        //   setShowPendingDelayApplication(true);
+        //   break;
+        // }
         if (caseDetails?.status === "ADMISSION_HEARING_SCHEDULED") {
           const { hearingDate, hearingNumber } = await getHearingData();
           if (hearingNumber) {
@@ -1955,6 +1979,15 @@ const AdmittedCases = () => {
               </React.Fragment>
             )}
             <div className="sub-details-text">Code: {caseDetails?.accessCode}</div>
+            {delayCondonationData?.delayCondonationType?.code === "NO" && isJudge && (
+              <div className="delay-condonation-chip" style={delayCondonationStylsMain}>
+                <p style={delayCondonationTextStyle}>
+                  {delayCondonationData?.delayCondonationType?.isDcaSkippedInEFiling || isDelayApplicationPending
+                    ? t("DELAY_CONDONATION_FILED")
+                    : t("DELAY_CONDONATION_NOT_FILED")}
+                </p>
+              </div>
+            )}
           </div>
           <div className="make-submission-action" style={{ display: "flex", gap: 20, justifyContent: "space-between", alignItems: "center" }}>
             {isCitizen && (
@@ -2184,11 +2217,9 @@ const AdmittedCases = () => {
           handleOrdersTab={handleOrdersTab}
         />
       )}
-
       {showHearingTranscriptModal && (
         <HearingTranscriptModal t={t} hearing={currentHearing} setShowHearingTranscriptModal={setShowHearingTranscriptModal} />
       )}
-
       {showScheduleHearingModal && (
         <ScheduleHearing
           setUpdateCounter={setUpdateCounter}

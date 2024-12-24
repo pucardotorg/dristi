@@ -41,6 +41,22 @@ const caseSecondaryActions = [
 ];
 const caseTertiaryActions = [{ action: "ISSUE_ORDER", label: "ISSUE_NOTICE" }];
 
+const delayCondonationStylsMain = {
+  padding: "6px 8px",
+  borderRadius: "999px",
+  backgroundColor: "#E9A7AA",
+};
+
+const delayCondonationTextStyle = {
+  margin: "0px",
+  fontFamily: "Roboto",
+  fontSize: "14px",
+  fontWeight: 400,
+  lineHeight: "16.41px",
+  textAlign: "center",
+  color: "#231F20",
+};
+
 function CaseFileAdmission({ t, path }) {
   const [isDisabled, setIsDisabled] = useState(false);
   const history = useHistory();
@@ -80,6 +96,7 @@ function CaseFileAdmission({ t, path }) {
     Boolean(caseId)
   );
   const caseDetails = useMemo(() => caseFetchResponse?.criteria?.[0]?.responseList?.[0] || null, [caseFetchResponse]);
+  const delayCondonationData = useMemo(() => caseDetails?.caseDetails?.delayApplications?.formdata?.[0]?.data, [caseDetails]);
   const complainantPrimaryUUId = useMemo(
     () => caseDetails?.litigants?.find((item) => item?.partyType === "complainant.primary").additionalDetails?.uuid || "",
     [caseDetails]
@@ -756,7 +773,11 @@ function CaseFileAdmission({ t, path }) {
         },
       },
     };
-    return await DRISTIService.createApplication(applicationReqBody, { tenantId });
+    try {
+      return await DRISTIService.createApplication(applicationReqBody, { tenantId });
+    } catch (error) {
+      console.error("Failed to create applications :>> ", error);
+    }
   };
 
   const handleScheduleCase = async (props) => {
@@ -966,11 +987,17 @@ function CaseFileAdmission({ t, path }) {
             <BackButton style={{ marginBottom: 0 }}></BackButton>
             <div className="employee-card-wrapper">
               <div className="header-content">
-                <div className="header-details">
+                <div className="header-details" style={{ justifyContent: "normal", gap: "8px" }}>
                   <Header>{caseDetails?.caseTitle}</Header>
-                  <div className="header-icon" onClick={() => {}}>
-                    <CustomArrowDownIcon />
-                  </div>
+                  {delayCondonationData?.delayCondonationType?.code === "NO" && (
+                    <div className="delay-condonation-chip" style={delayCondonationStylsMain}>
+                      <p style={delayCondonationTextStyle}>
+                        {delayCondonationData?.delayCondonationType?.isDcaSkippedInEFiling
+                          ? t("DELAY_CONDONATION_FILED")
+                          : t("DELAY_CONDONATION_NOT_FILED")}
+                      </p>
+                    </div>
+                  )}
                 </div>
               </div>
               <CustomCaseInfoDiv t={t} data={caseInfo} style={{ margin: "24px 0px" }} />

@@ -8,9 +8,10 @@ import { hearingService } from "../../hooks/services";
 
 const Heading = (props) => {
   return (
-    <div style={{ width: "440px", height: "56px" }}>
+    <div style={{ width: "440px" }}>
       <p
         style={{
+          marginBottom: "0px",
           fontWeight: 700,
           fontSize: "24px",
           lineHeight: "28.13px",
@@ -41,7 +42,16 @@ const CloseBtn = (props) => {
   );
 };
 
-const EndHearing = ({ handleEndHearingModal, hearingId, updateTranscript, hearing, transcriptText, disableTextArea, setTranscriptText }) => {
+const EndHearing = ({
+  handleEndHearingModal,
+  hearingId,
+  updateTranscript,
+  hearing,
+  transcriptText,
+  disableTextArea,
+  setTranscriptText,
+  isItemPending,
+}) => {
   const { t } = useTranslation();
   const [stepper, setStepper] = useState(1);
   const tenantId = window?.Digit.ULBService.getCurrentTenantId();
@@ -79,8 +89,6 @@ const EndHearing = ({ handleEndHearingModal, hearingId, updateTranscript, hearin
       {stepper === 1 && (
         <Modal
           popupStyles={{
-            height: "222px",
-            maxHeight: "222px",
             width: "536px",
             position: "absolute",
             top: "50%",
@@ -91,15 +99,15 @@ const EndHearing = ({ handleEndHearingModal, hearingId, updateTranscript, hearin
           headerBarMainStyle={{
             padding: "0px 24px 12px 24px",
           }}
+          popupModuleMianStyles={{ paddingLeft: "0px" }}
           popupModuleActionBarStyles={{
             display: "flex",
             justifyContent: "flex-end",
-            position: "absolute",
-            right: 0,
-            bottom: 0,
-            width: "100%",
+            width: "calc(100% + 48px)",
             borderTop: "1px solid #dbd7d2",
             padding: "10px 16px 16px 0px",
+            position: "relative",
+            left: "-24px",
           }}
           style={{
             backgroundColor: "#BB2C2F",
@@ -107,16 +115,21 @@ const EndHearing = ({ handleEndHearingModal, hearingId, updateTranscript, hearin
             height: "40px",
             padding: " 8px 24px 8px 24px",
           }}
-          headerBarMain={<Heading label={t("CONFIRM_END_HEARING")} />}
+          headerBarMain={<Heading label={isItemPending ? t("OPEN_ITEMS_PENDING") : t("CONFIRM_END_HEARING")} />}
           headerBarEnd={<CloseBtn onClick={handleEndHearingModal} />}
-          actionSaveLabel={t("END_HEARING")}
+          actionSaveLabel={isItemPending ? t("END_HEARING_ANYWAY") : t("END_HEARING")}
           actionSaveOnSubmit={() => {
             setStepper(stepper + 1);
           }}
           formId="modal-action"
         >
-          <div style={{ height: "70px", padding: "5px 24px 16px 24px" }}>
-            <CardText style={{ color: "#3D3C3C", fontSize: "16px", fontWeight: 400, lineHeight: "18.75px" }}>{t("END_HEARING_DISCLAIMER")}</CardText>
+          <div style={{ padding: "5px 24px 16px 24px" }}>
+            <CardText style={{ color: "#3D3C3C", fontSize: "16px", fontWeight: 400, lineHeight: "18.75px" }}>
+              {isItemPending ? t("HEARING_OPEN_ITEMS_PENDING_MSG") : t("END_HEARING_DISCLAIMER")}
+            </CardText>
+            {isItemPending && (
+              <CardText style={{ color: "#3D3C3C", fontSize: "16px", fontWeight: 400, lineHeight: "18.75px" }}>{t("END_NOT_REVERSED")}</CardText>
+            )}
           </div>
         </Modal>
       )}

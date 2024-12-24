@@ -77,7 +77,7 @@ const TasksComponent = ({
 
   useEffect(() => {
     refetch();
-  }, [refetch]);
+  }, [refetch, filingNumber]);
 
   const pendingTaskActionDetails = useMemo(() => {
     if (!totalPendingTask) {
@@ -562,6 +562,7 @@ const TasksComponent = ({
                     <div className="task-section">
                       <PendingTaskAccordion
                         pendingTasks={pendingTaskDataInWeek}
+                        allPendingTasks={[...pendingTaskDataInWeek, ...allOtherPendingTask]}
                         accordionHeader={"COMPLETE_THIS_WEEK"}
                         t={t}
                         totalCount={pendingTaskDataInWeek?.length}
@@ -574,6 +575,7 @@ const TasksComponent = ({
                     <div className="task-section">
                       <PendingTaskAccordion
                         pendingTasks={allOtherPendingTask}
+                        allPendingTasks={[...pendingTaskDataInWeek, ...allOtherPendingTask]}
                         accordionHeader={"ALL_OTHER_TASKS"}
                         t={t}
                         totalCount={allOtherPendingTask?.length}

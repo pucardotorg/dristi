@@ -5,12 +5,42 @@ import React, { useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { VideoIcon } from "./CustomSVGs";
 
-const EvidenceHearingHeader = ({ hearing, caseData, filingNumber, setActiveTab, activeTab, onAddParty, hearingLink }) => {
+const delayCondonationStylsMain = {
+  padding: "6px 8px",
+  borderRadius: "999px",
+  backgroundColor: "#E9A7AA",
+  width: "fit-content",
+};
+
+const delayCondonationTextStyle = {
+  margin: "0px",
+  fontFamily: "Roboto",
+  fontSize: "14px",
+  fontWeight: 400,
+  lineHeight: "16.41px",
+  textAlign: "center",
+  color: "#231F20",
+};
+
+const EvidenceHearingHeader = ({
+  hearing,
+  caseData,
+  filingNumber,
+  setActiveTab,
+  activeTab,
+  onAddParty,
+  hearingLink,
+  delayCondonationData,
+  isDelayApplicationPending,
+}) => {
   const [showMenu, setShowMenu] = useState(false);
   const { t } = useTranslation();
 
-  const userRoles = Digit.UserService.getUser()?.info?.roles.map((role) => role.code);
-  const userType = Digit.UserService.getUser()?.info?.type === "CITIZEN" ? "citizen" : "employee";
+  const userInfo = Digit.UserService.getUser()?.info;
+  const userRoles = userInfo?.roles.map((role) => role.code);
+  const userType = userInfo?.type === "CITIZEN" ? "citizen" : "employee";
+  const isJudge = userInfo?.roles?.some((role) => role.code === "JUDGE_ROLE");
+
   const handleTakeAction = () => {
     setShowMenu(!showMenu);
   };
@@ -44,15 +74,16 @@ const EvidenceHearingHeader = ({ hearing, caseData, filingNumber, setActiveTab, 
     }
   };
 
-  const allAdvocates = useMemo(
-    () => Digit?.Customizations?.DristiCaseUtils?.getAllCaseRepresentativesUUID?.(caseData)[Digit.UserService.getUser()?.info?.uuid] || [],
-    [caseData]
-  );
+  const allAdvocates = useMemo(() => Digit?.Customizations?.DristiCaseUtils?.getAllCaseRepresentativesUUID?.(caseData)[userInfo?.uuid] || [], [
+    caseData,
+    userInfo?.uuid,
+  ]);
 
-  const isAdvocatePresent = useMemo(
-    () => (userRoles?.includes("ADVOCATE_ROLE") ? true : allAdvocates.includes(Digit.UserService.getUser()?.info?.uuid)),
-    [allAdvocates, userRoles]
-  );
+  const isAdvocatePresent = useMemo(() => (userRoles?.includes("ADVOCATE_ROLE") ? true : allAdvocates.includes(userInfo?.uuid)), [
+    allAdvocates,
+    userInfo?.uuid,
+    userRoles,
+  ]);
 
   const showMakeSubmission = useMemo(() => {
     return isAdvocatePresent && userRoles?.includes("SUBMISSION_CREATOR");
@@ -72,6 +103,7 @@ const EvidenceHearingHeader = ({ hearing, caseData, filingNumber, setActiveTab, 
           <div className="vertical-line"></div>
           <div className="sub-details-text">{t(caseData?.substage || "")}</div>
         </div>
+
         <div className="judge-action-block">
           <div className="evidence-header-wrapper">
             <div className="evidence-hearing-header" style={{ background: "transparent" }}>
@@ -129,6 +161,15 @@ const EvidenceHearingHeader = ({ hearing, caseData, filingNumber, setActiveTab, 
           )}
         </div>
       </div>
+      {delayCondonationData?.delayCondonationType?.code === "NO" && isJudge && (
+        <div className="delay-condonation-chip" style={delayCondonationStylsMain}>
+          <p style={delayCondonationTextStyle}>
+            {delayCondonationData?.delayCondonationType?.isDcaSkippedInEFiling || isDelayApplicationPending
+              ? t("DELAY_CONDONATION_FILED")
+              : t("DELAY_CONDONATION_NOT_FILED")}
+          </p>
+        </div>
+      )}
       <div
         className="join-video-conference"
         style={{
