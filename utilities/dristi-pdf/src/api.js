@@ -72,6 +72,9 @@ async function search_order(
   tenantId,
   orderId,
   requestinfo,
+  filingNumber,
+  status,
+  orderType,
   isOrderNumber = false
 ) {
   return await axios({
@@ -83,6 +86,9 @@ async function search_order(
       criteria: {
         tenantId: tenantId,
         ...(isOrderNumber ? { orderNumber: orderId } : { id: orderId }),
+        ...(status && { status: status }),
+        ...(filingNumber && { filingNumber: filingNumber }),
+        ...(orderType && { orderType: orderType }),
       },
     },
   });

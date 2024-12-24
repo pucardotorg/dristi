@@ -2,33 +2,14 @@ const cheerio = require("cheerio");
 const config = require("../config");
 const {
   search_case,
-  search_mdms,
-  search_hrms,
-  search_sunbirdrc_credential_service,
-  search_application,
-  create_pdf,
   search_order,
-  search_message,
+  search_sunbirdrc_credential_service,
+  create_pdf,
 } = require("../api");
 const { renderError } = require("../utils/renderError");
-const { getAdvocates } = require("../applicationHandlers/getAdvocates");
 const { formatDate } = require("./formatDate");
 
-function getOrdinalSuffix(day) {
-  if (day > 3 && day < 21) return "th"; // 11th, 12th, 13th, etc.
-  switch (day % 10) {
-    case 1:
-      return "st"; // 1st, 21st, 31st
-    case 2:
-      return "nd"; // 2nd, 22nd
-    case 3:
-      return "rd"; // 3rd, 23rd
-    default:
-      return "th"; // 4th, 5th, 6th, etc.
-  }
-}
-
-const orderBailRejection = async (req, res, qrCode) => {
+async function orderAcceptanceRejectionCase(req, res, qrCode) {
   const cnrNumber = req.query.cnrNumber;
   const orderId = req.query.orderId;
   const tenantId = req.query.tenantId;
@@ -63,19 +44,6 @@ const orderBailRejection = async (req, res, qrCode) => {
   };
   // Search for case details
   try {
-    const resMessage = await handleApiCall(
-      () =>
-        search_message(tenantId, "rainmaker-submissions", "en_IN", requestInfo),
-      "Failed to query Localized messages"
-    );
-    const messages = resMessage?.data?.messages || [];
-    const messagesMap =
-      messages?.length > 0
-        ? Object.fromEntries(
-            messages.map(({ code, message }) => [code, message])
-          )
-        : {};
-
     const resCase = await handleApiCall(
       () => search_case(cnrNumber, tenantId, requestInfo),
       "Failed to query case service"
@@ -84,6 +52,10 @@ const orderBailRejection = async (req, res, qrCode) => {
     if (!courtCase) {
       return renderError(res, "Court case not found", 404);
     }
+
+    const mdmsCourtRoom = config.constants.mdmsCourtRoom;
+    const judgeDetails = config.constants.judgeDetails;
+
     const resOrder = await handleApiCall(
       () => search_order(tenantId, orderId, requestInfo),
       "Failed to query order service"
@@ -93,60 +65,34 @@ const orderBailRejection = async (req, res, qrCode) => {
       renderError(res, "Order not found", 404);
     }
 
-    const resApplication = await handleApiCall(
+    const listOfAllOrder = await handleApiCall(
       () =>
-        search_application(
+        search_order(
           tenantId,
-          order?.additionalDetails?.formdata?.refApplicationId,
-          requestInfo
+          orderId,
+          requestInfo,
+          courtCase.filingNumber,
+          "PUBLISHED",
+          "NOTICE"
         ),
-      "Failed to query application service"
-    );
-    const application = resApplication?.data?.applicationList[0];
-    if (!application) {
-      return renderError(res, "Application not found", 404);
-    }
-
-    const applicationDocuments =
-      application?.applicationDetails?.applicationDocuments || [];
-    const documentList =
-      applicationDocuments?.length > 0
-        ? applicationDocuments.map((item) => ({
-            ...item,
-            documentType:
-              messagesMap?.[item?.documentType] || item?.documentType,
-          }))
-        : [{ documentType: "" }];
-    const allAdvocates = getAdvocates(courtCase);
-    const onBehalfOfuuid = application?.onBehalfOf?.[0];
-    const advocate = allAdvocates?.[onBehalfOfuuid]?.[0]?.additionalDetails
-      ?.advocateName
-      ? allAdvocates[onBehalfOfuuid]?.[0]
-      : {};
-    const advocateName = advocate?.additionalDetails?.advocateName || "";
-    const partyName = application?.additionalDetails?.onBehalOfName || "";
-    const applicationDate = formatDate(
-      new Date(application?.createdDate),
-      "DD-MM-YYYY"
+      "Failed to query order service"
     );
 
-    // Search for MDMS court room details
-    // const resMdms = await handleApiCall(
-    //   () =>
-    //     search_mdms(
-    //       courtCase.courtId,
-    //       "common-masters.Court_Rooms",
-    //       tenantId,
-    //       requestInfo
-    //     ),
-    //   "Failed to query MDMS service for court room"
-    // );
-    // const mdmsCourtRoom = resMdms?.data?.mdms[0]?.data;
-    // if (!mdmsCourtRoom) {
-    //   return renderError(res, "Court room MDMS master not found", 404);
-    // }
-    const mdmsCourtRoom = config.constants.mdmsCourtRoom;
-    const judgeDetails = config.constants.judgeDetails;
+    const noticeList = listOfAllOrder.map((item) => {
+      return {
+        dateOfNotice: formatDate(new Date(item.createdDate), "DD-MM-YYYY"),
+      };
+    });
+
+    const chequeNumber = courtCase.chequeDetails.formdata
+      .map((item) => item.data?.chequeNumber || "")
+      .filter((number) => number)
+      .join(",");
+
+    const complainantName =
+      courtCase?.litigants?.find(
+        (litigant) => litigant.partyType === "complainant.primary"
+      )?.additionalDetails?.fullName || "";
 
     // Handle QR code if enabled
     let base64Url = "";
@@ -185,61 +131,34 @@ const orderBailRejection = async (req, res, qrCode) => {
       return renderError(res, "Invalid filingDate format", 500);
     }
 
-    const months = [
-      "January",
-      "February",
-      "March",
-      "April",
-      "May",
-      "June",
-      "July",
-      "August",
-      "September",
-      "October",
-      "November",
-      "December",
-    ];
-
     const currentDate = new Date();
 
-    const day = currentDate.getDate();
-    const month = months[currentDate.getMonth()];
-    const year = currentDate.getFullYear();
-
-    const ordinalSuffix = getOrdinalSuffix(day);
     const formattedToday = formatDate(currentDate, "DD-MM-YYYY");
-    let bailType = "Cash";
-    if (application?.applicationType === "SURETY") {
-      bailType = "In Person Surety";
-    }
-    if (application?.applicationType === "BAIL_BOND") {
-      bailType = "Bail Bond";
-    }
+
     const caseNumber = courtCase?.courtCaseNumber || courtCase?.cmpNumber || "";
     const data = {
       Data: [
         {
-          courtName: mdmsCourtRoom.name,
-          courtPlace: mdmsCourtRoom.place,
-          state: mdmsCourtRoom.state,
+          orderHeading: mdmsCourtRoom.orderHeading,
+          cmpNumber: courtCase.cmpNumber,
           caseNumber: caseNumber,
           caseYear: caseYear,
           caseName: courtCase.caseTitle,
-          applicantName: advocateName || partyName,
-          partyName,
-          dateOfApplication: applicationDate,
-          briefSummaryOfBail:
-            order?.additionalDetails?.formdata?.bailSummaryCircumstances
-              ?.text || "",
           date: formattedToday,
-          documentList,
-          bailType,
-          conditionOfBail:
-            "Don't go outside of the city without informing the court",
+          chequeNumber: chequeNumber,
+          filingNumber: courtCase.filingNumber,
+          partyName: complainantName,
+          isExamined: order?.additionalDetails?.formdata?.isExamined,
+          noticeList: noticeList,
+          response: order?.additionalDetails?.formdata?.isRejected
+            ? "rejected"
+            : "granted",
+          isRejected: order?.additionalDetails?.formdata?.isRejected,
+          rejectionReason: order?.additionalDetails?.formdata?.rejectionReason,
+          additionalComments:
+            order?.additionalDetails?.formdata?.comments?.text || "",
           judgeSignature: judgeDetails.judgeSignature,
           judgeName: judgeDetails.name,
-          courtSeal: judgeDetails.courtSeal,
-          orderHeading: mdmsCourtRoom.orderHeading,
           judgeDesignation: judgeDetails.judgeDesignation,
           qrCodeUrl: base64Url,
         },
@@ -247,11 +166,11 @@ const orderBailRejection = async (req, res, qrCode) => {
     };
     const pdfKey =
       qrCode === "true"
-        ? config.pdf.order_bail_rejection_qr
-        : config.pdf.order_bail_rejection;
+        ? config.pdf.order_acceptance_rejection_case_qr
+        : config.pdf.order_acceptance_rejection_case;
     const pdfResponse = await handleApiCall(
       () => create_pdf(tenantId, pdfKey, data, req.body),
-      "Failed to generate PDF of Bail Rejection"
+      "Failed to generate PDF of Order for acceptance of Bail"
     );
 
     const filename = `${pdfKey}_${new Date().getTime()}`;
@@ -270,11 +189,11 @@ const orderBailRejection = async (req, res, qrCode) => {
   } catch (ex) {
     return renderError(
       res,
-      "Failed to create PDF of Rejection of Bail",
+      "Failed to generate PDF for Acceptance of Bail",
       500,
       ex
     );
   }
-};
+}
 
-module.exports = orderBailRejection;
+module.exports = orderAcceptanceRejectionCase;

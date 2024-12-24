@@ -102,6 +102,7 @@ const applicationBailBond = async (req, res, qrCode) => {
     // }
 
     const mdmsCourtRoom = config.constants.mdmsCourtRoom;
+    const caseConfigDetails = config.constants.caseDetails;
     const judgeDetails = config.constants.judgeDetails;
 
     // Search for application details
@@ -113,8 +114,8 @@ const applicationBailBond = async (req, res, qrCode) => {
     if (!application) {
       return renderError(res, "Application not found", 404);
     }
-    let applicationTitle = "APPLICATION FOR BAIL - Bail bond";
-    let subjectText = "Application for Bail - Bail Bond";
+    let applicationTitle = "APPLICATION FOR BAIL";
+    let subjectText = "Application for Bail";
     if (application?.applicationType === "SURETY") {
       applicationTitle = "APPLICATION FOR BAIL - In Person Surety";
       subjectText = "Application for Bail - In Person Surety";
@@ -154,9 +155,10 @@ const applicationBailBond = async (req, res, qrCode) => {
           }))
         : [{ documentType: "" }];
     const additionalComments =
-      application?.applicationDetails?.additionalComments || "";
+      application?.applicationDetails?.additionalInformation || "";
     const reasonForApplication =
-      application?.applicationDetails?.reasonForApplication || "";
+      application?.applicationDetails?.reasonForApplicationOfBail || "";
+    const prayer = application?.applicationDetails?.prayer;
     // Handle QR code if enabled
     let base64Url = "";
     if (qrCode === "true") {
@@ -216,7 +218,7 @@ const applicationBailBond = async (req, res, qrCode) => {
     const year = currentDate.getFullYear();
 
     const ordinalSuffix = getOrdinalSuffix(day);
-    const statuteAndAct = "NIA 138";
+    const statuteAndAct = caseConfigDetails.statuteAndAct;
     const caseNumber = courtCase?.courtCaseNumber || courtCase?.cmpNumber || "";
     const data = {
       Data: [
@@ -234,6 +236,8 @@ const applicationBailBond = async (req, res, qrCode) => {
           applicationTitle,
           subjectText,
           statuteAndAct,
+          offenceAgainstAccused: caseConfigDetails.offence,
+          prayer: prayer,
           reasonForApplication,
           documentList,
           additionalComments,

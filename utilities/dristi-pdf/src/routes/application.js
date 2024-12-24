@@ -15,6 +15,8 @@ const applicationCaseWithdrawal = require("../applicationHandlers/applicationCas
 const applicationRescheduleRequest = require("../applicationHandlers/applicationRescheduleRequest");
 const applicationCheckout = require("../applicationHandlers/applicationCheckout");
 const caseSettlementApplication = require("../applicationHandlers/caseSettlementApplication");
+const applicationDelayCondonation = require("../applicationHandlers/applicationDelayCondonation");
+const applicationSubmitBailDocuments = require("../applicationHandlers/applicationSubmitBailDocuments");
 
 function renderError(res, errorMessage, errorCode, errorObject) {
   if (errorCode == undefined) errorCode = 500;
@@ -74,6 +76,12 @@ router.post(
           break;
         case "application-case-settlement":
           await caseSettlementApplication(req, res, qrCode);
+          break;
+        case "application-delay-condonation":
+          await applicationDelayCondonation(req, res, qrCode);
+          break;
+        case "application-submit-bail-documents":
+          await applicationSubmitBailDocuments(req, res, qrCode);
           break;
         default:
           await applicationGeneric(req, res, qrCode);

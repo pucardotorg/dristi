@@ -31,6 +31,9 @@ const SubmissionPreviewSubmissionTypeMap = {
   OTHERS: "application-generic",
   SETTLEMENT: "application-case-settlement",
   CHECKOUT_REQUEST: "application-for-checkout-request",
+  REQUEST_FOR_BAIL: "application-bail-bond",
+  SUBMIT_BAIL_DOCUMENTS: "application-submit-bail-documents",
+  DCA_APPLICATION: "application-delay-condonation",
 };
 
 const onDocumentUpload = async (fileData, filename) => {

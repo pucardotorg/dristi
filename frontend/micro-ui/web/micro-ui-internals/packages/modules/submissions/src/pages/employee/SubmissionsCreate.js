@@ -627,7 +627,7 @@ const SubmissionsCreate = ({ path }) => {
             ...(orderDetails && { orderDate: formatDate(new Date(orderDetails?.auditDetails?.lastModifiedTime)) }),
             ...(orderDetails?.additionalDetails?.formdata?.documentName && { documentName: orderDetails?.additionalDetails?.formdata?.documentName }),
             onBehalOfName: onBehalfOfLitigent?.additionalDetails?.fullName,
-            partyType: "complainant.primary",
+            partyType: sourceType?.toLowerCase(),
             ...(orderDetails &&
               orderDetails?.orderDetails.isResponseRequired?.code === true && {
                 respondingParty: orderDetails?.additionalDetails?.formdata?.responseInfo?.respondingParty,

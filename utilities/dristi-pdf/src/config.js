@@ -147,6 +147,18 @@ module.exports = {
     application_checkout_qr:
       process.env.APPLICATION_CHECKOUT_QR ||
       "application-for-checkout-request-qr",
+    application_delay_condonation:
+      process.env.APPLICATION_DELAY_CONDONATION ||
+      "application-delay-condonation",
+    application_delay_condonation_qr:
+      process.env.APPLICATION_DELAY_CONDONATION_QR ||
+      "application-delay-condonation-qr",
+    application_submit_bail_documents:
+      process.env.APPLICATION_SUBMIT_BAIL_DOCUMENTS ||
+      "application-submit-bail-documents",
+    application_submit_bail_documents_qr:
+      process.env.APPLICATION_SUBMIT_BAIL_DOCUMENTS_QR ||
+      "application-submit-bail-documents-qr",
     order_bail_rejection:
       process.env.ORDER_BAIL_REJECTION || "order-bail-rejection",
     order_bail_rejection_qr:
@@ -161,19 +173,6 @@ module.exports = {
     order_for_mandatory_async_submissions_and_response:
       process.env.ORDER_MANDATORY_SUBMISSION ||
       "order-for-mandatory-async-submissions-and-response",
-    order_accept_checkout:
-      process.env.ORDER_ACCEPT_CHECKOUT || "order-accept-checkout-request",
-    order_accept_checkout_qr:
-      process.env.ORDER_ACCEPT_CHECKOUT_QR ||
-      "order-accept-checkout-request-qr",
-    order_reject_checkout:
-      process.env.ORDER_REJECT_CHECKOUT || "order-reject-checkout-request",
-    order_reject_checkout_qr:
-      process.env.ORDER_REJECT_CHECKOUT_QR ||
-      "order-reject-checkout-request-qr",
-    order_for_rejection_rescheduling_request_qr:
-      process.env.ORDER_REJECTION_RESCHEDULE_REQUEST_QR ||
-      "order-for-rejection-rescheduling-request-qr",
     order_for_accept_rescheduling_request:
       process.env.ORDER_FOR_ACCEPT_RESCHEDULING_REQUEST ||
       "order-for-accept-rescheduling-request",
@@ -230,6 +229,26 @@ module.exports = {
       process.env.ORDER_SECTION202_CRPC || "order-202-crpc",
     order_section202_crpc_qr:
       process.env.ORDER_SECTION202_CRPC_QR || "order-202-crpc-qr",
+    order_acceptance_rejection_case:
+      process.env.ORDER_ACCEPTANCE_REJECTION_CASE ||
+      "order-acceptance-rejection-case",
+    order_acceptance_rejection_case_qr:
+      process.env.ORDER_ACCEPTANCE_REJECTION_CASE_QR ||
+      "order-acceptance-rejection-case-qr",
+    order_acceptance_rejection_dca:
+      process.env.ORDER_ACCEPTANCE_REJECTION_DCA ||
+      "order-acceptance-rejection-dca",
+    order_acceptance_rejection_dca_qr:
+      process.env.ORDER_ACCEPTANCE_REJECTION_DCA_QR ||
+      "order-acceptance-rejection-dca-qr",
+    order_notice_bnss_dca:
+      process.env.ORDER_NOTICE_BNSS_DCA || "order-notice-bnss-dca",
+    order_notice_bnss_dca_qr:
+      process.env.ORDER_NOTICE_BNSS_DCA_QR || "order-notice-bnss-dca-qr",
+    order_set_terms_of_bail:
+      process.env.ORDER_SET_TERMS_OF_BAIL || "order-set-terms-of-bail",
+    order_set_terms_of_bail_qr:
+      process.env.ORDER_SET_TERMS_OF_BAIL_QR || "order-set-terms-of-bail-qr",
   },
 
   app: {
@@ -280,12 +299,15 @@ module.exports = {
 
   constants: {
     mdmsCourtRoom: {
-      name:
-        process.env.ORDER_HEADING ||
-        'In The Special Court Of Judicial Magistrate of the First Class , for the trial of cases under section 138 of NI Act , 1881 at Kollam ( "24X7 ON Court" )',
+      name: "Court Centre, Kollam",
       place: "Kollam",
       state: "Kerala",
       orderHeading: process.env.ORDER_HEADING || "Order Heading",
+    },
+    caseDetails: {
+      offence:
+        process.env.OFFENCE || "dishonour of cheque due to inadiquacy of funds",
+      statuteAndAct: process.env.STATUE_AND_ACT || "NIA 138",
     },
     judgeDetails: {
       name: process.env.JUDGE_NAME || "Judge Name",

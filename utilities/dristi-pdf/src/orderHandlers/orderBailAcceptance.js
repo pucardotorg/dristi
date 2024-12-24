@@ -207,13 +207,7 @@ const orderBailAcceptance = async (req, res, qrCode) => {
 
     const ordinalSuffix = getOrdinalSuffix(day);
     const formattedToday = formatDate(currentDate, "DD-MM-YYYY");
-    let bailType = "Cash";
-    if (application?.applicationType === "SURETY") {
-      bailType = "In Person Surety";
-    }
-    if (application?.applicationType === "BAIL_BOND") {
-      bailType = "Bail Bond";
-    }
+
     const caseNumber = courtCase?.courtCaseNumber || courtCase?.cmpNumber || "";
     const data = {
       Data: [
@@ -223,20 +217,23 @@ const orderBailAcceptance = async (req, res, qrCode) => {
           state: mdmsCourtRoom.state,
           caseNumber: caseNumber,
           caseYear: caseYear,
+          caseName: courtCase.caseTitle,
           applicantName: advocateName || partyName,
           partyName,
           dateOfApplication: applicationDate,
-          briefSummaryOfBail: order?.comments || "",
+          briefSummaryOfBail:
+            order?.additionalDetails?.formdata?.bailSummary?.text || "",
           date: formattedToday,
           documentList,
-          bailType: bailType,
+          bailType: order?.additionalDetails?.formdata?.bailType?.code,
           conditionOfBail:
-            "Don't go outside of the city without informing the court",
+            order?.additionalDetails?.formdata?.otherConditions?.text || "",
           judgeSignature: judgeDetails.judgeSignature,
           judgeName: judgeDetails.name,
           courtSeal: judgeDetails.courtSeal,
           orderHeading: mdmsCourtRoom.orderHeading,
           judgeDesignation: judgeDetails.judgeDesignation,
+          qrCodeUrl: base64Url,
         },
       ],
     };
