@@ -48,5 +48,6 @@ module.exports = function (app) {
     "/egov-pdf",
     "/sbi-backend",
     "/dristi-case-pdf",
+    "/casemanagement/casemanager/case/v1/_buildcasebundle",
   ].forEach((location) => app.use(location, createProxy));
 };

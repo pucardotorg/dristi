@@ -165,4 +165,5 @@ public class Configuration {
 
     @Value("${egov.idgen.hearingFormat}")
     private String hearingFormat;
+
 }

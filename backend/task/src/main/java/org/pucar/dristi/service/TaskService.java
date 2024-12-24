@@ -1,5 +1,7 @@
 package org.pucar.dristi.service;
 
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.extern.slf4j.Slf4j;
 import org.egov.common.contract.models.Workflow;
 import org.egov.common.contract.request.RequestInfo;
@@ -8,6 +10,7 @@ import org.pucar.dristi.config.Configuration;
 import org.pucar.dristi.enrichment.TaskRegistrationEnrichment;
 import org.pucar.dristi.kafka.Producer;
 import org.pucar.dristi.repository.TaskRepository;
+import org.pucar.dristi.util.CaseUtil;
 import org.pucar.dristi.util.WorkflowUtil;
 import org.pucar.dristi.validators.TaskRegistrationValidator;
 import org.pucar.dristi.web.models.*;
@@ -15,7 +18,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import static org.pucar.dristi.config.ServiceConstants.*;
 
@@ -29,6 +35,8 @@ public class TaskService {
     private final WorkflowUtil workflowUtil;
     private final Configuration config;
     private final Producer producer;
+    private final CaseUtil caseUtil;
+    private final ObjectMapper objectMapper;
 
     @Autowired
     public TaskService(TaskRegistrationValidator validator,
@@ -36,13 +44,15 @@ public class TaskService {
                        TaskRepository taskRepository,
                        WorkflowUtil workflowUtil,
                        Configuration config,
-                       Producer producer) {
+                       Producer producer, CaseUtil caseUtil, ObjectMapper objectMapper) {
         this.validator = validator;
         this.enrichmentUtil = enrichmentUtil;
         this.taskRepository = taskRepository;
         this.workflowUtil = workflowUtil;
         this.config = config;
         this.producer = producer;
+        this.caseUtil = caseUtil;
+        this.objectMapper = objectMapper;
     }
 
     @Autowired
@@ -99,6 +109,7 @@ public class TaskService {
             workflowUpdate(body);
 
             String status = body.getTask().getStatus();
+            String taskType = body.getTask().getTaskType();
             if (SUMMON_SENT.equalsIgnoreCase(status) || NOTICE_SENT.equalsIgnoreCase(status) || WARRANT_SENT.equalsIgnoreCase(status))
                 producer.push(config.getTaskIssueSummonTopic(), body);
 

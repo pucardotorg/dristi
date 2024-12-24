@@ -156,6 +156,7 @@ const CustomReviewCardRow = ({
         return (
           <div className={`text-main ${bgclassname}`}>
             <div className="text">
+              {value === "dateOfDispatch" && <div> {`${dataIndex + 1}. `}</div>}
               <div className="label">{t(label)}</div>
               <div className="value">{formattedDate}</div>
               {showFlagIcon && (

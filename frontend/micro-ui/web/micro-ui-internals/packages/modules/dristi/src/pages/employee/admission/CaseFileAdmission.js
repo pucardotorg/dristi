@@ -20,7 +20,7 @@ import {
 import { reviewCaseFileFormConfig } from "../../citizen/FileCase/Config/reviewcasefileconfig";
 import { getAllAssignees } from "../../citizen/FileCase/EfilingValidationUtils";
 import AdmissionActionModal from "./AdmissionActionModal";
-import { generateUUID } from "../../../Utils";
+import { generateUUID, getFilingType } from "../../../Utils";
 import { documentTypeMapping } from "../../citizen/FileCase/Config";
 import ScheduleHearing from "../AdmittedCases/ScheduleHearing";
 import { SubmissionWorkflowAction } from "../../../Utils/submissionWorkflow";
@@ -96,6 +96,12 @@ function CaseFileAdmission({ t, path }) {
   });
 
   const filingNumber = useMemo(() => caseDetails?.filingNumber, [caseDetails?.filingNumber]);
+
+  const { data: filingTypeData, isLoading: isFilingTypeLoading } = Digit.Hooks.dristi.useGetStatuteSection("common-masters", [
+    { name: "FilingType" },
+  ]);
+
+  const filingType = useMemo(() => getFilingType(filingTypeData?.FilingType, "CaseFiling"), [filingTypeData?.FilingType]);
 
   const { data: hearingDetails } = Digit.Hooks.hearings.useGetHearings(
     {
@@ -621,6 +627,7 @@ function CaseFileAdmission({ t, path }) {
                         fileName: docFile?.fileName,
                         documentName: docFile?.documentName,
                       },
+                      filingType: filingType,
                       workflow: {
                         action: "TYPE DEPOSITION",
                         documents: [
@@ -707,6 +714,13 @@ function CaseFileAdmission({ t, path }) {
   ]);
   const delayCondonationDocument = useMemo(() => caseDetails?.caseDetails?.delayApplications?.formdata[0]?.data?.condonationFileUpload?.document, [
     caseDetails,
+  ]);
+
+  const isButtonDisabled = useMemo(() => isLoading || isWorkFlowLoading || caseAdmitLoader || isLoader, [
+    isLoading,
+    isWorkFlowLoading,
+    caseAdmitLoader,
+    isLoader,
   ]);
 
   const handleCreateDelayCondonation = async () => {
@@ -926,7 +940,7 @@ function CaseFileAdmission({ t, path }) {
     return <Redirect to="/" />;
   }
 
-  if (isLoading || isWorkFlowLoading || isLoader) {
+  if (isLoading || isWorkFlowLoading || isLoader || caseAdmitLoader) {
     return <Loader />;
   }
   const scrollToHeading = (heading) => {
@@ -970,7 +984,7 @@ function CaseFileAdmission({ t, path }) {
                 defaultValues={{}}
                 onFormValueChange={onFormValueChange}
                 cardStyle={{ minWidth: "100%" }}
-                isDisabled={isDisabled}
+                isDisabled={isButtonDisabled}
                 cardClassName={`e-filing-card-form-style review-case-file`}
                 secondaryLabel={
                   [CaseWorkflowState.ADMISSION_HEARING_SCHEDULED, CaseWorkflowState.PENDING_RESPONSE, CaseWorkflowState.PENDING_NOTICE].includes(

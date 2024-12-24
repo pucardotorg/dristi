@@ -10,7 +10,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.egov.common.contract.models.AuditDetails;
 import org.egov.common.contract.request.RequestInfo;
 import org.egov.common.contract.request.User;
-import org.egov.common.models.individual.Individual;
 import org.egov.tracer.model.CustomException;
 import org.jetbrains.annotations.NotNull;
 import org.pucar.dristi.config.Configuration;
@@ -20,7 +19,9 @@ import org.pucar.dristi.repository.CaseRepository;
 import org.pucar.dristi.util.AdvocateUtil;
 import org.pucar.dristi.util.BillingUtil;
 import org.pucar.dristi.util.EncryptionDecryptionUtil;
+import org.egov.common.models.individual.Individual;
 import org.pucar.dristi.validators.CaseRegistrationValidator;
+import org.pucar.dristi.web.OpenApiCaseSummary;
 import org.pucar.dristi.web.models.*;
 import org.pucar.dristi.web.models.analytics.CaseOutcome;
 import org.pucar.dristi.web.models.analytics.CaseOverallStatus;
@@ -53,7 +54,7 @@ public class CaseService {
     private final EncryptionDecryptionUtil encryptionDecryptionUtil;
     private final ObjectMapper objectMapper;
     private final CacheService cacheService;
-    
+
     private final SmsNotificationService notificationService;
 
     private final IndividualService individualService;
@@ -894,5 +895,21 @@ public class CaseService {
                 .cases(courtCase)
                 .build();
         producer.push(config.getJoinCaseTopicIndexer(), caseRequest);
+    }
+
+    public OpenApiCaseSummary searchByCnrNumber(@Valid OpenApiCaseSummaryRequest request) {
+
+        return caseRepository.getCaseSummaryByCnrNumber(request);
+    }
+
+    public List<CaseListLineItem> searchByCaseType(@Valid OpenApiCaseSummaryRequest request) {
+
+        return caseRepository.getCaseSummaryListByCaseType(request);
+    }
+
+    public OpenApiCaseSummary searchByCaseNumber(@Valid OpenApiCaseSummaryRequest request) {
+
+        return caseRepository.getCaseSummaryByCaseNumber(request);
+
     }
 }

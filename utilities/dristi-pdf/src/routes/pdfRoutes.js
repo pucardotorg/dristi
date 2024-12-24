@@ -4,15 +4,113 @@ const multer = require("multer");
 const upload = multer({ dest: "uploads/" });
 const { PDFDocument } = require("pdf-lib");
 const fs = require("fs");
+const { renderError } = require("../utils/renderError");
 const asyncMiddleware = require("../utils/asyncMiddleware");
+const buildCasePdf = require("../caseBundle/buildCasePdf");
+const processCaseBundle = require("../caseBundle/generateIndex");
+const { logger } = require("../logger");
 
 const A4_WIDTH = 595.28; // A4 width in points
 const A4_HEIGHT = 841.89; // A4 height in points
 
 router.post(
+  "/case-bundle",
+  asyncMiddleware(async (req, res) => {
+    const {
+      index,
+      caseNumber,
+      RequestInfo,
+      tenantId,
+      // caseDetails
+    } = req.body;
+
+    // Validate required parameters
+    if (!index || !caseNumber || !RequestInfo || !tenantId) {
+      return renderError(
+        res,
+        "Missing required fields: 'index', 'caseNumber', 'tenantId' or 'RequestInfo'.",
+        400
+      );
+    }
+
+    try {
+      // Call buildCasePdf and get updated index with pageCount
+      const result = await buildCasePdf(
+        caseNumber,
+        index,
+        RequestInfo,
+        tenantId
+      );
+
+      // Extract pageCount and remove it from updatedIndex
+      const { pageCount, ...updatedIndex } = result;
+
+      // Send success response with pageCount included but removed from updatedIndex
+      res.status(200).json({
+        ResponseInfo: RequestInfo,
+        index: updatedIndex, // Updated index without pageCount
+        pageCount: pageCount, // Page count sent separately
+      });
+    } catch (error) {
+      renderError(
+        res,
+        "An error occurred while creating the case bundle PDF.",
+        400,
+        error
+      );
+    }
+  })
+);
+
+router.post(
+  "/process-case-bundle",
+  asyncMiddleware(async (req, res) => {
+    const { tenantId, caseId, index, state, requestInfo } = req.body;
+
+    // Validate required inputs
+    if (!tenantId || !caseId || !index || !state || !requestInfo) {
+      return res.status(400).json({
+        message:
+          "Missing required fields: 'tenantId', 'caseId', 'index', 'state', or 'requestInfo'.",
+      });
+    }
+
+    logger.info("recd request to process case bundle for:", {
+      caseId,
+      index,
+      state,
+      requestInfo,
+    });
+
+    try {
+      // Process the case bundle
+      const updatedIndex = await processCaseBundle(
+        tenantId,
+        caseId,
+        index,
+        state,
+        requestInfo
+      );
+
+      // Return the updated index
+      res.status(200).json({
+        message: "Case bundle processed successfully",
+        index: updatedIndex,
+      });
+    } catch (error) {
+      console.error("Error processing case bundle:", error);
+      res.status(400).json({
+        message: "An error occurred while processing the case bundle.",
+        error: error.message,
+      });
+    }
+  })
+);
+
+router.post(
   "/combine-documents",
   upload.array("documents"),
-  asyncMiddleware(async function (req, res, next) {
+  asyncMiddleware(async function (req, res) {
     try {
       const mergedPdf = await PDFDocument.create();
 
@@ -62,7 +160,7 @@ router.post(
     } catch (error) {
       console.error("Error during PDF merging:", error?.message);
 
-      res.status(500).json({
+      res.status(400).json({
         message: "Error creating merged PDF",
         error: error.message,
       });

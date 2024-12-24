@@ -5,7 +5,6 @@ import org.springframework.stereotype.Component;
 
 import java.math.BigDecimal;
 
-
 @Component
 public class ServiceConstants {
 
@@ -81,5 +80,4 @@ public class ServiceConstants {
     public static final String INVALID_FILESTORE_ID = "INVALID_FILESTORE_ID";
     public static final String INVALID_DOCUMENT_DETAILS = "Invalid document details";
     public static final String DELAY_CONDONATION = "DELAY_CONDONATION";
-
 }

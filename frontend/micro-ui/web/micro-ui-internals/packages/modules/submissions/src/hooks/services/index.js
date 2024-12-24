@@ -42,4 +42,12 @@ export const submissionService = {
       data,
       params,
     }),
+  searchEvidence: (data, params) =>
+    Request({
+      url: Urls.evidence.evidenceSearch,
+      useCache: false,
+      userService: false,
+      data,
+      params,
+    }),
 };

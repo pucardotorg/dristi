@@ -25,7 +25,7 @@ paths:
         required: true
       responses:
         '200':
-          description: ReponseInfo with artifact(s) updated sucessfully
+          description: ResponseInfo with artifact(s) updated successfully
           content:
             '*/*':
               schema:
@@ -52,14 +52,14 @@ paths:
         required: true
       responses:
         '201':
-          description: ReponseInfo with case(s) updated successfully
+          description: ResponseInfo with artifact(s) updated successfully
           content:
             '*/*':
               schema:
                 $ref: >-
                  #/components/schemas/EvidenceResponse
         '400':
-          description: Case(s) updation failed
+          description: artifact(s) update failed
           content:
             '*/*':
               schema:
@@ -72,7 +72,7 @@ paths:
       description: |
         API used to search  artifacts using search criteria
       requestBody:
-        description: Search criteria for artifcat + RequestInfo meta data.
+        description: Search criteria for artifact + RequestInfo meta data.
         content:
           '*/*':
             schema:
@@ -173,6 +173,10 @@ components:
           type: string
           description: Represents the legal classification of the artifact, such as sworn statement, affidavit, testimony, etc.
           example: AFFIDAVIT, DEPOSITION, SWORN_STATEMENT, OTHER etc..
+        filingType:
+          type: string
+          example: master data values - caseFiling, application, direct
+          description: master data for submission type as per the values mentioned in example. caseFiling to be used for all documents uploaded at the time of case e-filing. application is for submissions along with application and direct for documents directly uploaded.
         sourceType:
           type: string
           description: Represents the legal classification of the source, such as COMPLAINANT, ACCUSED, COURT.
@@ -201,6 +205,15 @@ components:
           type: boolean
           description: Field to indicate soft delete of records. True if record is evidence, false if not.
           default: false
+        isVoid:
+          type: boolean
+          description: when a judge marks a document submission void. false by default
+          default: false
+        reason:
+          type: string
+          description: the reason for marking as void.
+          minLength: 0
+          maxLength: 256
         status:
           type: string
           description: >-
@@ -225,7 +238,7 @@ components:
           description: >-
             This field is meant to hold any extra information that we want to
             store for a case.
-        auditdetails:
+        auditDetails:
           $ref: >-
             https://raw.githubusercontent.com/egovernments/DIGIT-Specs/common-contract-update/Common%20Services/common-contract.yaml#/components/schemas/AuditDetails
         workflow:
@@ -265,7 +278,7 @@ components:
           description: >-
             This field is meant to hold any extra information that we want to
             store for this entity.
-        auditdetails:
+        auditDetails:
           $ref: 'https://raw.githubusercontent.com/egovernments/DIGIT-Specs/common-contract-update/Common%20Services/common-contract.yaml#/components/schemas/AuditDetails'
       required: [tenantId, artifactId, individualId, comment]
    
@@ -294,7 +307,7 @@ components:
       properties:
         RequestInfo:
           $ref: 'https://raw.githubusercontent.com/egovernments/DIGIT-Specs/common-contract-update/Common%20Services/common-contract.yaml#/components/schemas/RequestInfo'
-        tenantid: 
+        tenantId:
           type: string
         criteria:
           $ref: '#/components/schemas/EvidenceSearchCriteria'
@@ -306,8 +319,8 @@ components:
       properties:
         ResponseInfo:
           $ref: 'https://raw.githubusercontent.com/egovernments/DIGIT-Specs/common-contract-update/Common%20Services/common-contract.yaml#/components/schemas/ResponseInfo'
-        tenantid: 
-          type: string    
+        tenantId:
+          type: string
         artifacts:
           type: array
           description: his is an output field and will contain the list of artifacts found as per the search criteria
@@ -325,7 +338,8 @@ components:
         applicationId:
           type: string
         owner:
-          type: UUID
+          type: string
+          format: uuid
           description: UUID of user
         filingNumber:
           type: string
@@ -337,14 +351,17 @@ components:
           type: string
         order:
           type: string
-        sourceid:
+        sourceId:
           type: string
-        sourcename:
+          description: ID of the source (e.g., individual, organization) who provided the evidence
+        sourceName:
           type: string
+          description: Name of the source when formal ID is not available
         status:
           type: string
         artifactNumber:
           type: string
+
     EvidenceAddCommentRequest:
       type: object
       properties:

@@ -1,17 +1,17 @@
 import { Loader } from "@egovernments/digit-ui-components";
-import { CitizenInfoLabel, CloseSvg } from "@egovernments/digit-ui-react-components";
-import React, { useEffect, useMemo, useState } from "react";
+import { CloseSvg } from "@egovernments/digit-ui-react-components";
+import React, { useMemo, useState } from "react";
 import { useHistory, useRouteMatch } from "react-router-dom/cjs/react-router-dom.min";
 import Button from "../../../components/Button";
 import CustomDetailsCard from "../../../components/CustomDetailsCard";
 import Modal from "../../../components/Modal";
+import SelectCustomNote from "../../../components/SelectCustomNote";
+import useGetStatuteSection from "../../../hooks/dristi/useGetStatuteSection";
 import { FileDownloadIcon } from "../../../icons/svgIndex";
 import { DRISTIService } from "../../../services";
-import { userTypeOptions } from "../registration/config";
-import SelectCustomNote from "../../../components/SelectCustomNote";
-import _ from "lodash";
-import useGetStatuteSection from "../../../hooks/dristi/useGetStatuteSection";
 import downloadPdfWithLink from "../../../Utils/downloadPdfWithLink";
+import { userTypeOptions } from "../registration/config";
+
 const customNoteConfig = {
   populators: {
     inputs: [
@@ -37,7 +37,7 @@ function CaseType({ t }) {
   const tenantId = window?.Digit.ULBService.getCurrentTenantId();
   const [page, setPage] = useState(0);
   const [isDisabled, setIsDisabled] = useState(false);
-  const requiredDocumentsListLink = "/pucar-filestore/kl/RequiredDocumentsList.pdf";
+  const requiredDocumentsListLink = window?.globalConfigs?.getConfig("CASE_FILE_REQUIRED_DOCUMENTS");
 
   const onCancel = () => {
     history.push("/digit-ui/citizen/home/home-pending-task");
@@ -250,7 +250,7 @@ function CaseType({ t }) {
                                   individualDetails: {
                                     individualId: individualId,
                                     document: identifierIdDetails?.fileStoreId
-                                      ? [{ name: idType, fileStore: identifierIdDetails?.fileStoreId, documentName: identifierIdDetails?.filename }]
+                                      ? [{ fileName: idType, fileStore: identifierIdDetails?.fileStoreId, documentName: identifierIdDetails?.filename }]
                                       : null,
                                     "addressDetails-select": {
                                       pincode: pincode,

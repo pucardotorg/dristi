@@ -200,10 +200,10 @@ export const DRISTIService = {
   customApiService: (url, data, params, useCache = false, userService = true) =>
     Request({
       url: url,
-      useCache: useCache,
-      userService: true,
       data,
       params,
+      useCache,
+      userService,
     }),
   addWitness: (data, params) =>
     Request({
@@ -324,6 +324,14 @@ export const DRISTIService = {
       url: Urls.dristi.applicationCreate,
       useCache: false,
       userService: true,
+      data,
+      params,
+    }),
+  downloadCaseBundle: (data, params) =>
+    Request({
+      url: Urls.dristi.downloadCaseBundle,
+      useCache: false,
+      userService: false,
       data,
       params,
     }),

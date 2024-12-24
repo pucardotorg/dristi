@@ -65,6 +65,9 @@ public class Configuration {
 	@Value("${egov.mdms.schema.search.endpoint}")
 	private String mdmsSchemaEndPoint;
 
+	@Value("${schemacode.state.master}")
+	private String stateMasterSchema;
+
 
 	//HRMS
 	@Value("${egov.hrms.host}")
@@ -116,6 +119,22 @@ public class Configuration {
 	@Value("${dristi.dev.task.search.url}")
 	private String taskSearchPath;
 
+
+	@Value("${egov.dristi.pdf.host}")
+	private String caseBundlePdfHost;
+
+	@Value("${egov.dristi.pdf.bundle}")
+	private String caseBundlePdfPath;
+
+	@Value("${egov.dristi.pdf.process.bundle}")
+	private String processCaseBundlePdfPath;
+
+	@Value("${dristi.case.host}")
+	private String caseHost;
+
+	@Value("${dristi.case.search.url}")
+	private String caseSearchUrl;
+
 	//ElasticSearch Config
 	@Value("${egov.infra.indexer.host}")
 	private String esHostUrl;
@@ -128,6 +147,9 @@ public class Configuration {
 
 	@Value("${dristi.case.index}")
 	private String caseIndex;
+
+	@Value("${dristi.bundle.index}")
+	private String caseBundleIndex;
 
 	@Value("${dristi.hearing.index}")
 	private String hearingIndex;
@@ -153,6 +175,9 @@ public class Configuration {
 	//Kafka
 	@Value("${casemanagement.kafka.vc.create.topic}")
 	private String createVc;
+
+	@Value("${casemanagement.kafka.bundle.create.topic}")
+	private String bundleCreateTopic;
 
 	@Value("${generate.vc.code}")
 	private String vcCode;

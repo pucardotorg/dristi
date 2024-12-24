@@ -48,6 +48,13 @@
                     "isStateUpdatable": true,
                     "actions": [
                         {
+                            "action": "SAVE_DRAFT",
+                            "nextState": "DRAFT_IN_PROGRESS",
+                            "roles": [
+                                "CASE_CREATOR"
+                            ]
+                        },
+                        {
                             "action": "SUBMIT_CASE",
                             "nextState": "PENDING_E-SIGN",
                             "roles": [
@@ -377,6 +384,7 @@
                             "action": "RESPOND",
                             "nextState": "PENDING_ADMISSION",
                             "roles": [
+                                "CASE_EDITOR",
                                 "SYSTEM",
                                 "SYSTEM_ADMIN"
                             ]

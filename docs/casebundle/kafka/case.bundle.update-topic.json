@@ -1,0 +1,31 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://dristi.pucar.org/schemas/case-bundle-update.json",
+  "$comment": "definition of the schema for case-bundle-update topic. This is used when any event happens that results in need to update the case bundle PDF, outside of workflow transition events",
+  "$version": "1.0",
+  "type": "object",
+  "required": ["timestamp", "caseID", "eventType", "moduleName", "payload"],
+  "properties": {
+    "timestamp": {
+      "type": "number",
+      "description": "Date time the event is being created. Stored in EPOCH date time"
+    },
+    "caseID": {
+      "type": "string",
+      "format": "uuid",
+      "description": "the primary key of the case whose bundle needs to be created"
+    },
+    "eventType": {
+      "type": "string",
+      "description": "type of the event causing update in case bundle. Consumer may process each event in a different manner, based on this field"
+    },
+    "moduleName": {
+      "type": "string",
+      "description": "name of module/entity who has raised this event"
+    },
+    "payload": {
+      "type": "object",
+      "description": "different payload structure basis different eventType"
+    }
+  }
+}

@@ -80,7 +80,6 @@ public class ServiceConstants {
     public static final String ORDER_ISSUED = "ORDER_ISSUED";
 
     public static final String SCHEDULE_OF_HEARING_DATE = "SCHEDULE_OF_HEARING_DATE";
-
     public static final String INDIVIDUAL_UTILITY_EXCEPTION = "INDIVIDUAL_UTILITY_EXCEPTION";
 
 }

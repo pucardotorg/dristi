@@ -5,6 +5,7 @@ import { Switch } from "react-router-dom";
 import SubmissionsResponse from "./SubmissionsResponse";
 import SubmissionsCreate from "./SubmissionsCreate";
 import SubmissionsSearch from "./SubmissionsSearch";
+import SubmissionDocuments from "./SubmissionDocuments";
 import { useHistory } from "react-router-dom/cjs/react-router-dom.min";
 const bredCrumbStyle = { maxWidth: "min-content" };
 
@@ -50,6 +51,7 @@ const App = ({ path, stateCode, userType, tenants }) => {
         </React.Fragment>
         <PrivateRoute path={`${path}/submissions-response`} component={() => <SubmissionsResponse></SubmissionsResponse>} />
         <PrivateRoute path={`${path}/submissions-create`} component={() => <SubmissionsCreate path={path} />} />
+        <PrivateRoute path={`${path}/submit-document`} component={() => <SubmissionDocuments path={path} />} />
         <PrivateRoute path={`${path}/submissions-search`} component={() => <SubmissionsSearch></SubmissionsSearch>} />
       </AppContainer>
     </Switch>

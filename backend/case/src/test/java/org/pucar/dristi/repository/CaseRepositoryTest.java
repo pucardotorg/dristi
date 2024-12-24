@@ -22,7 +22,9 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.pucar.dristi.repository.querybuilder.CaseQueryBuilder;
 import org.pucar.dristi.repository.querybuilder.CaseSummaryQueryBuilder;
+import org.pucar.dristi.repository.querybuilder.OpenApiCaseSummaryQueryBuilder;
 import org.pucar.dristi.repository.rowmapper.*;
+import org.pucar.dristi.web.OpenApiCaseSummary;
 import org.pucar.dristi.web.models.*;
 import org.springframework.jdbc.core.JdbcTemplate;
 
@@ -33,6 +35,14 @@ class CaseRepositoryTest {
     private JdbcTemplate jdbcTemplate;
     @Mock
     private CaseQueryBuilder queryBuilder;
+    @Mock
+    private OpenApiCaseSummaryQueryBuilder openApiCaseSummaryQueryBuilder;
+
+    @Mock
+    private OpenApiCaseSummaryRowMapper openApiCaseSummaryRowMapper;
+
+    @Mock
+    private OpenApiCaseListRowMapper openApiCaseListRowMapper;
     @Mock
     private CaseRowMapper rowMapper;
     @Mock
@@ -487,5 +497,121 @@ class CaseRepositoryTest {
         assertThrows(Exception.class, () -> {
             caseRepository.getCaseSummary(request);
         });
+    }
+
+    @Test
+    void testGetCaseSummaryByCnrNumber_Success() {
+        OpenApiCaseSummaryRequest request = new OpenApiCaseSummaryRequest();
+        List<Object> preparedStmtList = new ArrayList<>();
+        List<Integer> preparedStmtArgList = new ArrayList<>();
+        preparedStmtList.add("param1");
+        preparedStmtArgList.add(java.sql.Types.VARCHAR);
+
+        String baseQuery = "SELECT * FROM case_summary WHERE ...";
+        String finalQuery = "SELECT * FROM case_summary WHERE ...";
+
+        when(openApiCaseSummaryQueryBuilder.getCaseBaseQuery(eq(request), anyList(), anyList())).thenReturn(baseQuery);
+        when(openApiCaseSummaryQueryBuilder.getCaseSummarySearchQuery(baseQuery)).thenReturn(finalQuery);
+        List<OpenApiCaseSummary> resultList = List.of(new OpenApiCaseSummary());
+        when(jdbcTemplate.query(eq(finalQuery), any(Object[].class), any(int[].class), eq(openApiCaseSummaryRowMapper)))
+                .thenReturn(resultList);
+
+        OpenApiCaseSummary result = caseRepository.getCaseSummaryByCnrNumber(request);
+
+        assertNotNull(result);
+        verify(jdbcTemplate, times(1)).query(eq(finalQuery), any(Object[].class), any(int[].class), eq(openApiCaseSummaryRowMapper));
+    }
+
+    @Test
+    void testGetCaseSummaryByCnrNumber_MultipleResults() {
+        OpenApiCaseSummaryRequest request = new OpenApiCaseSummaryRequest();
+        List<Object> preparedStmtList = new ArrayList<>();
+        List<Integer> preparedStmtArgList = new ArrayList<>();
+
+        String baseQuery = "SELECT * FROM case_summary WHERE ...";
+        String finalQuery = "SELECT * FROM case_summary WHERE ...";
+
+        when(openApiCaseSummaryQueryBuilder.getCaseBaseQuery(eq(request), anyList(), anyList())).thenReturn(baseQuery);
+        when(openApiCaseSummaryQueryBuilder.getCaseSummarySearchQuery(baseQuery)).thenReturn(finalQuery);
+        List<OpenApiCaseSummary> resultList = List.of(new OpenApiCaseSummary(), new OpenApiCaseSummary());
+        when(jdbcTemplate.query(eq(finalQuery), any(Object[].class), any(int[].class), eq(openApiCaseSummaryRowMapper)))
+                .thenReturn(resultList);
+
+        CustomException exception = assertThrows(CustomException.class, () -> {
+            caseRepository.getCaseSummaryByCnrNumber(request);
+        });
+
+        assertEquals("CASE_SUMMARY_SEARCH_QUERY_EXCEPTION", exception.getCode());
+    }
+
+    @Test
+    void testGetCaseSummaryListByCaseType_Success() {
+        OpenApiCaseSummaryRequest request = new OpenApiCaseSummaryRequest();
+        Pagination pagination = new Pagination();
+        request.setPagination(pagination);
+
+        List<Object> preparedStmtList = new ArrayList<>();
+        List<Integer> preparedStmtArgList = new ArrayList<>();
+
+        String baseQuery = "SELECT * FROM case_summary WHERE ...";
+        String paginatedQuery = "SELECT * FROM case_summary WHERE ... ORDER BY ... LIMIT ...";
+
+        when(openApiCaseSummaryQueryBuilder.getCaseBaseQuery(eq(request), anyList(), anyList())).thenReturn(baseQuery);
+        when(openApiCaseSummaryQueryBuilder.addOrderByQuery(eq(baseQuery), eq(pagination))).thenReturn(paginatedQuery);
+        when(openApiCaseSummaryQueryBuilder.addPaginationQuery(eq(paginatedQuery), anyList(), eq(pagination), anyList()))
+                .thenReturn(paginatedQuery);
+        when(jdbcTemplate.query(eq(paginatedQuery), any(Object[].class), any(int[].class), eq(openApiCaseListRowMapper)))
+                .thenReturn(new ArrayList<>());
+        when(queryBuilder.getTotalCountQuery(eq(paginatedQuery))).thenReturn("SELECT COUNT(*) FROM case_summary");
+        when(jdbcTemplate.queryForObject(eq("SELECT COUNT(*) FROM case_summary"), any(Object[].class), eq(Integer.class))
+        ).thenReturn(1);
+        List<CaseListLineItem> result = caseRepository.getCaseSummaryListByCaseType(request);
+
+        assertNotNull(result);
+        verify(jdbcTemplate, times(1)).query(eq(paginatedQuery), any(Object[].class), any(int[].class), eq(openApiCaseListRowMapper));
+    }
+
+    @Test
+    void testGetCaseSummaryByCaseNumber_Success() {
+        OpenApiCaseSummaryRequest request = new OpenApiCaseSummaryRequest();
+        List<Object> preparedStmtList = new ArrayList<>();
+        List<Integer> preparedStmtArgList = new ArrayList<>();
+        preparedStmtList.add("param1");
+        preparedStmtArgList.add(java.sql.Types.VARCHAR);
+
+        String baseQuery = "SELECT * FROM case_summary WHERE ...";
+        String finalQuery = "SELECT * FROM case_summary WHERE ...";
+
+        when(openApiCaseSummaryQueryBuilder.getCaseBaseQuery(eq(request), anyList(), anyList())).thenReturn(baseQuery);
+        when(openApiCaseSummaryQueryBuilder.getCaseSummarySearchQuery(baseQuery)).thenReturn(finalQuery);
+        List<OpenApiCaseSummary> resultList = List.of(new OpenApiCaseSummary());
+        when(jdbcTemplate.query(eq(finalQuery), any(Object[].class), any(int[].class), eq(openApiCaseSummaryRowMapper)))
+                .thenReturn(resultList);
+
+        OpenApiCaseSummary result = caseRepository.getCaseSummaryByCaseNumber(request);
+
+        assertNotNull(result);
+        verify(jdbcTemplate, times(1)).query(eq(finalQuery), any(Object[].class), any(int[].class), eq(openApiCaseSummaryRowMapper));
+    }
+
+    @Test
+    void testGetCaseSummaryByCaseNumber_Exception() {
+        OpenApiCaseSummaryRequest request = new OpenApiCaseSummaryRequest();
+        List<Object> preparedStmtList = new ArrayList<>();
+        List<Integer> preparedStmtArgList = new ArrayList<>();
+
+        String baseQuery = "SELECT * FROM case_summary WHERE ...";
+        String finalQuery = "SELECT * FROM case_summary WHERE ...";
+
+        when(openApiCaseSummaryQueryBuilder.getCaseBaseQuery(eq(request), anyList(), anyList())).thenReturn(baseQuery);
+        when(openApiCaseSummaryQueryBuilder.getCaseSummarySearchQuery(baseQuery)).thenReturn(finalQuery);
+        when(jdbcTemplate.query(eq(finalQuery), any(Object[].class), any(int[].class), eq(openApiCaseSummaryRowMapper)))
+                .thenThrow(new RuntimeException("Database error"));
+
+        CustomException exception = assertThrows(CustomException.class, () -> {
+            caseRepository.getCaseSummaryByCaseNumber(request);
+        });
+
+        assertEquals("CASE_SUMMARY_SEARCH_QUERY_EXCEPTION", exception.getCode());
     }
 }

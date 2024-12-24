@@ -1,21 +1,28 @@
 package org.pucar.dristi.service;
 
 
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.extern.slf4j.Slf4j;
+import org.egov.common.contract.request.RequestInfo;
+import org.egov.common.models.individual.Individual;
 import org.egov.tracer.model.CustomException;
 import org.pucar.dristi.config.Configuration;
 import org.pucar.dristi.enrichment.HearingRegistrationEnrichment;
 import org.pucar.dristi.kafka.Producer;
 import org.pucar.dristi.repository.HearingRepository;
+import org.pucar.dristi.util.CaseUtil;
 import org.pucar.dristi.validator.HearingRegistrationValidator;
 import org.pucar.dristi.web.models.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import static org.pucar.dristi.config.ServiceConstants.*;
-import static org.pucar.dristi.config.ServiceConstants.WITNESS_DEPOSITION_UPDATE_EXCEPTION;
 
 @Service
 @Slf4j
@@ -107,7 +114,6 @@ public class HearingService {
             enrichmentUtil.enrichHearingApplicationUponUpdate(hearingRequest);
 
             producer.push(config.getHearingUpdateTopic(), hearingRequest);
-
             return hearingRequest.getHearing();
 
         } catch (CustomException e) {

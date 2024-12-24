@@ -15,6 +15,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import static org.pucar.dristi.config.ServiceConstants.EVIDENCE_SEARCH_QUERY_EXCEPTION;
+import static org.pucar.dristi.config.ServiceConstants.PENDING_E_SIGN;
 
 @Slf4j
 @Repository
@@ -43,6 +44,16 @@ public class    EvidenceRepository {
 
             // Artifact query building
             String artifactQuery = queryBuilder.getArtifactSearchQuery(preparedStmtList,preparedStmtArgList,evidenceSearchCriteria);
+            if(evidenceSearchCriteria.getIsCourtEmployee()){
+                List<String> statusList = List.of(PENDING_E_SIGN);
+                String courtEmployeeQuery = queryBuilder.getStatusQuery(statusList, preparedStmtList, preparedStmtArgList);
+                artifactQuery += courtEmployeeQuery;
+            }
+            if(evidenceSearchCriteria.getIsCitizen()){
+                List<String> statusList = List.of(PENDING_E_SIGN);
+                String citizenQuery = queryBuilder.getCitizenQuery(statusList, evidenceSearchCriteria, preparedStmtList, preparedStmtArgList);
+                artifactQuery += citizenQuery;
+            }
             artifactQuery = queryBuilder.addOrderByQuery(artifactQuery, pagination);
             log.info("Final artifact query: {}", artifactQuery);
 

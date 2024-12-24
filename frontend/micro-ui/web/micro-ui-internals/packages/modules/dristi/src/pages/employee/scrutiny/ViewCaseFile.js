@@ -69,7 +69,7 @@ function ViewCaseFile({ t, inViewCase = false }) {
 
   const { downloadPdf } = useDownloadCasePdf();
 
-  const checkListLink = "/pucar-filestore/kl/ScrutinyCheckList.pdf";
+  const checkListLink = window?.globalConfigs?.getConfig("SCRUTINY_CHECK_LIST");
 
   const onFormValueChange = (setValue, formData, formState, reset, setError, clearErrors, trigger, getValues) => {
     if (JSON.stringify(formData) !== JSON.stringify(formdata.data)) {

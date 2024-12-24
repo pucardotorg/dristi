@@ -1,0 +1,160 @@
+{
+  "name": "case-bundle-pdf",
+  "tenantId": "KL",
+  "isInProcessing": false,
+  "caseID": "123e4567-e89b-12d3-a456-426614174000",
+  "isCaseRegistered": true,
+  "pdfCreatedDate": 1696102400,
+  "fileStoreId": "987e6543-b21d-45f6-a879-214365876543",
+  "contentLastModified": 1696188800,
+  "sections": [
+    {
+      "name": "titlepage",
+      "lineItems": [
+        {
+          "content": "cover",
+          "createPDF": true
+        }
+      ]
+    },
+    {
+      "name": "adiary"
+    },
+    {
+      "name": "pendingapplications",
+      "lineItems": [
+        {
+          "content": "application",
+          "createPDF": false,
+          "sourceId": "qrst4567-stuv-8901-wxyz-432109876543",
+          "fileStoreId": "ijkm4567-nopq-2345-qrst-321098765432",
+          "sortParam": "CMP/3/2024"
+        },
+        {
+          "content": "objection",
+          "createPDF": false,
+          "sourceId": "xyza5678-abcd-1234-efgh-210987654321",
+          "fileStoreId": "mnop5678-cdef-3456-ghij-109876543210",
+          "sortParam": "CMP/3/2024"
+        },
+        {
+          "content": "application",
+          "createPDF": false,
+          "sourceId": "qrst4567-stuv-8901-wxyz-432109876543",
+          "fileStoreId": "ijkm4567-nopq-2345-qrst-321098765432",
+          "sortParam": "CMP/8/2024"
+        }
+      ]
+    },
+    {
+      "name": "complaint",
+      "lineItems": [
+        {
+          "content": "complaint",
+          "createPDF": false,
+          "sourceId": "lmn1234-opqr-5678-stuv-876543210987",
+          "fileStoreId": "opqr5678-stuv-9012-wxyz-765432109876",
+          "sortParam": "1696040000"
+        }
+      ]
+    },
+    {
+      "name": "filings"
+    },
+    {
+      "name": "affidavit",
+      "lineItems": [
+        {
+          "content": "affidavit",
+          "createPDF": true,
+          "sourceId": "lmn1234-opqr-5678-stuv-876543210987",
+          "fileStoreId": "opqr5678-stuv-9012-wxyz-765432109876",
+          "sortParam": "1696040000"
+        }
+      ]
+    },
+    {
+      "name": "vakalat",
+      "lineItems": [
+        {
+          "content": "vakalat",
+          "createPDF": false,
+          "sourceId": "qrst4567-stuv-8901-wxyz-432109876543",
+          "fileStoreId": "ijkm4567-nopq-2345-qrst-321098765432",
+          "sortParam": "1696040000"
+        },
+        {
+          "content": "vakalat",
+          "createPDF": false,
+          "sourceId": "xyza5678-abcd-1234-efgh-210987654321",
+          "fileStoreId": "mnop5678-cdef-3456-ghij-109876543210",
+          "sortParam": "1796040000"
+        }
+      ]
+    },
+    {
+      "name": "additionalfilings"
+    },
+    {
+      "name": "mandatorysubmissions"
+    },
+    {
+      "name": "complainantevidence"
+    },
+    {
+      "name": "313"
+    },
+    {
+      "name": "accusedstatement"
+    },
+    {
+      "name": "accusedevidence"
+    },
+    {
+      "name": "courtevidence"
+    },
+    {
+      "name": "courtnotes"
+    },
+    {
+      "name": "complainantnotes"
+    },
+    {
+      "name": "accusednotes"
+    },
+    {
+      "name": "applications",
+      "lineItems": [
+        {
+          "content": "application",
+          "createPDF": false,
+          "sourceId": "lmn1234-opqr-5678-stuv-876543210987",
+          "fileStoreId": "opqr5678-stuv-9012-wxyz-765432109876",
+          "sortParam": "CMP/2/2024"
+        },
+        {
+          "content": "objection",
+          "createPDF": false,
+          "sourceId": "xyza5678-abcd-1234-efgh-210987654321",
+          "fileStoreId": "mnop5678-cdef-3456-ghij-109876543210",
+          "sortParam": "CMP/2/2024"
+        }
+      ]
+    },
+    {
+      "name": "baildocument"
+    },
+    {
+      "name": "memos"
+    },
+    {
+      "name": "processes"
+    },
+    {
+      "name": "paymentreceipts"
+    },
+    {
+      "name": "orders"
+    }
+  ]
+}

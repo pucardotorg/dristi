@@ -73,7 +73,7 @@ public class IndividualService {
             return Collections.emptyList();
         }
     }
-    private StringBuilder buildIndividualSearchUri(RequestInfo requestInfo, int limit, int offset) {
+    private StringBuilder buildIndividualSearchUri(RequestInfo requestInfo,int limit, int offset) {
         return new StringBuilder(config.getIndividualHost())
                 .append(config.getIndividualSearchEndpoint())
                 .append("?limit=").append(limit)

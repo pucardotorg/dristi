@@ -1,7 +1,7 @@
 // config.js
 // const env = process.env.NODE_ENV; // 'dev' or 'test'
 
-HOST = process.env.EGOV_HOST || "localhost";
+const HOST = process.env.EGOV_HOST || "localhost";
 
 if (!HOST) {
   console.log("You need to set the HOST variable");
@@ -269,6 +269,9 @@ module.exports = {
     sunbirdrc_credential_service_search:
       "/sunbirdrc-credential-service/qrcode/_get",
     message_search: "/localization/messages/v1/_search",
+    filestore_create: "/filestore/v1/files",
+    filestore_search: "/filestore/v1/files/url",
+    filestore_search_id: "/filestore/v1/files/id",
   },
 
   constraints: {

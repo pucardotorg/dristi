@@ -1,6 +1,5 @@
 package org.pucar.dristi.service;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.extern.slf4j.Slf4j;
@@ -146,17 +145,16 @@ public class OrderRegistrationService {
         return caseSearchRequest;
     }
     private String getMessageCode(String orderType, String updatedStatus) {
-
-         if(orderType.equalsIgnoreCase(SCHEDULE_OF_HEARING_DATE) && updatedStatus.equalsIgnoreCase(PUBLISHED)){
+        if(orderType.equalsIgnoreCase(SCHEDULE_OF_HEARING_DATE) && updatedStatus.equalsIgnoreCase(PUBLISHED)){
             return ADMISSION_HEARING_SCHEDULED;
         }
-         if (updatedStatus.equalsIgnoreCase(PUBLISHED)){
+        if (updatedStatus.equalsIgnoreCase(PUBLISHED)){
              return ORDER_ISSUED;
          }
         return null;
     }
 
-    private void callNotificationService(OrderRequest orderRequest, String messageCode) {
+    private void callNotificationService(OrderRequest orderRequest,String messageCode) {
 
         try {
             CaseSearchRequest caseSearchRequest = createCaseSearchRequest(orderRequest.getRequestInfo(), orderRequest.getOrder());
@@ -194,7 +192,6 @@ public class OrderRegistrationService {
         }
     }
 
-
     public List<OrderExists> existsOrder(OrderExistsRequest orderExistsRequest) {
         try {
             return orderRepository.checkOrderExists(orderExistsRequest.getOrder());
@@ -227,13 +224,12 @@ public class OrderRegistrationService {
     private Set<String> callIndividualService(RequestInfo requestInfo, Set<String> individualIds) {
 
         Set<String> mobileNumber = new HashSet<>();
-        for(String id : individualIds){
+        for (String id : individualIds) {
             List<Individual> individuals = individualService.getIndividualsByIndividualId(requestInfo, id);
-            if(individuals.get(0).getMobileNumber() != null){
+            if (individuals.get(0).getMobileNumber() != null) {
                 mobileNumber.add(individuals.get(0).getMobileNumber());
             }
         }
-        return mobileNumber;
+            return mobileNumber;
     }
-
 }

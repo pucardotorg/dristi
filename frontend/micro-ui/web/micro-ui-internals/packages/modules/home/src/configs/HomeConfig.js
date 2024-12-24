@@ -22,8 +22,9 @@ export const userTypeOptions = [
       "CASE_CREATOR",
       "CASE_EDITOR",
       "CASE_VIEWER",
-      "DEPOSITION_CREATOR",
-      "DEPOSITION_VIEWER",
+      "EVIDENCE_CREATOR",
+      "EVIDENCE_VIEWER",
+      "EVIDENCE_EDITOR",
       "APPLICATION_CREATOR",
       "APPLICATION_VIEWER",
       "HEARING_VIEWER",
@@ -48,8 +49,9 @@ export const userTypeOptions = [
       "CASE_CREATOR",
       "CASE_EDITOR",
       "CASE_VIEWER",
-      "DEPOSITION_CREATOR",
-      "DEPOSITION_VIEWER",
+      "EVIDENCE_CREATOR",
+      "EVIDENCE_VIEWER",
+      "EVIDENCE_EDITOR",
       "APPLICATION_CREATOR",
       "APPLICATION_VIEWER",
       "HEARING_VIEWER",
@@ -58,6 +60,7 @@ export const userTypeOptions = [
       "SUBMISSION_RESPONDER",
       "SUBMISSION_DELETE",
       "TASK_VIEWER",
+      "USER_REGISTER",
       "ADVOCATE_VIEWER",
       "ADVOCATE_APPLICATION_VIEWER",
       "PENDING_TASK_CREATOR",
@@ -80,8 +83,9 @@ export const userTypeOptions = [
       "CASE_CREATOR",
       "CASE_EDITOR",
       "CASE_VIEWER",
-      "DEPOSITION_CREATOR",
-      "DEPOSITION_VIEWER",
+      "EVIDENCE_CREATOR",
+      "EVIDENCE_VIEWER",
+      "EVIDENCE_EDITOR",
       "APPLICATION_CREATOR",
       "APPLICATION_VIEWER",
       "HEARING_VIEWER",
@@ -90,6 +94,7 @@ export const userTypeOptions = [
       "SUBMISSION_RESPONDER",
       "SUBMISSION_DELETE",
       "TASK_VIEWER",
+      "USER_REGISTER",
       "ADVOCATE_VIEWER",
       "ADVOCATE_APPLICATION_VIEWER",
       "PENDING_TASK_CREATOR",
@@ -409,6 +414,7 @@ export const pendingTaskOrderActions = {
       params: [
         { key: "filingNumber", value: "filingNumber" },
         { key: "hearingId", value: "referenceId" },
+        { key: "taskOrderType", defaultValue: "SUMMONS" },
       ],
     },
   },
@@ -688,6 +694,20 @@ export const pendingTaskForNoticeActions = {
   },
 };
 
+export const pendingTaskForDocumentSubmissionActions = {
+  PENDINGESIGN_SUBMIT_DOCUMENT: {
+    actorName: ["LITIGANT/ADVOCATE"],
+    actionName: "Esign the Document Submission",
+    redirectDetails: {
+      url: "/submissions/submit-document",
+      params: [
+        { key: "filingNumber", value: "filingNumber" },
+        { key: "artifactNumber", value: "referenceId" },
+      ],
+    },
+  },
+};
+
 export const selectTaskType = {
   "case-default": pendingTaskCaseActions,
   "hearing-default": pendingTaskHearingActions,
@@ -698,4 +718,5 @@ export const selectTaskType = {
   "artifact-default": pendingTaskForArtifactActions,
   "task-summons": pendingTaskForSummonsActions,
   "task-notice": pendingTaskForNoticeActions,
+  "voluntary-document-submission": pendingTaskForDocumentSubmissionActions,
 };

@@ -29,7 +29,7 @@
           "state": "PENDING_PAYMENT",
           "applicationStatus": "INWORKFLOW",
           "docUploadRequired": true,
-          "isStartState": true,
+          "isStartState": false,
           "isTerminateState": false,
           "isStateUpdatable": true,
           "actions": [

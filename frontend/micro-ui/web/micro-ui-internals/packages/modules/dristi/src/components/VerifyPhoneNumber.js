@@ -199,7 +199,7 @@ function VerifyPhoneNumber({ t, config, onSelect, formData = {}, errors, setErro
               individualDetails: {
                 individualId: individualData?.Individual?.[0]?.individualId,
                 document: identifierIdDetails?.fileStoreId
-                  ? [{ fileName: `${idType} Card`, fileStore: identifierIdDetails?.fileStoreId, documentName: identifierIdDetails?.filename }]
+                  ? [{ fileName: idType, fileStore: identifierIdDetails?.fileStoreId, documentName: identifierIdDetails?.filename }]
                   : null,
                 "addressDetails-select": data["addressDetails-select"],
                 addressDetails: data["addressDetails-select"],

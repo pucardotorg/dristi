@@ -631,6 +631,10 @@ export const respondentValidation = ({
         return false;
       }
     }
+    if (!formDataCopy?.respondentType?.code) {
+      setShowErrorToast(true);
+      return true;
+    }
   }
 
   const respondentMobileNUmbers = formData?.phonenumbers?.textfieldValue;
@@ -933,8 +937,9 @@ export const createIndividualUser = async ({ data, documentData, tenantId }) => 
             "CASE_CREATOR",
             "CASE_EDITOR",
             "CASE_VIEWER",
-            "DEPOSITION_CREATOR",
-            "DEPOSITION_VIEWER",
+            "EVIDENCE_CREATOR",
+            "EVIDENCE_VIEWER",
+            "EVIDENCE_EDITOR",
             "APPLICATION_CREATOR",
             "APPLICATION_VIEWER",
             "HEARING_VIEWER",
@@ -943,6 +948,7 @@ export const createIndividualUser = async ({ data, documentData, tenantId }) => 
             "SUBMISSION_RESPONDER",
             "SUBMISSION_DELETE",
             "TASK_VIEWER",
+            "ADVOCATE_VIEWER",
             "CASE_RESPONDER",
             "HEARING_ACCEPTOR",
             "PENDING_TASK_CREATOR",
@@ -1239,6 +1245,7 @@ export const updateCaseDetails = async ({
   multiUploadList,
   scrutinyObj,
   caseComplaintDocument,
+  filingType,
 }) => {
   const data = {};
   setIsDisabled(true);
@@ -1735,11 +1742,6 @@ export const updateCaseDetails = async ({
   }
   if (selected === "chequeDetails") {
     let docList = [];
-    const infoBoxData = {
-      header: "CS_YOU_HAVE_CONFIRMED",
-      scrutinyHeader: "CS_COMPLAINANT_HAVE_CONFIRMED",
-      data: ["CS_CHEQUE_RETURNED_INSUFFICIENT_FUND"],
-    };
 
     const newFormData = await Promise.all(
       updatedFormData
@@ -1749,6 +1751,11 @@ export const updateCaseDetails = async ({
             bouncedChequeFileUpload: null,
             depositChequeFileUpload: null,
             returnMemoFileUpload: null,
+          };
+          const infoBoxData = {
+            header: "CS_YOU_HAVE_CONFIRMED",
+            scrutinyHeader: "CS_COMPLAINANT_HAVE_CONFIRMED",
+            data: ["CS_CHEQUE_RETURNED_INSUFFICIENT_FUND"],
           };
           if (data?.data?.bouncedChequeFileUpload?.document) {
             documentData.bouncedChequeFileUpload = {};
@@ -2072,6 +2079,7 @@ export const updateCaseDetails = async ({
                             name: docWithNameData?.docName,
                           },
                         },
+                        filingType: filingType,
                         workflow: {
                           action: "TYPE DEPOSITION",
                           documents: [
@@ -2234,8 +2242,8 @@ export const updateCaseDetails = async ({
         })
     );
     let representatives = [];
-    if (updatedFormData?.filter((item) => item.isenabled).some((data) => data?.data?.isAdvocateRepresenting?.code === "YES")) {
-      representatives = updatedFormData
+    if (newFormData?.filter((item) => item.isenabled).some((data) => data?.data?.isAdvocateRepresenting?.code === "YES")) {
+      representatives = newFormData
         .filter((item) => item.isenabled)
         .map((data, index) => {
           return {
@@ -2261,6 +2269,7 @@ export const updateCaseDetails = async ({
                 ]
               : [],
             advocateId: data?.data?.advocateBarRegNumberWithName?.[0]?.advocateId,
+            documents: data?.data?.vakalatnamaFileUpload?.document,
             additionalDetails: {
               advocateName: data?.data?.advocateBarRegNumberWithName?.[0]?.advocateName,
               uuid: advocateDetails?.[data?.data?.advocateBarRegNumberWithName?.[0]?.advocateId],

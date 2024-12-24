@@ -18,9 +18,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
 
 
-import java.util.Arrays;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 import static org.pucar.dristi.config.ServiceConstants.PENDINGAPPROVAL;
 
@@ -35,6 +33,7 @@ public class PaymentUpdateService {
     private final Configuration configuration;
     private final ApplicationEnrichment enrichment;
     private final List<String> allowedBusinessServices;
+
     @Autowired
     public PaymentUpdateService(WorkflowService workflowService, ObjectMapper mapper, ApplicationRepository repository, Producer producer, Configuration configuration, ApplicationEnrichment enrichment) {
         this.workflowService = workflowService;
@@ -113,6 +112,7 @@ public class PaymentUpdateService {
                 if (PENDINGAPPROVAL.equalsIgnoreCase(application.getStatus())){
                     enrichment.enrichApplicationNumberByCMPNumber(applicationRequest);
                 }
+
                 producer.push(configuration.getApplicationUpdateStatusTopic(), applicationRequest);
             }
         } catch (Exception e) {

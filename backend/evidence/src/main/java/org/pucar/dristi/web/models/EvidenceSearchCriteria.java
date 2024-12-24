@@ -1,5 +1,6 @@
 package org.pucar.dristi.web.models;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -28,6 +29,13 @@ public class EvidenceSearchCriteria {
     private String artifactNumber;
     private String filingNumber;
     private UUID owner;
+
+    @JsonIgnore
+    private String userUuid;
+    @JsonIgnore
+    private boolean isCitizen = false;
+    @JsonIgnore
+    private boolean isCourtEmployee = false;
     // Getters and setters
 
     public String getId() {
@@ -110,5 +118,19 @@ public class EvidenceSearchCriteria {
 
     public void setArtifactNumber(String artifactNumber) {
         this.artifactNumber = artifactNumber;
+    }
+
+
+    public void setIsCitizen(boolean isCitizen) {
+        this.isCitizen = isCitizen;
+    }
+    public boolean getIsCitizen() {
+        return isCitizen;
+    }
+    public void setIsCourtEmployee(boolean isCourtEmployee) {
+        this.isCourtEmployee = isCourtEmployee;
+    }
+    public boolean getIsCourtEmployee() {
+        return isCourtEmployee;
     }
 }

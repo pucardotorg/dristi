@@ -1,0 +1,36 @@
+@startuml
+autonumber
+skinparam responseMessageBelowArrow true
+
+title "Case Bundle Complaint PDF Create"
+
+box DRISIT Services
+participant CaseManagementService as CMS #gold
+participant CaseSvc as CS #gold
+participant CaseBundleSvc as CBS #gold
+end box
+
+box DIGIT Services #lightgray
+participant PDFSvc as PS #lightgreen
+
+end box
+
+CMS->CBS++: invoke caseComplaintPDF (caseId)
+
+
+note across: Case Complaint PDF contains - Complaint + Witness Schedule + List of documents
+
+CBS->CS++: get case details (caseId)
+return caseDetails
+CBS->PS++: build complaint PDF
+return complaintPDF
+CBS->PS++: build Witness Schedule (list them in any sequence, could try alphabetically sorted names)
+return witnessPDF
+CBS->CBS: merge append witnessPDF to complaintPDF
+CBS->CBS: load static list of documents PDF
+CBS->CBS: merge append to complaintPDF
+note over CBS: because this is built on demand, this will not be stored, but streamed directly
+return complaintPDF stream
+
+
+@enduml

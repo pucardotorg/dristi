@@ -18,7 +18,7 @@ export const OwnerColumn = ({ rowData, colData, value = "", showAsHeading = fals
     status: rowData?.status,
     details: {
       applicationType: rowData?.applicationType,
-      applicationSentOn: formatDate(parseInt(rowData?.auditDetails.createdTime)),
+      applicationSentOn: formatDate(parseInt(rowData?.auditDetails?.createdTime)),
       sender: rowData?.owner,
       additionalDetails: rowData?.additionalDetails,
       applicationId: rowData?.id,
@@ -34,7 +34,7 @@ export const OwnerColumn = ({ rowData, colData, value = "", showAsHeading = fals
       status: rowData?.status,
       details: {
         applicationType: rowData?.applicationType,
-        applicationSentOn: formatDate(parseInt(rowData?.auditDetails.createdTime)),
+        applicationSentOn: formatDate(parseInt(rowData?.auditDetails?.createdTime)),
         sender: rowData?.owner,
         additionalDetails: rowData?.additionalDetails,
         applicationId: rowData?.id,

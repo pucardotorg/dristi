@@ -52,6 +52,9 @@ public class ServiceConstants {
 
     //ElasticSearch
     public static final String ES_TERM_QUERY = "{\"size\":10000,\"query\":{\"term\":{\"%s\":\"%s\"}},\"sort\":[{\"%s\":{\"order\":\"%s\"}}]}";
+    public static final String ES_IDS_QUERY = "{\"query\":{\"ids\":{\"values\":[\"%s\"]}}}";
+    public static final String ES_UPDATE_QUERY = "{ \"doc\": %s }";
+    public static final String ES_BULK_QUERY = "{\"size\":10000,\"query\":{\"bool\":{\"filter\":[{\"script\":{\"script\":{\"source\":\"doc['contentLastModified'].value.toInstant().toEpochMilli() > doc['pdfCreatedDate'].value.toInstant().toEpochMilli()\",\"lang\":\"painless\"}}}]}}}";
 
     public static final String ROOT_PATH = "$.";
     public static final String CASE_BASE_PATH = "Data.caseDetails";
@@ -75,5 +78,9 @@ public class ServiceConstants {
     public static final String ES_HITS_PATH = "$.hits.hits.*._source";
 
     public static final String TIME_ZONE = "Asia/Kolkata";
+
+    public static final String CASE_NOT_FOUND = "CASE_NOT_FOUND";
+
+    public static final String CASE_ERROR_MESSAGE = "No case present for given filingNumber";
 
 }

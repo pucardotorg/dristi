@@ -57,6 +57,7 @@ import { RightArrow } from "./icons/svgIndex";
 import CustomCheckBoxCard from "./components/CustomCheckBoxCard";
 import useBillSearch from "./hooks/dristi/useBillSearch";
 import SelectTranscriptTextArea from "./components/SelectTranscriptTextArea";
+import SelectMultiUpload from "./components/SelectMultiUpload";
 
 export const DRISTIModule = ({ stateCode, userType, tenants }) => {
   const Digit = useMemo(() => window?.Digit || {}, []);
@@ -161,6 +162,7 @@ const componentsToRegister = {
   RightArrow,
   useBillSearch,
   SelectTranscriptTextArea,
+  SelectMultiUpload,
 };
 
 const overrideHooks = () => {

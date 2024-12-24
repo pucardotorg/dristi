@@ -56,7 +56,7 @@ public class SmsNotificationService {
 
     private void pushNotificationBasedOnNotificationStatus(SmsTemplateData templateData, String messageCode, String message, String mobileNumber) {
 
-     if(messageCode.equalsIgnoreCase(ADMISSION_HEARING_SCHEDULED)){
+        if(messageCode.equalsIgnoreCase(ADMISSION_HEARING_SCHEDULED)){
             pushNotification(templateData, message, mobileNumber, config.getSmsNotificationAdmissionHearingScheduledTemplateId());
         }
         if(messageCode.equalsIgnoreCase(ORDER_ISSUED)){

@@ -1,0 +1,36 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://dristi.pucar.org/schemas/application-objection-update.json",
+  "$comment": "definition of the schema for application-objection-update event for case-bundle-update topic. This is used when someone objects to an application and uploads and objection document. ",
+  "$version": "1.0",
+  "type": "object",
+  "required": ["timestamp", "applicationId", "applicationFileStoreId", "objectionFileStoreId", "action"],
+  "properties": {
+    "timestamp": {
+      "type": "double",
+      "description": "Date time the event is being created. Stored in EPOCH date time"
+    },
+    "applicationId": {
+      "type": "string",
+      "format": "uuid",
+      "description": "primary key for the application which has been updated"
+    },
+    "applicationFileStoreId": {
+      "type": "string",
+      "format": "uuid",
+      "description": "fileStoreId of the application for which the objection was added"
+    },
+    "objectionFileStoreId": {
+      "type": "string",
+      "format": "uuid",
+      "description": "fileStoreId of the objection document updated"
+    },
+    "action": {
+      "enum": [
+        "add",
+        "delete"
+      ],
+      "description": "whether the objection document was uploaded added or deleted"
+    }
+  }
+}

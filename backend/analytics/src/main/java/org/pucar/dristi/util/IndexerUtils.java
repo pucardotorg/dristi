@@ -266,7 +266,6 @@ public class IndexerUtils {
     }
 
     private Set<String> callIndividualService(RequestInfo requestInfo, Set<String> individualIds) {
-
         Set<String> mobileNumber = new HashSet<>();
         for(String id : individualIds){
             List<Individual> individuals = individualService.getIndividualsByIndividualId(requestInfo, id);
@@ -290,7 +289,6 @@ public class IndexerUtils {
         caseSearchRequest.addCriteriaItem(caseCriteria);
         return caseSearchRequest;
     }
-
 
     public Map<String, String> processEntity(String entityType, String referenceId, String status, String action, Object object, JSONObject requestInfo) {
         Map<String, String> caseDetails = new HashMap<>();

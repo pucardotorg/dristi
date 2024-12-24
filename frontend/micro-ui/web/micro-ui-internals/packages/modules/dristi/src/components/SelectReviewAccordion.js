@@ -318,6 +318,7 @@ function SelectReviewAccordion({ t, config, onSelect, formData = {}, errors, for
               [type ? type : "FSOError"]: trimmedError,
             }
           );
+          set(formData, [configKey, page], scrutinyMessage);
           setValue(configKey, scrutinyMessage, page);
         }
       }
@@ -403,7 +404,7 @@ function SelectReviewAccordion({ t, config, onSelect, formData = {}, errors, for
           <CustomArrowDownIcon />
         </span>
       </div>
-      <div className={`accordion-item ${!isOpen ? "collapsed" : ""}`}>
+      <div style={{ maxHeight: "fit-content" }} className={`accordion-item ${!isOpen ? "collapsed" : ""}`}>
         <div className="accordion-content">
           {inputs.map((input, index) => {
             showFlagIcon = isScrutiny && !input?.disableScrutiny ? true : false;

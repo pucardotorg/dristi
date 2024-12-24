@@ -1,21 +1,27 @@
 package org.pucar.dristi.service;
 
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.extern.slf4j.Slf4j;
+import net.minidev.json.JSONArray;
+import net.minidev.json.JSONObject;
 import org.egov.common.contract.models.AuditDetails;
 import org.egov.common.contract.request.RequestInfo;
+import org.egov.common.contract.request.User;
 import org.egov.tracer.model.CustomException;
 import org.pucar.dristi.config.Configuration;
 import org.pucar.dristi.enrichment.EvidenceEnrichment;
 import org.pucar.dristi.kafka.Producer;
 import org.pucar.dristi.repository.EvidenceRepository;
+import org.pucar.dristi.util.CaseUtil;
+import org.pucar.dristi.util.MdmsUtil;
 import org.pucar.dristi.validators.EvidenceValidator;
 import org.pucar.dristi.web.models.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
 
 import static org.pucar.dristi.config.ServiceConstants.*;
 
@@ -28,15 +34,19 @@ public class EvidenceService {
     private final EvidenceRepository repository;
     private final Producer producer;
     private final Configuration config;
+    private final MdmsUtil mdmsUtil;
+    private final ObjectMapper objectMapper;
 
     @Autowired
-    public EvidenceService(EvidenceValidator validator, EvidenceEnrichment evidenceEnrichment, WorkflowService workflowService, EvidenceRepository repository, Producer producer, Configuration config) {
+    public EvidenceService(EvidenceValidator validator, EvidenceEnrichment evidenceEnrichment, WorkflowService workflowService, EvidenceRepository repository, Producer producer, Configuration config, MdmsUtil mdmsUtil, ObjectMapper objectMapper) {
         this.validator = validator;
         this.evidenceEnrichment = evidenceEnrichment;
         this.workflowService = workflowService;
         this.repository = repository;
         this.producer = producer;
         this.config = config;
+        this.mdmsUtil = mdmsUtil;
+        this.objectMapper = objectMapper;
     }
 
     public Artifact createEvidence(EvidenceRequest body) {
@@ -50,9 +60,14 @@ public class EvidenceService {
             if (body.getArtifact().getIsEvidence().equals(true)) {
                 evidenceEnrichment.enrichEvidenceNumber(body);
             }
-            // Initiate workflow for the new application-
-            if (body.getArtifact().getArtifactType() != null && body.getArtifact().getArtifactType().equals(DEPOSITION)) {
-                workflowService.updateWorkflowStatus(body);
+
+            String filingType = getFilingTypeMdms(body.getRequestInfo(), body.getArtifact());
+
+            // Initiate workflow for the new application- //todo witness deposition is part of case filing or not
+            if ((body.getArtifact().getArtifactType() != null &&
+                    body.getArtifact().getArtifactType().equals(DEPOSITION)) ||
+                    (filingType != null && body.getArtifact().getWorkflow() != null && filingType.equalsIgnoreCase(SUBMISSION))) {
+                workflowService.updateWorkflowStatus(body, filingType);
                 producer.push(config.getEvidenceCreateTopic(), body);
             } else {
                 producer.push(config.getEvidenceCreateWithoutWorkflowTopic(), body);
@@ -67,9 +82,31 @@ public class EvidenceService {
         }
     }
 
+    private String getFilingTypeMdms(RequestInfo requestInfo, Artifact artifact) {
+         try{
+             Map<String, Map<String, JSONArray>> mdmsData = mdmsUtil.fetchMdmsData(requestInfo, artifact.getTenantId(), config.getFilingTypeModule(), Collections.singletonList(config.getFilingTypeMaster()));
+             JSONArray jsonArray = mdmsData.get(config.getFilingTypeModule()).get(config.getFilingTypeMaster());
+             String filingType = null;
+             for(Object obj : jsonArray) {
+                 JSONObject jsonObject = objectMapper.convertValue(obj, JSONObject.class);
+                 if(jsonObject.get("code").equals(artifact.getFilingType())) {
+                     filingType = jsonObject.get("code").toString();
+                 }
+             }
+             if(filingType == null) {
+                 throw new CustomException(MDMS_DATA_NOT_FOUND, "Filing type not found in mdms");
+             }
+             return filingType;
+         } catch (Exception e){
+                log.error("Error fetching filing type from mdms: {}", e.toString());
+                throw new CustomException("MDMS_FETCH_ERR", "Error fetching filing type from mdms: " + e.toString());
+         }
+    }
+
     public List<Artifact> searchEvidence(RequestInfo requestInfo, EvidenceSearchCriteria evidenceSearchCriteria, Pagination pagination) {
         try {
             // Fetch applications from database according to the given search criteria
+            enrichEvidenceSearch(requestInfo, evidenceSearchCriteria);
             List<Artifact> artifacts = repository.getArtifacts(evidenceSearchCriteria, pagination);
 
             // If no applications are found matching the given criteria, return an empty list
@@ -84,6 +121,22 @@ public class EvidenceService {
         }
     }
 
+
+    private void enrichEvidenceSearch(RequestInfo requestInfo, EvidenceSearchCriteria searchCriteria) {
+        if(requestInfo.getUserInfo() != null) {
+            User userInfo = requestInfo.getUserInfo();
+            String userType = userInfo.getType();
+            switch (userType.toUpperCase()) {
+                case CITIZEN_UPPER -> {
+                    searchCriteria.setIsCitizen(true);
+                    searchCriteria.setUserUuid(userInfo.getUuid());
+                }
+                case EMPLOYEE_UPPER -> {
+                    searchCriteria.setIsCourtEmployee(true);
+                }
+            }
+        }
+    }
     public Artifact updateEvidence(EvidenceRequest evidenceRequest) {
         try {
             Artifact existingApplication = validateExistingEvidence(evidenceRequest);
@@ -98,8 +151,12 @@ public class EvidenceService {
                 evidenceEnrichment.enrichEvidenceNumber(evidenceRequest);
             }
 
-            if (evidenceRequest.getArtifact().getArtifactType() != null && evidenceRequest.getArtifact().getArtifactType().equals(DEPOSITION)) {
-                workflowService.updateWorkflowStatus(evidenceRequest);
+            String filingType = getFilingTypeMdms(evidenceRequest.getRequestInfo(), evidenceRequest.getArtifact());
+
+            if ((evidenceRequest.getArtifact().getArtifactType() != null &&
+                    evidenceRequest.getArtifact().getArtifactType().equals(DEPOSITION)) ||
+                    (filingType!= null && evidenceRequest.getArtifact().getWorkflow() != null && filingType.equalsIgnoreCase(SUBMISSION))) {
+                workflowService.updateWorkflowStatus(evidenceRequest, filingType);
                 enrichBasedOnStatus(evidenceRequest);
                 producer.push(config.getUpdateEvidenceKafkaTopic(), evidenceRequest);
             } else {
@@ -130,6 +187,8 @@ public class EvidenceService {
         if (PUBLISHED_STATE.equalsIgnoreCase(status)) {
             evidenceEnrichment.enrichEvidenceNumber(evidenceRequest);
         } else if (ABATED_STATE.equalsIgnoreCase(status)) {
+            evidenceEnrichment.enrichIsActive(evidenceRequest);
+        } else if(DELETED_STATE.equalsIgnoreCase(status)){
             evidenceEnrichment.enrichIsActive(evidenceRequest);
         }
     }
@@ -170,5 +229,4 @@ public class EvidenceService {
     private AuditDetails createAuditDetails(RequestInfo requestInfo) {
         return AuditDetails.builder().createdBy(requestInfo.getUserInfo().getUuid()).createdTime(System.currentTimeMillis()).lastModifiedBy(requestInfo.getUserInfo().getUuid()).lastModifiedTime(System.currentTimeMillis()).build();
     }
-
 }

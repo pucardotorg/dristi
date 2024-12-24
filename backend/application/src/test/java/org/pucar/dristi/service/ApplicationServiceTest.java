@@ -154,6 +154,7 @@ class ApplicationServiceTest {
         // Act
         Application result = applicationService.updateApplication(mockRequest);
 
+
         // Assert
         verify(producer).push("application-update-topic", mockRequest); // Should push the update
         assertEquals(mockApplication, result); // Returned application should be the same

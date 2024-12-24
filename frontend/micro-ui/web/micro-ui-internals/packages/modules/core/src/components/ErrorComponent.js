@@ -77,7 +77,7 @@ const LeftBackArrow = () => (
 
 const ErrorConfig = {
   error: {
-    imgUrl: `https://pucarfilestore.blob.core.windows.net/pucar-filestore/pg/pucar-assets/Frame.png`,
+    imgUrl: window?.globalConfigs?.getConfig("ERROR_IMAGE"),
     infoMessage: "ERROR_MESSAGE",
     buttonInfo: "ACTION_TEST_HOME",
   },
