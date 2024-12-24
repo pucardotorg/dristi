@@ -122,7 +122,7 @@ class ApplicationServiceTest {
         when(config.getApplicationUpdateTopic()).thenReturn("update-application");
 
         // Act
-        Application result = applicationService.updateApplication(applicationRequest);
+        Application result = applicationService.updateApplication(applicationRequest,false);
 
         // Assert
         verify(validator).validateApplicationExistence(requestInfo, application);
@@ -157,7 +157,7 @@ class ApplicationServiceTest {
 
         doNothing().when(smsNotificationUtil).callNotificationService(any(), any(), any());
         // Act
-        Application result = applicationService.updateApplication(mockRequest);
+        Application result = applicationService.updateApplication(mockRequest,false);
 
 
         // Assert
@@ -176,7 +176,7 @@ class ApplicationServiceTest {
 
         // Act & Assert
         CustomException exception = assertThrows(CustomException.class, () -> {
-            applicationService.updateApplication(applicationRequest);
+            applicationService.updateApplication(applicationRequest,false);
         });
 
         assertEquals("Error occurred while updating application: Validation failed", exception.getMessage());
@@ -194,7 +194,7 @@ class ApplicationServiceTest {
 
         // Act & Assert
         CustomException exception = assertThrows(CustomException.class, () -> {
-            applicationService.updateApplication(applicationRequest);
+            applicationService.updateApplication(applicationRequest,false);
         });
 
         assertEquals("Error occurred while validating existing application", exception.getMessage());
@@ -213,7 +213,7 @@ class ApplicationServiceTest {
 
         // Act & Assert
         CustomException exception = assertThrows(CustomException.class, () -> {
-            applicationService.updateApplication(applicationRequest);
+            applicationService.updateApplication(applicationRequest,false);
         });
 
         assertEquals("Error occurred while updating application: Unexpected error", exception.getMessage());

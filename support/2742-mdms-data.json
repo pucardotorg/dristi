@@ -1,0 +1,56 @@
+[
+  {
+    "tenantId": "kl",
+    "moduleName": "common-masters",
+    "masterName": "PendingTaskType",
+    "mdmsPayload": [
+      {
+        "tenantId": "kl",
+        "schemaCode": "common-masters.PendingTaskType",
+        "uniqueIdentifier": "18",
+        "data":{
+          "id": "18",
+          "actor": "Judge/CourtStaff",
+          "state": "PENDING_APPROVAL",
+          "isgeneric": false,
+          "pendingTask": "Review of Bail Application",
+          "closerAction": [
+            "APPROVE",
+            "SEND_BACK",
+            "DELETE",
+            "REJECT",
+            "ABANDON"
+          ],
+          "triggerAction": [
+            "MAKE_PAYMENT"
+          ],
+          "workflowModule": "voluntary-application-submission-bail"
+        },
+        "isActive": true
+      },
+      {
+        "tenantId": "kl",
+        "schemaCode": "common-masters.PendingTaskType",
+        "uniqueIdentifier": "19",
+        "data":{
+          "id": "19",
+          "actor": "Judge/CourtStaff",
+          "state": "PENDING_APPROVAL",
+          "isgeneric": false,
+          "pendingTask": "Review Bail Documents",
+          "closerAction": [
+            "APPROVE",
+            "DELETE",
+            "REJECT",
+            "ABANDON"
+          ],
+          "triggerAction": [
+            "E-SIGN"
+          ],
+          "workflowModule": "voluntary-application-submission-bail-documents"
+        },
+        "isActive": true
+      }
+    ]
+  }
+]

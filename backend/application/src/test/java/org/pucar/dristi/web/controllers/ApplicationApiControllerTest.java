@@ -93,7 +93,7 @@ class ApplicationApiControllerTest {
     @Test
     public void testArtifactsV1UpdatePost_Success() {
         Application expectedApplication = new Application();
-        when(applicationService.updateApplication(any(ApplicationRequest.class)))
+        when(applicationService.updateApplication(any(ApplicationRequest.class),any(Boolean.class)))
                 .thenReturn(expectedApplication);
 
         ResponseInfo expectedResponseInfo = new ResponseInfo();
@@ -189,7 +189,7 @@ class ApplicationApiControllerTest {
     @Test
     public void testArtifactsV1UpdatePost_InvalidRequest() {
         ApplicationRequest requestBody = new ApplicationRequest();  // Missing required fields
-        when(applicationService.updateApplication(any(ApplicationRequest.class)))
+        when(applicationService.updateApplication(any(ApplicationRequest.class),any(Boolean.class)))
                 .thenThrow(new IllegalArgumentException("Invalid request"));
 
         Exception exception = assertThrows(IllegalArgumentException.class, () -> {

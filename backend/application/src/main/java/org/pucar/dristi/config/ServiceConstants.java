@@ -119,6 +119,12 @@ public class ServiceConstants {
     public static final String VARIABLE_SUBMISSION_REJECTED = "VARIABLE_SUBMISSION_REJECTED";
     public static final String VOLUNTARY_SUBMISSION_ACCEPTED = "VOLUNTARY_SUBMISSION_ACCEPTED";
     public static final String VARIABLE_SUBMISSION_ACCEPTED = "VARIABLE_SUBMISSION_ACCEPTED";
-    public static final List<String> DEFINED_VOLUNTARY_SUBMISSIONS = Arrays.asList("RE_SCHEDULE","CHECKOUT_REQUEST", "EXTENSION_SUBMISSION_DEADLINE");
+
+    public static final String REQUEST_FOR_BAIL = "REQUEST_FOR_BAIL";
+    public static final String SUBMIT_BAIL_DOCUMENTS = "SUBMIT_BAIL_DOCUMENTS";
+
+    public static final String APPROVE = "APPROVE";
+    public static final String REJECT = "REJECT";
+    public static final List<String> DEFINED_VOLUNTARY_SUBMISSIONS = Arrays.asList("RE_SCHEDULE", "CHECKOUT_REQUEST", "EXTENSION_SUBMISSION_DEADLINE");
 
 }

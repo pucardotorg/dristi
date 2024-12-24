@@ -1,8 +1,11 @@
 package org.pucar.dristi.service;
 
 
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.extern.slf4j.Slf4j;
 import org.egov.common.contract.models.AuditDetails;
+import org.egov.common.contract.request.RequestInfo;
 import org.egov.tracer.model.CustomException;
 import org.pucar.dristi.config.Configuration;
 import org.pucar.dristi.enrichment.ApplicationEnrichment;
@@ -30,6 +33,7 @@ public class ApplicationService {
     private final Configuration config;
     private final Producer producer;
     private final SmsNotificationUtil smsNotificationUtil;
+    private final ObjectMapper objectMapper;
 
     @Autowired
     public ApplicationService(
@@ -38,7 +42,7 @@ public class ApplicationService {
             ApplicationRepository applicationRepository,
             WorkflowService workflowService,
             Configuration config,
-            Producer producer, SmsNotificationUtil smsNotificationUtil) {
+            Producer producer, SmsNotificationUtil smsNotificationUtil, ObjectMapper objectMapper) {
         this.validator = validator;
         this.enrichmentUtil = enrichmentUtil;
         this.applicationRepository = applicationRepository;
@@ -46,6 +50,7 @@ public class ApplicationService {
         this.config = config;
         this.producer = producer;
         this.smsNotificationUtil = smsNotificationUtil;
+        this.objectMapper = objectMapper;
     }
 
     public Application createApplication(ApplicationRequest body) {
@@ -53,10 +58,10 @@ public class ApplicationService {
             validator.validateApplication(body);
             enrichmentUtil.enrichApplication(body);
             validator.validateOrderDetails(body);
-            if(body.getApplication().getWorkflow()!=null)
+            if (body.getApplication().getWorkflow() != null)
                 workflowService.updateWorkflowStatus(body);
 
-            if(body.getApplication().getWorkflow()!=null && PENDINGAPPROVAL.equalsIgnoreCase(body.getApplication().getStatus())){
+            if (body.getApplication().getWorkflow() != null && PENDINGAPPROVAL.equalsIgnoreCase(body.getApplication().getStatus())) {
                 enrichmentUtil.enrichApplicationNumberByCMPNumber(body);
             }
 
@@ -68,21 +73,27 @@ public class ApplicationService {
         }
     }
 
-    public Application updateApplication(ApplicationRequest applicationRequest) {
+    public Application updateApplication(ApplicationRequest applicationRequest, Boolean isFromRelatedUpdate) {
         try {
-                Application application = applicationRequest.getApplication();
+            Application application = applicationRequest.getApplication();
 
-            if(!validator.validateApplicationExistence(applicationRequest.getRequestInfo(),application)){
+            if (!validator.validateApplicationExistence(applicationRequest.getRequestInfo(), application)) {
                 throw new CustomException(VALIDATION_ERR, "Error occurred while validating existing application");
             }
             // Enrich application upon update
             enrichmentUtil.enrichApplicationUponUpdate(applicationRequest);
             validator.validateOrderDetails(applicationRequest);
-            if (application.getWorkflow()!=null)
+            if (application.getWorkflow() != null)
                 workflowService.updateWorkflowStatus(applicationRequest);
 
-            if(applicationRequest.getApplication().getWorkflow()!=null && PENDINGAPPROVAL.equalsIgnoreCase(application.getStatus())){
+            if (application.getWorkflow() != null && PENDINGAPPROVAL.equalsIgnoreCase(application.getStatus())) {
                 enrichmentUtil.enrichApplicationNumberByCMPNumber(applicationRequest);
+            }
+
+            if (application.getWorkflow() != null && SUBMIT_BAIL_DOCUMENTS.equalsIgnoreCase(application.getApplicationType()) && (APPROVE.equalsIgnoreCase(application.getWorkflow().getAction()) || REJECT.equalsIgnoreCase(application.getWorkflow().getAction())) && !isFromRelatedUpdate) {
+
+                updateRelatedApplication(application, applicationRequest.getRequestInfo());
+
             }
 
             smsNotificationUtil.callNotificationService(applicationRequest, application.getStatus(), application.getApplicationType());
@@ -90,40 +101,77 @@ public class ApplicationService {
 
             return applicationRequest.getApplication();
 
-        } catch (CustomException e){
+        } catch (CustomException e) {
             log.error("Custom Exception occurred while updating application {}", e.getMessage());
             throw e;
-        } catch (Exception e){
+        } catch (Exception e) {
             log.error("Error occurred while updating application {}", e.getMessage());
-            throw new CustomException(UPDATE_APPLICATION_ERR,"Error occurred while updating application: " + e.getMessage());
+            throw new CustomException(UPDATE_APPLICATION_ERR, "Error occurred while updating application: " + e.getMessage());
         }
     }
 
-    public List<Application> searchApplications (ApplicationSearchRequest request){
-            try {
-                // Fetch applications from database according to the given search params
-                log.info("Starting application search with parameters :: {}", request);
-                List<Application> applicationList = applicationRepository.getApplications(request);
-                log.info("Application list fetched with size :: {}", applicationList.size());
-                // If no applications are found, return an empty list
-                if (CollectionUtils.isEmpty(applicationList))
-                    return new ArrayList<>();
-                return applicationList;
-            } catch (Exception e) {
-                log.error("Error while fetching to search results {}", e.toString());
-                throw new CustomException(APPLICATION_SEARCH_ERR, e.getMessage());
+    private void updateRelatedApplication(Application application, RequestInfo requestInfo) {
+
+        Object applicationDetails = application.getApplicationDetails();
+
+        JsonNode jsonNode = objectMapper.valueToTree(applicationDetails);
+        if (jsonNode != null && jsonNode.has("relatedApplication")) {
+
+            JsonNode relatedApplication = jsonNode.get("relatedApplication");
+            if (relatedApplication.isArray()) {
+                for (JsonNode applicationIdNode : relatedApplication) {
+                    String applicationId = applicationIdNode.asText();
+                    ApplicationSearchRequest searchRequest = ApplicationSearchRequest.builder()
+                            .requestInfo(requestInfo)
+                            .criteria(ApplicationCriteria.builder().applicationNumber(applicationId).build())
+                            .build();
+
+                    List<Application> relatedApplications = searchApplications(searchRequest);
+
+                    if (!relatedApplications.isEmpty()) {
+                        Application parentApplication = relatedApplications.get(0);
+                        parentApplication.setWorkflow(application.getWorkflow());
+                        updateApplication(ApplicationRequest.builder().application(parentApplication)
+                                .requestInfo(requestInfo).build(),true);
+
+                    } else {
+                        log.info("Application with id : {} not found in DB", applicationId);
+                    }
+                }
+            } else {
+                log.info("relatedApplication is not an array.");
             }
+
+        } else {
+            log.info("No relatedApplication found in applicationDetails.");
         }
+
+
+    }
+
+    public List<Application> searchApplications(ApplicationSearchRequest request) {
+        try {
+            // Fetch applications from database according to the given search params
+            log.info("Starting application search with parameters :: {}", request);
+            List<Application> applicationList = applicationRepository.getApplications(request);
+            log.info("Application list fetched with size :: {}", applicationList.size());
+            // If no applications are found, return an empty list
+            if (CollectionUtils.isEmpty(applicationList))
+                return new ArrayList<>();
+            return applicationList;
+        } catch (Exception e) {
+            log.error("Error while fetching to search results {}", e.toString());
+            throw new CustomException(APPLICATION_SEARCH_ERR, e.getMessage());
+        }
+    }
 
     public List<ApplicationExists> existsApplication(ApplicationExistsRequest applicationExistsRequest) {
         try {
             return applicationRepository.checkApplicationExists(applicationExistsRequest.getApplicationExists());
-        }
-        catch (CustomException e){
+        } catch (CustomException e) {
             log.error("Error while checking application exist {}", e.toString());
             throw e;
-        }
-        catch (Exception e){
+        } catch (Exception e) {
             log.error("Error while checking application exist {}", e.toString());
             throw new CustomException(APPLICATION_EXIST_EXCEPTION, e.getMessage());
         }
@@ -133,7 +181,7 @@ public class ApplicationService {
         try {
             ApplicationAddComment applicationAddComment = applicationAddCommentRequest.getApplicationAddComment();
             List<Application> applicationList = searchApplications(ApplicationSearchRequest.builder().criteria(ApplicationCriteria.builder().applicationNumber(applicationAddComment.getApplicationNumber()).tenantId(applicationAddComment.getTenantId()).build()).requestInfo(applicationAddCommentRequest.getRequestInfo()).build());
-            if(CollectionUtils.isEmpty(applicationList)){
+            if (CollectionUtils.isEmpty(applicationList)) {
                 throw new CustomException(VALIDATION_ERR, "Application not found");
             }
             AuditDetails auditDetails = AuditDetails.builder()
@@ -144,7 +192,7 @@ public class ApplicationService {
                     .build();
             applicationAddComment.getComment().forEach(comment -> enrichmentUtil.enrichCommentUponCreate(comment, auditDetails));
             Application applicationToUpdate = applicationList.get(0);
-            if(applicationToUpdate.getComment()==null)
+            if (applicationToUpdate.getComment() == null)
                 applicationToUpdate.setComment(new ArrayList<>());
             applicationToUpdate.getComment().addAll(applicationAddComment.getComment());
             applicationAddComment.setComment(applicationToUpdate.getComment());
@@ -155,12 +203,10 @@ public class ApplicationService {
             ApplicationRequest applicationRequest = ApplicationRequest.builder().application(applicationToUpdate)
                     .requestInfo(applicationAddCommentRequest.getRequestInfo()).build();
             producer.push(config.getApplicationUpdateCommentsTopic(), applicationRequest);
-        }
-        catch (CustomException e){
+        } catch (CustomException e) {
             log.error("Error while adding comments {}", e.toString());
             throw e;
-        }
-        catch (Exception e){
+        } catch (Exception e) {
             log.error("Error while adding comments {}", e.toString());
             throw new CustomException(COMMENT_ADD_ERR, e.getMessage());
         }

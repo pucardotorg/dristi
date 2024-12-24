@@ -18,16 +18,15 @@ import org.springframework.validation.annotation.Validated;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-public class ApplicationRequest   {
-        @JsonProperty("RequestInfo")
+public class ApplicationRequest {
 
-          @Valid
-                private RequestInfo requestInfo = null;
+    @JsonProperty("RequestInfo")
+    @Valid
+    private RequestInfo requestInfo = null;
 
-        @JsonProperty("application")
-
-          @Valid
-                private Application application = null;
+    @JsonProperty("application")
+    @Valid
+    private Application application = null;
 
 
 }

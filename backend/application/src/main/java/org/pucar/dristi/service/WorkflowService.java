@@ -100,16 +100,20 @@ public class WorkflowService {
         }
     }
     String getBusinessServiceFromAppplication(Application application, RequestInfo requestInfo) {
-        if(DELAY_CONDONATION.equalsIgnoreCase(application.getApplicationType()) && isJudge(requestInfo)){
+        if (DELAY_CONDONATION.equalsIgnoreCase(application.getApplicationType()) && isJudge(requestInfo)) {
             return config.getDelayCondonationBusinessServiceName();
-        }else{
-            if((DELAY_CONDONATION.equalsIgnoreCase(application.getApplicationType()) && isCitizen(requestInfo))|| application.getReferenceId() == null){
+        } else {
+            if ((DELAY_CONDONATION.equalsIgnoreCase(application.getApplicationType()) && isCitizen(requestInfo)) || application.getReferenceId() == null) {
                 return config.getAsyncVoluntarySubBusinessServiceName();
-            }
-            else if(application.isResponseRequired()){
+            } else if (REQUEST_FOR_BAIL.equalsIgnoreCase(application.getApplicationType())) {
+                return config.getBailVoluntarySubBusinessServiceName();
+
+            } else if (SUBMIT_BAIL_DOCUMENTS.equalsIgnoreCase(application.getApplicationType())) {
+                return config.getBailDocVoluntarySubBusinessServiceName();
+
+            } else if (application.isResponseRequired()) {
                 return config.getAsyncOrderSubWithResponseBusinessServiceName();
-            }
-            else {
+            } else {
                 return config.getAsyncOrderSubBusinessServiceName();
             }
         }
@@ -173,6 +177,7 @@ public class WorkflowService {
                     "No business name found for the business service: " + businessService);
         }
     }
+
     private StringBuilder getSearchURLForProcessInstanceWithParams(String tenantId, String businessService) {
         StringBuilder url = new StringBuilder(config.getWfHost());
         url.append(config.getWfProcessInstanceSearchPath());

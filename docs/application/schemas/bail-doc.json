@@ -1,0 +1,16 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "http://dristi.pucar.org/schemas/bail.json",
+  "$comment": "bail application details",
+  "$version": "0.1.0",
+  "applicationDetails":
+  {
+    "relatedApplication": {
+      "type": "array",
+      "items":{
+        "type":"string",
+        "description": "Application ids of related application"
+      }
+    }
+  }
+}

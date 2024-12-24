@@ -65,7 +65,7 @@ public class ApplicationApiController{
 
     @RequestMapping(value="/v1/update", method = RequestMethod.POST)
     public ResponseEntity<ApplicationResponse> applicationV1UpdatePost(@Parameter(in = ParameterIn.DEFAULT, description = "Details for the update application(s) + RequestInfo meta data.", required=true, schema=@Schema()) @Valid @RequestBody ApplicationRequest body) {
-                Application application = applicationService.updateApplication(body);
+                Application application = applicationService.updateApplication(body,false);
                 ResponseInfo responseInfo = responseInfoFactory.createResponseInfoFromRequestInfo(body.getRequestInfo(), true);
                 ApplicationResponse applicationResponse = ApplicationResponse.builder().application(application).responseInfo(responseInfo).build();
                 return new ResponseEntity<>(applicationResponse, HttpStatus.OK);
