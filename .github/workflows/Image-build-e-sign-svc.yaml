@@ -82,7 +82,7 @@ jobs:
         shell: bash
         run: |
           echo "${{ secrets.PUBLIC_KEY }}" > backend/e-sign-svc/src/main/resources/publicKey.cer
-          echo "${{ secrets.PRIVATE_KEY }}" > backend/e-sign-svc/src/main/resources/privateKey.pem
+          echo "${{ secrets.ESIGN_PRIVATE_KEY }}" > backend/e-sign-svc/src/main/resources/privateKey.pem
 
       - name: Build and Push Docker image for e-sign-svc
         if: (github.event_name == 'push' && (startsWith(github.ref, 'refs/heads/develop') || startsWith(github.ref, 'refs/heads/release/') || startsWith(github.ref, 'refs/heads/hotfix/') || startsWith(github.ref, 'refs/tags/v'))) || github.event_name == 'workflow_dispatch'
