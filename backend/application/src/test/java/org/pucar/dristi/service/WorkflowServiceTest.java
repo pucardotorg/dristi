@@ -123,7 +123,6 @@ public class WorkflowServiceTest {
     @Test
     public void testSetBusinessServiceAccordingToWorkflow_ResponseRequiredIsTrue() {
         // Arrange
-        when(mockApplication.getReferenceId()).thenReturn(UUID.fromString("577392d1-b0f3-4ff8-aead-52cd58f61da2"));
         when(mockApplication.isResponseRequired()).thenReturn(true);
 
         // Act

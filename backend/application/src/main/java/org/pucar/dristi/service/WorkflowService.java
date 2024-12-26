@@ -7,7 +7,10 @@ import org.egov.common.contract.request.RequestInfo;
 import org.egov.common.contract.request.User;
 import org.egov.common.contract.user.UserDetailResponse;
 import org.egov.common.contract.user.UserSearchRequest;
-import org.egov.common.contract.workflow.*;
+import org.egov.common.contract.workflow.ProcessInstance;
+import org.egov.common.contract.workflow.ProcessInstanceRequest;
+import org.egov.common.contract.workflow.ProcessInstanceResponse;
+import org.egov.common.contract.workflow.State;
 import org.egov.tracer.model.CustomException;
 import org.pucar.dristi.config.Configuration;
 import org.pucar.dristi.repository.ServiceRequestRepository;
@@ -48,19 +51,20 @@ public class WorkflowService {
     public void updateWorkflowStatus(ApplicationRequest applicationRequest) {
         Application application = applicationRequest.getApplication();
         try {
-                ProcessInstance processInstance = getProcessInstance(application , applicationRequest.getRequestInfo());
-                ProcessInstanceRequest workflowRequest = new ProcessInstanceRequest(applicationRequest.getRequestInfo(), Collections.singletonList(processInstance));
-                log.info("ProcessInstance Request :: {}", workflowRequest);
-                String state=callWorkFlow(workflowRequest).getState();
-                log.info("Application Status :: {}", state);
-                application.setStatus(state);
-            } catch (CustomException e){
-                throw e;
-            } catch (Exception e) {
-                log.error("Error updating workflow status: {}", e.getMessage());
-                throw new CustomException(WORKFLOW_SERVICE_EXCEPTION,"Error updating workflow status: "+e.getMessage());
-            }
+            ProcessInstance processInstance = getProcessInstance(application, applicationRequest.getRequestInfo());
+            ProcessInstanceRequest workflowRequest = new ProcessInstanceRequest(applicationRequest.getRequestInfo(), Collections.singletonList(processInstance));
+            log.info("ProcessInstance Request :: {}", workflowRequest);
+            String state = callWorkFlow(workflowRequest).getState();
+            log.info("Application Status :: {}", state);
+            application.setStatus(state);
+        } catch (CustomException e) {
+            throw e;
+        } catch (Exception e) {
+            log.error("Error updating workflow status: {}", e.getMessage());
+            throw new CustomException(WORKFLOW_SERVICE_EXCEPTION, "Error updating workflow status: " + e.getMessage());
+        }
     }
+
     public State callWorkFlow(ProcessInstanceRequest workflowReq) {
         try {
             StringBuilder url = new StringBuilder(config.getWfHost().concat(config.getWfTransitionPath()));
@@ -68,11 +72,11 @@ public class WorkflowService {
             log.info("Workflow Response :: {}", optional);
             ProcessInstanceResponse response = mapper.convertValue(optional, ProcessInstanceResponse.class);
             return response.getProcessInstances().get(0).getState();
-        } catch (CustomException e){
+        } catch (CustomException e) {
             throw e;
         } catch (Exception e) {
             log.error("Error calling workflow: {}", e.getMessage());
-            throw new CustomException(WORKFLOW_SERVICE_EXCEPTION,e.getMessage());
+            throw new CustomException(WORKFLOW_SERVICE_EXCEPTION, e.getMessage());
         }
     }
 
@@ -92,20 +96,19 @@ public class WorkflowService {
                 processInstance.setAssignes(users);
             }
             return processInstance;
-        } catch (CustomException e){
+        } catch (CustomException e) {
             throw e;
         } catch (Exception e) {
             log.error("Error getting process instance for Application: {}", e.getMessage());
-            throw new CustomException(WORKFLOW_SERVICE_EXCEPTION,e.getMessage());
+            throw new CustomException(WORKFLOW_SERVICE_EXCEPTION, e.getMessage());
         }
     }
+
     String getBusinessServiceFromAppplication(Application application, RequestInfo requestInfo) {
         if (DELAY_CONDONATION.equalsIgnoreCase(application.getApplicationType()) && isJudge(requestInfo)) {
             return config.getDelayCondonationBusinessServiceName();
         } else {
-            if ((DELAY_CONDONATION.equalsIgnoreCase(application.getApplicationType()) && isCitizen(requestInfo)) || application.getReferenceId() == null) {
-                return config.getAsyncVoluntarySubBusinessServiceName();
-            } else if (REQUEST_FOR_BAIL.equalsIgnoreCase(application.getApplicationType())) {
+            if (REQUEST_FOR_BAIL.equalsIgnoreCase(application.getApplicationType())) {
                 return config.getBailVoluntarySubBusinessServiceName();
 
             } else if (SUBMIT_BAIL_DOCUMENTS.equalsIgnoreCase(application.getApplicationType())) {
@@ -113,6 +116,8 @@ public class WorkflowService {
 
             } else if (application.isResponseRequired()) {
                 return config.getAsyncOrderSubWithResponseBusinessServiceName();
+            } else if ((DELAY_CONDONATION.equalsIgnoreCase(application.getApplicationType()) && isCitizen(requestInfo)) || application.getReferenceId() == null) {
+                return config.getAsyncVoluntarySubBusinessServiceName();
             } else {
                 return config.getAsyncOrderSubBusinessServiceName();
             }
@@ -121,11 +126,11 @@ public class WorkflowService {
     }
 
     private boolean isJudge(RequestInfo requestInfo) {
-        return requestInfo.getUserInfo().getRoles().stream().anyMatch(role->JUDGE_ROLE.equalsIgnoreCase(role.getCode()));
+        return requestInfo.getUserInfo().getRoles().stream().anyMatch(role -> JUDGE_ROLE.equalsIgnoreCase(role.getCode()));
     }
 
     private boolean isCitizen(RequestInfo requestInfo) {
-        return requestInfo.getUserInfo().getRoles().stream().anyMatch(role->CITIZEN_UPPER.equalsIgnoreCase(role.getCode()));
+        return requestInfo.getUserInfo().getRoles().stream().anyMatch(role -> CITIZEN_UPPER.equalsIgnoreCase(role.getCode()));
     }
 
     public ProcessInstance getCurrentWorkflow(RequestInfo requestInfo, String tenantId, String businessId) {
@@ -137,13 +142,14 @@ public class WorkflowService {
             if (response != null && !CollectionUtils.isEmpty(response.getProcessInstances()) && response.getProcessInstances().get(0) != null)
                 return response.getProcessInstances().get(0);
             return null;
-        } catch (CustomException e){
+        } catch (CustomException e) {
             throw e;
         } catch (Exception e) {
             log.error("Error getting current workflow: {}", e.getMessage());
             throw new CustomException(WORKFLOW_SERVICE_EXCEPTION, e.getMessage());
         }
     }
+
     public ProcessInstanceRequest getProcessInstanceForApplicationPayment(ApplicationSearchRequest updateRequest, String tenantId, String businessService) {
 
         ApplicationCriteria criteria = updateRequest.getCriteria();
@@ -187,11 +193,12 @@ public class WorkflowService {
     }
 
     public Workflow getWorkflowFromProcessInstance(ProcessInstance processInstance) {
-        if(processInstance == null) {
+        if (processInstance == null) {
             return null;
         }
         return Workflow.builder().action(processInstance.getState().getState()).comments(processInstance.getComment()).build();
     }
+
     public List<User> getUserListFromUserUuid(List<String> uuids) {
         List<User> users = new ArrayList<>();
         if (!CollectionUtils.isEmpty(uuids)) {
