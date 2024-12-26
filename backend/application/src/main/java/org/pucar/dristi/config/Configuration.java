@@ -233,10 +233,13 @@ public class Configuration {
     @Value("${egov.sms.notification.response.required.template.id}")
     private String smsNotificationResponseRequiredTemplateId;
 
-    @Value("${egov.workflow.bail.voluntary.submission.business.name}")
+    @Value("${egov.workflow.bail.voluntary.submission.business.service.name}")
     private String bailVoluntarySubBusinessServiceName;
 
-    @Value("${egov.workflow.bail.doc.voluntary.submission.business.name}")
+    @Value("${egov.workflow.bail.doc.voluntary.submission.business.service.name}")
     private String bailDocVoluntarySubBusinessServiceName;
+
+    @Value("${egov.workflow.bail.voluntary.submission.business.name}")
+    private String bailVoluntarySubBusinessName;
 
 }

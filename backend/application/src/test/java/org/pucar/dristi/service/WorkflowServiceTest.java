@@ -122,9 +122,6 @@ public class WorkflowServiceTest {
 
     @Test
     public void testSetBusinessServiceAccordingToWorkflow_ResponseRequiredIsTrue() {
-        // Arrange
-        when(mockApplication.isResponseRequired()).thenReturn(true);
-
         // Act
         String result = workflowService.getBusinessServiceFromAppplication(mockApplication, new RequestInfo());
 
