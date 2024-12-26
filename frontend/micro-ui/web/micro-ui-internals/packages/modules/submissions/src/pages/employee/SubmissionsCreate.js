@@ -568,6 +568,8 @@ const SubmissionsCreate = ({ path }) => {
       let file = null;
       let evidenceReqBody = {};
       const uploadedDocumentList = [...(documentres || []), ...applicationDocuments];
+
+      // evidence we are creating after create application (each evidenece need application Number)
       uploadedDocumentList.forEach((res) => {
         file = {
           documentType: res?.fileType,
@@ -575,23 +577,6 @@ const SubmissionsCreate = ({ path }) => {
           additionalDetails: { name: res?.filename || res?.additionalDetails?.name },
         };
         documents.push(file);
-        evidenceReqBody = {
-          artifact: {
-            artifactType: "DOCUMENTARY",
-            caseId: caseDetails?.id,
-            filingNumber,
-            tenantId,
-            comments: [],
-            file,
-            sourceType,
-            sourceID: individualId,
-            filingType: filingType,
-            additionalDetails: {
-              uuid: userInfo?.uuid,
-            },
-          },
-        };
-        DRISTIService.createEvidence(evidenceReqBody);
       });
 
       let applicationSchema = {};
@@ -649,6 +634,26 @@ const SubmissionsCreate = ({ path }) => {
         },
       };
       const res = await submissionService.createApplication(applicationReqBody, { tenantId });
+      documents?.forEach((docs)=>{
+        evidenceReqBody = {
+          artifact: {
+            artifactType: "DOCUMENTARY",
+            caseId: caseDetails?.id,
+            application: res?.application?.applicationNumber,
+            filingNumber,
+            tenantId,
+            comments: [],
+            file : docs,
+            sourceType,
+            sourceID: individualId,
+            filingType: filingType,
+            additionalDetails: {
+              uuid: userInfo?.uuid,
+            },
+          },
+        };
+        DRISTIService.createEvidence(evidenceReqBody);
+      })
       setLoader(false);
       return res;
     } catch (error) {
