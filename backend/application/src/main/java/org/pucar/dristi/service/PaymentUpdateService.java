@@ -47,7 +47,8 @@ public class PaymentUpdateService {
        this.allowedBusinessServices= Arrays.asList(
                 configuration.getAsyncOrderSubBusinessServiceName(),
                 configuration.getAsyncOrderSubWithResponseBusinessServiceName(),
-                configuration.getAsyncVoluntarySubBusinessServiceName()
+                configuration.getAsyncVoluntarySubBusinessServiceName(),
+                configuration.getBailVoluntarySubBusinessServiceName()
         );
         this.smsNotificationUtil = smsNotificationUtil;
     }
