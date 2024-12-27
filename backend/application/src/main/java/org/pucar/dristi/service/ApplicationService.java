@@ -6,6 +6,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.extern.slf4j.Slf4j;
 import org.egov.common.contract.models.AuditDetails;
 import org.egov.common.contract.request.RequestInfo;
+import org.egov.common.contract.request.Role;
 import org.egov.tracer.model.CustomException;
 import org.pucar.dristi.config.Configuration;
 import org.pucar.dristi.enrichment.ApplicationEnrichment;
@@ -113,6 +114,9 @@ public class ApplicationService {
     private void updateRelatedApplication(Application application, RequestInfo requestInfo) {
 
         Object applicationDetails = application.getApplicationDetails();
+
+        Role role = Role.builder().code("SYSTEM_ADMIN").tenantId(application.getTenantId()).build();
+        requestInfo.getUserInfo().getRoles().add(role);
 
         JsonNode jsonNode = objectMapper.valueToTree(applicationDetails);
         if (jsonNode != null && jsonNode.has("relatedApplication")) {
