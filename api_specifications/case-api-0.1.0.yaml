@@ -66,7 +66,34 @@ paths:
               schema:
                 $ref: >-
                   https://raw.githubusercontent.com/egovernments/DIGIT-OSS/master/core-services/docs/common-contract_v1-1.yml#/components/schemas/ErrorRes
-
+  /case/v1/admin/edit_case:
+    post:
+      tags:
+        - Case
+      summary: Edit a court case
+      description: |
+        API to Edit the case.
+      requestBody:
+        description: Details for editing few fields in the court case + RequestInfo meta data.
+        content:
+          '*/*':
+            schema:
+              $ref: '#/components/schemas/CaseRequest'
+        required: true
+      responses:
+        '200':
+          description: ResponseInfo with case details edited successfully
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/CaseResponse'
+        '400':
+          description: Case group edit failed
+          content:
+            '*/*':
+              schema:
+                $ref: >-
+                  https://raw.githubusercontent.com/egovernments/DIGIT-OSS/master/core-services/docs/common-contract_v1-1.yml#/components/schemas/ErrorRes
   /case/v1/search/_summary:
     post:
       tags:
