@@ -3,6 +3,7 @@ import React, { useEffect, useMemo, useState } from "react";
 import Modal from "../../../components/Modal";
 import { Button, SubmitBar } from "@egovernments/digit-ui-react-components";
 import { CaseWorkflowState } from "../../../Utils/caseWorkflow";
+import useGetAllOrderApplicationRelatedDocuments from "../../../hooks/dristi/useGetAllOrderApplicationRelatedDocuments";
 import { useGetPendingTask } from "../../../hooks/dristi/useGetPendingTask";
 
 function PublishedOrderModal({
@@ -21,6 +22,7 @@ function PublishedOrderModal({
   const tenantId = window?.Digit.ULBService.getCurrentTenantId();
   const DocViewerWrapper = Digit?.ComponentRegistryService?.getComponent("DocViewerWrapper");
   const userRoles = Digit.UserService.getUser()?.info?.roles.map((role) => role.code);
+  const { documents, isLoading, fetchRecursiveData } = useGetAllOrderApplicationRelatedDocuments();
   const Heading = (props) => {
     return <h1 className="heading-m">{props.label}</h1>;
   };
@@ -137,27 +139,35 @@ function PublishedOrderModal({
           display: "flex",
           flexDirection: "column",
           alignItems: "center",
-          height: "100%",
           width: "100%",
-          maxHeight: "100%",
+          maxHeight: "60vh",
           maxWidth: "100%",
+          overflowY: "auto",
+          overflowX: "hidden",
         }}
       >
-        {signedOrder ? (
-          <DocViewerWrapper
-            docWidth={"calc(80vw* 62/ 100)"}
-            docHeight={"60vh"}
-            fileStoreId={signedOrder?.fileStore}
-            tenantId={tenantId}
-            displayFilename={fileName}
-            showDownloadOption={false}
-          />
+        {documents?.length > 0 ? (
+          documents.map((docs) => (
+            <DocViewerWrapper
+              key={docs?.fileStore}
+              docWidth={"calc(80vw * 62 / 100)"}
+              docHeight={"60vh"}
+              fileStoreId={docs?.fileStore}
+              tenantId={tenantId}
+              displayFilename={fileName}
+              showDownloadOption={false}
+            />
+          ))
         ) : (
-          <h2>{t("PREVIEW_DOC_NOT_AVAILABLE")}</h2>
+          <h2>{isLoading ? t("Loading.....") : t("PREVIEW_DOC_NOT_AVAILABLE")}</h2>
         )}
       </div>
     );
-  }, [fileName, fileStoreId, t, tenantId]);
+  }, [documents, fileName, isLoading, t, tenantId]);
+
+  useEffect(() => {
+    fetchRecursiveData(order);
+  }, [fetchRecursiveData, order]);
 
   return (
     <Modal

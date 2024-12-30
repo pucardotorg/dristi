@@ -17,6 +17,7 @@ import SelectCustomDocUpload from "../../../components/SelectCustomDocUpload";
 import ESignSignatureModal from "../../../components/ESignSignatureModal";
 import useDownloadCasePdf from "../../../hooks/dristi/useDownloadCasePdf";
 import { cleanString, removeInvalidNameParts } from "../../../Utils";
+import useGetAllOrderApplicationRelatedDocuments from "../../../hooks/dristi/useGetAllOrderApplicationRelatedDocuments";
 const stateSla = {
   DRAFT_IN_PROGRESS: 2,
 };
@@ -58,6 +59,7 @@ const EvidenceModal = ({
   const [formData, setFormData] = useState({});
   const [showFileIcon, setShowFileIcon] = useState(false);
   const { downloadPdf } = useDownloadCasePdf();
+  const { documents: allCombineDocs, isLoading, fetchRecursiveData } = useGetAllOrderApplicationRelatedDocuments();
   const setData = (data) => {
     setFormData(data);
   };
@@ -574,27 +576,47 @@ const EvidenceModal = ({
   const showDocument = useMemo(() => {
     return (
       <React.Fragment>
-        {documentSubmission?.map((docSubmission, index) => (
-          <React.Fragment>
-            {docSubmission.applicationContent && (
+        {modalType !== "Submissions" ? (
+          documentSubmission?.map((docSubmission, index) => (
+            <React.Fragment key={index}>
+              {docSubmission.applicationContent && (
+                <div className="application-view">
+                  <DocViewerWrapper
+                    fileStoreId={docSubmission.applicationContent.fileStoreId}
+                    displayFilename={docSubmission.applicationContent.fileName}
+                    tenantId={docSubmission.applicationContent.tenantId}
+                    docWidth={"calc(80vw * 62 / 100)"}
+                    docHeight={"60vh"}
+                    showDownloadOption={false}
+                    documentName={docSubmission.applicationContent.fileName}
+                  />
+                </div>
+              )}
+            </React.Fragment>
+          ))
+        ) : allCombineDocs?.length > 0 ? (
+          allCombineDocs.map((docs, index) => (
+            <React.Fragment key={index}>
               <div className="application-view">
                 <DocViewerWrapper
-                  key={docSubmission.applicationContent.fileStoreId}
-                  fileStoreId={docSubmission.applicationContent.fileStoreId}
-                  displayFilename={docSubmission.applicationContent.fileName}
-                  tenantId={docSubmission.applicationContent.tenantId}
-                  docWidth={"calc(80vw* 62/ 100)"}
+                  fileStoreId={docs?.fileStore}
+                  displayFilename={docs?.additionalDetails?.name}
+                  tenantId={tenantId}
+                  docWidth={"calc(80vw * 62 / 100)"}
                   docHeight={"60vh"}
                   showDownloadOption={false}
-                  documentName={docSubmission.applicationContent.fileName}
+                  documentName={docs?.additionalDetails?.name}
                 />
               </div>
-            )}
-          </React.Fragment>
-        ))}
+            </React.Fragment>
+          ))
+        ) : (
+          <h2>{isLoading ? t("Loading.....") : t("PREVIEW_DOC_NOT_AVAILABLE")}</h2>
+        )}
       </React.Fragment>
     );
-  }, [documentSubmission]);
+  }, [allCombineDocs, documentSubmission, modalType, tenantId, isLoading, t]);
+
   const handleApplicationAction = async (generateOrder, type) => {
     try {
       const orderType = getOrderTypes(documentSubmission?.[0]?.applicationList?.applicationType, type);
@@ -834,6 +856,10 @@ const EvidenceModal = ({
     const fileUploadRes = await window?.Digit.UploadServices.Filestorage("DRISTI", fileData, tenantId);
     return { file: fileUploadRes?.data, fileType: fileData.type, filename };
   };
+
+  useEffect(() => {
+    fetchRecursiveData(documentSubmission?.[0]?.applicationList);
+  }, [documentSubmission, fetchRecursiveData]);
 
   const customLabelShow = useMemo(() => {
     return (
