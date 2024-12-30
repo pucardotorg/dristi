@@ -168,11 +168,11 @@ async function orderSetTermsOfBail(req, res, qrCode) {
           partyName: partyName,
           dateOfApplication: applicationDate,
           briefSummaryOfBail:
-            order?.additionalDetails?.formdata?.bailSummary?.text || "",
+            order?.additionalDetails?.formdata?.bailSummaryCircumstances
+              ?.text || "",
           documentList: documentList,
           additionalConditionsOfBail:
-            order?.additionalDetails?.formdata?.additionalConditionsOfBail
-              ?.text || "",
+            order?.additionalDetails?.formdata?.additionalComments?.text || "",
           judgeSignature: judgeDetails.judgeSignature,
           judgeName: judgeDetails.name,
           judgeDesignation: judgeDetails.judgeDesignation,
@@ -182,8 +182,8 @@ async function orderSetTermsOfBail(req, res, qrCode) {
     };
     const pdfKey =
       qrCode === "true"
-        ? config.pdf.order_acceptance_rejection_dca_qr
-        : config.pdf.order_acceptance_rejection_dca;
+        ? config.pdf.order_set_terms_of_bail
+        : config.pdf.order_set_terms_of_bail_qr;
     const pdfResponse = await handleApiCall(
       () => create_pdf(tenantId, pdfKey, data, req.body),
       "Failed to generate PDF of Order for acceptance of Bail"

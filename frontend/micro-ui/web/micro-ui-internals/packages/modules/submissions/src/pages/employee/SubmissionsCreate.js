@@ -540,11 +540,6 @@ const SubmissionsCreate = ({ path }) => {
           } else if (docs?.documentType && Object.keys(formState?.errors).includes(`documentType_${index}`)) {
             clearErrors(`documentType_${index}`);
           }
-          if (!docs?.documentSubType && !Object.keys(formState?.errors).includes(`documentSubType_${index}`)) {
-            setError(`documentSubType_${index}`, { message: t("CORE_REQUIRED_FIELD_ERROR") });
-          } else if (docs?.documentSubType && Object.keys(formState?.errors).includes(`documentSubType_${index}`)) {
-            clearErrors(`documentSubType_${index}`);
-          }
           if (!docs?.submissionDocuments?.uploadedDocs?.length && !Object.keys(formState?.errors).includes(`submissionDocuments_${index}`)) {
             setError(`submissionDocuments_${index}`, { message: t("CORE_REQUIRED_FIELD_ERROR") });
           } else if (docs?.submissionDocuments?.uploadedDocs?.length && Object.keys(formState?.errors).includes(`submissionDocuments_${index}`)) {
@@ -712,7 +707,7 @@ const SubmissionsCreate = ({ path }) => {
         },
       };
       const res = await submissionService.createApplication(applicationReqBody, { tenantId });
-      
+
       documents?.forEach((docs) => {
         evidenceReqBody = {
           artifact: {
