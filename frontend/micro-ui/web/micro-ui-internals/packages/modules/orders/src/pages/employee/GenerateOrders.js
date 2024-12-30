@@ -2422,8 +2422,6 @@ const GenerateOrders = () => {
     return <Loader />;
   }
 
-  console.log(currentFormData, "lll");
-
   return (
     <div className="generate-orders">
       <div className="orders-list-main">

@@ -204,7 +204,7 @@ const applicationDelayCondonation = async (req, res, qrCode) => {
         : config.pdf.application_delay_condonation;
     const pdfResponse = await handleApiCall(
       () => create_pdf(tenantId, pdfKey, data, req.body),
-      "Failed to generate PDF of Application Bail Bond"
+      "Failed to generate PDF of Application Delay Condonation"
     );
 
     const filename = `${pdfKey}_${new Date().getTime()}`;

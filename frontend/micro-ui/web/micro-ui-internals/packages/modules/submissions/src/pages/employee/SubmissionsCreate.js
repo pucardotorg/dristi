@@ -137,6 +137,25 @@ const SubmissionsCreate = ({ path }) => {
     },
   });
 
+  const { data: caseData } = Digit.Hooks.dristi.useSearchCaseService(
+    {
+      criteria: [
+        {
+          filingNumber: filingNumber,
+        },
+      ],
+      tenantId,
+    },
+    {},
+    `case-details-${filingNumber}`,
+    filingNumber,
+    Boolean(filingNumber)
+  );
+
+  const caseDetails = useMemo(() => {
+    return caseData?.criteria?.[0]?.responseList?.[0];
+  }, [caseData]);
+
   const submissionType = useMemo(() => {
     return formdata?.submissionType?.code;
   }, [formdata?.submissionType?.code]);
@@ -145,7 +164,7 @@ const SubmissionsCreate = ({ path }) => {
     const submissionConfigKeys = {
       APPLICATION: applicationTypeConfig,
     };
-    if (Array.isArray(submissionConfigKeys[submissionType])) {
+    if (caseDetails && Array.isArray(submissionConfigKeys[submissionType])) {
       if (orderNumber || (hearingId && applicationTypeUrl) || !isCitizen) {
         return submissionConfigKeys[submissionType]?.map((item) => {
           return {
@@ -156,11 +175,30 @@ const SubmissionsCreate = ({ path }) => {
           };
         });
       } else {
-        return submissionConfigKeys[submissionType];
+        return submissionConfigKeys[submissionType]?.map((item) => {
+          return {
+            ...item,
+            ...(caseDetails?.status !== "CASE_ADMITTED" && {
+              body: item?.body?.map((input) => {
+                return {
+                  ...input,
+                  populators: {
+                    ...input.populators,
+                    mdmsConfig: {
+                      ...input.populators.mdmsConfig,
+                      select:
+                        "(data) => {return data['Application'].ApplicationType?.filter((item)=>![`REQUEST_FOR_BAIL`,`DELAY_CONDONATION`,`EXTENSION_SUBMISSION_DEADLINE`,`DOCUMENT`,`RE_SCHEDULE`,`CHECKOUT_REQUEST`, `SUBMIT_BAIL_DOCUMENTS`].includes(item.type)).map((item) => {return { ...item, name: 'APPLICATION_TYPE_'+item.type };});}",
+                    },
+                  },
+                };
+              }),
+            }),
+          };
+        });
       }
     }
     return [];
-  }, [hearingId, orderNumber, submissionType, isCitizen]);
+  }, [hearingId, orderNumber, submissionType, isCitizen, caseDetails]);
 
   const applicationType = useMemo(() => {
     return formdata?.applicationType?.type || applicationTypeUrl;
@@ -278,24 +316,6 @@ const SubmissionsCreate = ({ path }) => {
     }
   }, [applicationDetails]);
 
-  const { data: caseData } = Digit.Hooks.dristi.useSearchCaseService(
-    {
-      criteria: [
-        {
-          filingNumber: filingNumber,
-        },
-      ],
-      tenantId,
-    },
-    {},
-    `case-details-${filingNumber}`,
-    filingNumber,
-    Boolean(filingNumber)
-  );
-
-  const caseDetails = useMemo(() => {
-    return caseData?.criteria?.[0]?.responseList?.[0];
-  }, [caseData]);
   const allAdvocates = useMemo(() => getAdvocates(caseDetails), [caseDetails]);
   const onBehalfOfuuid = useMemo(() => Object.keys(allAdvocates)?.find((key) => allAdvocates[key].includes(userInfo?.uuid)), [
     allAdvocates,

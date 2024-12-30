@@ -170,7 +170,7 @@ async function orderAcceptanceRejectionCase(req, res, qrCode) {
         : config.pdf.order_acceptance_rejection_case;
     const pdfResponse = await handleApiCall(
       () => create_pdf(tenantId, pdfKey, data, req.body),
-      "Failed to generate PDF of Order for acceptance of Bail"
+      "Failed to generate PDF of Order for Acceptance Rejection of Case"
     );
 
     const filename = `${pdfKey}_${new Date().getTime()}`;

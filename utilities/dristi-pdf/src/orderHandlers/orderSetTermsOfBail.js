@@ -182,11 +182,11 @@ async function orderSetTermsOfBail(req, res, qrCode) {
     };
     const pdfKey =
       qrCode === "true"
-        ? config.pdf.order_set_terms_of_bail
-        : config.pdf.order_set_terms_of_bail_qr;
+        ? config.pdf.order_set_terms_of_bail_qr
+        : config.pdf.order_set_terms_of_bail;
     const pdfResponse = await handleApiCall(
       () => create_pdf(tenantId, pdfKey, data, req.body),
-      "Failed to generate PDF of Order for acceptance of Bail"
+      "Failed to generate PDF of Order for Set Terms of Bail"
     );
 
     const filename = `${pdfKey}_${new Date().getTime()}`;

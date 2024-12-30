@@ -228,7 +228,7 @@ const applicationSubmitBailDocuments = async (req, res, qrCode) => {
         : config.pdf.application_submit_bail_documents;
     const pdfResponse = await handleApiCall(
       () => create_pdf(tenantId, pdfKey, data, req.body),
-      "Failed to generate PDF of Application Bail Bond"
+      "Failed to generate PDF of Application Submit Bail Documents"
     );
 
     const filename = `${pdfKey}_${new Date().getTime()}`;
