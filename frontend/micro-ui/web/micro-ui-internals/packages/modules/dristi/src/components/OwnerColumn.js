@@ -64,6 +64,7 @@ export const OwnerColumn = ({ rowData, colData, value = "", showAsHeading = fals
         SubmissionWorkflowState.COMPLETED,
         SubmissionWorkflowState.REJECTED,
         SubmissionWorkflowState.PENDINGRESPONSE,
+        SubmissionWorkflowState.DOC_UPLOAD,
       ].includes(rowData?.status)
     : true;
   //   ||

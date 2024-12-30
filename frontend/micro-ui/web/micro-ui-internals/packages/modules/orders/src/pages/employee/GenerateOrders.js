@@ -29,6 +29,9 @@ import {
   configsScheduleHearingDate,
   configsScheduleNextHearingDate,
   configsVoluntarySubmissionStatus,
+  configsIssueBailAcceptance,
+  configsIssueBailReject,
+  configsSetTermBail,
 } from "../../configs/ordersCreateConfig";
 import { CustomDeleteIcon } from "../../../../dristi/src/icons/svgIndex";
 import OrderReviewModal from "../../pageComponents/OrderReviewModal";
@@ -75,6 +78,10 @@ const configKeys = {
   APPROVE_VOLUNTARY_SUBMISSIONS: configsVoluntarySubmissionStatus,
   REJECT_VOLUNTARY_SUBMISSIONS: configRejectSubmission,
   JUDGEMENT: configsJudgement,
+  // key to be addes in mdms
+  REJECT_BAIL: configsIssueBailReject,
+  ACCEPT_BAIL: configsIssueBailAcceptance,
+  SET_BAIL_TERMS: configsSetTermBail,
 };
 
 function applyMultiSelectDropdownFix(setValue, formData, keys) {
@@ -123,6 +130,9 @@ const stateSlaMap = {
   OTHERS: 3,
   APPROVE_VOLUNTARY_SUBMISSIONS: 3,
   REJECT_VOLUNTARY_SUBMISSIONS: 3,
+  REJECT_BAIL: 3,
+  ACCEPT_BAIL: 3,
+  SET_BAIL_TERMS: 3,
   JUDGEMENT: 3,
   CHECKOUT_ACCEPTANCE: 1,
   CHECKOUT_REJECT: 1,
@@ -795,6 +805,16 @@ const GenerateOrders = () => {
       updatedFormdata.submissionDocuments = applicationDetails?.additionalDetails?.formdata?.submissionDocuments;
       updatedFormdata.bailOf = applicationDetails?.additionalDetails?.onBehalOfName;
     }
+    if (orderType === "SET_BAIL_TERMS") {
+      updatedFormdata.partyId = applicationDetails?.createdBy;
+    }
+    if (orderType === "ACCEPT_BAIL" || orderType === "REJECT_BAIL") {
+      updatedFormdata.bailParty = applicationDetails?.additionalDetails?.onBehalOfName;
+      updatedFormdata.submissionDocuments = {
+        uploadedDocs:
+          applicationDetails?.additionalDetails?.formdata?.supportingDocuments?.flatMap((doc) => doc.submissionDocuments?.uploadedDocs || []) || [],
+      };
+    }
     // if (orderType === "CASE_TRANSFER") {
     //   updatedFormdata.caseTransferredTo = applicationDetails?.applicationDetails?.selectRequestedCourt;
     //   updatedFormdata.grounds = { text: applicationDetails?.applicationDetails?.groundsForSeekingTransfer };
@@ -1308,6 +1328,30 @@ const GenerateOrders = () => {
       });
     }
 
+    if (order?.orderType === "SET_BAIL_TERMS") {
+      create = true;
+      status = "CREATE_SUBMISSION";
+      name = t("SUBMIT_BAIL_DOCUMENTS");
+      entityType = "voluntary-application-submission-bail-documents";
+      const assigneeUuid = order?.additionalDetails?.formdata?.partyId;
+      return ordersService.customApiService(Urls.orders.pendingTask, {
+        pendingTask: {
+          name,
+          entityType,
+          referenceId: `MANUAL_${assigneeUuid}_${order?.orderNumber}`,
+          status,
+          assignedTo: [{ uuid: assigneeUuid }],
+          assignedRole,
+          cnrNumber: cnrNumber,
+          filingNumber: filingNumber,
+          isCompleted: false,
+          stateSla,
+          additionalDetails,
+          tenantId,
+        },
+      });
+    }
+
     if (isAssignedRole) {
       assignees = [];
       assignedRole = ["JUDGE_ROLE"];
@@ -1408,6 +1452,17 @@ const GenerateOrders = () => {
     }
   };
 
+  const applicationStatusType = (Type) => {
+    switch (Type) {
+      case "APPROVED":
+        return SubmissionWorkflowAction.APPROVE;
+      case "SET_TERM_BAIL":
+        return SubmissionWorkflowAction.SET_TERM_BAIL;
+      default:
+        return SubmissionWorkflowAction.REJECT;
+    }
+  };
+
   const handleApplicationAction = async (order) => {
     try {
       return await ordersService.customApiService(
@@ -1418,8 +1473,7 @@ const GenerateOrders = () => {
             cmpNumber: caseDetails?.cmpNumber,
             workflow: {
               ...applicationDetails.workflow,
-              action:
-                order?.additionalDetails?.applicationStatus === t("APPROVED") ? SubmissionWorkflowAction.APPROVE : SubmissionWorkflowAction.REJECT,
+              action: applicationStatusType(order?.additionalDetails?.applicationStatus),
             },
           },
         },
@@ -2368,11 +2422,22 @@ const GenerateOrders = () => {
     return <Loader />;
   }
 
+  console.log(currentFormData, "lll");
+
   return (
     <div className="generate-orders">
       <div className="orders-list-main">
         <div className="add-order-button" onClick={handleAddOrder}>{`+ ${t("CS_ADD_ORDER")}`}</div>
         <React.Fragment>
+          <style>
+            {` .view-order .generate-orders .employeeCard .label-field-pair .field .field-container .component-in-front {
+                border-top:1px solid #000 !important ;
+                border-bottom:1px solid #000 !important ;
+                border-left:1px solid #000 !important ;
+                margin-top: 0px; 
+          }`}
+          </style>
+
           {formList?.map((item, index) => {
             return (
               <div className={`order-item-main ${selectedOrder === index ? "selected-order" : ""}`}>

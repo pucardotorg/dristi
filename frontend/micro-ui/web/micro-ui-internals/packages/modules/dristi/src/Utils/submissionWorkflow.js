@@ -19,6 +19,7 @@ export const SubmissionWorkflowState = {
   DELETED: "DELETED",
   ABATED: "ABATED",
   REJECTED: "REJECTED",
+  DOC_UPLOAD: "DOCUMENT_UPLOAD",
 };
 
 export const SubmissionDocumentsWorkflowState = {

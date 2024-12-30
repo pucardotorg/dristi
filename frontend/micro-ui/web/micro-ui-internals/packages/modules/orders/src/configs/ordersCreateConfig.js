@@ -3949,3 +3949,244 @@ export const configsJudgement = [
     ],
   },
 ];
+
+export const configsIssueBailAcceptance = [
+  {
+    body: [
+      {
+        label: "REF_APPLICATION_ID",
+        isMandatory: false,
+        key: "refApplicationId",
+        disable: true,
+        type: "text",
+        populators: { name: "refApplicationId" },
+      },
+      {
+        isMandatory: true,
+        key: "bailParty",
+        type: "dropdown",
+        label: "BAIL_PARTY",
+        disable: true,
+        populators: {
+          name: "bailParty",
+          styles: { maxWidth: "100%" },
+          error: "required ",
+        },
+      },
+      {
+        label: "BAIL_TYPE",
+        isMandatory: true,
+        key: "bailType",
+        disable: false,
+        type: "dropdown",
+        populators: {
+          styles: { maxWidth: "100%" },
+
+          name: "bailType",
+          optionsKey: "type",
+          error: "CORE_REQUIRED_FIELD_ERROR",
+          required: true,
+          isMandatory: true,
+          mdmsConfig: {
+            masterName: "BailType",
+            moduleName: "Order",
+            localePrefix: "BAIL_TYPE",
+          },
+        },
+      },
+      {
+        type: "amount",
+        label: "CS_CHEQUE_AMOUNT",
+        isMandatory: true,
+        populators: {
+          error: "CORE_REQUIRED_FIELD_ERROR",
+          componentInFront: "₹",
+          name: "chequeAmount",
+          prefix: "",
+        },
+      },
+      {
+        type: "component",
+        component: "SelectCustomTextArea",
+        key: "bailSummary",
+        isMandatory: true,
+        populators: {
+          inputs: [
+            {
+              name: "text",
+              textAreaSubHeader: "CS_BAIL_SUMMARY",
+              placeholder: "TYPE_HERE_PLACEHOLDER",
+              isOptional: false,
+              type: "TextAreaComponent",
+            },
+          ],
+        },
+      },
+      {
+        type: "component",
+        component: "SelectCustomTextArea",
+        key: "otherConditions",
+        isMandatory: false,
+
+        populators: {
+          inputs: [
+            {
+              name: "text",
+              textAreaSubHeader: "CS_OTHER_CONDITIONS",
+              placeholder: "TYPE_HERE_PLACEHOLDER",
+              isOptional: true,
+              type: "TextAreaComponent",
+            },
+          ],
+        },
+      },
+      {
+        type: "component",
+        key: "submissionDocuments",
+        component: "SelectMultiUpload",
+        disable: true,
+        isMandatory: true,
+        populators: {
+          inputs: [
+            {
+              name: "uploadedDocs",
+              isMandatory: true,
+              textAreaHeader: "CS_DOCUMENT_ATTACHED",
+              fileTypes: ["JPG", "PDF", "PNG", "JPEG"],
+              textAreaStyle: {
+                fontSize: "16px",
+                fontWeight: 400,
+                marginBottom: "8px",
+              },
+            },
+          ],
+        },
+      },
+    ],
+  },
+];
+
+export const configsIssueBailReject = [
+  {
+    body: [
+      {
+        label: "REF_APPLICATION_ID",
+        isMandatory: false,
+        key: "refApplicationId",
+        schemaKeyPath: "orderDetails.refApplicationId",
+        disable: true,
+        type: "text",
+        populators: { name: "refApplicationId" },
+      },
+      {
+        isMandatory: true,
+        key: "bailParty",
+        type: "dropdown",
+        label: "BAIL_PARTY",
+        disable: true,
+        populators: {
+          name: "bailParty",
+          styles: { maxWidth: "100%" },
+          error: "required ",
+        },
+      },
+      {
+        type: "component",
+        component: "SelectCustomTextArea",
+        key: "bailSummaryCircumstances",
+        isMandatory: true,
+        populators: {
+          inputs: [
+            {
+              name: "text",
+              textAreaSubHeader: "CS_BAIL_SUMMARY_CIRCUMSTANCES",
+              placeholder: "TYPE_HERE_PLACEHOLDER",
+              isOptional: false,
+              type: "TextAreaComponent",
+            },
+          ],
+        },
+      },
+      {
+        type: "component",
+        key: "submissionDocuments",
+        component: "SelectMultiUpload",
+        disable: true,
+        isMandatory: true,
+        populators: {
+          inputs: [
+            {
+              name: "uploadedDocs",
+              isMandatory: true,
+              textAreaHeader: "CS_DOCUMENT",
+              fileTypes: ["JPG", "PDF", "PNG", "JPEG"],
+              uploadGuidelines: "UPLOAD_DOC_50",
+              maxFileSize: 50,
+              maxFileErrorMessage: "CS_FILE_LIMIT_50_MB",
+              textAreaStyle: {
+                fontSize: "16px",
+                fontWeight: 400,
+                marginBottom: "8px",
+              },
+            },
+          ],
+        },
+      },
+    ],
+  },
+];
+export const configsSetTermBail = [
+  {
+    body: [
+      {
+        label: "REF_APPLICATION_ID",
+        isMandatory: false,
+        key: "refApplicationId",
+        disable: true,
+        type: "text",
+        populators: { name: "refApplicationId" },
+      },
+      {
+        key: "partyId",
+        type: "component",
+        withoutLabel: true,
+        component: "SelectEmptyComponent",
+        populators: {},
+      },
+      {
+        type: "component",
+        component: "SelectCustomTextArea",
+        key: "bailSummaryCircumstances",
+        isMandatory: true,
+        populators: {
+          inputs: [
+            {
+              name: "text",
+              textAreaSubHeader: "CS_BAIL_SUMMARY",
+              placeholder: "TYPE_HERE_PLACEHOLDER",
+              isOptional: false,
+              type: "TextAreaComponent",
+            },
+          ],
+        },
+      },
+      {
+        type: "component",
+        component: "SelectCustomTextArea",
+        key: "additionalComments",
+        isMandatory: true,
+        populators: {
+          inputs: [
+            {
+              name: "text",
+              textAreaSubHeader: "ADDITIONAL_DOCUMENTS",
+              placeholder: "TYPE_HERE_PLACEHOLDER",
+              isOptional: false,
+              type: "TextAreaComponent",
+            },
+          ],
+        },
+      },
+    ],
+  },
+];

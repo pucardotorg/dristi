@@ -1,0 +1,55 @@
+{
+  "tenantId": "kl",
+  "masterName": "Order",
+  "moduleName": "OrderType",
+  "mdmsPaylod": [
+    {
+      "tenantId": "kl",
+      "schemaCode": "Order.OrderType",
+      "uniqueIdentifier": "27",
+      "data": {
+        "id": 27,
+        "code": "SET_BAIL_TERMS",
+        "type": "SET_BAIL_TERMS",
+        "isactive": true
+      },
+      "isActive": true
+    },
+    {
+      "tenantId": "kl",
+      "schemaCode": "Order.OrderType",
+      "uniqueIdentifier": "26",
+      "data": {
+        "id": 26,
+        "code": "ACCEPT_BAIL",
+        "type": "ACCEPT_BAIL",
+        "isactive": true
+      },
+      "isActive": true
+    },
+    {
+      "tenantId": "kl",
+      "schemaCode": "Order.OrderType",
+      "uniqueIdentifier": "25",
+      "data": {
+        "id": 25,
+        "code": "REJECT_BAIL",
+        "type": "REJECT_BAIL",
+        "isactive": true
+      },
+      "isActive": true
+    },
+    {
+        "tenantId": "kl",
+        "schemaCode": "Order.OrderType",
+        "uniqueIdentifier": "15",
+        "data": {
+            "id": 15,
+            "code": "BAIL",
+            "type": "BAIL",
+            "isactive": true
+        },
+        "isActive": false // soft Delete
+    }
+  ]
+}

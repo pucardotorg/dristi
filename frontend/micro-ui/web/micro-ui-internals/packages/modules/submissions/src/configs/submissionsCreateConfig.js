@@ -52,7 +52,7 @@ export const applicationTypeConfig = [
             moduleName: "Application",
             localePrefix: "APPLICATION_TYPE",
             select:
-              "(data) => {return data['Application'].ApplicationType?.filter((item)=>![`DELAY_CONDONATION`,`EXTENSION_SUBMISSION_DEADLINE`,`DOCUMENT`,`RE_SCHEDULE`,`CHECKOUT_REQUEST`].includes(item.type)).map((item) => {return { ...item, name: 'APPLICATION_TYPE_'+item.type };});}",
+              "(data) => {return data['Application'].ApplicationType?.filter((item)=>![`DELAY_CONDONATION`,`EXTENSION_SUBMISSION_DEADLINE`,`DOCUMENT`,`RE_SCHEDULE`,`CHECKOUT_REQUEST`, `SUBMIT_BAIL_DOCUMENTS`].includes(item.type)).map((item) => {return { ...item, name: 'APPLICATION_TYPE_'+item.type };});}",
           },
           customStyle: { display: "flex", flexDirection: "column", alignItems: "flex-start" },
         },
@@ -1598,6 +1598,344 @@ export const configsOthers = [
               subHeaderClassName: "dristi-font-big-bold",
               placeholder: "TYPE_HERE_PLACEHOLDER",
               type: "TextAreaComponent",
+            },
+          ],
+        },
+      },
+    ],
+  },
+];
+
+export const requestForBail = [
+  {
+    body: [
+      {
+        key: "refOrderId",
+        type: "component",
+        withoutLabel: true,
+        component: "SelectEmptyComponent",
+        populators: {},
+      },
+      {
+        inline: true,
+        type: "component",
+        component: "SelectCustomTextArea",
+        key: "reasonForApplicationOfBail",
+        schemaKeyPath: "applicationDetails.reasonForApplicationOfBail",
+        transformer: "customTextArea",
+        isMandatory: true,
+        populators: {
+          inputs: [
+            {
+              name: "text",
+              textAreaSubHeader: "GROUND_REASON_BAIL",
+              placeholder: "TYPE_HERE_PLACEHOLDER",
+              type: "TextAreaComponent",
+              textAreaStyle: {
+                fontSize: "16px",
+                fontWeight: 400,
+                marginBottom: 0,
+              },
+            },
+          ],
+          validation: {
+            customValidationFn: {
+              moduleName: "dristiSubmissions",
+              masterName: "alphaNumericValidation",
+            },
+          },
+          customStyle: { display: "flex", flexDirection: "column", alignItems: "flex-start" },
+        },
+      },
+      {
+        inline: true,
+        type: "component",
+        component: "SelectCustomTextArea",
+        key: "prayer",
+        schemaKeyPath: "applicationDetails.prayer",
+        transformer: "customTextArea",
+        isMandatory: true,
+        populators: {
+          inputs: [
+            {
+              name: "text",
+              textAreaSubHeader: "PRAYER",
+              placeholder: "TYPE_HERE_PLACEHOLDER",
+              type: "TextAreaComponent",
+              textAreaStyle: {
+                fontSize: "16px",
+                fontWeight: 400,
+                marginBottom: 0,
+              },
+            },
+          ],
+          validation: {
+            customValidationFn: {
+              moduleName: "dristiSubmissions",
+              masterName: "alphaNumericValidation",
+            },
+          },
+          customStyle: { display: "flex", flexDirection: "column", alignItems: "flex-start" },
+        },
+      },
+      {
+        inline: true,
+        type: "component",
+        component: "SelectCustomTextArea",
+        key: "additionalInformation",
+        schemaKeyPath: "applicationDetails.additionalInformation",
+        transformer: "customTextArea",
+        isMandatory: false,
+        populators: {
+          inputs: [
+            {
+              name: "text",
+              textAreaSubHeader: "ADDITIONAL_INFO",
+              isOptional: true,
+              placeholder: "TYPE_HERE_PLACEHOLDER",
+              type: "TextAreaComponent",
+              textAreaStyle: {
+                fontSize: "16px",
+                fontWeight: 400,
+                marginBottom: 0,
+              },
+            },
+          ],
+          validation: {
+            customValidationFn: {
+              moduleName: "dristiSubmissions",
+              masterName: "alphaNumericValidation",
+            },
+          },
+          customStyle: { display: "flex", flexDirection: "column", alignItems: "flex-start" },
+        },
+      },
+      {
+        type: "component",
+        component: "CustomInfo",
+        key: "suretyDocuments",
+        inline: false,
+        isMandatory: false,
+        populators: {
+          inputs: [
+            {
+              infoHeader: "INFO",
+              infoText: "SURETY_DOCUMENTS_INFO_TEXT",
+              infoTooltipMessage: "CS_NOTETOOLTIP_RESPONDENT_PERSONAL_DETAILS",
+              type: "InfoComponent",
+              linkText: "CLICK_HERE",
+              modalHeading: "LIST_OF_SURETY_DOCUMENT",
+              modalData: [],
+            },
+          ],
+        },
+      },
+      {
+        type: "component",
+        key: "supportingDocuments",
+        component: "SupportingDocsComponent",
+        schemaKeyPath: "applicationDetails.applicationDocuments",
+        transformer: "applicationDocuments",
+        name: "SUPPORTING_DOCS",
+        disable: false,
+        isMandatory: true,
+        populators: {
+          inputs: [
+            {
+              isMandatory: true,
+              key: "documentType",
+              type: "dropdown",
+              label: "DOCUMENT_TYPE",
+              populators: {
+                name: "documentType",
+                optionsKey: "code",
+                error: "CORE_REQUIRED_FIELD_ERROR",
+                styles: { maxWidth: "100%" },
+                required: true,
+                isMandatory: true,
+                // need to chnage
+                mdmsConfig: {
+                  moduleName: "Application",
+                  masterName: "DocumentType",
+                  select: "(data) => {return data['Application'].DocumentType?.map((item) => {return item;});}",
+                },
+                customStyle: { display: "flex", flexDirection: "column", alignItems: "flex-start" },
+              },
+            },
+            {
+              label: "DOCUMENT_TITLE_OPTIONAL",
+              isOptional: true,
+              isMandatory: false,
+              key: "documentTitle",
+              type: "text",
+              name: "documentTitle",
+              validation: {
+                isRequired: false,
+                pattern: /^[0-9A-Z/]{0,20}$/,
+                errMsg: "",
+              },
+            },
+            {
+              type: "component",
+              key: "submissionDocuments",
+              component: "SelectMultiUpload",
+              disable: false,
+              populators: {
+                inputs: [
+                  {
+                    name: "uploadedDocs",
+                    isMandatory: true,
+                    textAreaHeader: "CS_DOCUMENT",
+                    fileTypes: ["JPG", "PDF", "PNG", "JPEG"],
+                    uploadGuidelines: "UPLOAD_DOC_50",
+                    maxFileSize: 50,
+                    maxFileErrorMessage: "CS_FILE_LIMIT_50_MB",
+                    textAreaStyle: {
+                      fontSize: "16px",
+                      fontWeight: 400,
+                      marginBottom: "8px",
+                    },
+                  },
+                ],
+              },
+            },
+          ],
+        },
+      },
+    ],
+  },
+];
+
+export const submitDocsForBail = [
+  {
+    body: [
+      {
+        key: "refOrderId",
+        type: "component",
+        withoutLabel: true,
+        component: "SelectEmptyComponent",
+        populators: {},
+      },
+      {
+        inline: true,
+        type: "component",
+        component: "SelectCustomTextArea",
+        key: "additionalInformation",
+        schemaKeyPath: "applicationDetails.additionalInformation",
+        transformer: "customTextArea",
+        isMandatory: false,
+        populators: {
+          inputs: [
+            {
+              name: "text",
+              textAreaSubHeader: "ADDITIONAL_INFO",
+              isOptional: true,
+              placeholder: "TYPE_HERE_PLACEHOLDER",
+              type: "TextAreaComponent",
+              textAreaStyle: {
+                fontSize: "16px",
+                fontWeight: 400,
+                marginBottom: 0,
+              },
+            },
+          ],
+          validation: {
+            customValidationFn: {
+              moduleName: "dristiSubmissions",
+              masterName: "alphaNumericValidation",
+            },
+          },
+          customStyle: { display: "flex", flexDirection: "column", alignItems: "flex-start" },
+        },
+      },
+      {
+        type: "component",
+        component: "CustomInfo",
+        key: "suretyDocuments",
+        inline: false,
+        isMandatory: false,
+        populators: {
+          inputs: [
+            {
+              infoHeader: "INFO",
+              infoText: "SURETY_DOCUMENTS_INFO_TEXT",
+              infoTooltipMessage: "CS_NOTETOOLTIP_RESPONDENT_PERSONAL_DETAILS",
+              type: "InfoComponent",
+              linkText: "CLICK_HERE",
+              modalHeading: "LIST_OF_SURETY_DOCUMENT",
+              modalData: [],
+            },
+          ],
+        },
+      },
+      {
+        type: "component",
+        key: "supportingDocuments",
+        component: "SupportingDocsComponent",
+        schemaKeyPath: "applicationDetails.applicationDocuments",
+        transformer: "applicationDocuments",
+        name: "SUPPORTING_DOCS",
+        disable: false,
+        isMandatory: true,
+        populators: {
+          inputs: [
+            {
+              isMandatory: true,
+              key: "documentType",
+              type: "dropdown",
+              label: "DOCUMENT_TYPE",
+              populators: {
+                name: "documentType",
+                optionsKey: "code",
+                error: "CORE_REQUIRED_FIELD_ERROR",
+                styles: { maxWidth: "100%" },
+                required: true,
+                isMandatory: true,
+                // need to change
+                mdmsConfig: {
+                  moduleName: "Application",
+                  masterName: "DocumentType",
+                  select: "(data) => {return data['Application'].DocumentType?.map((item) => {return item;});}",
+                },
+                customStyle: { display: "flex", flexDirection: "column", alignItems: "flex-start" },
+              },
+            },
+            {
+              label: "DOCUMENT_TITLE_OPTIONAL",
+              labelChildren: "optional",
+              isMandatory: false,
+              key: "documentTitle",
+              type: "text",
+              name: "documentTitle",
+              validation: {
+                isRequired: false,
+                pattern: /^[0-9A-Z/]{0,20}$/,
+                errMsg: "",
+              },
+            },
+            {
+              type: "component",
+              key: "submissionDocuments",
+              component: "SelectMultiUpload",
+              disable: false,
+              populators: {
+                inputs: [
+                  {
+                    name: "uploadedDocs",
+                    isMandatory: true,
+                    textAreaHeader: "CS_DOCUMENT",
+                    fileTypes: ["JPG", "PDF", "PNG", "JPEG"],
+                    uploadGuidelines: "UPLOAD_DOC_50",
+                    maxFileSize: 50,
+                    maxFileErrorMessage: "CS_FILE_LIMIT_50_MB",
+                    textAreaStyle: {
+                      fontSize: "16px",
+                      fontWeight: 400,
+                      marginBottom: "8px",
+                    },
+                  },
+                ],
+              },
             },
           ],
         },

@@ -58,6 +58,7 @@ import CustomCheckBoxCard from "./components/CustomCheckBoxCard";
 import useBillSearch from "./hooks/dristi/useBillSearch";
 import SelectTranscriptTextArea from "./components/SelectTranscriptTextArea";
 import SelectMultiUpload from "./components/SelectMultiUpload";
+import SupportingDocsComponent from "./components/SupportingDocsComponent"
 
 export const DRISTIModule = ({ stateCode, userType, tenants }) => {
   const Digit = useMemo(() => window?.Digit || {}, []);
@@ -163,6 +164,7 @@ const componentsToRegister = {
   useBillSearch,
   SelectTranscriptTextArea,
   SelectMultiUpload,
+  SupportingDocsComponent
 };
 
 const overrideHooks = () => {

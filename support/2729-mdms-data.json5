@@ -1,0 +1,51 @@
+{
+  "tenantId": "kl",
+  "masterName": "Application",
+  "moduleName": "ApplicationType",
+  "mdmsPaylod": [
+    {
+      "tenantId": "kl",
+      "schemaCode": "Application.ApplicationType",
+      "uniqueIdentifier": "14",
+      "data": {
+        "id": 14,
+        "type": "SUBMIT_BAIL_DOCUMENTS",
+        "isactive": true
+      },
+      "isActive": true
+    },
+    {
+      "tenantId": "kl",
+      "schemaCode": "Application.ApplicationType",
+      "uniqueIdentifier": "13",
+      "data": {
+        "id": 13,
+        "type": "REQUEST_FOR_BAIL",
+        "isactive": true
+      },
+      "isActive": true
+    },
+    {
+        "tenantId": "kl",
+        "schemaCode": "Application.ApplicationType",
+        "uniqueIdentifier": "8",
+        "data": {
+            "id": 8,
+            "type": "SURETY",
+            "isactive": true
+        },
+        "isActive": false // soft Delete
+    },
+    {
+        "tenantId": "kl",
+        "schemaCode": "Application.ApplicationType",
+        "uniqueIdentifier": "7",
+        "data": {
+            "id": 7,
+            "type": "BAIL_BOND",
+            "isactive": true
+        },
+        "isActive": false // soft Delete
+    }
+  ]
+}

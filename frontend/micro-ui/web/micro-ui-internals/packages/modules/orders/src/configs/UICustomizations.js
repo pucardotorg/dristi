@@ -53,11 +53,11 @@ export const UICustomizations = {
             const select = mdmsConfig?.select
               ? Digit.Utils.createFunction(mdmsConfig?.select)
               : (data) => {
-                  const optionsData = get(data, `${mdmsConfig?.moduleName}.${mdmsConfig?.masterName}`, []);
-                  return optionsData
-                    .filter((opt) => (opt?.hasOwnProperty("active") ? opt.active : true))
-                    .map((opt) => ({ ...opt, name: `${mdmsConfig?.localePrefix}_${Digit.Utils.locale.getTransformedLocale(opt.code)}` }));
-                };
+                const optionsData = get(data, `${mdmsConfig?.moduleName}.${mdmsConfig?.masterName}`, []);
+                return optionsData
+                  .filter((opt) => (opt?.hasOwnProperty("active") ? opt.active : true))
+                  .map((opt) => ({ ...opt, name: `${mdmsConfig?.localePrefix}_${Digit.Utils.locale.getTransformedLocale(opt.code)}` }));
+              };
 
             return select(mdmsData).find((option) => option.code === value);
           }
@@ -201,11 +201,11 @@ export const UICustomizations = {
             const select = mdmsConfig?.select
               ? Digit.Utils.createFunction(mdmsConfig?.select)
               : (data) => {
-                  const optionsData = get(data, `${mdmsConfig?.moduleName}.${mdmsConfig?.masterName}`, []);
-                  return optionsData
-                    .filter((opt) => (opt?.hasOwnProperty("active") ? opt.active : true))
-                    .map((opt) => ({ ...opt, name: `${mdmsConfig?.localePrefix}_${Digit.Utils.locale.getTransformedLocale(opt.code)}` }));
-                };
+                const optionsData = get(data, `${mdmsConfig?.moduleName}.${mdmsConfig?.masterName}`, []);
+                return optionsData
+                  .filter((opt) => (opt?.hasOwnProperty("active") ? opt.active : true))
+                  .map((opt) => ({ ...opt, name: `${mdmsConfig?.localePrefix}_${Digit.Utils.locale.getTransformedLocale(opt.code)}` }));
+              };
 
             return select(mdmsData).find((option) => option.code === value);
           }
@@ -251,7 +251,14 @@ export const UICustomizations = {
               fileStore: item?.document?.fileStore,
               documentType: item?.documentType?.code,
               documentTitle: item?.documentTitle,
-            })) || []
+            })) ||
+            obj?.map((item) => ({
+              fileName: item?.submissionDocuments?.uploadedDocs?.[0]?.additionalDetails?.name,
+              fileStore: item?.submissionDocuments?.uploadedDocs?.[0]?.fileStore,
+              documentType: item?.documentType?.code,
+              documentTitle: item?.documentTitle,
+            })) ||
+            []
           );
         },
         schemaToForm: (arr) => {
