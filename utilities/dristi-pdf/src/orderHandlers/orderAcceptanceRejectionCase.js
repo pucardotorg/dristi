@@ -69,7 +69,7 @@ async function orderAcceptanceRejectionCase(req, res, qrCode) {
       () =>
         search_order(
           tenantId,
-          orderId,
+          null,
           requestInfo,
           courtCase.filingNumber,
           "PUBLISHED",

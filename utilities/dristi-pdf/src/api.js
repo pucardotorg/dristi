@@ -85,7 +85,8 @@ async function search_order(
       tenantId: tenantId,
       criteria: {
         tenantId: tenantId,
-        ...(isOrderNumber ? { orderNumber: orderId } : { id: orderId }),
+        ...(orderId &&
+          (isOrderNumber ? { orderNumber: orderId } : { id: orderId })),
         ...(status && { status: status }),
         ...(filingNumber && { filingNumber: filingNumber }),
         ...(orderType && { orderType: orderType }),
