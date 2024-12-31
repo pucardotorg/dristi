@@ -1,0 +1,29 @@
+{
+    "tenantId": "kl",
+    "masterName": "Notice",
+    "moduleName": "NoticeType",
+    "mdmsPaylod": [
+      {
+        "tenantId": "kl",
+        "schemaCode": "Notice.NoticeType",
+        "uniqueIdentifier": "2",
+        "data": {
+          "id": 2,
+          "type": "SECTION_223_NOTICE",
+          "isactive": true
+        },
+        "isActive": true
+      },
+      {
+        "tenantId": "kl",
+        "schemaCode": "Notice.NoticeType",
+        "uniqueIdentifier": "1",
+        "data": {
+          "id": 1,
+          "type": "DCA_NOTICE",
+          "isactive": true
+        },
+        "isActive": true
+      }
+    ]
+  }

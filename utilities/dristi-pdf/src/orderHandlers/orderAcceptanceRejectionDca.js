@@ -134,15 +134,11 @@ async function orderAcceptanceRejectionDca(req, res, qrCode) {
           caseName: courtCase.caseTitle,
           date: formattedToday,
           partyName: partyName,
-          reasonForDelayCondonation:
-            order?.additionalDetails?.formdata?.reasonForDelayCondonation?.text,
-          response: order?.additionalDetails?.isAccepted
-            ? "granted"
-            : "rejected",
+          reasonForDelayCondonation: order?.orderDetails?.reasonForSeekingDca,
+          response: order?.orderDetails?.isDcaAcceptedOrRejected?.toLowerCase(),
           responseReason:
-            order?.additionalDetails?.formdata?.responseReason?.text,
-          additionalComments:
-            order?.additionalDetails?.formdata?.comments?.text || "",
+            order?.orderDetails?.reasonForAcceptanceOrRejectionDca || "",
+          additionalComments: order?.orderDetails?.additionalCommentsDca || "",
           judgeSignature: judgeDetails.judgeSignature,
           judgeName: judgeDetails.name,
           judgeDesignation: judgeDetails.judgeDesignation,

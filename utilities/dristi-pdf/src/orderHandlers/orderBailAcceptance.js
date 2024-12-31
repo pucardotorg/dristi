@@ -221,13 +221,11 @@ const orderBailAcceptance = async (req, res, qrCode) => {
           applicantName: advocateName || partyName,
           partyName,
           dateOfApplication: applicationDate,
-          briefSummaryOfBail:
-            order?.additionalDetails?.formdata?.bailSummary?.text || "",
+          briefSummaryOfBail: order?.orderDetails?.bailSummary || "",
           date: formattedToday,
           documentList,
-          bailType: order?.additionalDetails?.formdata?.bailType?.code,
-          conditionOfBail:
-            order?.additionalDetails?.formdata?.otherConditions?.text || "",
+          bailType: order?.orderDetails?.bailType,
+          conditionOfBail: order?.orderDetails?.otherConditions || "",
           judgeSignature: judgeDetails.judgeSignature,
           judgeName: judgeDetails.name,
           courtSeal: judgeDetails.courtSeal,

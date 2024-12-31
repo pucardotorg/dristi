@@ -229,8 +229,7 @@ const orderBailRejection = async (req, res, qrCode) => {
           partyName,
           dateOfApplication: applicationDate,
           briefSummaryOfBail:
-            order?.additionalDetails?.formdata?.bailSummaryCircumstances
-              ?.text || "",
+            order?.orderDetails?.bailSummaryCircumstancesReject || "",
           date: formattedToday,
           documentList,
           bailType,

@@ -110,7 +110,7 @@ const applicationDelayCondonation = async (req, res, qrCode) => {
       )?.additionalDetails?.fullName || "";
 
     const additionalComments =
-      application?.applicationDetails?.additionalComments || "";
+      application?.applicationDetails?.additionalInformation || "";
     const reasonForDelay =
       application?.applicationDetails?.reasonForDelay || "";
     // Handle QR code if enabled

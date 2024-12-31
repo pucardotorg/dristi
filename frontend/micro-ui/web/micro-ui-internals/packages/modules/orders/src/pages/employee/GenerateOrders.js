@@ -32,6 +32,8 @@ import {
   configsIssueBailAcceptance,
   configsIssueBailReject,
   configsSetTermBail,
+  configsAcceptRejectDelayCondonation,
+  configsAdmitDismissCase,
 } from "../../configs/ordersCreateConfig";
 import { CustomDeleteIcon } from "../../../../dristi/src/icons/svgIndex";
 import OrderReviewModal from "../../pageComponents/OrderReviewModal";
@@ -78,10 +80,11 @@ const configKeys = {
   APPROVE_VOLUNTARY_SUBMISSIONS: configsVoluntarySubmissionStatus,
   REJECT_VOLUNTARY_SUBMISSIONS: configRejectSubmission,
   JUDGEMENT: configsJudgement,
-  // key to be addes in mdms
   REJECT_BAIL: configsIssueBailReject,
   ACCEPT_BAIL: configsIssueBailAcceptance,
   SET_BAIL_TERMS: configsSetTermBail,
+  ACCEPTANCE_REJECTION_DCA: configsAcceptRejectDelayCondonation,
+  ADMIT_DISMISS_CASE: configsAdmitDismissCase,
 };
 
 function applyMultiSelectDropdownFix(setValue, formData, keys) {

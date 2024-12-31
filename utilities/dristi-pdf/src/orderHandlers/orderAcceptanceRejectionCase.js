@@ -148,15 +148,20 @@ async function orderAcceptanceRejectionCase(req, res, qrCode) {
           chequeNumber: chequeNumber,
           filingNumber: courtCase.filingNumber,
           partyName: complainantName,
-          isExamined: order?.additionalDetails?.formdata?.isExamined,
+          isExamined:
+            order?.orderDetails?.wasAccusedExamined === "YES"
+              ? "examined"
+              : "not examined",
           noticeList: noticeList,
-          response: order?.additionalDetails?.formdata?.isRejected
-            ? "rejected"
-            : "granted",
-          isRejected: order?.additionalDetails?.formdata?.isRejected,
-          rejectionReason: order?.additionalDetails?.formdata?.rejectionReason,
+          response:
+            order?.orderDetails?.isCaseAdmittedOrDismissed.toLowerCase(),
+          isRejected:
+            order?.orderDetails?.isCaseAdmittedOrDismissed === "DISMISSED"
+              ? true
+              : false,
+          rejectionReason: order?.orderDetails?.reasonForAdmitDismissCase,
           additionalComments:
-            order?.additionalDetails?.formdata?.comments?.text || "",
+            order?.orderDetails?.additionalCommentsAdmitDismissCase || "",
           judgeSignature: judgeDetails.judgeSignature,
           judgeName: judgeDetails.name,
           judgeDesignation: judgeDetails.judgeDesignation,

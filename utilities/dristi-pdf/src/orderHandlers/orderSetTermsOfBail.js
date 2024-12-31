@@ -10,6 +10,7 @@ const {
 } = require("../api");
 const { renderError } = require("../utils/renderError");
 const { formatDate } = require("./formatDate");
+const { getAdvocates } = require("../applicationHandlers/getAdvocates");
 
 async function orderSetTermsOfBail(req, res, qrCode) {
   const cnrNumber = req.query.cnrNumber;
@@ -103,11 +104,15 @@ async function orderSetTermsOfBail(req, res, qrCode) {
           }))
         : [{ documentType: "" }];
 
+    const allAdvocates = getAdvocates(courtCase);
+    const onBehalfOfuuid = application?.onBehalfOf?.[0];
+    const advocate = allAdvocates?.[onBehalfOfuuid]?.[0]?.additionalDetails
+      ?.advocateName
+      ? allAdvocates[onBehalfOfuuid]?.[0]
+      : {};
+    const advocateName = advocate?.additionalDetails?.advocateName || "";
     const partyName = application?.additionalDetails?.onBehalOfName || "";
-    const complainantName =
-      courtCase?.litigants?.find(
-        (litigant) => litigant.partyType === "complainant.primary"
-      )?.additionalDetails?.fullName || "";
+
     const applicationDate = formatDate(
       new Date(application?.createdDate),
       "DD-MM-YYYY"
@@ -164,15 +169,14 @@ async function orderSetTermsOfBail(req, res, qrCode) {
           caseYear: caseYear,
           caseName: courtCase.caseTitle,
           date: formattedToday,
-          applicantName: complainantName,
+          applicantName: advocateName || partyName,
           partyName: partyName,
           dateOfApplication: applicationDate,
           briefSummaryOfBail:
-            order?.additionalDetails?.formdata?.bailSummaryCircumstances
-              ?.text || "",
+            order?.orderDetails?.bailSummaryCircumstancesTerms || "",
           documentList: documentList,
           additionalConditionsOfBail:
-            order?.additionalDetails?.formdata?.additionalComments?.text || "",
+            order?.orderDetails?.additionalCommentsTermsOfBail || "",
           judgeSignature: judgeDetails.judgeSignature,
           judgeName: judgeDetails.name,
           judgeDesignation: judgeDetails.judgeDesignation,
