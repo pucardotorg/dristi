@@ -4307,15 +4307,6 @@ export const configsAdmitDismissCase = [
   {
     body: [
       {
-        label: "REF_APPLICATION_ID",
-        isMandatory: false,
-        key: "refApplicationId",
-        disable: true,
-        schemaKeyPath: "orderDetails.refApplicationId",
-        type: "text",
-        populators: { name: "refApplicationId" },
-      },
-      {
         label: "IS_CASE_ADMITTED_OR_DISMISSED",
         isMandatory: true,
         key: "isCaseAdmittedOrDismissed",

@@ -78,13 +78,13 @@ async function orderAcceptanceRejectionCase(req, res, qrCode) {
       "Failed to query order service"
     );
 
-    const noticeList = listOfAllOrder.map((item) => {
+    const noticeList = listOfAllOrder.data.list.map((item) => {
       return {
         dateOfNotice: formatDate(new Date(item.createdDate), "DD-MM-YYYY"),
       };
     });
 
-    const chequeNumber = courtCase.chequeDetails.formdata
+    const chequeNumber = courtCase.caseDetails.chequeDetails.formdata
       .map((item) => item.data?.chequeNumber || "")
       .filter((number) => number)
       .join(",");
