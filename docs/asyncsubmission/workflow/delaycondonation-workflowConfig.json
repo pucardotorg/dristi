@@ -19,7 +19,8 @@
               "action": "CREATE",
               "nextState": "PENDING_APPROVAL",
               "roles": [
-                "SYSTEM"
+                "SUBMISSION_CREATOR",
+                "APPLICATION_CREATOR"
               ]
             }
           ]
