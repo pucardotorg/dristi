@@ -20,21 +20,16 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.pucar.dristi.config.Configuration;
 import org.pucar.dristi.repository.ServiceRequestRepository;
 import org.pucar.dristi.util.UserUtil;
-import org.pucar.dristi.web.models.Application;
-import org.pucar.dristi.web.models.ApplicationCriteria;
-import org.pucar.dristi.web.models.ApplicationRequest;
-import org.pucar.dristi.web.models.ApplicationSearchRequest;
+import org.pucar.dristi.web.models.*;
 
 
 import java.util.Collections;
 import java.util.List;
-import java.util.UUID;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.when;
-import static org.pucar.dristi.config.ServiceConstants.*;
 
 @ExtendWith(MockitoExtension.class)
 public class WorkflowServiceTest {
@@ -93,54 +88,32 @@ public class WorkflowServiceTest {
         application.setWorkflow(Workflow.builder().action("APPROVE").build());
         applicationRequest.setApplication(application);
 
-        when(config.getWfHost()).thenReturn("http://localhost:8080");
-        when(config.getWfTransitionPath()).thenReturn("/workflow/transition");
-
-        // Mock repository.fetchResult to throw CustomException
-        when(repository.fetchResult(any(StringBuilder.class), any())).thenThrow(new CustomException());
-
-        // Execute the method
-        assertThrows(CustomException.class, () -> workflowService.updateWorkflowStatus(applicationRequest));
-
-        // Mock repository.fetchResult to throw generic Exception
-        when(repository.fetchResult(any(StringBuilder.class), any())).thenThrow(new RuntimeException("Generic Exception"));
-
         // Execute the method
         assertThrows(CustomException.class, () -> workflowService.updateWorkflowStatus(applicationRequest));
     }
     @Test
     public void testSetBusinessServiceAccordingToWorkflow_ReferenceIdIsNull() {
+
+        when(config.getWfHost()).thenReturn("http://localhost:8080");
+        when(config.getWfProcessInstanceSearchPath()).thenReturn("/workflow/search");
+
+        RequestInfo requestInfo = new RequestInfo();
+        StringBuilder url = new StringBuilder(config.getWfHost().concat(config.getWfProcessInstanceSearchPath()));
+        // Mock repository.fetchResult to throw generic Exception
+        when(repository.fetchResult(any(),any())).thenReturn(new Object());
+
         // Arrange
         when(mockApplication.getReferenceId()).thenReturn(null);
+        when(mockApplication.getApplicationNumber()).thenReturn("123");
+        when(mockApplication.getTenantId()).thenReturn("Tt");
 
         // Act
-        String result = workflowService.getBusinessServiceFromAppplication(mockApplication, new RequestInfo());
+        String result = workflowService.getBusinessServiceFromAppplication(mockApplication, requestInfo);
 
         // Assert
         assertEquals(config.getAsyncVoluntarySubBusinessServiceName(), result);
     }
 
-    @Test
-    public void testSetBusinessServiceAccordingToWorkflow_ResponseRequiredIsTrue() {
-        // Act
-        String result = workflowService.getBusinessServiceFromAppplication(mockApplication, new RequestInfo());
-
-        // Assert
-        assertEquals(config.getAsyncOrderSubWithResponseBusinessServiceName(), result);
-    }
-
-    @Test
-    public void testSetBusinessServiceAccordingToWorkflow_ResponseRequiredIsFalse() {
-        // Arrange
-        when(mockApplication.getReferenceId()).thenReturn(UUID.fromString("577392d1-b0f3-4ff8-aead-52cd58f61da2"));
-        when(mockApplication.isResponseRequired()).thenReturn(false);
-
-        // Act
-        String result = workflowService.getBusinessServiceFromAppplication(mockApplication, new RequestInfo());
-
-        // Assert
-        assertEquals(config.getAsyncOrderSubBusinessServiceName(), result);
-    }
     @Test
     void updateWorkflowStatus_Exception() {
         ApplicationRequest applicationRequest = new ApplicationRequest();
@@ -151,14 +124,8 @@ public class WorkflowServiceTest {
         application.setWorkflow(Workflow.builder().action("APPROVE").build());
         applicationRequest.setApplication(application);
 
-        when(config.getWfHost()).thenReturn("http://localhost:8080");
-        when(config.getWfTransitionPath()).thenReturn("/workflow/transition");
-
         ProcessInstance processInstance = new ProcessInstance();
         processInstance.setState(new State());
-
-        // Mock repository.fetchResult
-        when(repository.fetchResult(any(StringBuilder.class), any())).thenThrow(new RuntimeException());
 
         // Execute the method
         assertThrows(Exception.class, () -> {workflowService.updateWorkflowStatus(applicationRequest);

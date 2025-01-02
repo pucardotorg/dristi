@@ -105,22 +105,45 @@ public class WorkflowService {
     }
 
     String getBusinessServiceFromAppplication(Application application, RequestInfo requestInfo) {
-        if (DELAY_CONDONATION.equalsIgnoreCase(application.getApplicationType()) && isJudge(requestInfo)) {
-            return config.getDelayCondonationBusinessServiceName();
-        } else {
-            if (REQUEST_FOR_BAIL.equalsIgnoreCase(application.getApplicationType())) {
+        try {
+        ProcessInstance processInstance = getCurrentWorkflow(requestInfo, application.getTenantId(), application.getApplicationNumber());
+
+        if (processInstance == null) {
+            log.info("Selecting business service for start action");
+            if (DELAY_CONDONATION.equalsIgnoreCase(application.getApplicationType())) {
+                log.info("Delay condonation application");
+                if (isJudge(requestInfo)){
+                    log.info("Delay condonation application by Judge");
+                    return config.getDelayCondonationBusinessServiceName();
+                }
+                else if (isCitizen(requestInfo)){
+                    log.info("Delay condonation application by Citizen");
+                    return config.getAsyncVoluntarySubBusinessServiceName();
+                }
+            } else if (REQUEST_FOR_BAIL.equalsIgnoreCase(application.getApplicationType())) {
+                log.info("Bail voluntary submission application");
                 return config.getBailVoluntarySubBusinessServiceName();
             } else if (SUBMIT_BAIL_DOCUMENTS.equalsIgnoreCase(application.getApplicationType())) {
+                log.info("Bail doc voluntary submission application");
                 return config.getBailDocVoluntarySubBusinessServiceName();
-            } else if ((DELAY_CONDONATION.equalsIgnoreCase(application.getApplicationType()) && isCitizen(requestInfo)) || application.getReferenceId() == null) {
+            } else if (application.getReferenceId() == null) {
+                log.info("Async voluntary submission application");
                 return config.getAsyncVoluntarySubBusinessServiceName();
             } else if (application.isResponseRequired()) {
+                log.info("Async order submission application with response");
                 return config.getAsyncOrderSubWithResponseBusinessServiceName();
             } else {
+                log.info("Async order submission application");
                 return config.getAsyncOrderSubBusinessServiceName();
             }
         }
-
+        return processInstance.getBusinessService();
+        } catch (CustomException e) {
+            throw e;
+        } catch (Exception e) {
+            log.error("Error getting business service: {}", e.getMessage());
+            throw new CustomException(WORKFLOW_SERVICE_EXCEPTION, e.getMessage());
+        }
     }
 
     private boolean isJudge(RequestInfo requestInfo) {
@@ -176,9 +199,9 @@ public class WorkflowService {
             return config.getAsyncOrderSubWithResponseBusinessName();
         } else if (businessService.equals(config.getAsyncVoluntarySubBusinessServiceName())) {
             return config.getAsyncVoluntarySubBusinessName();
-        }else if(businessService.equals(config.getBailVoluntarySubBusinessServiceName())){
+        } else if (businessService.equals(config.getBailVoluntarySubBusinessServiceName())) {
             return config.getBailVoluntarySubBusinessName();
-        }else {
+        } else {
             throw new CustomException("INVALID_BUSINESS_SERVICE",
                     "No business name found for the business service: " + businessService);
         }
