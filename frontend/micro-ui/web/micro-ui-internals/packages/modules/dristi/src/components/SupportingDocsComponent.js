@@ -62,6 +62,8 @@ const SupportingDocsComponent = ({ t, config, onSelect, formData = {}, errors, s
     updatedFormInstances.splice(index, 1);
     setFormInstances(updatedFormInstances);
     updateFormData(updatedFormInstances);
+    clearErrors(`submissionDocuments_${index}`);
+    clearErrors(`documentType_${index}`);
   };
 
   function setValue(value, name, input, index) {

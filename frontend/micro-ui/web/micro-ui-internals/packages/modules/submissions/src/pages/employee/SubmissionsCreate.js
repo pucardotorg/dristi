@@ -819,7 +819,7 @@ const SubmissionsCreate = ({ path }) => {
         const doc = formData.supportingDocuments[index];
         if (doc?.submissionDocuments?.uploadedDocs?.length) {
           try {
-            const combinedDocName = `SUPPORTING_DOCS_${index + 1}.pdf`;
+            const combinedDocName = `${t("SUPPORTING_DOCS")} ${index + 1}.pdf`;
             const combinedDocumentFile = await combineMultipleFiles(doc.submissionDocuments.uploadedDocs, combinedDocName, "submissionDocuments");
             const docs = await onDocumentUpload(combinedDocumentFile?.[0], combinedDocName);
             const file = {
