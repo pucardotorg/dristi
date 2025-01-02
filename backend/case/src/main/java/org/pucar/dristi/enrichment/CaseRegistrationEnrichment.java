@@ -18,8 +18,8 @@ import org.pucar.dristi.web.models.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import java.util.List;
-import java.util.UUID;
+import java.util.*;
+import java.util.stream.Collectors;
 
 import static org.pucar.dristi.config.ServiceConstants.*;
 
@@ -243,7 +243,9 @@ public class CaseRegistrationEnrichment {
 
     private void enrichDocument(CaseRequest caseRequest, List<CourtCase> existingCourtCaseList) {
         // Extract IDs from documents in the caseRequest
-        List<String> documentIds = caseRequest.getCases().getDocuments().stream()
+        List<String> documentIds = Optional.ofNullable(caseRequest.getCases().getDocuments())
+                .orElse(Collections.emptyList())
+                .stream()
                 .map(Document::getId)
                 .toList();
 
