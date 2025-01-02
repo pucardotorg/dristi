@@ -136,7 +136,7 @@ const applicationSubmitBailDocuments = async (req, res, qrCode) => {
           }))
         : [{ documentType: "" }];
     const additionalComments =
-      application?.applicationDetails?.additionalComments || "";
+      application?.applicationDetails?.additionalInformation || "";
     // Handle QR code if enabled
     let base64Url = "";
     if (qrCode === "true") {

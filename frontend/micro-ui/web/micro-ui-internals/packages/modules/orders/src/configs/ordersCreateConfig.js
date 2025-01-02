@@ -4189,7 +4189,7 @@ export const configsSetTermBail = [
         component: "SelectCustomTextArea",
         key: "additionalCommentsTermsOfBail",
         isMandatory: true,
-        schemaKeyPath: "orderDetails.additionalCommentsTermsOfBail`",
+        schemaKeyPath: "orderDetails.additionalCommentsTermsOfBail",
         transformer: "customTextArea",
         populators: {
           inputs: [

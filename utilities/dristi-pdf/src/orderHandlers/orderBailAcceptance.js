@@ -224,7 +224,9 @@ const orderBailAcceptance = async (req, res, qrCode) => {
           briefSummaryOfBail: order?.orderDetails?.bailSummary || "",
           date: formattedToday,
           documentList,
-          bailType: order?.orderDetails?.bailType,
+          bailType:
+            messagesMap?.[order?.orderDetails?.bailType] ||
+            order?.orderDetails?.bailType,
           conditionOfBail: order?.orderDetails?.otherConditions || "",
           judgeSignature: judgeDetails.judgeSignature,
           judgeName: judgeDetails.name,
