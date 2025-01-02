@@ -167,12 +167,19 @@ public class CaseService {
     public CourtCase updateCase(CaseRequest caseRequest) {
 
         try {
+            //Search and validate case Exist
+            List<CaseCriteria> existingApplications = caseRepository.getCases(Collections.singletonList(CaseCriteria
+                            .builder().filingNumber(caseRequest.getCases().getFilingNumber()).caseId(String.valueOf(caseRequest.getCases().getId()))
+                            .cnrNumber(caseRequest.getCases().getCnrNumber()).courtCaseNumber(caseRequest.getCases().getCourtCaseNumber()).build()),
+                    caseRequest.getRequestInfo());
+
             // Validate whether the application that is being requested for update indeed exists
-            if (!validator.validateUpdateRequest(caseRequest))
+            if(!validator.validateUpdateRequest(caseRequest, existingApplications.get(0).getResponseList())) {
                 throw new CustomException(VALIDATION_ERR, "Case Application does not exist");
+            }
 
             // Enrich application upon update
-            enrichmentUtil.enrichCaseApplicationUponUpdate(caseRequest);
+            enrichmentUtil.enrichCaseApplicationUponUpdate(caseRequest, existingApplications.get(0).getResponseList());
 
             String previousStatus = caseRequest.getCases().getStatus();
             workflowService.updateWorkflowStatus(caseRequest);

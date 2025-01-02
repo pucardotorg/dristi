@@ -4,7 +4,7 @@ import java.util.List;
 import java.util.UUID;
 
 import org.egov.common.contract.models.AuditDetails;
-import org.egov.common.contract.models.Document;
+import org.pucar.dristi.web.models.Document;
 import org.springframework.validation.annotation.Validated;
 
 import com.fasterxml.jackson.annotation.JsonProperty;

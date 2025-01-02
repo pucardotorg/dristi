@@ -34,7 +34,7 @@ public class CaseQueryBuilder {
     private static final String DEFAULT_ORDERBY_CLAUSE = " ORDER BY cases.createdtime DESC ";
 
     private static final String DOCUMENT_SELECT_QUERY_CASE = "Select doc.id as id, doc.documenttype as documenttype, doc.filestore as filestore," +
-            " doc.documentuid as documentuid, doc.additionaldetails as docadditionaldetails, doc.case_id as case_id, doc.linked_case_id as linked_case_id, doc.litigant_id as litigant_id, doc.representative_id as representative_id, doc.representing_id as representing_id ";
+            " doc.documentuid as documentuid, doc.additionaldetails as docadditionaldetails, doc.case_id as case_id, doc.isactive as isactive, doc.linked_case_id as linked_case_id, doc.litigant_id as litigant_id, doc.representative_id as representative_id, doc.representing_id as representing_id ";
     private static final String FROM_DOCUMENTS_TABLE = " FROM dristi_case_document doc";
 
     private  static  final String TOTAL_COUNT_QUERY = "SELECT COUNT(*) FROM ({baseQuery}) total_result";
@@ -241,13 +241,13 @@ public class CaseQueryBuilder {
             StringBuilder query = new StringBuilder(DOCUMENT_SELECT_QUERY_CASE);
             query.append(FROM_DOCUMENTS_TABLE);
             if (!ids.isEmpty()) {
-                query.append(" WHERE doc.case_id IN (")
+                query.append(" WHERE doc.isactive = true AND doc.case_id IN (")
                         .append(ids.stream().map(id -> "?").collect(Collectors.joining(",")))
                         .append(")");
                 preparedStmtList.addAll(ids);
                 ids.forEach(i->preparedStmtArgList.add(Types.VARCHAR));
             }
-
+            log.info("Case Document search query :: {}",query);
             return query.toString();
         }  catch(CustomException e){
             throw e;
@@ -363,7 +363,7 @@ public class CaseQueryBuilder {
             StringBuilder query = new StringBuilder(DOCUMENT_SELECT_QUERY_CASE);
             query.append(FROM_DOCUMENTS_TABLE);
             if (!ids.isEmpty()) {
-                query.append(" WHERE doc.linked_case_id IN (")
+                query.append(" WHERE doc.isactive = true AND doc.linked_case_id IN (")
                         .append(ids.stream().map(id -> "?").collect(Collectors.joining(",")))
                         .append(")");
                 preparedStmtList.addAll(ids);
@@ -382,7 +382,7 @@ public class CaseQueryBuilder {
             StringBuilder query = new StringBuilder(DOCUMENT_SELECT_QUERY_CASE);
             query.append(FROM_DOCUMENTS_TABLE);
             if (!ids.isEmpty()) {
-                query.append(" WHERE doc.litigant_id IN (")
+                query.append(" WHERE doc.isactive = true AND doc.litigant_id IN (")
                         .append(ids.stream().map(id -> "?").collect(Collectors.joining(",")))
                         .append(")");
                 preparedStmtList.addAll(ids);
@@ -401,7 +401,7 @@ public class CaseQueryBuilder {
             StringBuilder query = new StringBuilder(DOCUMENT_SELECT_QUERY_CASE);
             query.append(FROM_DOCUMENTS_TABLE);
             if (!ids.isEmpty()) {
-                query.append(" WHERE doc.representative_id IN (")
+                query.append(" WHERE doc.isactive = true AND doc.representative_id IN (")
                         .append(ids.stream().map(id -> "?").collect(Collectors.joining(",")))
                         .append(")");
                 preparedStmtList.addAll(ids);
@@ -420,7 +420,7 @@ public class CaseQueryBuilder {
             StringBuilder query = new StringBuilder(DOCUMENT_SELECT_QUERY_CASE);
             query.append(FROM_DOCUMENTS_TABLE);
             if (!ids.isEmpty()) {
-                query.append(" WHERE doc.representing_id IN (")
+                query.append(" WHERE doc.isactive = true AND doc.representing_id IN (")
                         .append(ids.stream().map(id -> "?").collect(Collectors.joining(",")))
                         .append(")");
                 preparedStmtList.addAll(ids);

@@ -368,10 +368,7 @@ class CaseQueryBuilderTest {
         String query = queryBuilder.getDocumentSearchQuery(ids, preparedStmtList, preparedStmtArgList);
 
         // Assert
-        String expectedQuery = "Select doc.id as id, doc.documenttype as documenttype, doc.filestore as filestore, doc.documentuid as documentuid, " +
-                "doc.additionaldetails as docadditionaldetails, doc.case_id as case_id, doc.linked_case_id as linked_case_id, doc.litigant_id as litigant_id, " +
-                "doc.representative_id as representative_id, doc.representing_id as representing_id  FROM dristi_case_document doc " +
-                "WHERE doc.case_id IN (?,?,?)";
+        String expectedQuery = "Select doc.id as id, doc.documenttype as documenttype, doc.filestore as filestore, doc.documentuid as documentuid, doc.additionaldetails as docadditionaldetails, doc.case_id as case_id, doc.isactive as isactive, doc.linked_case_id as linked_case_id, doc.litigant_id as litigant_id, doc.representative_id as representative_id, doc.representing_id as representing_id  FROM dristi_case_document doc WHERE doc.isactive = true AND doc.case_id IN (?,?,?)";
 
         assertEquals(expectedQuery, query);
         assertEquals(3, preparedStmtList.size());
@@ -563,7 +560,7 @@ class CaseQueryBuilderTest {
         String query = queryBuilder.getLinkedCaseDocumentSearchQuery(ids, preparedStmtList,preparedStmtArgList);
 
         // Assert
-        String expectedQuery = "Select doc.id as id, doc.documenttype as documenttype, doc.filestore as filestore, doc.documentuid as documentuid, doc.additionaldetails as docadditionaldetails, doc.case_id as case_id, doc.linked_case_id as linked_case_id, doc.litigant_id as litigant_id, doc.representative_id as representative_id, doc.representing_id as representing_id  FROM dristi_case_document doc WHERE doc.linked_case_id IN (?,?,?)";
+        String expectedQuery = "Select doc.id as id, doc.documenttype as documenttype, doc.filestore as filestore, doc.documentuid as documentuid, doc.additionaldetails as docadditionaldetails, doc.case_id as case_id, doc.isactive as isactive, doc.linked_case_id as linked_case_id, doc.litigant_id as litigant_id, doc.representative_id as representative_id, doc.representing_id as representing_id  FROM dristi_case_document doc WHERE doc.isactive = true AND doc.linked_case_id IN (?,?,?)";
         assertEquals(expectedQuery, query);
         assertEquals(3, preparedStmtList.size());
         assertEquals("1", preparedStmtList.get(0));
@@ -594,7 +591,7 @@ class CaseQueryBuilderTest {
         String query = queryBuilder.getLitigantDocumentSearchQuery(ids, preparedStmtList,preparedStmtArgList);
 
         // Assert
-        String expectedQuery = "Select doc.id as id, doc.documenttype as documenttype, doc.filestore as filestore, doc.documentuid as documentuid, doc.additionaldetails as docadditionaldetails, doc.case_id as case_id, doc.linked_case_id as linked_case_id, doc.litigant_id as litigant_id, doc.representative_id as representative_id, doc.representing_id as representing_id  FROM dristi_case_document doc WHERE doc.litigant_id IN (?,?,?)";
+        String expectedQuery = "Select doc.id as id, doc.documenttype as documenttype, doc.filestore as filestore, doc.documentuid as documentuid, doc.additionaldetails as docadditionaldetails, doc.case_id as case_id, doc.isactive as isactive, doc.linked_case_id as linked_case_id, doc.litigant_id as litigant_id, doc.representative_id as representative_id, doc.representing_id as representing_id  FROM dristi_case_document doc WHERE doc.isactive = true AND doc.litigant_id IN (?,?,?)";
         assertEquals(expectedQuery, query);
         assertEquals(3, preparedStmtList.size());
         assertEquals("1", preparedStmtList.get(0));
@@ -625,7 +622,7 @@ class CaseQueryBuilderTest {
         String query = queryBuilder.getRepresentativeDocumentSearchQuery(ids, preparedStmtList,preparedStmtArgList);
 
         // Assert
-        String expectedQuery = "Select doc.id as id, doc.documenttype as documenttype, doc.filestore as filestore, doc.documentuid as documentuid, doc.additionaldetails as docadditionaldetails, doc.case_id as case_id, doc.linked_case_id as linked_case_id, doc.litigant_id as litigant_id, doc.representative_id as representative_id, doc.representing_id as representing_id  FROM dristi_case_document doc WHERE doc.representative_id IN (?,?,?)";
+        String expectedQuery = "Select doc.id as id, doc.documenttype as documenttype, doc.filestore as filestore, doc.documentuid as documentuid, doc.additionaldetails as docadditionaldetails, doc.case_id as case_id, doc.isactive as isactive, doc.linked_case_id as linked_case_id, doc.litigant_id as litigant_id, doc.representative_id as representative_id, doc.representing_id as representing_id  FROM dristi_case_document doc WHERE doc.isactive = true AND doc.representative_id IN (?,?,?)";
         assertEquals(expectedQuery, query);
         assertEquals(3, preparedStmtList.size());
         assertEquals("1", preparedStmtList.get(0));
@@ -656,7 +653,7 @@ class CaseQueryBuilderTest {
         String query = queryBuilder.getRepresentingDocumentSearchQuery(ids, preparedStmtList,preparedStmtArgList);
 
         // Assert
-        String expectedQuery = "Select doc.id as id, doc.documenttype as documenttype, doc.filestore as filestore, doc.documentuid as documentuid, doc.additionaldetails as docadditionaldetails, doc.case_id as case_id, doc.linked_case_id as linked_case_id, doc.litigant_id as litigant_id, doc.representative_id as representative_id, doc.representing_id as representing_id  FROM dristi_case_document doc WHERE doc.representing_id IN (?,?,?)";
+        String expectedQuery = "Select doc.id as id, doc.documenttype as documenttype, doc.filestore as filestore, doc.documentuid as documentuid, doc.additionaldetails as docadditionaldetails, doc.case_id as case_id, doc.isactive as isactive, doc.linked_case_id as linked_case_id, doc.litigant_id as litigant_id, doc.representative_id as representative_id, doc.representing_id as representing_id  FROM dristi_case_document doc WHERE doc.isactive = true AND doc.representing_id IN (?,?,?)";
         assertEquals(expectedQuery, query);
         assertEquals(3, preparedStmtList.size());
         assertEquals("1", preparedStmtList.get(0));

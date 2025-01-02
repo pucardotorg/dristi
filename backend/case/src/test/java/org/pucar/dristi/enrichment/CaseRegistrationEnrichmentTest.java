@@ -19,7 +19,7 @@ import java.util.List;
 import java.util.UUID;
 
 import org.egov.common.contract.models.AuditDetails;
-import org.egov.common.contract.models.Document;
+import org.pucar.dristi.web.models.Document;
 import org.egov.common.contract.request.RequestInfo;
 import org.egov.common.contract.request.User;
 import org.egov.tracer.model.CustomException;
@@ -155,7 +155,7 @@ class CaseRegistrationEnrichmentTest {
         courtCase.getAuditdetails().setLastModifiedTime(oldLastModifiedTime);
 
         // Invoke the method
-        caseRegistrationEnrichment.enrichCaseApplicationUponUpdate(caseRequest);
+        caseRegistrationEnrichment.enrichCaseApplicationUponUpdate(caseRequest,Collections.singletonList(new CourtCase()));
 
         // Assert the enriched audit details
         assertNotEquals(oldLastModifiedTime, courtCase.getAuditdetails().getLastModifiedTime());
@@ -174,7 +174,7 @@ class CaseRegistrationEnrichmentTest {
     void enrichCaseApplicationUponUpdate_Exception() {
         caseRequest.setCases(null);
 
-        assertThrows(Exception.class, () -> caseRegistrationEnrichment.enrichCaseApplicationUponUpdate(caseRequest));
+        assertThrows(Exception.class, () -> caseRegistrationEnrichment.enrichCaseApplicationUponUpdate(caseRequest, new ArrayList<>()));
     }
 
     @Test

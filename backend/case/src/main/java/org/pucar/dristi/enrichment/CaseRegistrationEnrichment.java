@@ -3,7 +3,7 @@ package org.pucar.dristi.enrichment;
 
 import lombok.extern.slf4j.Slf4j;
 import org.egov.common.contract.models.AuditDetails;
-import org.egov.common.contract.models.Document;
+import org.pucar.dristi.web.models.Document;
 import org.egov.common.contract.request.RequestInfo;
 import org.egov.common.contract.request.Role;
 import org.egov.common.contract.request.User;
@@ -225,7 +225,7 @@ public class CaseRegistrationEnrichment {
         return stB.toString();
     }
 
-    public void enrichCaseApplicationUponUpdate(CaseRequest caseRequest) {
+    public void enrichCaseApplicationUponUpdate(CaseRequest caseRequest, List<CourtCase> existingCourtCaseList) {
         try {
             // Enrich lastModifiedTime and lastModifiedBy in case of update
             CourtCase courtCase = caseRequest.getCases();
@@ -233,11 +233,26 @@ public class CaseRegistrationEnrichment {
             auditDetails.setLastModifiedTime(caseUtil.getCurrentTimeMil());
             auditDetails.setLastModifiedBy(caseRequest.getRequestInfo().getUserInfo().getUuid());
             enrichCaseRegistrationUponCreateAndUpdate(courtCase, auditDetails);
+            enrichDocument(caseRequest, existingCourtCaseList);
 
         } catch (Exception e) {
             log.error("Error enriching case application upon update :: {}", e.toString());
             throw new CustomException(ENRICHMENT_EXCEPTION, "Error in case enrichment service during case update process: " + e.getMessage());
         }
+    }
+
+    private void enrichDocument(CaseRequest caseRequest, List<CourtCase> existingCourtCaseList) {
+        // Extract IDs from documents in the caseRequest
+        List<String> documentIds = caseRequest.getCases().getDocuments().stream()
+                .map(Document::getId)
+                .toList();
+
+        // Iterate through existing documents and compare IDs
+        existingCourtCaseList.get(0).getDocuments().forEach(existingDocument -> {
+            if (!documentIds.contains(existingDocument.getId())) {
+                existingDocument.setIsActive(false);
+            }
+        });
     }
 
     public void enrichCourtCaseNumber(CaseRequest caseRequest) {

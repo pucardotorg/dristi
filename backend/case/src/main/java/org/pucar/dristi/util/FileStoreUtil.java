@@ -2,7 +2,7 @@ package org.pucar.dristi.util;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import org.egov.common.contract.models.Document;
+import org.pucar.dristi.web.models.Document;
 import org.egov.common.models.individual.AdditionalFields;
 import org.egov.common.models.individual.Field;
 import org.egov.tracer.model.CustomException;

@@ -88,7 +88,10 @@ public class CaseRegistrationValidator {
 		}
 	}
 
-	public Boolean validateUpdateRequest(CaseRequest caseRequest) {
+	public boolean validateUpdateRequest(CaseRequest caseRequest, List<CourtCase> existingCourtCaseList) {
+		if(existingCourtCaseList.isEmpty()){
+			return false;
+		}
 		validateCaseRegistration(caseRequest);
 		CourtCase courtCase = caseRequest.getCases();
 		RequestInfo requestInfo = caseRequest.getRequestInfo();
@@ -98,20 +101,13 @@ public class CaseRegistrationValidator {
 				|| DELETE_DRAFT_WORKFLOW_ACTION.equalsIgnoreCase(courtCase.getWorkflow().getAction())) && ObjectUtils.isEmpty(courtCase.getFilingDate())) {
 				throw new CustomException(VALIDATION_ERR, "filingDate is mandatory for updating case");
 		}
-
-		List<CaseCriteria> existingApplications = repository.getCases(Collections.singletonList(CaseCriteria
-				.builder().filingNumber(courtCase.getFilingNumber()).caseId(String.valueOf(courtCase.getId()))
-				.cnrNumber(courtCase.getCnrNumber()).courtCaseNumber(courtCase.getCourtCaseNumber()).build()),
-				requestInfo);
-		if (existingApplications.get(0).getResponseList().isEmpty())
-			return false;
 		//For not allowing certain fields to update
-		setUnEditableOnUpdate(existingApplications.get(0).getResponseList().get(0), caseRequest);
+		setUnEditableOnUpdate(existingCourtCaseList.get(0), caseRequest);
 
 		validateMDMSData(requestInfo,courtCase);
 		validateDocuments(courtCase);
 		validateRepresentative(requestInfo,courtCase);
-		validateLinkedCase(courtCase,existingApplications.get(0).getResponseList());
+		validateLinkedCase(courtCase,existingCourtCaseList);
 
 		return true;
 	}

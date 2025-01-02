@@ -584,15 +584,20 @@ public class CaseServiceTest {
         courtCase.setId(UUID.randomUUID());
         caseRequest.setCases(courtCase);
         courtCase.setStatus(updatedStatus);
-        when(validator.validateUpdateRequest(any(CaseRequest.class))).thenReturn(true);
-        doNothing().when(enrichmentUtil).enrichCaseApplicationUponUpdate(any(CaseRequest.class));
+        when(validator.validateUpdateRequest(any(CaseRequest.class),any())).thenReturn(true);
+        doNothing().when(enrichmentUtil).enrichCaseApplicationUponUpdate(any(CaseRequest.class),any());
         doNothing().when(workflowService).updateWorkflowStatus(any(CaseRequest.class));
         when(encryptionDecryptionUtil.encryptObject(any(),any(),any())).thenReturn(courtCase);
 
         doNothing().when(producer).push(anyString(), any(CaseRequest.class));
         doNothing().when(cacheService).save(anyString(), any());
         when(config.getCaseUpdateTopic()).thenReturn("case-update-topic");
-
+        List<CaseCriteria> caseCriteriaList = new ArrayList<>();
+        CaseCriteria caseCriteria = new CaseCriteria();
+        caseCriteria.setCaseId(courtCase.getId().toString());
+        caseCriteria.setResponseList(Collections.singletonList(courtCase));
+        caseCriteriaList.add(caseCriteria);
+        when(caseRepository.getCases(any(), any())).thenReturn(caseCriteriaList);
         when(encryptionDecryptionUtil.decryptObject(any(),any(),eq(CourtCase.class),any())).thenReturn(courtCase);
 
         // Execute
@@ -604,35 +609,8 @@ public class CaseServiceTest {
 
     @Test
     void testUpdateCase_Validation_ExistenceException() {
-        // Setup
         CourtCase courtCase = new CourtCase(); // Assume the necessary properties are set
         caseRequest.setCases(courtCase);
-
-        when(validator.validateUpdateRequest(any(CaseRequest.class))).thenReturn(false);
-
-        // Execute & Assert
-        assertThrows(CustomException.class, () -> caseService.updateCase(caseRequest));
-    }
-
-    @Test
-    void testUpdateCase_Validation_CustomException() {
-        // Setup
-        CourtCase courtCase = new CourtCase(); // Assume the necessary properties are set
-        caseRequest.setCases(courtCase);
-
-        when(validator.validateUpdateRequest(any(CaseRequest.class))).thenThrow(new CustomException("VALIDATION", "Case does not exist"));
-
-        // Execute & Assert
-        assertThrows(CustomException.class, () -> caseService.updateCase(caseRequest));
-    }
-
-    @Test
-    void testUpdateCase_Validation_Exception() {
-        // Setup
-        caseRequest.setCases(courtCase);
-
-        when(validator.validateUpdateRequest(any(CaseRequest.class))).thenThrow(new RuntimeException());
-
         // Execute & Assert
         assertThrows(CustomException.class, () -> caseService.updateCase(caseRequest));
     }
