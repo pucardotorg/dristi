@@ -24,6 +24,7 @@ function PublishedOrderModal({
   const DocViewerWrapper = Digit?.ComponentRegistryService?.getComponent("DocViewerWrapper");
   const userRoles = Digit.UserService.getUser()?.info?.roles.map((role) => role.code);
   const { documents, isLoading, fetchRecursiveData } = useGetAllOrderApplicationRelatedDocuments();
+  const [Loader, setLoader] = useState(false);
   const Heading = (props) => {
     return <h1 className="heading-m">{props.label}</h1>;
   };
@@ -100,6 +101,7 @@ function PublishedOrderModal({
   const fetchAndCheckTasks = useCallback(
     async function () {
       try {
+        setLoader(true);
         const pendingTasks = await DRISTIService.getPendingTaskService(
           {
             SearchCriteria: {
@@ -125,6 +127,7 @@ function PublishedOrderModal({
         });
 
         setIsTaskCompleted(taskCompleted);
+        setLoader(false);
       } catch (error) {
         console.error("Error fetching pending tasks:", error);
       }
@@ -211,7 +214,7 @@ function PublishedOrderModal({
               label={t("EXTENSION_REQUEST_LABEL")}
             />
           )}
-          {showSubmitDocumentButton && (
+          {!Loader && showSubmitDocumentButton && (
             <SubmitBar
               variation="primary"
               onSubmit={() => {
