@@ -2253,6 +2253,9 @@ const GenerateOrders = () => {
           }
         }
       }
+      if (orderType === "ADMIT_DISMISS_CASE") {
+        updateCaseDetails(currentOrder.additionalDetails?.formdata?.isCaseAdmittedOrDismissed?.code === "DISMISSED" ? "REJECT" : "ADMIT");
+      }
       createTask(orderType, caseDetails, orderResponse);
       setLoader(false);
       setShowSuccessModal(true);

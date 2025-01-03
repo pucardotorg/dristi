@@ -18,12 +18,12 @@ import {
   sendBackCase,
 } from "../../citizen/FileCase/Config/admissionActionConfig";
 import { reviewCaseFileFormConfig } from "../../citizen/FileCase/Config/reviewcasefileconfig";
-import { getAllAssignees } from "../../citizen/FileCase/EfilingValidationUtils";
+import { getAdvocates } from "../../citizen/FileCase/EfilingValidationUtils";
 import AdmissionActionModal from "./AdmissionActionModal";
 import { generateUUID, getFilingType } from "../../../Utils";
 import { documentTypeMapping } from "../../citizen/FileCase/Config";
 import ScheduleHearing from "../AdmittedCases/ScheduleHearing";
-import { SubmissionWorkflowAction } from "../../../Utils/submissionWorkflow";
+import { SubmissionWorkflowAction, SubmissionWorkflowState } from "../../../Utils/submissionWorkflow";
 
 const stateSla = {
   SCHEDULE_HEARING: 3 * 24 * 3600 * 1000,
@@ -97,6 +97,8 @@ function CaseFileAdmission({ t, path }) {
   );
   const caseDetails = useMemo(() => caseFetchResponse?.criteria?.[0]?.responseList?.[0] || null, [caseFetchResponse]);
   const delayCondonationData = useMemo(() => caseDetails?.caseDetails?.delayApplications?.formdata?.[0]?.data, [caseDetails]);
+  const allAdvocates = useMemo(() => getAdvocates(caseDetails), [caseDetails]);
+  const representativesUuid = useMemo(() => allAdvocates?.[Object.keys(allAdvocates)?.[0]], [allAdvocates]);
   const complainantPrimaryUUId = useMemo(
     () => caseDetails?.litigants?.find((item) => item?.partyType === "complainant.primary").additionalDetails?.uuid || "",
     [caseDetails]
@@ -131,6 +133,31 @@ function CaseFileAdmission({ t, path }) {
     {},
     filingNumber,
     Boolean(filingNumber)
+  );
+
+  const { data: applicationData, isLoading: isApplicationLoading } = Digit.Hooks.submissions.useSearchSubmissionService(
+    {
+      criteria: {
+        filingNumber,
+        tenantId,
+      },
+      tenantId,
+    },
+    {},
+    filingNumber + "allApplications",
+    filingNumber
+  );
+
+  const isDelayApplicationPending = useMemo(
+    () =>
+      Boolean(
+        applicationData?.applicationList?.some(
+          (item) =>
+            item?.applicationType === "DELAY_CONDONATION" &&
+            [SubmissionWorkflowState.PENDINGAPPROVAL, SubmissionWorkflowState.PENDINGREVIEW].includes(item?.status)
+        )
+      ),
+    [applicationData]
   );
 
   const currentHearingId = useMemo(
@@ -377,11 +404,11 @@ function CaseFileAdmission({ t, path }) {
     switch (primaryAction.action) {
       case "REGISTER":
         try {
-          if (isDelayCondonation) {
+          if (isDelayCondonationApplicable) {
             try {
               setLoader(true);
               setIsDisabled(true);
-              await handleCreateDelayCondonation();
+              await createDcaAndPendingTasks();
             } catch (error) {
               setShowErrorToast("INTERNAL_ERROR_OCCURRED");
               setIsDisabled(false);
@@ -726,9 +753,16 @@ function CaseFileAdmission({ t, path }) {
     );
   };
 
-  const isDelayCondonation = useMemo(() => caseDetails?.caseDetails?.delayApplications?.formdata[0]?.data?.delayCondonationType?.code === "NO", [
-    caseDetails,
-  ]);
+  const isDelayCondonationApplicable = useMemo(
+    () => caseDetails?.caseDetails?.delayApplications?.formdata[0]?.data?.delayCondonationType?.code === "NO",
+    [caseDetails]
+  );
+  const isDelayCondonationDocUploadSkipped = useMemo(
+    () =>
+      caseDetails?.caseDetails?.delayApplications?.formdata[0]?.data?.delayCondonationType?.code === "NO" &&
+      caseDetails?.caseDetails?.delayApplications?.formdata[0]?.data?.isDcaSkippedInEFiling?.code === "YES",
+    [caseDetails]
+  );
   const delayCondonationDocument = useMemo(() => caseDetails?.caseDetails?.delayApplications?.formdata[0]?.data?.condonationFileUpload?.document, [
     caseDetails,
   ]);
@@ -739,6 +773,35 @@ function CaseFileAdmission({ t, path }) {
     caseAdmitLoader,
     isLoader,
   ]);
+
+  const createDcaAndPendingTasks = async () => {
+    if (isDelayCondonationApplicable) {
+      if (!isDelayCondonationDocUploadSkipped) {
+        await handleCreateDelayCondonation();
+      } else {
+        try {
+          DRISTIService.customApiService(Urls.dristi.pendingTask, {
+            pendingTask: {
+              name: "Create DCA Applications",
+              entityType: "delay-condonation-submission",
+              referenceId: `MANUAL_${caseDetails?.filingNumber}`,
+              status: "CREATE_DCA_SUBMISSION",
+              assignedTo: representativesUuid?.map((uuid) => ({ uuid })),
+              assignedRole: [],
+              cnrNumber: caseDetails?.cnrNumber,
+              filingNumber: caseDetails?.filingNumber,
+              isCompleted: false,
+              additionalDetails: {},
+              tenantId,
+            },
+          });
+        } catch (error) {
+          console.error("error", error);
+          throw new Error(error);
+        }
+      }
+    }
+  };
 
   const handleCreateDelayCondonation = async () => {
     const applicationReqBody = {
@@ -992,7 +1055,7 @@ function CaseFileAdmission({ t, path }) {
                   {delayCondonationData?.delayCondonationType?.code === "NO" && (
                     <div className="delay-condonation-chip" style={delayCondonationStylsMain}>
                       <p style={delayCondonationTextStyle}>
-                        {delayCondonationData?.delayCondonationType?.isDcaSkippedInEFiling
+                        {(delayCondonationData?.isDcaSkippedInEFiling?.code === "NO" && isDelayApplicationPending) || isDelayApplicationPending
                           ? t("DELAY_CONDONATION_FILED")
                           : t("DELAY_CONDONATION_NOT_FILED")}
                       </p>

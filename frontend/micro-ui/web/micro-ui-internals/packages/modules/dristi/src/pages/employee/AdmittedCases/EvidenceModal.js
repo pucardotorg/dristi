@@ -8,7 +8,7 @@ import ConfirmSubmissionAction from "../../../components/ConfirmSubmissionAction
 import Modal from "../../../components/Modal";
 import SubmissionSuccessModal from "../../../components/SubmissionSuccessModal";
 import { Urls } from "../../../hooks";
-import { RightArrow } from "../../../icons/svgIndex";
+import { RightArrow, WarningInfoIconYellow } from "../../../icons/svgIndex";
 import { DRISTIService } from "../../../services";
 import { SubmissionWorkflowAction, SubmissionWorkflowState } from "../../../Utils/submissionWorkflow";
 import { getAdvocates } from "../../citizen/FileCase/EfilingValidationUtils";
@@ -521,6 +521,8 @@ const EvidenceModal = ({
         return "EXTENSION_OF_DOCUMENT_SUBMISSION_DATE";
       case "CHECKOUT_REQUEST":
         return type === "reject" ? "CHECKOUT_REJECT" : "CHECKOUT_ACCEPTANCE";
+      case "DELAY_CONDONATION":
+        return "ACCEPTANCE_REJECTION_DCA";
       default:
         return type === "reject" ? "REJECT_VOLUNTARY_SUBMISSIONS" : "APPROVE_VOLUNTARY_SUBMISSIONS";
     }
@@ -547,6 +549,8 @@ const EvidenceModal = ({
         return type === "reject" ? "REJECT_BAIL" : type === "SET_TERM_BAIL" ? "SET_BAIL_TERMS" : "ACCEPT_BAIL";
       case "CHECKOUT_REQUEST":
         return type === "reject" ? "REJECT_CHECKOUT_REQUEST" : "ACCEPT_CHECKOUT_REQUEST";
+      case "DELAY_CONDONATION":
+        return "ACCEPTANCE_REJECTION_DCA";
       default:
         return type === "reject" ? "REJECT_ORDER_VOLUNTARY_SUBMISSIONS" : "APPROVE_ORDER_VOLUNTARY_SUBMISSIONS";
     }
@@ -634,6 +638,12 @@ const EvidenceModal = ({
             ? t("APPROVED")
             : t("REJECTED")
           : t("NO_STATUS"),
+        ...(documentSubmission?.[0]?.applicationList?.applicationType === "DELAY_CONDONATION" && {
+          isDcaAcceptedOrRejected: {
+            code: type === "reject" ? "REJECTED" : type === "accept" ? "ACCEPTED" : null,
+            name: type === "reject" ? "REJECTED" : type === "accept" ? "ACCEPTED" : null,
+          },
+        }),
       };
       const linkedOrderNumber = documentSubmission?.[0]?.applicationList?.additionalDetails?.formdata?.refOrderId;
       if (generateOrder) {
@@ -666,6 +676,10 @@ const EvidenceModal = ({
                   : type === "accept"
                   ? t("APPROVED")
                   : t("REJECTED")
+                : documentSubmission?.[0]?.applicationList?.applicationType === "DELAY_CONDONATION"
+                ? type === "accept"
+                  ? "APPROVED"
+                  : "REJECTED"
                 : t("NO_STATUS"),
             },
             ...(documentSubmission?.[0]?.applicationList?.additionalDetails?.onBehalOfName && {
@@ -679,7 +693,7 @@ const EvidenceModal = ({
         };
         try {
           const res = await ordersService.createOrder(reqbody, { tenantId });
-          const name = getOrderActionName(documentSubmission?.[0]?.applicationList?.applicationType, isBail ? type : showConfirmationModal.type);
+          const name = getOrderActionName(documentSubmission?.[0]?.applicationList?.applicationType, isBail ? type : showConfirmationModal?.type);
           DRISTIService.customApiService(Urls.dristi.pendingTask, {
             pendingTask: {
               name: t(name),
@@ -748,6 +762,8 @@ const EvidenceModal = ({
     if (userType === "employee") {
       if (isBail) {
         await handleApplicationAction(true, "accept");
+      } else if (modalType === "Submissions" && documentSubmission?.[0]?.applicationList?.applicationType === "DELAY_CONDONATION") {
+        await handleApplicationAction(true, "accept");
       } else modalType === "Documents" ? setShowConfirmationModal({ type: "documents-confirmation" }) : setShowConfirmationModal({ type: "accept" });
     } else {
       if (actionSaveLabel === t("ADD_COMMENT")) {
@@ -781,6 +797,8 @@ const EvidenceModal = ({
   const actionCancelOnSubmit = async () => {
     if (userType === "employee") {
       if (isBail) {
+        await handleApplicationAction(true, "reject");
+      } else if (modalType === "Submissions" && documentSubmission?.[0]?.applicationList?.applicationType === "DELAY_CONDONATION") {
         await handleApplicationAction(true, "reject");
       } else setShowConfirmationModal({ type: "reject" });
     } else {
@@ -903,6 +921,28 @@ const EvidenceModal = ({
           <div className="evidence-modal-main">
             <div className={"application-details"}>
               <div style={{ display: "flex", flexDirection: "column" }}>
+                {isJudge && documentSubmission?.[0]?.applicationList?.applicationType === "DELAY_CONDONATION" && (
+                  <div
+                    className="dca-infobox-message"
+                    style={{
+                      display: "flex",
+                      gap: "8px",
+                      backgroundColor: "#FEF4F4",
+                      border: "1px",
+                      borderColor: "#FCE8E8",
+                      padding: "8px",
+                      borderRadius: "8px",
+                      marginBottom: "24px",
+                    }}
+                  >
+                    <div className="dca-infobox-icon" style={{}}>
+                      <WarningInfoIconYellow />{" "}
+                    </div>
+                    <div className="dca-infobox-me" style={{}}>
+                      {t("ENSURE_DUE_PROCESS") + ": " + t("CONDUCT_HEARING_BEFORE_ACTING_DCA")}
+                    </div>
+                  </div>
+                )}
                 <div className="application-info" style={{ display: "flex", flexDirection: "column" }}>
                   <div className="info-row">
                     <div className="info-key">
@@ -1049,7 +1089,7 @@ const EvidenceModal = ({
                                 await handleSubmitComment(newComment);
                                 setCurrentComment("");
                               } catch (error) {
-                                console.log("error :>> ", error);
+                                console.error("error :>> ", error);
                               }
                             } else {
                               setCurrentComment("");

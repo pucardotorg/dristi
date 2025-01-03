@@ -4226,6 +4226,7 @@ export const configsAcceptRejectDelayCondonation = [
         schemaKeyPath: "orderDetails.isDcaAcceptedOrRejected",
         transformer: "customDropdown",
         type: "radio",
+        disable: true,
         populators: {
           name: "isDcaAcceptedOrRejected",
           optionsKey: "name",
@@ -4313,6 +4314,7 @@ export const configsAdmitDismissCase = [
         schemaKeyPath: "orderDetails.isCaseAdmittedOrDismissed",
         transformer: "customDropdown",
         type: "radio",
+        disable: true,
         populators: {
           name: "isDelayConAcceptedOrRejected",
           optionsKey: "name",

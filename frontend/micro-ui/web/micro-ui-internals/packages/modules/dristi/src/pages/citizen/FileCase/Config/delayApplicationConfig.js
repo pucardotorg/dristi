@@ -2,19 +2,30 @@ const delayApplicationFormConfig = [
   {
     body: [
       {
-        type: "radio",
         key: "delayCondonationType",
+        type: "component",
         label: "CS_QUESTION_DELAY_APPLICATION",
-        isMandatory: true,
+        notes: {
+          key: "personalDetailsNote",
+          type: "component",
+          component: "SelectCustomNote",
+          populators: {
+            inputs: [
+              {
+                type: "InfoComponent",
+                infoText: "CS_DELAY_CONDONATION_APPLICATION_NOT_REQUIRED_TEXT",
+                infoHeader: "CS_COMMON_NOTE",
+                infoTooltipMessage: "CS_NOTE_TOOLTIP_DELAY_CONDONATION_APPLICATION",
+              },
+            ],
+          },
+          withoutLabel: true,
+        },
+        component: "CustomRadioInfoComponent",
         populators: {
-          label: "CS_QUESTION_DELAY_APPLICATION",
           type: "radioButton",
-          optionsKey: "name",
           error: "CORE_REQUIRED_FIELD_ERROR",
-          required: false,
-          isMandatory: true,
-          isDependent: true,
-          clearFields: { stateOfRegistration: "", barRegistrationNumber: "", barCouncilId: [], stateRegnNumber: "" },
+          label: "CS_QUESTION_DELAY_APPLICATION",
           options: [
             {
               code: "YES",
@@ -26,95 +37,113 @@ const delayApplicationFormConfig = [
               code: "NO",
               name: "NO",
               showForm: true,
-              isVerified: true,
-              hasBarRegistrationNo: true,
               isEnabled: true,
             },
           ],
+          required: false,
+          optionsKey: "name",
+          isDependent: true,
+          isMandatory: true,
         },
+        isMandatory: true,
+        labelStyles: {
+          fontWeight: 700,
+        },
+        withoutLabel: true,
+        noteDependentOn: "delayCondonationType.code",
+        noteDependentOnValue: "YES",
       },
     ],
   },
   {
-    dependentKey: { delayCondonationType: ["showForm"] },
     body: [
-      // {
-      //   type: "component",
-      //   component: "SelectCustomTextArea",
-      //   key: "delayApplicationReason",
-      //   withoutLabel: true,
-      //   populators: {
-      //     inputs: [
-      //       {
-      //         name: "reasonForDelay",
-      //         textAreaHeader: "CS_TEXTAREA_HEADER_DELAY_REASON",
-      //         type: "TextAreaComponent",
-      //         headerClassName: "text-area-header",
-      //       },
-      //     ],
-      //   },
-      // },
       {
-        type: "component",
-        component: "SelectTranscriptTextArea",
-        key: "delayApplicationReason",
-        withoutLabel: true,
+        key: "isDcaSkippedInEFiling",
+        type: "radio",
+        label: "SKIP_DELAY_APPLICATION_CONFIRM",
         populators: {
-          input: {
-            name: "reasonForDelay",
-            textAreaHeader: "CS_TEXTAREA_HEADER_DELAY_REASON",
-            type: "TranscriptionTextAreaComponent",
-            headerClassName: "text-area-header",
-          },
+          name: "isDcaSkippedInEFiling",
+          type: "radioButton",
+          optionsKey: "name",
+          error: "CORE_REQUIRED_FIELD_ERROR",
+          label: "SKIP_DELAY_APPLICATION_CONFIRM",
+          options: [
+            {
+              code: "YES",
+              name: "YES",
+              showDcaFileUpload: false,
+            },
+            {
+              code: "NO",
+              name: "NO",
+              showDcaFileUpload: true,
+            },
+          ],
+          isDependent: true,
+          isMandatory: true,
+        },
+        labelStyles: {
+          fontWeight: 700,
         },
       },
     ],
+    dependentKey: {
+      delayCondonationType: ["showForm"],
+    },
   },
   {
-    dependentKey: { delayCondonationType: ["showForm"] },
     body: [
       {
         type: "component",
-        component: "SelectCustomNote",
-        key: "addressDetailsNote",
-        withoutLabel: true,
+        component: "SelectCustomTextArea",
+        key: "additionalDelayCondonationDetails",
+        isMandatory: false,
         populators: {
+          isMandatory: false,
           inputs: [
             {
-              infoHeader: "CS_COMMON_NOTE",
-              infoText: "CS_NOTE_DELAY_APPLICATION",
-              infoTooltipMessage: "CS_NOTE_DELAY_APPLICATION",
-              type: "InfoComponent",
+              name: "text",
+              textAreaSubHeader: "ADDITIONAL_INFO",
+              isOptional: true,
+              type: "TextAreaComponent",
             },
           ],
         },
       },
     ],
+    dependentKey: {
+      delayCondonationType: ["showForm"],
+    },
   },
   {
-    dependentKey: { delayCondonationType: ["showForm"] },
     body: [
       {
-        type: "component",
-        component: "SelectCustomDragDrop",
         key: "condonationFileUpload",
-        withoutLabel: true,
+        type: "component",
+        label: "CS_DELAY_CONDONATION_APPLICATION",
+        component: "SelectCustomDragDrop",
         populators: {
           inputs: [
             {
               name: "document",
-              documentHeader: "CS_DELAY_CONDONATION_APPLICATION",
-              infoTooltipMessage: "CS_DELAY_CONDONATION_APPLICATION",
               type: "DragDropComponent",
-              uploadGuidelines: "UPLOAD_DOC_50",
+              fileTypes: ["JPG", "JPEG", "PDF", "PNG"],
               maxFileSize: 50,
+              documentHeader: "CS_DELAY_CONDONATION_APPLICATION",
+              isMultipleUpload: true,
+              uploadGuidelines: "UPLOAD_DOC_50",
+              infoTooltipMessage: "CS_DELAY_CONDONATION_APPLICATION",
               maxFileErrorMessage: "CS_FILE_LIMIT_1_MB",
-              fileTypes: ["JPG", "PDF", "PNG"],
             },
           ],
         },
+        isMandatory: true,
+        withoutLabel: true,
       },
     ],
+    dependentKey: {
+      isDcaSkippedInEFiling: ["showDcaFileUpload"],
+    },
   },
 ];
 

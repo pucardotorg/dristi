@@ -164,7 +164,7 @@ const EvidenceHearingHeader = ({
       {delayCondonationData?.delayCondonationType?.code === "NO" && isJudge && (
         <div className="delay-condonation-chip" style={delayCondonationStylsMain}>
           <p style={delayCondonationTextStyle}>
-            {delayCondonationData?.delayCondonationType?.isDcaSkippedInEFiling || isDelayApplicationPending
+            {(delayCondonationData?.isDcaSkippedInEFiling?.code === "NO" && isDelayApplicationPending) || isDelayApplicationPending
               ? t("DELAY_CONDONATION_FILED")
               : t("DELAY_CONDONATION_NOT_FILED")}
           </p>

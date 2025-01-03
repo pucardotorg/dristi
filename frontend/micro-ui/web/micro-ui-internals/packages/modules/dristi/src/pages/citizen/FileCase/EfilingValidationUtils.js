@@ -71,7 +71,22 @@ export const showDemandNoticeModal = ({ selected, setValue, formData, setError, 
   }
 };
 
-export const validateDateForDelayApplication = ({ selected, setValue, caseDetails, toast, t, history, caseId }) => {
+export const validateDateForDelayApplication = ({
+  formData,
+  selected,
+  setValue,
+  caseDetails,
+  toast,
+  t,
+  history,
+  caseId,
+  setShowConfirmDcaSkipModal,
+  showConfirmDcaSkipModal,
+  shouldShowConfirmDcaModal,
+  setShouldShowConfirmDcaModal,
+  prevIsDcaSkipped,
+  setPrevIsDcaSkipped,
+}) => {
   if (selected === "delayApplications") {
     if (
       !caseDetails?.caseDetails ||
@@ -83,28 +98,15 @@ export const validateDateForDelayApplication = ({ selected, setValue, caseDetail
         history.push(`?caseId=${caseId}&selected=demandNoticeDetails`);
       }, 3000);
     }
-    if (
-      caseDetails?.caseDetails?.["demandNoticeDetails"]?.formdata?.some(
-        (data) => new Date(data?.data?.dateOfAccrual).getTime() + 31 * 24 * 60 * 60 * 1000 < new Date().getTime()
-      )
-    ) {
-      setValue("delayCondonationType", {
-        code: "NO",
-        name: "NO",
-        showForm: true,
-        isEnabled: true,
-      });
-    } else if (
-      caseDetails?.caseDetails?.["demandNoticeDetails"]?.formdata?.some(
-        (data) => new Date(data?.data?.dateOfAccrual).getTime() + 31 * 24 * 60 * 60 * 1000 >= new Date().getTime()
-      )
-    ) {
-      setValue("delayCondonationType", {
-        code: "YES",
-        name: "YES",
-        showForm: false,
-        isEnabled: true,
-      });
+    if (formData?.isDcaSkippedInEFiling?.code === "YES" && shouldShowConfirmDcaModal && formData?.isDcaSkippedInEFiling?.code !== prevIsDcaSkipped) {
+      setShowConfirmDcaSkipModal(true);
+      setShouldShowConfirmDcaModal(false);
+      setPrevIsDcaSkipped("YES");
+    }
+    if (formData?.isDcaSkippedInEFiling?.code === "NO") {
+      setShowConfirmDcaSkipModal(false);
+      setShouldShowConfirmDcaModal(true);
+      setPrevIsDcaSkipped("NO");
     }
   }
 };
@@ -842,6 +844,7 @@ export const delayApplicationValidation = ({ t, formData, selected, setShowError
   if (selected === "delayApplications") {
     if (
       formData?.delayCondonationType?.code === "NO" &&
+      formData?.isDcaSkippedInEFiling?.code === "NO" &&
       (!formData?.condonationFileUpload?.document || formData?.condonationFileUpload?.document.length === 0)
     ) {
       setFormErrors("condonationFileUpload", { type: "required" });

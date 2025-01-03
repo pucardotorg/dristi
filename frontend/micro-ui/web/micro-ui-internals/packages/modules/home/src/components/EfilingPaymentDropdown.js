@@ -73,10 +73,14 @@ function EfilingPaymentBreakdown({ setShowModal, header, subHeader }) {
     [caseData]
   );
   const delayCondonation = useMemo(() => {
-    const today = new Date();
-    if (!caseDetails?.caseDetails?.["demandNoticeDetails"]?.formdata) {
+    const dcaData = caseDetails?.caseDetails?.["delayApplications"]?.formdata[0]?.data;
+    if (
+      dcaData?.delayCondonationType?.code === "YES" ||
+      (dcaData?.delayCondonationType?.code === "NO" && dcaData?.isDcaSkippedInEFiling?.code === "YES")
+    ) {
       return null;
     }
+    const today = new Date();
     const dateOfAccrual = new Date(caseDetails?.caseDetails["demandNoticeDetails"]?.formdata[0]?.data?.dateOfAccrual);
     return today?.getTime() - dateOfAccrual?.getTime();
   }, [caseDetails]);

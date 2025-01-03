@@ -17,6 +17,7 @@ import {
   submissionTypeConfig,
   requestForBail,
   submitDocsForBail,
+  submitDelayCondonation,
 } from "../../configs/submissionsCreateConfig";
 import ReviewSubmissionModal from "../../components/ReviewSubmissionModal";
 import SubmissionSignatureModal from "../../components/SubmissionSignatureModal";
@@ -156,6 +157,23 @@ const SubmissionsCreate = ({ path }) => {
     return caseData?.criteria?.[0]?.responseList?.[0];
   }, [caseData]);
 
+  const { data: applicationData, isloading: isApplicationLoading, refetch: applicationRefetch } = Digit.Hooks.submissions.useSearchSubmissionService(
+    {
+      criteria: {
+        filingNumber,
+        applicationNumber,
+        tenantId,
+      },
+      tenantId,
+    },
+    {},
+    applicationNumber + filingNumber,
+    Boolean(applicationNumber + filingNumber)
+  );
+
+  const orderRefNumber = useMemo(() => applicationData?.applicationList?.[0]?.additionalDetails?.formdata?.refOrderId, [applicationData]);
+  const referenceId = useMemo(() => applicationData?.applicationList?.[0]?.referenceId, [applicationData]);
+
   const submissionType = useMemo(() => {
     return formdata?.submissionType?.code;
   }, [formdata?.submissionType?.code]);
@@ -164,9 +182,16 @@ const SubmissionsCreate = ({ path }) => {
     const submissionConfigKeys = {
       APPLICATION: applicationTypeConfig,
     };
-    if (caseDetails && Array.isArray(submissionConfigKeys[submissionType])) {
+    if (applicationData && caseDetails && Array.isArray(submissionConfigKeys[submissionType])) {
+      const isDelayApplicationPending = Boolean(
+        applicationData?.applicationList?.some(
+          (item) =>
+            item?.applicationType === "DELAY_CONDONATION" &&
+            [SubmissionWorkflowState.PENDINGAPPROVAL, SubmissionWorkflowState.PENDINGREVIEW].includes(item?.status)
+        )
+      );
       if (orderNumber || (hearingId && applicationTypeUrl) || !isCitizen) {
-        return submissionConfigKeys[submissionType]?.map((item) => {
+        const tempData = submissionConfigKeys[submissionType]?.map((item) => {
           return {
             ...item,
             body: item?.body?.map((input) => {
@@ -174,31 +199,33 @@ const SubmissionsCreate = ({ path }) => {
             }),
           };
         });
+        return tempData;
       } else {
         return submissionConfigKeys[submissionType]?.map((item) => {
           return {
             ...item,
-            ...(caseDetails?.status !== "CASE_ADMITTED" && {
-              body: item?.body?.map((input) => {
-                return {
-                  ...input,
-                  populators: {
-                    ...input.populators,
-                    mdmsConfig: {
-                      ...input.populators.mdmsConfig,
-                      select:
-                        "(data) => {return data['Application'].ApplicationType?.filter((item)=>![`REQUEST_FOR_BAIL`,`DELAY_CONDONATION`,`EXTENSION_SUBMISSION_DEADLINE`,`DOCUMENT`,`RE_SCHEDULE`,`CHECKOUT_REQUEST`, `SUBMIT_BAIL_DOCUMENTS`].includes(item.type)).map((item) => {return { ...item, name: 'APPLICATION_TYPE_'+item.type };});}",
-                    },
+            body: item?.body?.map((input) => {
+              return {
+                ...input,
+                populators: {
+                  ...input.populators,
+                  mdmsConfig: {
+                    ...input.populators.mdmsConfig,
+                    select: `(data) => {return data['Application'].ApplicationType?.filter((item)=>!["EXTENSION_SUBMISSION_DEADLINE","DOCUMENT","RE_SCHEDULE","CHECKOUT_REQUEST", "SUBMIT_BAIL_DOCUMENTS",${
+                      isDelayApplicationPending ? `"DELAY_CONDONATION",` : ""
+                    }${
+                      caseDetails?.status !== "CASE_ADMITTED" ? `"REQUEST_FOR_BAIL",` : ""
+                    }].includes(item.type)).map((item) => {return { ...item, name: 'APPLICATION_TYPE_'+item.type };});}`,
                   },
-                };
-              }),
+                },
+              };
             }),
           };
         });
       }
     }
     return [];
-  }, [hearingId, orderNumber, submissionType, isCitizen, caseDetails]);
+  }, [applicationData, caseDetails, submissionType, orderNumber, hearingId, applicationTypeUrl, isCitizen]);
 
   const applicationType = useMemo(() => {
     return formdata?.applicationType?.type || applicationTypeUrl;
@@ -217,6 +244,7 @@ const SubmissionsCreate = ({ path }) => {
       CHECKOUT_REQUEST: configsCheckoutRequest,
       REQUEST_FOR_BAIL: requestForBail,
       SUBMIT_BAIL_DOCUMENTS: submitDocsForBail,
+      DELAY_CONDONATION: submitDelayCondonation,
       OTHERS: configsOthers, // need to chnage here
     };
     const applicationConfigKeysForEmployee = {
@@ -271,23 +299,6 @@ const SubmissionsCreate = ({ path }) => {
     return [...submissionTypeConfig, ...submissionFormConfig, ...applicationFormConfig];
   }, [submissionFormConfig, applicationFormConfig]);
 
-  const { data: applicationData, isloading: isApplicationLoading, refetch: applicationRefetch } = Digit.Hooks.submissions.useSearchSubmissionService(
-    {
-      criteria: {
-        filingNumber,
-        applicationNumber,
-        tenantId,
-      },
-      tenantId,
-    },
-    {},
-    applicationNumber,
-    applicationNumber
-  );
-
-  const orderRefNumber = useMemo(() => applicationData?.applicationList?.[0]?.additionalDetails?.formdata?.refOrderId, [applicationData]);
-  const referenceId = useMemo(() => applicationData?.applicationList?.[0]?.referenceId, [applicationData]);
-
   const { data: hearingsData } = Digit.Hooks.hearings.useGetHearings(
     {
       hearing: { tenantId },
@@ -302,7 +313,11 @@ const SubmissionsCreate = ({ path }) => {
     true
   );
 
-  const applicationDetails = useMemo(() => applicationData?.applicationList?.[0], [applicationData]);
+  const applicationDetails = useMemo(() => (applicationNumber ? applicationData?.applicationList?.[0] : undefined), [
+    applicationData?.applicationList,
+    applicationNumber,
+  ]);
+
   useEffect(() => {
     if (applicationDetails) {
       if ([SubmissionWorkflowState.PENDINGESIGN, SubmissionWorkflowState.PENDINGSUBMISSION].includes(applicationDetails?.status)) {
@@ -360,7 +375,7 @@ const SubmissionsCreate = ({ path }) => {
   const latestExtensionOrder = useMemo(() => extensionOrders?.[0], [extensionOrders]);
 
   const { entityType, taxHeadMasterCode } = useMemo(() => {
-    const isResponseRequired = orderDetails?.orderDetails.isResponseRequired?.code === true;
+    const isResponseRequired = orderDetails?.orderDetails?.isResponseRequired?.code === true;
     if ((orderNumber || orderRefNumber) && referenceId) {
       return {
         entityType: isResponseRequired ? "application-order-submission-feedback" : "application-order-submission-default",
@@ -380,7 +395,7 @@ const SubmissionsCreate = ({ path }) => {
       entityType: "application-voluntary-submission",
       taxHeadMasterCode: "APPLICATION_VOLUNTARY_SUBMISSION_ADVANCE_CARRY_FORWARD",
     };
-  }, [applicationType, orderDetails?.orderDetails.isResponseRequired?.code, orderNumber, orderRefNumber, referenceId]);
+  }, [applicationType, orderDetails?.orderDetails?.isResponseRequired?.code, orderNumber, orderRefNumber, referenceId]);
 
   const defaultFormValue = useMemo(() => {
     if (applicationDetails?.additionalDetails?.formdata) {
@@ -523,7 +538,7 @@ const SubmissionsCreate = ({ path }) => {
   const onFormValueChange = (setValue, formData, formState, reset, setError, clearErrors, trigger, getValues) => {
     if (
       applicationType &&
-      !["OTHERS", "DOCUMENT", "REQUEST_FOR_BAIL", "SUBMIT_BAIL_DOCUMENTS"].includes(applicationType) &&
+      !["OTHERS", "DOCUMENT", "REQUEST_FOR_BAIL", "SUBMIT_BAIL_DOCUMENTS", "DELAY_CONDONATION"].includes(applicationType) &&
       !formData?.applicationDate
     ) {
       setValue("applicationDate", formatDate(new Date()));
@@ -549,7 +564,7 @@ const SubmissionsCreate = ({ path }) => {
       }
     }
 
-    if (applicationType && ["REQUEST_FOR_BAIL", "SUBMIT_BAIL_DOCUMENTS"].includes(applicationType) && formState?.submitCount) {
+    if (applicationType && ["REQUEST_FOR_BAIL", "SUBMIT_BAIL_DOCUMENTS", "DELAY_CONDONATION"].includes(applicationType) && formState?.submitCount) {
       if (!formData?.supportingDocuments && !Object.keys(formState?.errors).includes("supportingDocuments")) {
         setValue("supportingDocuments", [{}]);
         setError("supportingDocuments", { message: t("CORE_REQUIRED_FIELD_ERROR") });
@@ -636,7 +651,7 @@ const SubmissionsCreate = ({ path }) => {
         documentsList = [...documentsList, ...formdata?.othersDocument?.documents];
       }
 
-      const applicationDocuments = ["REQUEST_FOR_BAIL", "SUBMIT_BAIL_DOCUMENTS"].includes(applicationType)
+      const applicationDocuments = ["REQUEST_FOR_BAIL", "SUBMIT_BAIL_DOCUMENTS", "DELAY_CONDONATION"].includes(applicationType)
         ? formdata?.supportingDocuments?.map((supportDocs) => ({
             fileType: supportDocs?.submissionDocuments?.uploadedDocs?.[0]?.documentType,
             fileStore: supportDocs?.submissionDocuments?.uploadedDocs?.[0]?.fileStore,
@@ -668,7 +683,7 @@ const SubmissionsCreate = ({ path }) => {
       try {
         applicationSchema = Digit.Customizations.dristiOrders.ApplicationFormSchemaUtils.formToSchema(formdata, modifiedFormConfig);
       } catch (error) {
-        console.log(error);
+        console.error(error);
       }
       if (userTypeCitizen === "ADVOCATE") {
         applicationSchema = {
@@ -681,6 +696,13 @@ const SubmissionsCreate = ({ path }) => {
         applicationSchema = {
           ...applicationSchema,
           applicationDetails: { ...applicationSchema?.applicationDetails, relatedApplication: orderDetails?.applicationNumber },
+        };
+      }
+
+      if (applicationType === "DELAY_CONDONATION") {
+        applicationSchema = {
+          ...applicationSchema,
+          applicationDetails: { ...applicationSchema?.applicationDetails },
         };
       }
 
@@ -707,10 +729,10 @@ const SubmissionsCreate = ({ path }) => {
             onBehalOfName: onBehalfOfLitigent?.additionalDetails?.fullName,
             partyType: sourceType?.toLowerCase(),
             ...(orderDetails &&
-              orderDetails?.orderDetails.isResponseRequired?.code === true && {
+              orderDetails?.orderDetails?.isResponseRequired?.code === true && {
                 respondingParty: orderDetails?.additionalDetails?.formdata?.responseInfo?.respondingParty,
               }),
-            isResponseRequired: orderDetails && !isExtension ? orderDetails?.orderDetails.isResponseRequired?.code === true : true,
+            isResponseRequired: orderDetails && !isExtension ? orderDetails?.orderDetails?.isResponseRequired?.code === true : true,
             ...(hearingId && { hearingId }),
             owner: cleanString(userInfo?.name),
           },
@@ -841,7 +863,7 @@ const SubmissionsCreate = ({ path }) => {
   const handleOpenReview = async () => {
     setLoader(true);
 
-    if (applicationType && ["REQUEST_FOR_BAIL", "SUBMIT_BAIL_DOCUMENTS"].includes(applicationType)) {
+    if (applicationType && ["REQUEST_FOR_BAIL", "SUBMIT_BAIL_DOCUMENTS", "DELAY_CONDONATION"].includes(applicationType)) {
       const updatedFormData = await replaceUploadedDocsWithCombinedFile(formdata);
       setFormdata(updatedFormData);
     }
@@ -1001,6 +1023,13 @@ const SubmissionsCreate = ({ path }) => {
           setShowPaymentModal(false);
           setShowSuccessModal(true);
           createPendingTask({ name: t("MAKE_PAYMENT_SUBMISSION"), status: "MAKE_PAYMENT_SUBMISSION", isCompleted: true });
+          if (applicationDetails?.applicationType === "DELAY_CONDONATION")
+            createPendingTask({
+              name: "Create DCA Applications",
+              status: "CREATE_DCA_SUBMISSION",
+              refId: applicationDetails?.filingNumber,
+              isCompleted: true,
+            });
         } else {
           setMakePaymentLabel(true);
           setShowPaymentModal(false);

@@ -33,7 +33,7 @@ const SubmissionPreviewSubmissionTypeMap = {
   CHECKOUT_REQUEST: "application-for-checkout-request",
   REQUEST_FOR_BAIL: "application-bail-bond",
   SUBMIT_BAIL_DOCUMENTS: "application-submit-bail-documents",
-  DCA_APPLICATION: "application-delay-condonation",
+  DELAY_CONDONATION: "application-delay-condonation",
 };
 
 const onDocumentUpload = async (fileData, filename) => {
@@ -130,7 +130,7 @@ function ReviewSubmissionModal({
         ) : isLoading ? (
           <h2>{t("LOADING")}</h2>
         ) : (
-          <h2>{t("PREVIEW_DOC_NOT_AVAILABLE")}</h2>
+          <h2>{t("PREVIEW_DOC_NOT_AVAILABLE")} </h2>
         )}
       </React.Fragment>
     );

@@ -525,6 +525,17 @@ export const pendingTaskOrderActions = {
 export const pendingTaskOrderOfJudgementActions = {};
 
 export const pendingTaskVoluntarySubmissionActions = {
+  CREATE_DCA_SUBMISSION: {
+    actorName: ["LITIGANT/ADVOCATE"],
+    actionName: "Create DCA Application",
+    redirectDetails: {
+      url: "/submissions/submissions-create",
+      params: [
+        { key: "filingNumber", value: "filingNumber" },
+        { key: "applicationType", defaultValue: "DELAY_CONDONATION" },
+      ],
+    },
+  },
   MAKE_PAYMENT_SUBMISSION: {
     actorName: ["LITIGANT/ADVOCATE"],
     actionName: "Payment for Submission",
