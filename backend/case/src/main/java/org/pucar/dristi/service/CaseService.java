@@ -200,9 +200,16 @@ public class CaseService {
 
             log.info("Encrypting: {}", caseRequest);
             caseRequest.setCases(encryptionDecryptionUtil.encryptObject(caseRequest.getCases(), "CourtCase", CourtCase.class));
-            cacheService.save(caseRequest.getCases().getTenantId() + ":" + caseRequest.getCases().getId(), caseRequest.getCases());
-
             producer.push(config.getCaseUpdateTopic(), caseRequest);
+
+            log.info("Updating cache");
+            List<Document> isActiveTrueDocuments = Optional.ofNullable(caseRequest.getCases().getDocuments())
+                    .orElse(Collections.emptyList())
+                    .stream()
+                    .filter(Document::getIsActive)
+                    .toList();
+            caseRequest.getCases().setDocuments(isActiveTrueDocuments);
+            cacheService.save(caseRequest.getCases().getTenantId() + ":" + caseRequest.getCases().getId(), caseRequest.getCases());
 
             CourtCase cases = encryptionDecryptionUtil.decryptObject(caseRequest.getCases(), null, CourtCase.class, caseRequest.getRequestInfo());
             cases.setAccessCode(null);
