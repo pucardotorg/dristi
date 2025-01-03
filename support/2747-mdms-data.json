@@ -2,7 +2,7 @@
     "tenantId": "kl",
     "masterName": "Notice",
     "moduleName": "NoticeType",
-    "mdmsPaylod": [
+    "mdmsPayload": [
       {
         "tenantId": "kl",
         "schemaCode": "Notice.NoticeType",

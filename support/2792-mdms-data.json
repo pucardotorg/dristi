@@ -1,0 +1,19 @@
+{
+    "tenantId": "kl",
+    "masterName": "Application",
+    "moduleName": "ApplicationStatus",
+    "mdmsPayload": [
+        {
+            "tenantId": "kl",
+            "schemaCode": "Application.ApplicationStatus",
+            "uniqueIdentifier": "17",
+            "data": {
+                "id": 17,
+                "code": "DOCUMENT_UPLOAD",
+                "type": "DOCUMENT_UPLOAD",
+                "isactive": true
+            },
+            "isActive": true
+        }
+    ]
+}

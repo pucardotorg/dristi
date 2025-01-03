@@ -2,7 +2,7 @@
     "tenantId": "kl",
     "masterName": "Submission",
     "moduleName": "SubmissionDocumentType",
-    "mdmsPaylod": [
+    "mdmsPayload": [
         {
             "tenantId": "kl",
             "schemaCode": "Submission.SubmissionDocumentType",

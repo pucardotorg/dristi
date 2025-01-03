@@ -80,20 +80,17 @@ const Modal = ({
                 textClassName={submitTextClassName}
               />
             ) : null}
-            {actionSaveLabel && !hideSubmit
-              ? (console.log(style),
-                (
-                  <ButtonSelector
-                    textStyles={textStyle}
-                    label={actionSaveLabel}
-                    onSubmit={actionSaveOnSubmit}
-                    formId={formId}
-                    isDisabled={isDisabled}
-                    style={style}
-                    textClassName={submitTextClassName}
-                  />
-                ))
-              : null}
+            {actionSaveLabel && !hideSubmit ? (
+              <ButtonSelector
+                textStyles={textStyle}
+                label={actionSaveLabel}
+                onSubmit={actionSaveOnSubmit}
+                formId={formId}
+                isDisabled={isDisabled}
+                style={style}
+                textClassName={submitTextClassName}
+              />
+            ) : null}
           </div>
         </div>
       </div>

@@ -1,10 +1,10 @@
 import { CloseSvg } from "@egovernments/digit-ui-components";
-import React, { useEffect, useMemo, useState } from "react";
+import React, { useCallback, useEffect, useMemo, useState } from "react";
 import Modal from "../../../components/Modal";
 import { Button, SubmitBar } from "@egovernments/digit-ui-react-components";
 import { CaseWorkflowState } from "../../../Utils/caseWorkflow";
 import useGetAllOrderApplicationRelatedDocuments from "../../../hooks/dristi/useGetAllOrderApplicationRelatedDocuments";
-import { useGetPendingTask } from "../../../hooks/dristi/useGetPendingTask";
+import { DRISTIService } from "../../../services";
 
 function PublishedOrderModal({
   t,
@@ -19,6 +19,7 @@ function PublishedOrderModal({
 }) {
   const [fileStoreId, setFileStoreID] = useState(null);
   const [fileName, setFileName] = useState();
+  const [isTaskCompleted, setIsTaskCompleted] = useState(false);
   const tenantId = window?.Digit.ULBService.getCurrentTenantId();
   const DocViewerWrapper = Digit?.ComponentRegistryService?.getComponent("DocViewerWrapper");
   const userRoles = Digit.UserService.getUser()?.info?.roles.map((role) => role.code);
@@ -96,39 +97,48 @@ function PublishedOrderModal({
   }, [order, tenantId]);
 
   // tracking of appliction based on order Generated for bail
-  const { data: pendingTaskDetails = [] } = useGetPendingTask({
-    data: {
-      SearchCriteria: {
-        tenantId,
-        moduleName: "Pending Tasks Service",
-        moduleSearchCriteria: {
-          filingNumber: order?.filingNumber,
-          isCompleted: true,
-          referenceId: `MANUAL_${userInfo?.uuid}_${order?.orderNumber}`,
-        },
-        limit: 10000,
-        offset: 0,
-      },
-    },
-    params: { tenantId },
-    key: `MANUAL_${userInfo?.uuid}_${order?.orderType}`,
-    config: {
-      enabled: Boolean(order && tenantId),
-    },
-  });
+  const fetchAndCheckTasks = useCallback(
+    async function () {
+      try {
+        const pendingTasks = await DRISTIService.getPendingTaskService(
+          {
+            SearchCriteria: {
+              tenantId,
+              moduleName: "Pending Tasks Service",
+              moduleSearchCriteria: {
+                filingNumber: order?.filingNumber,
+                isCompleted: true,
+                referenceId: `MANUAL_${userInfo?.uuid}_${order?.orderNumber}`,
+              },
+              limit: 10000,
+              offset: 0,
+            },
+          },
+          { tenantId }
+        );
 
-  const completedTask = useMemo(() => {
-    return pendingTaskDetails?.data?.some((task) => {
-      const refIdField = task?.fields?.find((field) => field?.key === "referenceId");
-      const isCompletedField = task?.fields?.find((field) => field?.key === "isCompleted");
+        const taskCompleted = pendingTasks?.data?.some((task) => {
+          const refIdField = task?.fields?.find((field) => field?.key === "referenceId");
+          const isCompletedField = task?.fields?.find((field) => field?.key === "isCompleted");
 
-      return refIdField?.value === `MANUAL_${userInfo?.uuid}_${order?.orderNumber}` && isCompletedField?.value === true;
-    });
-  }, [pendingTaskDetails?.data, userInfo?.uuid, order?.orderNumber]);
+          return refIdField?.value === `MANUAL_${userInfo?.uuid}_${order?.orderNumber}` && isCompletedField?.value === true;
+        });
+
+        setIsTaskCompleted(taskCompleted);
+      } catch (error) {
+        console.error("Error fetching pending tasks:", error);
+      }
+    },
+    [order?.filingNumber, order?.orderNumber, tenantId, userInfo?.uuid]
+  );
+
+  useEffect(() => {
+    fetchAndCheckTasks();
+  }, [tenantId, order.filingNumber, order.orderNumber, userInfo.uuid, fetchAndCheckTasks]);
 
   const showSubmitDocumentButton = useMemo(
-    () => (order?.orderType === "SET_BAIL_TERMS" ? showSubmissionButtons && !completedTask : showSubmissionButtons),
-    [completedTask, order?.orderType, showSubmissionButtons]
+    () => (order?.orderType === "SET_BAIL_TERMS" ? showSubmissionButtons && !isTaskCompleted : showSubmissionButtons),
+    [isTaskCompleted, order?.orderType, showSubmissionButtons]
   );
 
   const showDocument = useMemo(() => {

@@ -2,7 +2,7 @@
   "tenantId": "kl",
   "masterName": "Order",
   "moduleName": "OrderType",
-  "mdmsPaylod": [
+  "mdmsPayload": [
     {
       "tenantId": "kl",
       "schemaCode": "Order.OrderType",
