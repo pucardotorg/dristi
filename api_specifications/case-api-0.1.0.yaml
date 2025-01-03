@@ -386,7 +386,7 @@ components:
         - statutesAndSections
         - litigants
       oneOf:
-        - required: [filingNumber, caseNumber]
+        - required: [filingNumber, cnrNumber]
       type: object
       properties:
         id:
