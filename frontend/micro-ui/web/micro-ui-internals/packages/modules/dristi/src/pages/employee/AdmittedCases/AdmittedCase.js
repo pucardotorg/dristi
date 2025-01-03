@@ -875,7 +875,7 @@ const AdmittedCases = () => {
           : "unmark_void_submission" === documentSubmission?.[0]?.itemType
           ? t("MARK_VOID_CONFIRM")
           : t("MARK_AS_VOID"),
-      actionCancelLabel: t("MARK_VOID_CANCEL"),
+      actionCancelLabel: userType === "citizen" ? t("VOID_BACK") : t("MARK_VOID_CANCEL"),
       steps: [
         {
           actionCancelOnSubmit: handleClose,

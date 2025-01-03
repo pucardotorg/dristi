@@ -1,0 +1,31 @@
+{
+    "tenantId": "kl",
+    "masterName": "Submission",
+    "moduleName": "SubmissionDocumentType",
+    "mdmsPaylod": [
+        {
+            "tenantId": "kl",
+            "schemaCode": "Submission.SubmissionDocumentType",
+            "uniqueIdentifier": "2",
+            "data": {
+                "id": "2",
+                "code": "AFFIDAVITS",
+                "name": "AFFIDAVITS",
+                "isActive": true
+            },
+            "isActive": true
+        },
+        {
+            "tenantId": "kl",
+            "schemaCode": "Submission.SubmissionDocumentType",
+            "uniqueIdentifier": "3",
+            "data": {
+                "id": "3",
+                "code": "OBJECTIONS",
+                "name": "OBJECTIONS",
+                "isActive": true
+            },
+            "isActive": true
+        }
+    ]
+}

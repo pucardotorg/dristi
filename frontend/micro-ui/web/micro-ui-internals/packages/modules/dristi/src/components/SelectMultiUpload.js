@@ -21,6 +21,38 @@ const CloseBtn = (props) => {
   );
 };
 
+const DragDropComponent = ({ config, label }) => {
+  return (
+    <div
+      style={{
+        border: "1px solid #007E7E",
+        display: "flex",
+        alignItems: "center",
+        justifyContent: "center",
+        padding: "4px 8px",
+        fontFamily: "Arial, sans-serif",
+        fontSize: "14px",
+        color: "#007E7E",
+        height: "40px",
+        gap: "4px",
+        width: "100%",
+        opacity: !config?.disable ? 1 : 0.5,
+        cursor: !config?.disable ? "pointer" : "default",
+      }}
+    >
+      <UploadIcon
+        style={{
+          width: "16px",
+          height: "16px",
+          marginRight: "4px",
+          color: "#007E7E",
+        }}
+      />
+      <span style={{ color: "#007E7E", fontWeight: 600 }}>{label}</span>
+    </div>
+  );
+};
+
 const SelectMultiUpload = ({ t, config, onSelect, formData = {}, errors, setError, clearErrors }) => {
   const [showErrorToast, setShowErrorToast] = useState(null);
   const tenantId = Digit.ULBService.getCurrentTenantId();
@@ -48,36 +80,6 @@ const SelectMultiUpload = ({ t, config, onSelect, formData = {}, errors, setErro
         },
       ],
     [config?.populators?.inputs]
-  );
-
-  const dragDropJSX = (
-    <div
-      style={{
-        border: "1px solid #007E7E",
-        display: "flex",
-        alignItems: "center",
-        justifyContent: "center",
-        padding: "4px 8px",
-        fontFamily: "Arial, sans-serif",
-        fontSize: "14px",
-        color: "#007E7E",
-        height: "40px",
-        gap: "4px",
-        width: "100%",
-        opacity: !config?.disable ? 1 : 0.5,
-        cursor: !config?.disable ? "pointer" : "default",
-      }}
-    >
-      <UploadIcon
-        style={{
-          width: "16px",
-          height: "16px",
-          marginRight: "4px",
-          color: "#007E7E",
-        }}
-      />
-      <span style={{ color: "#007E7E", fontWeight: 600 }}>{t("UPLOAD_MORE")}</span>
-    </div>
   );
 
   useEffect(() => {
@@ -124,18 +126,27 @@ const SelectMultiUpload = ({ t, config, onSelect, formData = {}, errors, setErro
       <React.Fragment>
         <style>
           {`
-        .file-uploader .text-input.text-input-width {
-          max-width: calc(100% - 138px)
-        }
-        .file-uploader input[type="file"]{
-          width :100%
-        }
-        label{
-          width : "122px"
-        }
-        .file-uploader-div-main .toast-success.error h2 {
-          color: white !important;
-        }
+            .file-uploader {
+              display: flex;
+              align-items: center;
+              justify-content: space-between;
+            }
+            .file-uploader .text-input.text-input-width {
+              max-width: calc(100% - 138px);
+              flex: 1;
+            }
+            .file-uploader input[type="file"] {
+              width: 100%;
+            }
+            .file-uploader label {
+              width: 130px;
+              display: flex;
+              align-items: center;
+              justify-content: center;
+            }
+            .file-uploader-div-main .toast-success.error h2 {
+              color: white !important;
+            }
         `}
         </style>
         <div className={`file-uploader-div-main show-file-uploader select-UploadFiles`}>
@@ -160,7 +171,7 @@ const SelectMultiUpload = ({ t, config, onSelect, formData = {}, errors, setErro
               handleChange={(data) => handleAddFiles(data, input, currentValue)}
               name="file"
               types={input?.fileTypes}
-              children={dragDropJSX}
+              children={<DragDropComponent config={config} label={currentValue?.length > 0 ? t("UPLOAD_MORE") : t("UPLOAD")} />}
               key={input?.name}
             />
           </div>
