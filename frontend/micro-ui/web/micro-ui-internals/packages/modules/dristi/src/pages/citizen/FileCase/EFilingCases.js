@@ -564,7 +564,7 @@ function EFilingCases({ path }) {
             (data) => new Date(data?.data?.dateOfAccrual).getTime() + 31 * 24 * 60 * 60 * 1000 < new Date().getTime()
           )
         ) {
-          return {
+          const data = {
             delayCondonationType: {
               code: "NO",
               name: "NO",
@@ -580,6 +580,7 @@ function EFilingCases({ path }) {
                   showDcaFileUpload: true,
                 },
           };
+          return data;
         } else {
           return {
             ...caseDetails?.caseDetails?.[selected]?.formdata?.[index]?.data,

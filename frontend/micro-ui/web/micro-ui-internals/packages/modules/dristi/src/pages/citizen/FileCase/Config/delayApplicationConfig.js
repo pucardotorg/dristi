@@ -87,9 +87,6 @@ const delayApplicationFormConfig = [
         },
       },
     ],
-    dependentKey: {
-      delayCondonationType: ["showForm"],
-    },
   },
   {
     body: [
