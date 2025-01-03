@@ -13,7 +13,7 @@ on:
     branches:
       - develop
       - uat
-      - release/0.5
+      - main
     paths:
       - "common/pdf-service/**"
   workflow_dispatch:
