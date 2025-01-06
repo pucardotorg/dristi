@@ -7,11 +7,34 @@
       {
         "tenantId": "kl",
         "schemaCode": "common-masters.PendingTaskType",
-        "uniqueIdentifier": "18",
-        "data":{
-          "id": "18",
+        "uniqueIdentifier": "20",
+        "data": {
+          "id": "20",
           "actor": "Judge/CourtStaff",
-          "state": "PENDING_APPROVAL",
+          "state": "PENDINGAPPROVAL",
+          "isgeneric": false,
+          "pendingTask": "Review Bail Documents",
+          "closerAction": [
+            "APPROVE",
+            "DELETE",
+            "REJECT",
+            "ABANDON"
+          ],
+          "triggerAction": [
+            "ESIGN"
+          ],
+          "workflowModule": "voluntary-application-submission-bail-documents"
+        },
+        "isActive": true
+      },
+      {
+        "tenantId": "kl",
+        "schemaCode": "common-masters.PendingTaskType",
+        "uniqueIdentifier": "19",
+        "data": {
+          "id": "19",
+          "actor": "Judge/CourtStaff",
+          "state": "PENDINGAPPROVAL",
           "isgeneric": false,
           "pendingTask": "Review of Bail Application",
           "closerAction": [
@@ -22,32 +45,61 @@
             "ABANDON"
           ],
           "triggerAction": [
-            "MAKE_PAYMENT"
+            "PAY"
           ],
           "workflowModule": "voluntary-application-submission-bail"
         },
         "isActive": true
-      },
+      }
+    ]
+  },
+  {
+    "tenantId": "kl",
+    "moduleName": "BillingService",
+    "masterName": "TaxHeadMaster",
+    "mdmsPayload": [
       {
         "tenantId": "kl",
-        "schemaCode": "common-masters.PendingTaskType",
-        "uniqueIdentifier": "19",
-        "data":{
-          "id": "19",
-          "actor": "Judge/CourtStaff",
-          "state": "PENDING_APPROVAL",
-          "isgeneric": false,
-          "pendingTask": "Review Bail Documents",
-          "closerAction": [
-            "APPROVE",
-            "DELETE",
-            "REJECT",
-            "ABANDON"
-          ],
-          "triggerAction": [
-            "E-SIGN"
-          ],
-          "workflowModule": "voluntary-application-submission-bail-documents"
+        "schemaCode": "BillingService.TaxHeadMaster",
+        "uniqueIdentifier": "APPLICATION_VOLUNTARY_BAIL_SUBMISSION_ADVANCE_CARRY_FORWARD",
+        "data": {
+          "code": "APPLICATION_VOLUNTARY_BAIL_SUBMISSION_ADVANCE_CARRY_FORWARD",
+          "name": "Application Voluntary Bail Submission advance carry forward",
+          "order": "0",
+          "isDebit": true,
+          "service": "voluntary-application-submission-bail",
+          "category": "ADVANCE_COLLECTION",
+          "isRequired": false,
+          "isActualDemand": false
+        },
+        "isActive": true
+      }
+    ]
+  },
+  {
+    "tenantId": "kl",
+    "moduleName": "BillingService",
+    "masterName": "BusinessService",
+    "mdmsPayload": [
+      {
+        "id": "f7160276-c7c9-484d-b55f-6dcd3733389a",
+        "tenantId": "kl",
+        "schemaCode": "BillingService.BusinessService",
+        "uniqueIdentifier": "voluntary-application-submission-bail",
+        "data": {
+          "code": "voluntary-application-submission-bail",
+          "billGineiURL": " ",
+          "businessService": "voluntary-application-submission-bail",
+          "demandUpdateTime": 604800000,
+          "isAdvanceAllowed": false,
+          "minAmountPayable": 0,
+          "partPaymentAllowed": false,
+          "isVoucherCreationEnabled": true,
+          "collectionModesNotAllowed": [
+            "OFFLINE_NEFT",
+            "OFFLINE_RTGS",
+            "POSTAL_ORDER"
+          ]
         },
         "isActive": true
       }
