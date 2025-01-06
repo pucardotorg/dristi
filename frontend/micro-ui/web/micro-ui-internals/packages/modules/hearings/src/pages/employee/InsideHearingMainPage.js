@@ -385,7 +385,11 @@ const InsideHearingMainPage = () => {
             onAddParty={onClickAddWitness}
             hearingLink={hearingVcLink}
             delayCondonationData={delayCondonationData}
-            isDelayApplicationPending={isDelayApplicationPending || isDelayApplicationCompleted}
+            isDelayApplicationPending={
+              (delayCondonationData?.isDcaSkippedInEFiling?.code === "NO" && isDelayApplicationPending) ||
+              isDelayApplicationPending ||
+              isDelayApplicationCompleted
+            }
           ></EvidenceHearingHeader>
         </React.Fragment>
         {activeTab === "Witness Deposition" && (

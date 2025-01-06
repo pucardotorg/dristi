@@ -2085,7 +2085,9 @@ const AdmittedCases = () => {
             {delayCondonationData?.delayCondonationType?.code === "NO" && isJudge && (
               <div className="delay-condonation-chip" style={delayCondonationStylsMain}>
                 <p style={delayCondonationTextStyle}>
-                  {delayCondonationData?.isDcaSkippedInEFiling?.code === "NO" || isDelayApplicationPending || isDelayApplicationCompleted
+                  {(delayCondonationData?.isDcaSkippedInEFiling?.code === "NO" && isDelayApplicationPending) ||
+                  isDelayApplicationPending ||
+                  isDelayApplicationCompleted
                     ? t("DELAY_CONDONATION_FILED")
                     : t("DELAY_CONDONATION_NOT_FILED")}
                 </p>
