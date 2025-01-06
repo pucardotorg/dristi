@@ -18,6 +18,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.Collections;
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 
 import static digit.config.ServiceConstants.*;
@@ -64,9 +65,14 @@ public class SummonsService {
     public TaskResponse generateSummonsDocument(TaskRequest taskRequest) {
         String taskType = taskRequest.getTask().getTaskType();
         String docSubType = getDocSubType(taskType, taskRequest.getTask().getTaskDetails());
-        String pdfTemplateKey = getPdfTemplateKey(taskType, docSubType, false);
+        String noticeType = getNoticeType(taskRequest.getTask().getTaskDetails());
+        String pdfTemplateKey = getPdfTemplateKey(taskType, docSubType, false, noticeType);
 
         return generateDocumentAndUpdateTask(taskRequest, pdfTemplateKey, false);
+    }
+
+    private String getNoticeType(TaskDetails taskDetails) {
+        return taskDetails.getNoticeDetails()!=null ? taskDetails.getNoticeDetails().getNoticeType() : null;
     }
 
     private TaskResponse generateDocumentAndUpdateTask(TaskRequest taskRequest, String pdfTemplateKey, boolean qrCode) {
@@ -94,7 +100,8 @@ public class SummonsService {
 
         if (!taskType.equalsIgnoreCase(WARRANT)) {
             String docSubType = getDocSubType(taskType, task.getTaskDetails());
-            String pdfTemplateKey = getPdfTemplateKey(taskType, docSubType, true);
+            String noticeType = getNoticeType(task.getTaskDetails());
+            String pdfTemplateKey = getPdfTemplateKey(taskType, docSubType, true, noticeType);
 
             generateDocumentAndUpdateTask(taskRequest, pdfTemplateKey, true);
         }
@@ -175,7 +182,7 @@ public class SummonsService {
         taskUtil.callUpdateTask(taskRequest);
     }
 
-    private String getPdfTemplateKey(String taskType, String docSubType, boolean qrCode) {
+    private String getPdfTemplateKey(String taskType, String docSubType, boolean qrCode, String noticeType) {
         switch (taskType) {
             case SUMMON -> {
                 if (docSubType.equals(ACCUSED)) {
@@ -195,7 +202,13 @@ public class SummonsService {
                     throw new CustomException("INVALID_DOC_SUB_TYPE", "Document Sub-Type must be valid. Provided: " + docSubType);
                 }            }
             case NOTICE -> {
-                return qrCode ? config.getTaskNoticeQrPdfTemplateKey() : config.getTaskNoticePdfTemplateKey();
+                if(Objects.equals(noticeType, BNSS_NOTICE)){
+                    return config.getTaskBnssNoticePdfTemplateKey();
+                } else if(Objects.equals(noticeType, DCA_NOTICE)) {
+                    return config.getTaskDcaNoticePdfTemplateKey();
+                } else {
+                    return qrCode ? config.getTaskNoticeQrPdfTemplateKey() : config.getTaskNotificationTemplateKey();
+                }
             }
             default -> throw new CustomException("INVALID_TASK_TYPE", "Task Type must be valid. Provided: " + taskType);
         }
