@@ -388,6 +388,16 @@ export const reviewCaseFileFormConfig = [
                 //   value: "delayApplicationReason.reasonForDelay",
                 // },
                 {
+                  type: "text",
+                  label: "SKIP_DELAY_APPLICATION_CONFIRM",
+                  value: "isDcaSkippedInEFiling.name",
+                },
+                {
+                  type: "text",
+                  label: "DELAY_ADDITIONAL_INFO",
+                  value: "additionalDelayCondonationDetails.text",
+                },
+                {
                   type: "image",
                   label: "CS_DOCUMENT",
                   value: ["condonationFileUpload.document"],

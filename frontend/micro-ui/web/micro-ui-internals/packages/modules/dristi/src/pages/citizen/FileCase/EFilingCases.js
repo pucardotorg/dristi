@@ -1122,16 +1122,18 @@ function EFilingCases({ path }) {
                 let disableDelayCondonationType = false;
 
                 if (selected === "delayApplications") {
-                  if (
-                    caseDetails?.caseDetails?.["demandNoticeDetails"]?.formdata?.some(
-                      (data) => new Date(data?.data?.dateOfAccrual).getTime() + 31 * 24 * 60 * 60 * 1000 < new Date().getTime()
-                    ) &&
-                    body?.key === "delayCondonationType"
-                  ) {
+                  if (body?.key === "delayCondonationType") {
                     disableDelayCondonationType = true;
                   }
+                  if (
+                    body?.key === "isDcaSkippedInEFiling" &&
+                    caseDetails?.caseDetails?.["demandNoticeDetails"]?.formdata?.some(
+                      (data) => new Date(data?.data?.dateOfAccrual).getTime() + 31 * 24 * 60 * 60 * 1000 > new Date().getTime()
+                    )
+                  ) {
+                    return {};
+                  }
                 }
-
                 return {
                   ...body,
                   disable: disableConfigFields.some((field) => field === body?.populators?.name) || disableDelayCondonationType,
@@ -1233,6 +1235,9 @@ function EFilingCases({ path }) {
                   }
                   if (selected === "chequeDetails" && key === "policeStation") {
                     key = key + "." + formComponent?.populators?.optionsKey;
+                  }
+                  if (selected === "delayApplications" && key === "delayCondonationType.name") {
+                    modifiedFormComponent.disable = true;
                   }
                   if (key in scrutiny?.[selected]?.form?.[index] && scrutiny?.[selected]?.form?.[index]?.[key]?.FSOError) {
                     if (key === "complainantVerification.individualDetails.document") {

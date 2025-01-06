@@ -265,7 +265,7 @@ const CustomReviewCardRow = ({
       case "text":
         const textValue = extractValue(data, value);
         const dependentOnValue = extractValue(data, textDependentOn);
-        if (showFlagIcon && dependentOnValue && t(textDependentValue)) {
+        if ((showFlagIcon && dependentOnValue && t(textDependentValue)) || value === "delayCondonationType.name") {
           showFlagIcon = false;
         }
         return (
