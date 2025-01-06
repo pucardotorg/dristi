@@ -1,4 +1,11 @@
-export const SubmissionWorkflowAction = { CREATE: "CREATE", ESIGN: "ESIGN", REJECT: "REJECT", ABANDON: "ABANDON", APPROVE: "APPROVE", SET_TERM_BAIL: "SEND_BACK" };
+export const SubmissionWorkflowAction = {
+  CREATE: "CREATE",
+  ESIGN: "ESIGN",
+  REJECT: "REJECT",
+  ABANDON: "ABANDON",
+  APPROVE: "APPROVE",
+  SET_TERM_BAIL: "SEND_BACK",
+};
 export const SubmissionWorkflowState = {
   PENDINGSUBMISSION: "PENDINGSUBMISSION",
   PENDINGPAYMENT: "PENDINGPAYMENT",

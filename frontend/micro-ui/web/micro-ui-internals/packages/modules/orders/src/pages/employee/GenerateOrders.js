@@ -2318,6 +2318,25 @@ const GenerateOrders = () => {
   };
 
   const handleReviewOrderClick = () => {
+    if (
+      referenceId &&
+      "ACCEPTANCE_REJECTION_DCA" === orderType &&
+      [SubmissionWorkflowState.COMPLETED, SubmissionWorkflowState.REJECTED].includes(applicationDetails?.status)
+    ) {
+      setShowErrorToast({
+        label: applicationDetails?.status === SubmissionWorkflowState.COMPLETED ? t("DCA_APPLICATION_ACCEPTED") : t("DCA_APPLICATION_REJECTED"),
+        error: true,
+      });
+      return;
+    }
+    if ("ADMIT_DISMISS_CASE" === orderType && ["CASE_DISMISSED", "CASE_ADMITTED"].includes(caseDetails?.status)) {
+      setShowErrorToast({
+        label: "CASE_ADMITTED" === caseDetails?.status ? t("CASE_ALREADY_ADMITTED") : t("CASE_ALREADY_REJECTED"),
+        error: true,
+      });
+      return;
+    }
+
     if (["SCHEDULE_OF_HEARING_DATE", "SCHEDULING_NEXT_HEARING"].includes(orderType) && (isHearingScheduled || isHearingOptout)) {
       setShowErrorToast({
         label: isHearingScheduled ? t("HEARING_IS_ALREADY_SCHEDULED_FOR_THIS_CASE") : t("CURRENTLY_A_HEARING_IS_IN_OPTOUT_STATE"),

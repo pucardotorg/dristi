@@ -200,6 +200,7 @@ const AdmittedCases = () => {
   const [voidReason, setVoidReason] = useState("");
   const [isDelayApplicationPending, setIsDelayApplicationPending] = useState(false);
   const [isOpenDCA, setIsOpenDCA] = useState(false);
+  const [isOpenFromPendingTask, setIsOpenFromPendingTask] = useState(false);
 
   const history = useHistory();
   const isCitizen = userRoles.includes("CITIZEN");
@@ -373,6 +374,16 @@ const AdmittedCases = () => {
       )
     );
   }, [applicationData]);
+
+  const isDelayApplicationCompleted = useMemo(
+    () =>
+      Boolean(
+        applicationData?.applicationList?.some(
+          (item) => item?.applicationType === "DELAY_CONDONATION" && [SubmissionWorkflowState.COMPLETED].includes(item?.status)
+        )
+      ),
+    [applicationData]
+  );
 
   const caseRelatedData = useMemo(
     () => ({
@@ -973,6 +984,7 @@ const AdmittedCases = () => {
     if (!isDelayCondonationApplicable) return;
     return {
       handleClose: () => {
+        setIsOpenFromPendingTask(false);
         setIsOpenDCA(false);
       },
       heading: { label: "" },
@@ -1003,11 +1015,15 @@ const AdmittedCases = () => {
           actionCancelLabel: "BACK",
           actionCancelOnSubmit: () => {
             setIsOpenDCA(false);
+            if (isOpenFromPendingTask) {
+              setIsOpenFromPendingTask(false);
+              window.history.back();
+            }
           },
         },
       ],
     };
-  }, [caseInfo, isDelayApplicationPending, isDelayCondonationApplicable, t]);
+  }, [caseInfo, isDelayApplicationPending, isDelayCondonationApplicable, isOpenFromPendingTask, t]);
 
   const tabData = useMemo(() => {
     return newTabSearchConfig?.TabSearchconfig?.map((configItem, index) => ({
@@ -1031,8 +1047,14 @@ const AdmittedCases = () => {
   }, [caseDetails?.status]);
 
   useEffect(() => {
-    if (history?.location?.state?.triggerAdmitCase && openAdmitCaseModal && isDelayCondonationApplicable !== undefined) {
-      if (isDelayCondonationApplicable) {
+    if (
+      history?.location?.state?.triggerAdmitCase &&
+      openAdmitCaseModal &&
+      isDelayCondonationApplicable !== undefined &&
+      isDelayApplicationCompleted !== undefined
+    ) {
+      if (isDelayCondonationApplicable && !isDelayApplicationCompleted) {
+        setIsOpenFromPendingTask(true);
         setIsOpenDCA(true);
         setShowModal(false);
         setOpenAdmitCaseModal(false);
@@ -1043,7 +1065,7 @@ const AdmittedCases = () => {
         setOpenAdmitCaseModal(false);
       }
     }
-  }, [caseInfo, history?.location, isDelayCondonationApplicable, openAdmitCaseModal]);
+  }, [caseInfo, history?.location, isDelayApplicationCompleted, isDelayCondonationApplicable, openAdmitCaseModal]);
 
   useEffect(() => {
     if (history?.location?.state?.from === "orderSuccessModal" && !toastStatus?.alreadyShown) {
@@ -1585,7 +1607,7 @@ const AdmittedCases = () => {
             }
           }
         } else {
-          if (isDelayApplicationPending || isDelayCondonationApplicable) {
+          if ((isDelayApplicationPending || isDelayCondonationApplicable) && !isDelayApplicationCompleted) {
             setIsOpenDCA(true);
           } else {
             setSubmitModalInfo({ ...admitCaseSubmitConfig, caseInfo: caseInfo });
@@ -2063,7 +2085,7 @@ const AdmittedCases = () => {
             {delayCondonationData?.delayCondonationType?.code === "NO" && isJudge && (
               <div className="delay-condonation-chip" style={delayCondonationStylsMain}>
                 <p style={delayCondonationTextStyle}>
-                  {(delayCondonationData?.isDcaSkippedInEFiling?.code === "NO" && isDelayApplicationPending) || isDelayApplicationPending
+                  {delayCondonationData?.isDcaSkippedInEFiling?.code === "NO" || isDelayApplicationPending || isDelayApplicationCompleted
                     ? t("DELAY_CONDONATION_FILED")
                     : t("DELAY_CONDONATION_NOT_FILED")}
                 </p>

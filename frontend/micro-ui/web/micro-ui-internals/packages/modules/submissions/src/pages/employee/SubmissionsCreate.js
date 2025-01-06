@@ -878,6 +878,13 @@ const SubmissionsCreate = ({ path }) => {
           refId: newapplicationNumber,
           stateSla: todayDate + stateSla.ESIGN_THE_SUBMISSION,
         });
+        if (applicationDetails?.applicationType === "DELAY_CONDONATION")
+          createPendingTask({
+            name: "Create DCA Applications",
+            status: "CREATE_DCA_SUBMISSION",
+            refId: applicationDetails?.filingNumber,
+            isCompleted: true,
+          });
       } else if (hasSubmissionRole) {
         await createPendingTask({
           name: t("ESIGN_THE_SUBMISSION"),
@@ -1023,13 +1030,6 @@ const SubmissionsCreate = ({ path }) => {
           setShowPaymentModal(false);
           setShowSuccessModal(true);
           createPendingTask({ name: t("MAKE_PAYMENT_SUBMISSION"), status: "MAKE_PAYMENT_SUBMISSION", isCompleted: true });
-          if (applicationDetails?.applicationType === "DELAY_CONDONATION")
-            createPendingTask({
-              name: "Create DCA Applications",
-              status: "CREATE_DCA_SUBMISSION",
-              refId: applicationDetails?.filingNumber,
-              isCompleted: true,
-            });
         } else {
           setMakePaymentLabel(true);
           setShowPaymentModal(false);

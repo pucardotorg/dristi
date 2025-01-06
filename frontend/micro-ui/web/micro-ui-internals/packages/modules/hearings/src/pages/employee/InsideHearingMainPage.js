@@ -143,10 +143,22 @@ const InsideHearingMainPage = () => {
   const isDelayApplicationPending = useMemo(() => {
     return Boolean(
       applicationData?.applicationList?.some(
-        (item) => item?.applicationType === "DELAY_CONDONATION" && item?.status === SubmissionWorkflowState.PENDINGAPPROVAL
+        (item) =>
+          item?.applicationType === "DELAY_CONDONATION" &&
+          [SubmissionWorkflowState.PENDINGAPPROVAL, SubmissionWorkflowState.PENDINGREVIEW].includes(item?.status)
       )
     );
   }, [applicationData]);
+
+  const isDelayApplicationCompleted = useMemo(
+    () =>
+      Boolean(
+        applicationData?.applicationList?.some(
+          (item) => item?.applicationType === "DELAY_CONDONATION" && [SubmissionWorkflowState.COMPLETED].includes(item?.status)
+        )
+      ),
+    [applicationData]
+  );
 
   const isCaseInRegistrationStage = useMemo(() => {
     return caseData?.criteria?.[0]?.responseList?.[0]?.substage === "REGISTRATION";
@@ -373,7 +385,7 @@ const InsideHearingMainPage = () => {
             onAddParty={onClickAddWitness}
             hearingLink={hearingVcLink}
             delayCondonationData={delayCondonationData}
-            isDelayApplicationPending={isDelayApplicationPending}
+            isDelayApplicationPending={isDelayApplicationPending || isDelayApplicationCompleted}
           ></EvidenceHearingHeader>
         </React.Fragment>
         {activeTab === "Witness Deposition" && (

@@ -1,4 +1,4 @@
-import { CardText, Modal } from "@egovernments/digit-ui-react-components";
+import { CardText } from "@egovernments/digit-ui-react-components";
 import React, { useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useHistory } from "react-router-dom";
@@ -58,6 +58,8 @@ const EndHearing = ({
   const [transcript, setTranscript] = useState(transcriptText);
   const history = useHistory();
 
+  const Modal = window?.Digit?.ComponentRegistryService?.getComponent("Modal");
+
   const handleNavigate = (path) => {
     const contextPath = window?.contextPath || "";
     history.push(`/${contextPath}${path}`);
@@ -115,12 +117,15 @@ const EndHearing = ({
             height: "40px",
             padding: " 8px 24px 8px 24px",
           }}
+          actionCancelStyle={{ height: "40px" }}
           headerBarMain={<Heading label={isItemPending ? t("OPEN_ITEMS_PENDING") : t("CONFIRM_END_HEARING")} />}
           headerBarEnd={<CloseBtn onClick={handleEndHearingModal} />}
           actionSaveLabel={isItemPending ? t("END_HEARING_ANYWAY") : t("END_HEARING")}
           actionSaveOnSubmit={() => {
             setStepper(stepper + 1);
           }}
+          actionCancelLabel={isItemPending ? t("HEARING_BACK") : undefined}
+          actionCancelOnSubmit={handleEndHearingModal}
           formId="modal-action"
         >
           <div style={{ padding: "5px 24px 16px 24px" }}>

@@ -160,6 +160,16 @@ function CaseFileAdmission({ t, path }) {
     [applicationData]
   );
 
+  const isDelayApplicationCompleted = useMemo(
+    () =>
+      Boolean(
+        applicationData?.applicationList?.some(
+          (item) => item?.applicationType === "DELAY_CONDONATION" && [SubmissionWorkflowState.COMPLETED].includes(item?.status)
+        )
+      ),
+    [applicationData]
+  );
+
   const currentHearingId = useMemo(
     () =>
       hearingDetails?.HearingList?.find((list) => list?.hearingType === "ADMISSION" && !(list?.status === "COMPLETED" || list?.status === "ABATED"))
@@ -1055,7 +1065,7 @@ function CaseFileAdmission({ t, path }) {
                   {delayCondonationData?.delayCondonationType?.code === "NO" && (
                     <div className="delay-condonation-chip" style={delayCondonationStylsMain}>
                       <p style={delayCondonationTextStyle}>
-                        {(delayCondonationData?.isDcaSkippedInEFiling?.code === "NO" && isDelayApplicationPending) || isDelayApplicationPending
+                        {delayCondonationData?.isDcaSkippedInEFiling?.code === "NO" || isDelayApplicationPending || isDelayApplicationCompleted
                           ? t("DELAY_CONDONATION_FILED")
                           : t("DELAY_CONDONATION_NOT_FILED")}
                       </p>
