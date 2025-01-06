@@ -44,6 +44,14 @@ const stateSla = {
   MAKE_PAYMENT_SUBMISSION: 2 * 24 * 3600 * 1000,
 };
 
+const getFormattedDate = (date) => {
+  const currentDate = new Date(date);
+  const year = String(currentDate.getFullYear());
+  const month = String(currentDate.getMonth() + 1).padStart(2, "0");
+  const day = String(currentDate.getDate()).padStart(2, "0");
+  return `${month}/${day}/${year}`;
+};
+
 const SubmissionsCreate = ({ path }) => {
   const tenantId = Digit.ULBService.getCurrentTenantId();
   const { t } = useTranslation();
@@ -1118,7 +1126,7 @@ const SubmissionsCreate = ({ path }) => {
           actionCancelLabel={"DOWNLOAD_SUBMISSION"}
           actionCancelOnSubmit={handleDownloadSubmission}
           applicationNumber={applicationNumber}
-          createdDate={applicationDetails?.createdDate}
+          createdDate={getFormattedDate(applicationDetails?.createdDate)}
           makePayment={makePaymentLabel}
           paymentStatus={paymentStatus}
         />
