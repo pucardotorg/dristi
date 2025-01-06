@@ -8,9 +8,9 @@ const convertToDisplayFormat = (dateStr) => {
   return `${day}-${month}-${year}`;
 };
 
-const UpdateDeliveryStatusComponent = ({ t, infos, links, handleSubmitButtonDisable, rowData, selectedDelievery, setSelectedDelievery }) => {
+const UpdateDeliveryStatusComponent = ({ t, infos, links, handleSubmitButtonDisable, rowData, selectedDelievery, setSelectedDelievery, remarks, setRemarks }) => {
   const [date, setDate] = useState(rowData?.createdDate ? convertToDateInputFormat(rowData.createdDate) : "");
-  const [remarks, setRemarks] = useState("");
+  
   const deliveryOptions = [
     {
       key: "DELIVERED",

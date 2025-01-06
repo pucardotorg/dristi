@@ -54,6 +54,7 @@ const ReviewSummonsNoticeAndWarrant = () => {
   const [reload, setReload] = useState(false);
   // const [taskDetails, setTaskDetails] = useState({});
   const [tasksData, setTasksData] = useState(null);
+  const [remarks, setRemarks] = useState("");
   const [selectedDelievery, setSelectedDelievery] = useState({});
   const history = useHistory();
   const dayInMillisecond = 24 * 3600 * 1000;
@@ -186,6 +187,12 @@ const ReviewSummonsNoticeAndWarrant = () => {
           task: {
             ...task,
             ...(typeof task?.taskDetails === "string" && { taskDetails: JSON.parse(task?.taskDetails) }),
+            taskDetails: {
+              ...(typeof task?.taskDetails === "string" ? JSON.parse(task?.taskDetails) : task?.taskDetails),
+              remarks: {
+                remark: remarks,
+              },
+            },
             workflow: {
               ...tasksData?.list?.[0]?.workflow,
               action:
@@ -470,6 +477,8 @@ const ReviewSummonsNoticeAndWarrant = () => {
           selectedDelievery={selectedDelievery}
           setSelectedDelievery={setSelectedDelievery}
           orderType={orderType}
+          remarks={remarks}
+          setRemarks={setRemarks}
         />
       ),
       actionSaveOnSubmit: handleUpdateStatus,
