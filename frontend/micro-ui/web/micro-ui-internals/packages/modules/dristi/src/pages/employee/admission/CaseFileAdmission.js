@@ -1065,7 +1065,8 @@ function CaseFileAdmission({ t, path }) {
                   {delayCondonationData?.delayCondonationType?.code === "NO" && (
                     <div className="delay-condonation-chip" style={delayCondonationStylsMain}>
                       <p style={delayCondonationTextStyle}>
-                        {(delayCondonationData?.isDcaSkippedInEFiling?.code === "NO" && isDelayApplicationPending) ||
+                        {(delayCondonationData?.isDcaSkippedInEFiling?.code === "NO" && "PENDING_REGISTRATION" === caseDetails?.status) ||
+                        (delayCondonationData?.isDcaSkippedInEFiling?.code === "NO" && isDelayApplicationPending) ||
                         isDelayApplicationPending ||
                         isDelayApplicationCompleted
                           ? t("DELAY_CONDONATION_FILED")
