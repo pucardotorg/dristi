@@ -504,8 +504,34 @@ const GenerateOrders = () => {
     referenceId,
     referenceId
   );
+
+  const { data: completeApplicationData, isLoading: iscompleteApplicationDetailsLoading } = Digit.Hooks.submissions.useSearchSubmissionService(
+    {
+      criteria: {
+        filingNumber,
+        tenantId,
+      },
+      tenantId,
+    },
+    {},
+    filingNumber + "allApplications",
+    filingNumber
+  );
   const applicationDetails = useMemo(() => applicationData?.applicationList?.[0], [applicationData]);
 
+  const isDelayApplicationPending = useMemo(
+    () =>
+      Boolean(
+        completeApplicationData?.applicationList?.some(
+          (item) =>
+            item?.applicationType === "DELAY_CONDONATION" &&
+            [SubmissionWorkflowState.PENDINGAPPROVAL, SubmissionWorkflowState.PENDINGREVIEW].includes(item?.status)
+        )
+      ),
+    [completeApplicationData]
+  );
+
+  const delayCondonationData = useMemo(() => caseDetails?.caseDetails?.delayApplications?.formdata?.[0]?.data, [caseDetails]);
   const hearingId = useMemo(() => currentOrder?.hearingNumber || applicationDetails?.additionalDetails?.hearingId || "", [
     applicationDetails,
     currentOrder,
@@ -2529,6 +2555,32 @@ const GenerateOrders = () => {
               </div>
               <div className="dca-infobox-me" style={{}}>
                 {t("DCA_NOTICE_NOT_SENT") + ": " + t("DCA_NOTICE_NOT_SENT_MESSAGE")}
+              </div>
+            </div>
+          )}
+        {currentFormData?.orderType?.code === "NOTICE" &&
+          currentFormData?.noticeType?.code === "DCA Notice" &&
+          delayCondonationData?.delayCondonationType?.code === "NO" &&
+          isDelayApplicationPending && (
+            <div
+              className="dca-infobox-message"
+              style={{
+                display: "flex",
+                gap: "8px",
+                backgroundColor: "#FEF4F4",
+                border: "1px",
+                borderColor: "#FCE8E8",
+                padding: "8px",
+                borderRadius: "8px",
+                marginBottom: "24px",
+                width: "fit-content",
+              }}
+            >
+              <div className="dca-infobox-icon" style={{}}>
+                <WarningInfoIconYellow />{" "}
+              </div>
+              <div className="dca-infobox-me" style={{}}>
+                {t("DELAY_APPLICATION_NOT_SUBMITTED")}
               </div>
             </div>
           )}
