@@ -897,7 +897,7 @@ const SubmissionsCreate = ({ path }) => {
           createPendingTask({
             name: "Create DCA Applications",
             status: "CREATE_DCA_SUBMISSION",
-            refId: filingNumber,
+            refId: `DCA_${filingNumber}`,
             isCompleted: true,
           });
       } else if (hasSubmissionRole) {

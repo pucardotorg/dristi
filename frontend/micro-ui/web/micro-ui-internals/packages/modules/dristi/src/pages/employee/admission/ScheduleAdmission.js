@@ -54,7 +54,6 @@ function ScheduleAdmission({
   console.log("delayCondonationData", delayCondonationData, isDelayApplicationPending, isDelayApplicationCompleted);
 
   const isDcaHearingScheduled = useMemo(() => {
-    debugger;
     if (!hearingDetails?.HearingList?.length) {
       return false;
     } else {
