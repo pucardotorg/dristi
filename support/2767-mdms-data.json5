@@ -1,0 +1,111 @@
+[
+  {
+    "tenantId": "kl",
+    "moduleName": "common-masters",
+    "masterName": "IdFormat",
+    "mdmsPayload": [
+      {
+        "id": "b3c62247-8a24-4955-aa11-0d8fdbd55574", //Use mdms search data api to replace this id
+        "tenantId": "kl",
+        "schemaCode": "common-masters.IdFormat",
+        "uniqueIdentifier": "user.registration.advocate.clerk",
+        "data": {
+          "format": "[TENANT_ID]-CLERK-[SEQ_REG_CLERK]-[cy:yyyy]", // Converted YYYY to yyyy
+          "idname": "user.registration.advocate.clerk"
+        },
+        "isActive": true,
+        "auditDetails": {
+          "createdBy": "b19d1a47-f090-479d-b2f5-dd9b3d19d9ed",
+          "lastModifiedBy": "b19d1a47-f090-479d-b2f5-dd9b3d19d9ed",
+          "createdTime": 1726764158894,
+          "lastModifiedTime": 1726764158894
+        }
+      },
+      {
+        "id": "600b08b8-5418-4e91-acde-f76011b8d9a4",//Use mdms search data api to replace this id
+        "tenantId": "kl",
+        "schemaCode": "common-masters.IdFormat",
+        "uniqueIdentifier": "user.registration.advocate",
+        "data": {
+          "format": "[TENANT_ID]-ADV-[SEQ_REG_ADV]-[cy:yyyy]",// Converted YYYY to yyyy
+          "idname": "user.registration.advocate"
+        },
+        "isActive": true,
+        "auditDetails": {
+          "createdBy": "b19d1a47-f090-479d-b2f5-dd9b3d19d9ed",
+          "lastModifiedBy": "b19d1a47-f090-479d-b2f5-dd9b3d19d9ed",
+          "createdTime": 1726764136699,
+          "lastModifiedTime": 1726764136699
+        }
+      },
+      {
+        "id": "77892f64-6230-499f-8cde-2afabd3e9348",//Use mdms search data api to replace this id
+        "tenantId": "kl",
+        "schemaCode": "common-masters.IdFormat",
+        "uniqueIdentifier": "case.cmp.[TENANT_ID]",
+        "data": {
+          "format": "CMP/[SEQ_CMP_[TENANT_ID]]/[cy:yyyy]",// Converted YYYY to yyyy
+          "idname": "case.cmp.[TENANT_ID]"
+        },
+        "isActive": true,
+        "auditDetails": {
+          "createdBy": "b19d1a47-f090-479d-b2f5-dd9b3d19d9ed",
+          "lastModifiedBy": "b19d1a47-f090-479d-b2f5-dd9b3d19d9ed",
+          "createdTime": 1726751886238,
+          "lastModifiedTime": 1726751886238
+        },
+      },
+      {
+        "id": "080be99b-d7dd-4651-add1-2633922293df",//Use mdms search data api to replace this id
+        "tenantId": "kl",
+        "schemaCode": "common-masters.IdFormat",
+        "uniqueIdentifier": "case.ccst.[TENANT_ID]",
+        "data": {
+          "format": "ST/[SEQ_CCST_[TENANT_ID]]/[cy:yyyy]",// Converted YYYY to yyyy
+          "idname": "case.ccst.[TENANT_ID]"
+        },
+        "isActive": true,
+        "auditDetails": {
+          "createdBy": "b19d1a47-f090-479d-b2f5-dd9b3d19d9ed",
+          "lastModifiedBy": "b19d1a47-f090-479d-b2f5-dd9b3d19d9ed",
+          "createdTime": 1726751868147,
+          "lastModifiedTime": 1726751868147
+        }
+      },
+      {
+        "id": "7b80608d-8e18-47ff-a598-087c7a42ac36",//Use mdms search data api to replace this id
+        "tenantId": "kl",
+        "schemaCode": "common-masters.IdFormat",
+        "uniqueIdentifier": "case.cnr.[TENANT_ID]",
+        "data": {
+          "format": "[TENANT_ID][SEQ_CNR_[TENANT_ID]][cy:yyyy]",// Converted YYYY to yyyy
+          "idname": "case.cnr.[TENANT_ID]"
+        },
+        "isActive": true,
+        "auditDetails": {
+          "createdBy": "b19d1a47-f090-479d-b2f5-dd9b3d19d9ed",
+          "lastModifiedBy": "b19d1a47-f090-479d-b2f5-dd9b3d19d9ed",
+          "createdTime": 1726751847023,
+          "lastModifiedTime": 1726751847023
+        }
+      },
+      {
+        "id": "6221ea0e-4d45-43ff-bc8e-813938ffa5b0",//Use mdms search data api to replace this id
+        "tenantId": "kl",
+        "schemaCode": "common-masters.IdFormat",
+        "uniqueIdentifier": "case.filingnumber",
+        "data": {
+          "format": "[TENANT_ID]-[SEQ_FILING_NUMBER]-[cy:yyyy]",// Converted YYYY to yyyy
+          "idname": "case.filingnumber"
+        },
+        "isActive": true,
+        "auditDetails": {
+          "createdBy": "b19d1a47-f090-479d-b2f5-dd9b3d19d9ed",
+          "lastModifiedBy": "b19d1a47-f090-479d-b2f5-dd9b3d19d9ed",
+          "createdTime": 1726751802632,
+          "lastModifiedTime": 1726751802632
+        }
+      },
+    ]
+  }
+]

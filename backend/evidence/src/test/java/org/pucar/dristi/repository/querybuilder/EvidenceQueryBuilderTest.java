@@ -43,6 +43,7 @@ public class EvidenceQueryBuilderTest {
 
         // Expected query
         String expectedQuery = " SELECT art.id as id, art.tenantId as tenantId, art.artifactNumber as artifactNumber, art.evidenceNumber as evidenceNumber, art.externalRefNumber as externalRefNumber, art.caseId as caseId, art.application as application, art.filingNumber as filingNumber, art.hearing as hearing, art.orders as orders, art.mediaType as mediaType, art.artifactType as artifactType, art.sourceType as sourceType, art.sourceID as sourceID, art.sourceName as sourceName, art.applicableTo as applicableTo, art.comments as comments, art.file as file, art.createdDate as createdDate, art.isActive as isActive, art.isEvidence as isEvidence, art.status as status, art.description as description, art.artifactDetails as artifactDetails, art.additionalDetails as additionalDetails, art.createdBy as createdBy, art.lastModifiedBy as lastModifiedBy, art.createdTime as createdTime, art.lastModifiedTime as lastModifiedTime, art.isVoid as isVoid, art.reason as reason, art.filingType as filingType FROM dristi_evidence_artifact art WHERE art.id = ? AND art.caseId = ? AND art.application = ? AND art.artifactType = ? AND art.isEvidence = ? AND art.filingNumber = ? AND art.hearing = ? AND art.orders = ? AND art.sourceId = ? AND art.createdBy = ? AND art.sourceName = ? AND art.artifactNumber LIKE ?";
+
         // Calling the method under test
         String query = queryBuilder.getArtifactSearchQuery(preparedStmtList,new ArrayList<>(), criteria);
 
