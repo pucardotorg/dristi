@@ -565,13 +565,14 @@ function EFilingCases({ path }) {
           )
         ) {
           const data = {
+            ...caseDetails?.caseDetails?.[selected]?.formdata?.[index]?.data,
             delayCondonationType: {
               code: "NO",
               name: "NO",
               showForm: true,
               isEnabled: true,
             },
-            ...caseDetails?.caseDetails?.[selected]?.formdata?.[index]?.data,
+
             isDcaSkippedInEFiling: caseDetails?.caseDetails?.[selected]?.formdata?.[index]?.data?.isDcaSkippedInEFiling
               ? caseDetails?.caseDetails?.[selected]?.formdata?.[index]?.data?.isDcaSkippedInEFiling
               : {
