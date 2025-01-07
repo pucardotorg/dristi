@@ -135,7 +135,7 @@ function CaseFileAdmission({ t, path }) {
     Boolean(filingNumber)
   );
 
-  const { data: applicationData, isLoading: isApplicationLoading } = Digit.Hooks.submissions.useSearchSubmissionService(
+  const { data: applicationData, isLoading: isApplicationLoading, refetch: applicationRefetch } = Digit.Hooks.submissions.useSearchSubmissionService(
     {
       criteria: {
         filingNumber,
@@ -426,6 +426,7 @@ function CaseFileAdmission({ t, path }) {
             }
           }
           await handleRegisterCase();
+          await applicationRefetch();
           setCreateAdmissionOrder(true);
           setLoader(false);
         } catch (error) {
