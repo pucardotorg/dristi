@@ -60,7 +60,7 @@ class EvidenceValidatorTest {
         });
 
         assertEquals(ServiceConstants.ILLEGAL_ARGUMENT_EXCEPTION_CODE, exception.getCode());
-        assertEquals("tenantId, caseId and filing number are mandatory for creating advocate", exception.getMessage());
+        assertEquals("tenantId, caseId and filing number are mandatory for creating evidence", exception.getMessage());
     }
     @Test
     public void testValidateEvidenceRegistration_OrderDoesNotExist() {
@@ -201,7 +201,7 @@ class EvidenceValidatorTest {
         });
 
         assertEquals("IllegalArgumentException", exception.getCode());
-        assertEquals("tenantId, caseId and filing number are mandatory for creating advocate", exception.getMessage());
+        assertEquals("tenantId, caseId and filing number are mandatory for creating evidence", exception.getMessage());
     }
 
     @Test
@@ -216,7 +216,7 @@ class EvidenceValidatorTest {
         });
 
         assertEquals("IllegalArgumentException", exception.getCode());
-        assertEquals("tenantId, caseId and filing number are mandatory for creating advocate", exception.getMessage());
+        assertEquals("tenantId, caseId and filing number are mandatory for creating evidence", exception.getMessage());
     }
 
     @Test
@@ -231,7 +231,7 @@ class EvidenceValidatorTest {
         });
 
         assertEquals("IllegalArgumentException", exception.getCode());
-        assertEquals("tenantId, caseId and filing number are mandatory for creating advocate", exception.getMessage());
+        assertEquals("tenantId, caseId and filing number are mandatory for creating evidence", exception.getMessage());
     }
 
     @Test
@@ -246,7 +246,7 @@ class EvidenceValidatorTest {
         });
 
         assertEquals("IllegalArgumentException", exception.getCode());
-        assertEquals("tenantId, caseId and filing number are mandatory for creating advocate", exception.getMessage());
+        assertEquals("tenantId, caseId and filing number are mandatory for creating evidence", exception.getMessage());
     }
 
     @Test
@@ -277,7 +277,7 @@ class EvidenceValidatorTest {
         });
 
         assertEquals("EVIDENCE_UPDATE_EXCEPTION", exception.getCode());
-        assertEquals("Error occurred while updating evidence: org.egov.tracer.model.CustomException: tenantId, caseId and filing number are mandatory for creating advocate", exception.getMessage());
+        assertEquals("Error occurred while updating evidence: org.egov.tracer.model.CustomException: tenantId, caseId and filing number are mandatory for creating evidence", exception.getMessage());
     }
 
     private EvidenceRequest createValidEvidenceRequest() {
