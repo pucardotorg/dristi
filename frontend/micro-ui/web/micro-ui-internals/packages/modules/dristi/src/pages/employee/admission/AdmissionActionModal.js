@@ -96,7 +96,6 @@ function AdmissionActionModal({
 
   const [scheduleHearingParams, setScheduleHearingParam] = useState(!isCaseAdmitted ? { purpose: t("ADMISSION") } : {});
   const isGenerateOrderDisabled = useMemo(() => Boolean(!scheduleHearingParams?.purpose || !scheduleHearingParams?.date), [scheduleHearingParams]);
-  console.log("first", scheduleHearingParams, isGenerateOrderDisabled);
 
   const onSubmit = (props, wordLimit) => {
     const words = props?.commentForLitigant?.trim()?.split(/\s+/);

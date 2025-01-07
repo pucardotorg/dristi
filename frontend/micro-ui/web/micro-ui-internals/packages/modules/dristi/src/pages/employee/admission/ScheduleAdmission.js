@@ -4,6 +4,7 @@ import { Button, CardText, CustomDropdown, SubmitBar, TextInput, Toast, Loader }
 import CustomCaseInfoDiv from "../../../components/CustomCaseInfoDiv";
 import { formatDateInMonth, getMDMSObj } from "../../../Utils";
 import useGetStatuteSection from "../../../hooks/dristi/useGetStatuteSection";
+import { HearingWorkflowState } from "@egovernments/digit-ui-module-orders/src/utils/hearingWorkflow";
 
 function ScheduleAdmission({
   config,
@@ -48,16 +49,26 @@ function ScheduleAdmission({
     if (!hearingDetails?.HearingList?.length) {
       return false;
     } else {
-      return Boolean(hearingDetails?.HearingList?.find((hearing) => hearing?.hearingType === "ADMISSION"));
+      return Boolean(
+        hearingDetails?.HearingList?.find(
+          (hearing) =>
+            hearing?.hearingType === "ADMISSION" && [HearingWorkflowState?.INPROGRESS, HearingWorkflowState?.SCHEDULED].includes(hearing?.status)
+        )
+      );
     }
   }, [hearingDetails]);
-  console.log("delayCondonationData", delayCondonationData, isDelayApplicationPending, isDelayApplicationCompleted);
 
   const isDcaHearingScheduled = useMemo(() => {
     if (!hearingDetails?.HearingList?.length) {
       return false;
     } else {
-      return Boolean(hearingDetails?.HearingList?.find((hearing) => hearing?.hearingType === "DELAY_CONDONATION_HEARING"));
+      return Boolean(
+        hearingDetails?.HearingList?.find(
+          (hearing) =>
+            hearing?.hearingType === "DELAY_CONDONATION_HEARING" &&
+            [HearingWorkflowState?.INPROGRESS, HearingWorkflowState?.SCHEDULED].includes(hearing?.status)
+        )
+      );
     }
   }, [hearingDetails]);
 
@@ -73,17 +84,22 @@ function ScheduleAdmission({
       if (!isDcaHearingScheduled && isAdmissionHearingScheduled) {
         return hearingTypeData?.HearingType?.filter((type) => !["ADMISSION", "DELAY_CONDONATION_AND_ADMISSION"].includes(type?.code)) || [];
       }
-      if (isDcaHearingScheduled && !isAdmissionHearingScheduled) {
-        return hearingTypeData?.HearingType?.filter((type) => ["ADMISSION"].includes(type?.code)) || [];
-      }
-      if (isDcaHearingScheduled && isAdmissionHearingScheduled) {
-        return hearingTypeData?.HearingType || [];
+      if (isDcaHearingScheduled) {
+        return (
+          hearingTypeData?.HearingType?.filter(
+            (type) => !["DELAY_CONDONATION_HEARING", "ADMISSION", "DELAY_CONDONATION_AND_ADMISSION"].includes(type?.code)
+          ) || []
+        );
       }
     } else {
       if (!isAdmissionHearingScheduled) {
         return hearingTypeData?.HearingType?.filter((type) => ["ADMISSION"].includes(type?.code)) || [];
       }
-      return hearingTypeData?.HearingType || [];
+      return (
+        hearingTypeData?.HearingType?.filter(
+          (type) => !["DELAY_CONDONATION_HEARING", "ADMISSION", "DELAY_CONDONATION_AND_ADMISSION"].includes(type?.code)
+        ) || []
+      );
     }
   }, [hearingTypeData, isDelayApplicationPending, isDelayApplicationCompleted, isAdmissionHearingScheduled, isDcaHearingScheduled]);
 
@@ -97,13 +113,8 @@ function ScheduleAdmission({
           isactive: true,
         };
       }
-      if (isDcaHearingScheduled && !isAdmissionHearingScheduled) {
-        return {
-          id: 5,
-          type: "ADMISSION",
-          isactive: true,
-          code: "ADMISSION",
-        };
+      if (isDcaHearingScheduled) {
+        return null;
       }
     } else {
       if (!isAdmissionHearingScheduled) {
@@ -129,10 +140,10 @@ function ScheduleAdmission({
 
   const setPurpose = useCallback((props) => setPurposeValue(props), []);
   useEffect(() => {
-    if (scheduleHearingParams?.purpose?.code !== defaultHearingType?.code) {
+    if (defaultHearingType) {
       setPurpose(defaultHearingType);
     }
-  }, [setPurpose, defaultHearingType, scheduleHearingParams]);
+  }, []);
 
   const handleSubmit = (props) => {
     if (!scheduleHearingParams?.date && !modalInfo?.showCustomDate) {
