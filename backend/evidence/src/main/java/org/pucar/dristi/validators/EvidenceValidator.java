@@ -39,7 +39,7 @@ public class EvidenceValidator {
     public void validateEvidenceRegistration(EvidenceRequest evidenceRequest) throws CustomException {
 
         if (ObjectUtils.isEmpty(evidenceRequest.getArtifact().getTenantId()) || ObjectUtils.isEmpty(evidenceRequest.getArtifact().getCaseId()) || ObjectUtils.isEmpty(evidenceRequest.getArtifact().getFilingNumber())) {
-            throw new CustomException(ILLEGAL_ARGUMENT_EXCEPTION_CODE, "tenantId, caseId and filing number are mandatory for creating advocate");
+            throw new CustomException(ILLEGAL_ARGUMENT_EXCEPTION_CODE, "tenantId, caseId and filing number are mandatory for creating evidence");
         }
         if (evidenceRequest.getRequestInfo().getUserInfo() == null) {
             throw new CustomException(ENRICHMENT_EXCEPTION, "User info not found!!!");
