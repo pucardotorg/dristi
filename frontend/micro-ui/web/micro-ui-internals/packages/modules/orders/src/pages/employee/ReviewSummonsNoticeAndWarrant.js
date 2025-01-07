@@ -505,6 +505,7 @@ const ReviewSummonsNoticeAndWarrant = () => {
       return; // Do nothing if the row's status is 'Completed'
     }
 
+    setRemarks("");
     setRowData(props?.original);
     setActionModalType(props?.original?.documentStatus);
     setShowActionModal(true);
