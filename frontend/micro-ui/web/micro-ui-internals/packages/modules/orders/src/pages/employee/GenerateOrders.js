@@ -522,6 +522,9 @@ const GenerateOrders = () => {
       ),
     [applicationData]
   );
+  const isDcaFiled = useMemo(() => {
+    return caseDetails?.caseDetails?.delayApplications?.formdata?.[0]?.data?.isDcaSkippedInEFiling === "NO" || isDelayApplicationSubmitted;
+  }, [caseDetails, isDelayApplicationSubmitted]);
 
   const hearingId = useMemo(() => currentOrder?.hearingNumber || applicationDetails?.additionalDetails?.hearingId || "", [
     applicationDetails,
@@ -608,6 +611,22 @@ const GenerateOrders = () => {
                     !isCaseAdmitted && {
                       disable: true,
                     }),
+                  populators: {
+                    ...field.populators,
+                    mdmsConfig: {
+                      ...field.populators?.mdmsConfig,
+                      select: `(data) => {
+                        return (
+                          data?.Hearing?.HearingType?.filter((h) => {
+                            if (${!isDcaFiled}) {
+                              return !["DELAY_CONDONATION_HEARING", "DELAY_CONDONATION_AND_ADMISSION"].includes(h?.code);
+                            }
+                            return true;
+                          }) || []
+                        );
+                      }`,
+                    },
+                  },
                 };
               }
               if (field.key === "unjoinedPartiesNote") {
