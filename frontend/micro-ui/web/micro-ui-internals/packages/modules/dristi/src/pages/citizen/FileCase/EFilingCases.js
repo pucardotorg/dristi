@@ -1181,7 +1181,7 @@ function EFilingCases({ path }) {
                   key =
                     formComponent.key + "." + formComponent.populators?.inputs?.[0]?.name + "." + formComponent.populators?.inputs?.[0]?.optionsKey;
                 }
-                if (selected === "debtLiabilityDetails" && ["dropdown", "radio"].includes(formComponent.type)) {
+                if (["debtLiabilityDetails", "delayApplications"].includes(selected) && ["dropdown", "radio"].includes(formComponent.type)) {
                   key = formComponent.key + "." + formComponent?.populators?.optionsKey;
                 }
                 if (selected === "delayApplications" && formComponent.component === "CustomRadioInfoComponent") {
