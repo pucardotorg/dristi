@@ -112,13 +112,15 @@
                 "type": "component",
                 "component": "SelectCustomTextArea",
                 "key": "additionalDelayCondonationDetails",
+                "label": "DELAY_ADDITIONAL_INFO",
                 "isMandatory": false,
+                "withoutLabel": true,
                 "populators": {
                   "isMandatory": false,
                   "inputs": [
                     {
                       "name": "text",
-                      "textAreaSubHeader": "ADDITIONAL_INFO",
+                      "textAreaSubHeader": "DELAY_ADDITIONAL_INFO",
                       "isOptional": true,
                       "type": "TextAreaComponent"
                     }

@@ -361,22 +361,30 @@
                         {
                           "type": "text",
                           "label": "CS_QUESTION_DELAY_APPLICATION",
-                          "value": "delayCondonationType.name"
+                          "value": "delayCondonationType.name",
+                          "isLocalizationRequired": true
                         },
                         {
                           "type": "text",
                           "label": "SKIP_DELAY_APPLICATION_CONFIRM",
-                          "value": "isDcaSkippedInEFiling.name"
+                          "value": "isDcaSkippedInEFiling.name",
+                          "dependentOn": "delayCondonationType.name",
+                          "dependentValue": "NO",
+                          "isLocalizationRequired": true
                         },
                         {
                           "type": "text",
                           "label": "DEALY_ADDITIONAL_INFO",
-                          "value": "additionalDelayCondonationDetails.text"
+                          "value": "additionalDelayCondonationDetails.text",
+                          "dependentOn": "delayCondonationType.name",
+                          "dependentValue": "NO"
                         },
                         {
                           "type": "image",
                           "label": "CS_DOCUMENT",
-                          "value": ["condonationFileUpload.document"]
+                          "value": ["condonationFileUpload.document"],
+                          "dependentOn": "delayCondonationType.name",
+                          "dependentValue": "NO"
                         }
                       ]
                     }
