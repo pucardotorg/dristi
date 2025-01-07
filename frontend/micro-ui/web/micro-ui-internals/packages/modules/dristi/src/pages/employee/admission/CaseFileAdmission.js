@@ -1116,6 +1116,10 @@ function CaseFileAdmission({ t, path }) {
                   caseAdmittedSubmit={caseAdmittedSubmit}
                   isCaseAdmitted={false}
                   createAdmissionOrder={createAdmissionOrder}
+                  delayCondonationData={delayCondonationData}
+                  hearingDetails={hearingDetails}
+                  isDelayApplicationPending={isDelayApplicationPending}
+                  isDelayApplicationCompleted={isDelayApplicationPending}
                 />
               )}
               {showModal && (
@@ -1138,6 +1142,10 @@ function CaseFileAdmission({ t, path }) {
                   caseAdmittedSubmit={caseAdmittedSubmit}
                   createAdmissionOrder={createAdmissionOrder}
                   isAdmissionHearingAvailable={Boolean(currentHearingId)}
+                  delayCondonationData={delayCondonationData}
+                  hearingDetails={hearingDetails}
+                  isDelayApplicationPending={isDelayApplicationPending}
+                  isDelayApplicationCompleted={isDelayApplicationPending}
                 ></AdmissionActionModal>
               )}
             </div>

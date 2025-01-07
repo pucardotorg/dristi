@@ -2335,6 +2335,10 @@ const AdmittedCases = () => {
           caseAdmittedSubmit={caseAdmittedSubmit}
           isCaseAdmitted={isCaseAdmitted}
           createAdmissionOrder={createAdmissionOrder}
+          delayCondonationData={delayCondonationData}
+          hearingDetails={hearingDetails}
+          isDelayApplicationPending={isDelayApplicationPending}
+          isDelayApplicationCompleted={isDelayApplicationCompleted}
         />
       )}
       {orderDraftModal && <ViewAllOrderDrafts t={t} setShow={setOrderDraftModal} draftOrderList={draftOrderList} filingNumber={filingNumber} />}
@@ -2422,6 +2426,10 @@ const AdmittedCases = () => {
           caseDetails={caseDetails}
           isAdmissionHearingAvailable={Boolean(currentHearingId)}
           setOpenAdmitCaseModal={setOpenAdmitCaseModal}
+          delayCondonationData={delayCondonationData}
+          hearingDetails={hearingDetails}
+          isDelayApplicationPending={isDelayApplicationPending}
+          isDelayApplicationCompleted={isDelayApplicationCompleted}
         ></AdmissionActionModal>
       )}
       {showDismissCaseConfirmation && (

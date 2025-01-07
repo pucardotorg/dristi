@@ -23,6 +23,11 @@ function ScheduleAdmission({
   isSubmitBarDisabled = false,
   createAdmissionOrder = false,
   caseAdmittedSubmit = () => {},
+  delayCondonationData,
+  hearingDetails = [],
+  isDelayApplicationPending,
+  isDelayApplicationCompleted,
+  caseDetails,
 }) {
   // const getNextNDates = (n) => {
   //   const today = new Date();
@@ -36,11 +41,82 @@ function ScheduleAdmission({
 
   //   return datesArray;
   // };
-
   const [nextFiveDates, setNextFiveDates] = useState([]);
   const [showErrorToast, setShowErrorToast] = useState(false);
   const { data: hearingTypeData, isLoading } = useGetStatuteSection("Hearing", [{ name: "HearingType" }]);
-  const hearingTypes = useMemo(() => hearingTypeData?.HearingType || [], [hearingTypeData]);
+  const isAdmissionHearingScheduled = useMemo(() => {
+    if (!hearingDetails?.HearingList?.length) {
+      return false;
+    } else {
+      return Boolean(hearingDetails?.HearingList?.find((hearing) => hearing?.hearingType === "ADMISSION"));
+    }
+  }, [hearingDetails]);
+  console.log("delayCondonationData", delayCondonationData, isDelayApplicationPending, isDelayApplicationCompleted);
+
+  const isDcaHearingScheduled = useMemo(() => {
+    debugger;
+    if (!hearingDetails?.HearingList?.length) {
+      return false;
+    } else {
+      return Boolean(hearingDetails?.HearingList?.find((hearing) => hearing?.hearingType === "DELAY_CONDONATION_HEARING"));
+    }
+  }, [hearingDetails]);
+
+  const hearingTypes = useMemo(() => {
+    if (isDelayApplicationPending || isDelayApplicationCompleted || delayCondonationData?.isDcaSkippedInEFiling?.code === "NO") {
+      if (!isDcaHearingScheduled && !isAdmissionHearingScheduled) {
+        return (
+          hearingTypeData?.HearingType?.filter((type) =>
+            ["DELAY_CONDONATION_HEARING", "ADMISSION", "DELAY_CONDONATION_AND_ADMISSION"].includes(type?.code)
+          ) || []
+        );
+      }
+      if (!isDcaHearingScheduled && isAdmissionHearingScheduled) {
+        return hearingTypeData?.HearingType?.filter((type) => !["ADMISSION", "DELAY_CONDONATION_AND_ADMISSION"].includes(type?.code)) || [];
+      }
+      if (isDcaHearingScheduled && !isAdmissionHearingScheduled) {
+        return hearingTypeData?.HearingType?.filter((type) => ["ADMISSION"].includes(type?.code)) || [];
+      }
+      if (isDcaHearingScheduled && isAdmissionHearingScheduled) {
+        return hearingTypeData?.HearingType || [];
+      }
+    } else {
+      if (!isAdmissionHearingScheduled) {
+        return hearingTypeData?.HearingType?.filter((type) => ["ADMISSION"].includes(type?.code)) || [];
+      }
+      return hearingTypeData?.HearingType || [];
+    }
+  }, [hearingTypeData, isDelayApplicationPending, isDelayApplicationCompleted, isAdmissionHearingScheduled, isDcaHearingScheduled]);
+
+  const defaultHearingType = useMemo(() => {
+    if (isDelayApplicationPending || isDelayApplicationCompleted || delayCondonationData?.isDcaSkippedInEFiling?.code === "NO") {
+      if (!isDcaHearingScheduled) {
+        return {
+          id: 15,
+          code: "DELAY_CONDONATION_HEARING",
+          type: "DELAY_CONDONATION_HEARING",
+          isactive: true,
+        };
+      }
+      if (isDcaHearingScheduled && !isAdmissionHearingScheduled) {
+        return {
+          id: 5,
+          type: "ADMISSION",
+          isactive: true,
+          code: "ADMISSION",
+        };
+      }
+    } else {
+      if (!isAdmissionHearingScheduled) {
+        return {
+          id: 5,
+          type: "ADMISSION",
+          isactive: true,
+          code: "ADMISSION",
+        };
+      } else return null;
+    }
+  }, [isDelayApplicationPending, isDelayApplicationCompleted, isDcaHearingScheduled, isAdmissionHearingScheduled]);
   const closeToast = () => {
     setShowErrorToast(false);
   };
@@ -54,15 +130,10 @@ function ScheduleAdmission({
 
   const setPurpose = useCallback((props) => setPurposeValue(props), []);
   useEffect(() => {
-    if (createAdmissionOrder) {
-      setPurpose({
-        id: 5,
-        type: "ADMISSION",
-        isactive: true,
-        code: "ADMISSION",
-      });
+    if (scheduleHearingParams?.purpose?.code !== defaultHearingType?.code) {
+      setPurpose(defaultHearingType);
     }
-  }, [createAdmissionOrder, setPurpose]);
+  }, [setPurpose, defaultHearingType, scheduleHearingParams]);
 
   const handleSubmit = (props) => {
     if (!scheduleHearingParams?.date && !modalInfo?.showCustomDate) {
@@ -80,8 +151,9 @@ function ScheduleAdmission({
       optionsKey: "type",
       isMandatory: true,
       options: hearingTypes,
+      defaultValue: defaultHearingType,
     };
-  }, [hearingTypes]);
+  }, [hearingTypes, defaultHearingType]);
 
   function dateToEpoch(date) {
     return Math.floor(new Date(date).getTime());
@@ -134,15 +206,14 @@ function ScheduleAdmission({
 
       <CardText className="card-label-smaller">{t(config.label)}</CardText>
       {!isCaseAdmitted ? (
-        <TextInput
-          value={t(createAdmissionOrder ? scheduleHearingParams?.purpose?.code : scheduleHearingParams?.purpose)}
-          className="field desktop-w-full"
-          name={`${config.name}`}
+        <CustomDropdown
+          t={t}
           onChange={(e) => {
-            setPurposeValue(e.target.value, config.name);
+            setPurposeValue(e, config.name);
           }}
-          disabled={disabled}
-        />
+          config={dropdownConfig}
+          // defaulValue={defaultHearingType}
+        ></CustomDropdown>
       ) : (
         <CustomDropdown
           t={t}

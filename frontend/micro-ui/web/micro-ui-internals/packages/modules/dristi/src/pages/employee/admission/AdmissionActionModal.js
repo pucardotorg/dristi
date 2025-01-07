@@ -52,7 +52,7 @@ function AdmissionActionModal({
   handleScheduleCase,
   updatedConfig,
   tenantId,
-  // hearingDetails,
+  hearingDetails,
   handleScheduleNextHearing,
   disabled,
   filingNumber,
@@ -64,6 +64,9 @@ function AdmissionActionModal({
   scheduleHearing = false,
   isAdmissionHearingAvailable = false,
   setOpenAdmitCaseModal,
+  delayCondonationData,
+  isDelayApplicationPending = false,
+  isDelayApplicationCompleted = false,
 }) {
   const history = useHistory();
   const [showErrorToast, setShowErrorToast] = useState(false);
@@ -286,7 +289,6 @@ function AdmissionActionModal({
           <CardText>{t(isAdmissionHearingAvailable ? "CS_CONFIRM_CLOSE_HEARING_AFTER_ADMIT_CASE_TEXT" : stepItems[1]?.text)}</CardText>
         </Modal>
       )}
-
       {modalInfo?.page === 0 && modalInfo?.type === "schedule" && (
         <Modal
           headerBarMain={<Heading label={scheduleHearing ? t("CS_SCHEDULE_HEARING") : t(stepItems[2].headModal)} />}
@@ -313,6 +315,11 @@ function AdmissionActionModal({
             createAdmissionOrder={createAdmissionOrder}
             isSubmitBarDisabled={isGenerateOrderDisabled}
             caseAdmittedSubmit={caseAdmittedSubmit}
+            delayCondonationData={delayCondonationData}
+            hearingDetails={hearingDetails}
+            caseDetails={caseDetails}
+            isDelayApplicationPending={isDelayApplicationPending}
+            isDelayApplicationCompleted={isDelayApplicationCompleted}
           />
         </Modal>
       )}

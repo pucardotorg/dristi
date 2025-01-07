@@ -1,0 +1,21 @@
+[
+  {
+    "tenantId": "kl",
+    "moduleName": "Hearing",
+    "masterName": "HearingType",
+    "mdmsPayload": [
+      {
+        "id": 14,
+        "code": "DELAY_CONDONATION_AND_ADMISSION",
+        "type": "DELAY_CONDONATION_AND_ADMISSION",
+        "isactive": true
+      },
+      {
+        "id": 15,
+        "code": "DELAY_CONDONATION_HEARING",
+        "type": "DELAY_CONDONATION_HEARING",
+        "isactive": true
+      }
+    ]
+  }
+]
