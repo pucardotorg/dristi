@@ -622,6 +622,16 @@ const EvidenceModal = ({
     );
   }, [allCombineDocs, documentSubmission, modalType, tenantId, isLoading, t]);
 
+  const setApplicationStatus = (type, applicationType) =>{
+    if(["SUBMIT_BAIL_DOCUMENTS", "REQUEST_FOR_BAIL"].includes(applicationType)){
+      return type === "SET_TERM_BAIL" ? "SET_TERM_BAIL" : type === "accept" ? "APPROVED" : "REJECTED";
+    }
+    if(["DELAY_CONDONATION"].includes(applicationType)){
+      return type === "accept" ? "APPROVED" : "REJECTED"
+    }
+    return type === "accept" ? "APPROVED" : "REJECTED"
+  }
+
   const handleApplicationAction = async (generateOrder, type) => {
     try {
       const orderType = getOrderTypes(documentSubmission?.[0]?.applicationList?.applicationType, type);
@@ -632,7 +642,7 @@ const EvidenceModal = ({
           name: `ORDER_TYPE_${orderType}`,
         },
         refApplicationId: documentSubmission?.[0]?.applicationList?.applicationNumber,
-        applicationStatus: isBail ? (type === "SET_TERM_BAIL" ? "SET_TERM_BAIL" : type === "accept" ? "APPROVED" : "REJECTED") : "NO_STATUS",
+        applicationStatus: documentSubmission?.[0]?.applicationList?.applicationType ? setApplicationStatus(type, documentSubmission[0].applicationList.applicationType) : null,
         ...(documentSubmission?.[0]?.applicationList?.applicationType === "DELAY_CONDONATION" && {
           isDcaAcceptedOrRejected: {
             code: type === "reject" ? "REJECTED" : type === "accept" ? "ACCEPTED" : null,
@@ -665,17 +675,7 @@ const EvidenceModal = ({
             documents: [],
             additionalDetails: {
               formdata,
-              applicationStatus: isBail
-                ? type === "SET_TERM_BAIL"
-                  ? t("SET_TERM_BAIL")
-                  : type === "accept"
-                  ? t("APPROVED")
-                  : t("REJECTED")
-                : documentSubmission?.[0]?.applicationList?.applicationType === "DELAY_CONDONATION"
-                ? type === "accept"
-                  ? "APPROVED"
-                  : "REJECTED"
-                : t("NO_STATUS"),
+              applicationStatus: documentSubmission?.[0]?.applicationList?.applicationType ? setApplicationStatus(type, documentSubmission[0].applicationList.applicationType) : null,
             },
             ...(documentSubmission?.[0]?.applicationList?.additionalDetails?.onBehalOfName && {
               orderDetails: { parties: [{ partyName: documentSubmission?.[0]?.applicationList?.additionalDetails?.onBehalOfName }] },
