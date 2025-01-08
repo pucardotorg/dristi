@@ -2127,12 +2127,8 @@ function EFilingCases({ path }) {
     if (formdata && formdata?.[0]?.data?.advocateBarRegNumberWithName?.[0]?.isDisable) {
       return "disable-form";
     }
-
-    if (selected === "delayApplications" && formdata?.[0]?.data?.delayCondonationType?.code) {
-      return "disable-form";
-    }
     return "";
-  }, [formdata, selected]);
+  }, [formdata]);
 
   const handleConfirmDeleteForm = () => {
     const index = deleteFormIndex;
