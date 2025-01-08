@@ -104,6 +104,16 @@ const applicationDelayCondonation = async (req, res, qrCode) => {
       : {};
     const advocateName = advocate?.additionalDetails?.advocateName || "";
     const partyName = application?.additionalDetails?.onBehalOfName || "";
+    const onBehalfOfLitigent = courtCase?.litigants?.find(
+      (item) => item.additionalDetails.uuid === onBehalfOfuuid
+    );
+    let partyType = "COURT";
+    if (onBehalfOfLitigent?.partyType?.toLowerCase()?.includes("complainant")) {
+      partyType = "Complainant";
+    }
+    if (onBehalfOfLitigent?.partyType?.toLowerCase()?.includes("respondent")) {
+      partyType = "Accused";
+    }
     const complainantName =
       courtCase?.litigants?.find(
         (litigant) => litigant.partyType === "complainant.primary"
@@ -185,6 +195,7 @@ const applicationDelayCondonation = async (req, res, qrCode) => {
           date: formattedToday,
           complainantName: complainantName,
           partyName: partyName,
+          partyType: partyType,
           advocateName: advocateName,
           applicationTitle: applicationTitle,
           reasonForDelay: reasonForDelay,
