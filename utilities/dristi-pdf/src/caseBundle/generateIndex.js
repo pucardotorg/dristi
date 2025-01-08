@@ -159,7 +159,7 @@ async function applyDocketToDocument(
     Data: [
       {
         docketDateOfSubmission: docketDateOfSubmission,
-        docketCourtName: config.constants.mdmsCourtRoom.name,
+        docketCourtName: config.constants.mdmsCourtRoom.orderHeading,
         docketComplainantName,
         docketAccusedName: [
           respondent.respondentFirstName,

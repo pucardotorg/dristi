@@ -1,0 +1,35 @@
+[
+  {
+    "tenantId": "kl",
+    "masterName": "ACCESSCONTROL-ROLEACTIONS",
+    "moduleName": "roleactions",
+    "mdmsPayload" : [
+      {
+        "tenantId": "kl",
+        "schemaCode": "ACCESSCONTROL-ROLEACTIONS.roleactions",
+        "uniqueIdentifier": "413",
+        "data": {
+          "id": 413,
+          "actionid": 1742,
+          "rolecode": "WORKFLOW_ADMIN",
+          "tenantid": "kl",
+          "actioncode": "1742"
+        },
+        "isActive": true
+      },
+      {
+        "tenantId": "kl",
+        "schemaCode": "ACCESSCONTROL-ROLEACTIONS.roleactions",
+        "uniqueIdentifier": "414",
+        "data": {
+          "id": 414,
+          "actionid": 1741,
+          "rolecode": "WORKFLOW_ADMIN",
+          "tenantid": "kl",
+          "actioncode": "1741"
+        },
+        "isActive": true
+      }
+    ]
+  }
+]

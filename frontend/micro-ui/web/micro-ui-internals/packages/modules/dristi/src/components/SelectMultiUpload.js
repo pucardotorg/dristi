@@ -131,7 +131,6 @@ const SelectMultiUpload = ({ t, config, onSelect, formData = {}, errors, setErro
               align-items: center;
               justify-content: space-between;
             }
-
             .file-uploader .text-input.text-input-width {
               max-width: calc(100% - 138px);
               flex: 1;
@@ -147,7 +146,6 @@ const SelectMultiUpload = ({ t, config, onSelect, formData = {}, errors, setErro
               align-items: center;
               justify-content: center;
             }
-
             .file-uploader-div-main .toast-success.error h2 {
               color: white !important;
             }

@@ -207,7 +207,6 @@ const orderBailAcceptance = async (req, res, qrCode) => {
 
     const ordinalSuffix = getOrdinalSuffix(day);
     const formattedToday = formatDate(currentDate, "DD-MM-YYYY");
-
     const caseNumber = courtCase?.courtCaseNumber || courtCase?.cmpNumber || "";
     const data = {
       Data: [

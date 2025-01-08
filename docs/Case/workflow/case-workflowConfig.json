@@ -384,6 +384,7 @@
                             "action": "RESPOND",
                             "nextState": "PENDING_ADMISSION",
                             "roles": [
+                                "CASE_EDITOR",
                                 "SYSTEM",
                                 "SYSTEM_ADMIN"
                             ]

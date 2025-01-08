@@ -103,7 +103,6 @@ const EvidenceHearingHeader = ({
           <div className="vertical-line"></div>
           <div className="sub-details-text">{t(caseData?.substage || "")}</div>
         </div>
-
         <div className="judge-action-block">
           <div className="evidence-header-wrapper">
             <div className="evidence-hearing-header" style={{ background: "transparent" }}>

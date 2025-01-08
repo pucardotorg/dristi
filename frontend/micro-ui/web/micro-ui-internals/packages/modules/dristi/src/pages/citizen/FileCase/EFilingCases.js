@@ -2128,6 +2128,9 @@ function EFilingCases({ path }) {
       return "disable-form";
     }
 
+    if (selected === "delayApplications" && formdata?.[0]?.data?.delayCondonationType?.code) {
+      return "disable-form";
+    }
     return "";
   }, [formdata, selected]);
 
@@ -2258,7 +2261,6 @@ function EFilingCases({ path }) {
     margin-top:0 !important;
   }
 `;
-  const isDcaNotSkipped = caseDetails?.caseDetails?.["delayApplications"]?.formdata?.[0]?.data?.isDcaSkippedInEFiling?.code === "NO";
 
   return (
     <div className="file-case">

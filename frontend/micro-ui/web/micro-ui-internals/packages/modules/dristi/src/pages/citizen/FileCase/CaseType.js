@@ -37,7 +37,7 @@ function CaseType({ t }) {
   const tenantId = window?.Digit.ULBService.getCurrentTenantId();
   const [page, setPage] = useState(0);
   const [isDisabled, setIsDisabled] = useState(false);
-  const requiredDocumentsListLink = "/pucar-filestore/kl/RequiredDocumentsList.pdf";
+  const requiredDocumentsListLink = window?.globalConfigs?.getConfig("CASE_FILE_REQUIRED_DOCUMENTS");
 
   const onCancel = () => {
     history.push("/digit-ui/citizen/home/home-pending-task");

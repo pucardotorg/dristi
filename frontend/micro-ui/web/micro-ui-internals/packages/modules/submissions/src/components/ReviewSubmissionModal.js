@@ -130,7 +130,7 @@ function ReviewSubmissionModal({
         ) : isLoading ? (
           <h2>{t("LOADING")}</h2>
         ) : (
-          <h2>{t("PREVIEW_DOC_NOT_AVAILABLE")} </h2>
+          <h2>{t("PREVIEW_DOC_NOT_AVAILABLE")}</h2>
         )}
       </React.Fragment>
     );

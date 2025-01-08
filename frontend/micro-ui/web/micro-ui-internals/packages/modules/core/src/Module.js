@@ -79,6 +79,7 @@ export const DigitUI = ({ stateCode, registry, enabledModules, moduleReducers, d
   const queryClient = new QueryClient({
     defaultOptions: {
       queries: {
+        refetchOnWindowFocus: false,
         staleTime: 15 * 60 * 1000,
         cacheTime: 50 * 60 * 1000,
         retry: false,

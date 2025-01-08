@@ -139,6 +139,8 @@ const TopBar = ({
       />
     );
   }
+  const emblemBigImageLink = window?.globalConfigs?.getConfig("EMBLEM_BIG");
+  const onCourtsImageLink = window?.globalConfigs?.getConfig("ON_COURTS_LOGO");
   return (
     <div className="topbar">
       <div
@@ -154,20 +156,14 @@ const TopBar = ({
           className="city"
           id="topbar-logo"
           style={{ display: "flex", alignItems: "center", height: "40px", minWidth: "20px" }}
-          src={
-            "https://pucarfilestore.blob.core.windows.net/pucar-filestore/kl/17bba4d1a5b09a0840e516227bbe9364.png" ||
-            "https://cdn.jsdelivr.net/npm/@egovernments/digit-ui-css@1.0.7/img/m_seva_white_logo.png"
-          }
+          src={emblemBigImageLink || "https://cdn.jsdelivr.net/npm/@egovernments/digit-ui-css@1.0.7/img/m_seva_white_logo.png"}
           alt="mSeva"
         />
         <img
           className="city"
           id="topbar-logo"
           style={{ display: "flex", alignItems: "center", height: "40px" }}
-          src={
-            "https://pucarfilestore.blob.core.windows.net/pucar-filestore/kl/Crafting_ON_24x7_final%20(1).png" ||
-            "https://cdn.jsdelivr.net/npm/@egovernments/digit-ui-css@1.0.7/img/m_seva_white_logo.png"
-          }
+          src={onCourtsImageLink || "https://cdn.jsdelivr.net/npm/@egovernments/digit-ui-css@1.0.7/img/m_seva_white_logo.png"}
           alt="mSeva"
         />
       </div>

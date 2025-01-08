@@ -287,7 +287,7 @@ export const UICustomizations = {
                   deliveryChannel: taskDetail?.deliveryChannels?.channelName,
                   channelDetails: typeof channelDetails === "object" ? generateAddress({ ...channelDetails }) : channelDetails,
                   status: data?.status,
-                  remarks: taskDetail?.deliveryChannels?.status,
+                  remarks: taskDetail?.remarks?.remark,
                 };
               });
             return { list: taskData };

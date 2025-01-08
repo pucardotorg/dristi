@@ -19,6 +19,7 @@ import isEmpty from "lodash/isEmpty";
 import TranscriptComponent from "./Transcription";
 import TasksComponent from "../../../../home/src/components/TaskComponent";
 import { SubmissionWorkflowState } from "@egovernments/digit-ui-module-dristi/src/Utils/submissionWorkflow";
+
 const SECOND = 1000;
 
 const InsideHearingMainPage = () => {
