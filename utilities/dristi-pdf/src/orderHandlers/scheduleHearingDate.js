@@ -9,6 +9,7 @@ const {
   create_pdf,
   search_sunbirdrc_credential_service,
   search_application,
+  search_message,
 } = require("../api");
 const { renderError } = require("../utils/renderError");
 
@@ -62,6 +63,22 @@ async function scheduleHearingDate(req, res, qrCode) {
   };
 
   try {
+    const resMessage = await handleApiCall(
+      () =>
+        search_message(
+          tenantId,
+          "rainmaker-orders,rainmaker-submissions,rainmaker-common,rainmaker-home,rainmaker-case",
+          "en_IN",
+          requestInfo
+        ),
+      "Failed to query Localized messages"
+    );
+    const messages = resMessage?.data?.messages;
+    const messagesMap = messages.reduce((acc, curr) => {
+      acc[curr.code] = curr.message;
+      return acc;
+    }, {});
+
     // Search for case details
     const resCase = await handleApiCall(
       () => search_case(cnrNumber, tenantId, requestInfo),
@@ -159,6 +176,9 @@ async function scheduleHearingDate(req, res, qrCode) {
       return renderError(res, "Invalid filingDate format", 500);
     }
 
+    const purposeOfHearing =
+      messagesMap?.[order.orderDetails.purposeOfHearing] ||
+      order.orderDetails.purposeOfHearing;
     const formattedToday = formatDate(Date.now());
     const caseNumber = courtCase?.courtCaseNumber || courtCase?.cmpNumber || "";
     const data = {
@@ -176,7 +196,7 @@ async function scheduleHearingDate(req, res, qrCode) {
           ).toLocaleDateString("en-IN"),
           partyNames: order.orderDetails.partyName.join(", "),
           additionalComments: order.comments,
-          purposeOfHearing: order.orderDetails.purposeOfHearing,
+          purposeOfHearing: purposeOfHearing,
           judgeSignature: judgeDetails.judgeSignature,
           judgeName: judgeDetails.name,
           courtSeal: judgeDetails.courtSeal,
