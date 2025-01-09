@@ -838,6 +838,7 @@ export const configsProductionOfDocuments = [
             {
               label: "DOCUMENT_TITLE",
               type: "text",
+              key: "documentTitle",
               name: "documentTitle",
               validation: {
                 isRequired: true,
@@ -847,6 +848,7 @@ export const configsProductionOfDocuments = [
               isMandatory: true,
             },
             {
+              key: "submissionDocuments",
               label: "DOCUMENT_ATTACHMENT",
               type: "documentUpload",
               name: "document",

@@ -83,6 +83,7 @@ const MultiUploadWrapper = ({
   disable,
 }) => {
   const FILES_UPLOADED = "FILES_UPLOADED";
+  const RESET_FILE = "RESET";
   const TARGET_FILE_REMOVAL = "TARGET_FILE_REMOVAL";
 
   const [fileErrors, setFileErrors] = useState([]);
@@ -118,6 +119,8 @@ const MultiUploadWrapper = ({
 
   const uploadReducer = (state, action) => {
     switch (action.type) {
+      case RESET_FILE:
+        return action.payload;
       case FILES_UPLOADED:
         return uploadMultipleFiles(state, action.payload);
       case TARGET_FILE_REMOVAL:
@@ -128,6 +131,10 @@ const MultiUploadWrapper = ({
   };
 
   const [state, dispatch] = useReducer(uploadReducer, [...setuploadedstate]);
+
+  useEffect(() => {
+    dispatch({ type: "RESET", payload: [...setuploadedstate] });
+  }, [JSON.stringify(setuploadedstate)]);
 
   const onUploadMultipleFiles = async (e) => {
     setEnableButton(false);

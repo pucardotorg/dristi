@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo, useState } from "react";
+import React, { useEffect, useMemo, useRef, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { FormComposerV2, Header, Loader } from "@egovernments/digit-ui-react-components";
 import {
@@ -75,6 +75,13 @@ const SubmissionsCreate = ({ path }) => {
   const token = window.localStorage.getItem("token");
   const isUserLoggedIn = Boolean(token);
   const { downloadPdf } = Digit.Hooks.dristi.useDownloadCasePdf();
+
+  const setFormErrors = useRef(null);
+  const setFormState = useRef(null);
+  const resetFormData = useRef(null);
+  const setFormDataValue = useRef(null);
+  const clearFormDataErrors = useRef(null);
+
   const hasSubmissionRole = useMemo(
     () =>
       ["SUBMISSION_CREATOR", "SUBMISSION_RESPONDER"].reduce((result, current) => {
@@ -579,6 +586,21 @@ const SubmissionsCreate = ({ path }) => {
       }
     }
 
+    if (applicationType && ["PRODUCTION_DOCUMENTS"].includes(applicationType) && formState?.submitCount) {
+      formdata?.submissionDocuments?.submissionDocuments?.forEach((docs, index) => {
+        if (!docs?.documentType && !Object.keys(setFormState.current?.errors).includes(`documentType_${index}`)) {
+          setError(`documentType_${index}`, { message: t("CORE_REQUIRED_FIELD_ERROR") });
+        } else if (docs?.documentType && Object.keys(setFormState.current?.errors).includes(`documentType_${index}`)) {
+          clearErrors(`documentType_${index}`);
+        }
+        if (!docs?.document?.fileStore && !Object.keys(setFormState.current?.errors).includes(`submissionDocuments_${index}`)) {
+          setFormErrors.current(`submissionDocuments_${index}`, { message: t("CORE_REQUIRED_FIELD_ERROR") });
+        } else if (docs?.document?.fileStore && Object.keys(setFormState.current?.errors).includes(`submissionDocuments_${index}`)) {
+          clearFormDataErrors.current(`submissionDocuments_${index}`);
+        }
+      });
+    }
+
     if (applicationType && ["REQUEST_FOR_BAIL", "SUBMIT_BAIL_DOCUMENTS", "DELAY_CONDONATION"].includes(applicationType) && formState?.submitCount) {
       if (!formData?.supportingDocuments && !Object.keys(formState?.errors).includes("supportingDocuments")) {
         setValue("supportingDocuments", [{}]);
@@ -610,6 +632,11 @@ const SubmissionsCreate = ({ path }) => {
     if (!isEqual(formdata, formData)) {
       setFormdata(formData);
     }
+    setFormErrors.current = setError;
+    setFormState.current = formState;
+    resetFormData.current = reset;
+    setFormDataValue.current = setValue;
+    clearFormDataErrors.current = clearErrors;
   };
   const onDocumentUpload = async (fileData, filename) => {
     if (fileData?.fileStore) return fileData;
@@ -875,7 +902,41 @@ const SubmissionsCreate = ({ path }) => {
     return formData;
   };
 
-  const handleOpenReview = async () => {
+  const handleDocumentUploadValidation = (formData) => {
+    let documentErrorFlag = false;
+    if (applicationType && ["REQUEST_FOR_BAIL", "SUBMIT_BAIL_DOCUMENTS", "DELAY_CONDONATION", "PRODUCTION_DOCUMENTS"].includes(applicationType)) {
+      formData?.supportingDocuments?.forEach((docs, index) => {
+        if (!docs?.submissionDocuments?.uploadedDocs?.length && !Object.keys(setFormState.current?.errors).includes(`submissionDocuments_${index}`)) {
+          setFormErrors.current(`submissionDocuments_${index}`, { message: t("CORE_REQUIRED_FIELD_ERROR") });
+          documentErrorFlag = true;
+        } else if (
+          docs?.submissionDocuments?.uploadedDocs?.length &&
+          Object.keys(setFormState.current?.errors).includes(`submissionDocuments_${index}`)
+        ) {
+          clearFormDataErrors.current(`submissionDocuments_${index}`);
+        }
+      });
+    }
+    if (applicationType === "PRODUCTION_DOCUMENTS") {
+      formdata?.submissionDocuments?.submissionDocuments?.forEach((docs, index) => {
+        if (!docs?.documentType && !Object.keys(setFormState.current?.errors).includes(`submissionDocuments_${index}`)) {
+          setFormErrors.current(`documentType_${index}`, { message: t("CORE_REQUIRED_FIELD_ERROR") });
+        } else if (docs?.document?.fileStore && Object.keys(setFormState.current?.errors).includes(`submissionDocuments_${index}`)) {
+          clearFormDataErrors.current(`documentType_${index}`);
+        }
+        if (!docs?.document?.fileStore && !Object.keys(setFormState.current?.errors).includes(`submissionDocuments_${index}`)) {
+          setFormErrors.current(`submissionDocuments_${index}`, { message: t("CORE_REQUIRED_FIELD_ERROR") });
+          documentErrorFlag = true;
+        } else if (docs?.document?.fileStore && Object.keys(setFormState.current?.errors).includes(`submissionDocuments_${index}`)) {
+          clearFormDataErrors.current(`submissionDocuments_${index}`);
+        }
+      });
+    }
+    return documentErrorFlag;
+  };
+
+  const handleOpenReview = async (formData) => {
+    if (handleDocumentUploadValidation(formData)) return;
     setLoader(true);
 
     if (applicationType && ["REQUEST_FOR_BAIL", "SUBMIT_BAIL_DOCUMENTS", "DELAY_CONDONATION"].includes(applicationType)) {

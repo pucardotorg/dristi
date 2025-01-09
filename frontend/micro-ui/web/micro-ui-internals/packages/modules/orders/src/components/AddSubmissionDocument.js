@@ -14,7 +14,7 @@ const CloseBtn = () => {
   );
 };
 
-const AddSubmissionDocument = ({ t, config, onSelect, formData = {}, errors }) => {
+const AddSubmissionDocument = ({ t, config, onSelect, formData = {}, errors, clearErrors }) => {
   const DocViewerWrapper = window?.Digit?.ComponentRegistryService?.getComponent("DocViewerWrapper");
   const tenantId = window?.Digit.ULBService.getCurrentTenantId();
   const Digit = window.Digit || {};
@@ -48,6 +48,8 @@ const AddSubmissionDocument = ({ t, config, onSelect, formData = {}, errors }) =
     updatedFormInstances.splice(index, 1);
     setFormInstances(updatedFormInstances);
     updateFormData(updatedFormInstances);
+    clearErrors(`submissionDocuments_${index}`);
+    clearErrors(`documentType_${index}`);
   };
 
   const onDocumentUpload = async (fileData, filename) => {
@@ -203,6 +205,13 @@ const AddSubmissionDocument = ({ t, config, onSelect, formData = {}, errors }) =
                           <span style={{ color: "#FF0000" }}> {t(input.validation?.errMsg || "INVALID_BAR_REG_NUMBER")}</span>
                         </CardLabelError>
                       )}
+                    {["documentUpload", "dropdown"].includes(input?.type) && errors[`${input?.key}_${index}`] && (
+                      <CardLabelError style={{ width: "70%", marginLeft: "30%", fontSize: "12px" }}>
+                        {errors[`${input?.key}_${index}`]?.message
+                          ? errors[`${input?.key}_${index}`]?.message
+                          : t(errors[`${input?.key}_${index}`]) || t(input.error)}
+                      </CardLabelError>
+                    )}
                   </div>
                 </div>
               </React.Fragment>
