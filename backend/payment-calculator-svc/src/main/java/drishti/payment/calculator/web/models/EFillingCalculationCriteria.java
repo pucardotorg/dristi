@@ -34,4 +34,7 @@ public class EFillingCalculationCriteria {
     @JsonProperty("delayCondonation")
     private Long delayCondonation = 0L;
 
+    @JsonProperty("isDelayCondonation")
+    private Boolean isDelayCondonation = false;
+
 }

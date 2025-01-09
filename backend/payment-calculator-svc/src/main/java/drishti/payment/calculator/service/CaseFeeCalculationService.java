@@ -40,7 +40,6 @@ public class CaseFeeCalculationService {
         Double vakalathnamaFee = eFillingDefaultData.getVakalathnamaFee();
         Double advocateClerkWelfareFund = eFillingDefaultData.getAdvocateClerkWelfareFund();
         Double delayCondonationFee = eFillingDefaultData.getDelayCondonationFee();
-        Long delayCondonationPeriod = eFillingDefaultData.getDelayCondonationPeriod();
 
         LinkedHashMap<String, HashMap<String, Integer>> noOfAdvocateFees = eFillingDefaultData.getNoOfAdvocateFees();
         Map<String, Range> petitionFeeRange = eFillingDefaultData.getPetitionFee();
@@ -52,7 +51,8 @@ public class CaseFeeCalculationService {
 
             Double totalApplicationFee = criteria.getNumberOfApplication() * applicationFee;
             Double petitionFee = getPetitionFee(criteria.getCheckAmount(), petitionFeeRange);
-            Double delayFee = isDelayCondonationFeeApplicable(criteria.getDelayCondonation(), delayCondonationPeriod) ? delayCondonationFee : 0.0;
+//            Double delayFee = isDelayCondonationFeeApplicable(criteria.getDelayCondonation(), delayCondonationPeriod) ? delayCondonationFee : 0.0;
+            Double delayFee = criteria.getIsDelayCondonation() ? delayCondonationFee : 0.0;
 
             int noOfAdvocates = getAdvocateCountForCase(request.getRequestInfo(), criteria);
             vakalathnamaFee = noOfAdvocates == 0 ? 0.0 : vakalathnamaFee;

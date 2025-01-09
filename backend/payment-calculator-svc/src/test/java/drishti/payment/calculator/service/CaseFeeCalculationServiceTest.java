@@ -46,7 +46,7 @@ public class CaseFeeCalculationServiceTest {
         when(caseUtil.searchCaseDetails(any())).thenReturn(mockJsonNode);
         EFillingCalculationReq request = EFillingCalculationReq.builder()
                 .calculationCriteria(Collections.singletonList(
-                        EFillingCalculationCriteria.builder().tenantId("pb").numberOfApplication(1).checkAmount(50000.0).delayCondonation(289600000L).build()
+                        EFillingCalculationCriteria.builder().tenantId("pb").numberOfApplication(1).checkAmount(50000.0).isDelayCondonation(false).build()
                 )).build();
 
         List<Calculation> result = caseFeesCalculationService.calculateCaseFees(request);
