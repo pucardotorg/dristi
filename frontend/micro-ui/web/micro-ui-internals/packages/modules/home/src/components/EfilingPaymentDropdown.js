@@ -72,17 +72,15 @@ function EfilingPaymentBreakdown({ setShowModal, header, subHeader }) {
     }),
     [caseData]
   );
-  const delayCondonation = useMemo(() => {
+  const isDelayCondonation = useMemo(() => {
     const dcaData = caseDetails?.caseDetails?.["delayApplications"]?.formdata[0]?.data;
     if (
       dcaData?.delayCondonationType?.code === "YES" ||
       (dcaData?.delayCondonationType?.code === "NO" && dcaData?.isDcaSkippedInEFiling?.code === "YES")
     ) {
-      return null;
+      return false;
     }
-    const today = new Date();
-    const dateOfAccrual = new Date(caseDetails?.caseDetails["demandNoticeDetails"]?.formdata[0]?.data?.dateOfAccrual);
-    return today?.getTime() - dateOfAccrual?.getTime();
+    return true;
   }, [caseDetails]);
   // check for partial Liability
   const chequeDetails = useMemo(() => {
@@ -110,7 +108,7 @@ function EfilingPaymentBreakdown({ setShowModal, header, subHeader }) {
           numberOfApplication: 1,
           tenantId: tenantId,
           caseId: caseId,
-          delayCondonation: delayCondonation,
+          isDelayCondonation: isDelayCondonation,
           filingNumber: caseDetails?.filingNumber,
         },
       ],

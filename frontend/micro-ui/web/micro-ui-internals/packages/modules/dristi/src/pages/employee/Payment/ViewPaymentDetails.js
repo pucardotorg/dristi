@@ -132,7 +132,7 @@ const ViewPaymentDetails = ({ location, match }) => {
           tenantId: tenantId,
           caseId: caseId,
           filingNumber: filingNumber,
-          delayCondonation: demandBill?.additionalDetails?.delayCondonation,
+          isDelayCondonation: demandBill?.additionalDetails?.isDelayCondonation,
         },
       ],
     },
