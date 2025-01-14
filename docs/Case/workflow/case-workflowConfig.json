@@ -321,24 +321,6 @@
                     "actions": [
                         {
                             "action": "SCHEDULE_ADMISSION_HEARING",
-                            "nextState": "ADMISSION_HEARING_SCHEDULED",
-                            "roles": [
-                                "CASE_APPROVER"
-                            ]
-                        }
-                    ]
-                },
-                {
-                    "sla": null,
-                    "state": "ADMISSION_HEARING_SCHEDULED",
-                    "applicationStatus": "INWORKFLOW",
-                    "docUploadRequired": false,
-                    "isStartState": false,
-                    "isTerminateState": false,
-                    "isStateUpdatable": true,
-                    "actions": [
-                        {
-                            "action": "ADMIT",
                             "nextState": "PENDING_NOTICE",
                             "roles": [
                                 "CASE_APPROVER"
