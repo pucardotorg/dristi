@@ -429,7 +429,7 @@ function SelectReviewAccordion({ t, config, onSelect, formData = {}, errors, for
                   {input?.data?.length === 0 && (
                     <span style={{ fontFamily: "Roboto", fontSize: "14px", fontWeight: 400 }}>{t(input?.noDataText)}</span>
                   )}
-                  {!isScrutiny && !isJudge && (isCaseReAssigned || isDraftInProgress) && (
+                  {input?.isFilingParty && !isScrutiny && !isJudge && (isCaseReAssigned || isDraftInProgress) && (
                     <div
                       className="header-right"
                       style={{ display: "contents" }}

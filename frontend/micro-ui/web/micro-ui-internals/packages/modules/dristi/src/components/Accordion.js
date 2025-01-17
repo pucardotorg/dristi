@@ -13,6 +13,8 @@ function Accordion({
   errorCount,
   isCaseReAssigned,
   isDraftInProgress,
+  isFilingParty,
+  AccordionTabs,
 }) {
   const getTime = useMemo(() => {
     switch (parentIndex) {
@@ -62,7 +64,12 @@ function Accordion({
               className="radio-wrap"
               style={item.checked ? { background: "#E8E8E8", color: "#3D3C3C", borderRadius: "0px" } : { color: "#77787B" }}
               onClick={() => {
-                handlePageChange(item.key, !showConfirmModal);
+                if(!isFilingParty){
+                  handlePageChange(AccordionTabs.REVIEW_CASE_FILE, !showConfirmModal);
+                }
+                else{
+                  handlePageChange(item.key, !showConfirmModal);
+                }
               }}
             >
               {item.isCompleted && !item?.checked ? (

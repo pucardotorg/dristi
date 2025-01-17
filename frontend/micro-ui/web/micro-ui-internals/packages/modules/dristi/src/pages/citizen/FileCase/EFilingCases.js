@@ -144,6 +144,10 @@ const stateSla = {
   PENDING_PAYMENT: 2,
 };
 
+const AccordionTabs = {
+  REVIEW_CASE_FILE : "reviewCaseFile",
+}
+
 const dayInMillisecond = 24 * 3600 * 1000;
 
 function EFilingCases({ path }) {
@@ -197,6 +201,7 @@ function EFilingCases({ path }) {
   const [isLoader, setIsLoader] = useState(false);
   const [pdfDetails, setPdfDetails] = useState(null);
   const { downloadPdf } = useDownloadCasePdf();
+  const [isFilingParty, setIsFilingParty] = useState(false);
 
   const [{ showSuccessToast, successMsg }, setSuccessToast] = useState({
     showSuccessToast: false,
@@ -415,8 +420,8 @@ function EFilingCases({ path }) {
 
   const errorPages = useMemo(() => {
     const pages = Object.values(scrutinyErrors)
-      .flatMap((val) => val?.pages)
-      .filter((val) => val !== undefined);
+      ?.flatMap((val) => val?.pages)
+      ?.filter((val) => val !== undefined);
     return pages.sort((a, b) => {
       const keyA = a.key;
       const keyB = b.key;
@@ -505,6 +510,15 @@ function EFilingCases({ path }) {
     }
   }, [caseDetails]);
 
+  useEffect(()=>{
+    const filingParty = caseDetails?.auditDetails?.createdBy === userInfo?.uuid;
+    setIsFilingParty(filingParty)
+
+    if (caseDetails && !filingParty && !isLoading) {
+      history.replace(`?caseId=${caseId}&selected=${AccordionTabs.REVIEW_CASE_FILE}`);
+    }
+  },[caseDetails, caseId, history, isFilingParty, isLoading, userInfo?.uuid])
+
   useEffect(() => {
     const data =
       caseDetails?.additionalDetails?.[selected]?.formdata ||
@@ -517,7 +531,7 @@ function EFilingCases({ path }) {
     if (selected === "addSignature" && !caseDetails?.additionalDetails?.["reviewCaseFile"]?.isCompleted && !isLoading) {
       setShowReviewCorrectionModal(true);
     }
-  }, [selected, caseDetails]);
+  }, [selected, caseDetails, isLoading]);
 
   const closeToast = () => {
     setShowErrorToast(false);
@@ -656,7 +670,7 @@ function EFilingCases({ path }) {
   }, [pageConfig?.formconfig]);
   const multiUploadList = useMemo(
     () =>
-      formConfig.flatMap((config) =>
+      formConfig?.flatMap((config) =>
         config.body
           .filter((item) => ["SelectCustomDragDrop"].includes(item.component))
           .map((item) => {
@@ -758,6 +772,7 @@ function EFilingCases({ path }) {
                       return {
                         ...input,
                         data: dataobj,
+                        isFilingParty : isFilingParty
                       };
                     }),
                   },
@@ -1964,7 +1979,12 @@ function EFilingCases({ path }) {
         setIsDisabled(false);
       });
     setPrevSelected(selected);
-    history.push(`?caseId=${caseId}&selected=${key}`);
+    if(!isFilingParty){
+      history.replace(`?caseId=${caseId}&selected=${key}`)
+    }
+    else{
+      history.push(`?caseId=${caseId}&selected=${key}`);
+    }
   };
 
   const chequeDetails = useMemo(() => {
@@ -2162,6 +2182,11 @@ function EFilingCases({ path }) {
     [isCaseReAssigned, isDisableAllFieldsMode, isPendingESign, selected, t, isDraftInProgress, isPendingReESign]
   );
 
+  // show action bar only after all mandatory details are filed
+  const showActionsLabels = useMemo(() => {
+    return !isFilingParty ? !mandatoryFieldsLeftTotalCount && !isDisableAllFieldsMode : true;
+  }, [isFilingParty, mandatoryFieldsLeftTotalCount, isDisableAllFieldsMode]);
+
   const [isOpen, setIsOpen] = useState(false);
   if (isLoading || isGetAllCasesLoading || isCourtIdsLoading || isLoader) {
     return <Loader />;
@@ -2192,7 +2217,12 @@ function EFilingCases({ path }) {
   };
 
   const handleGoToPage = (key) => {
-    history.push(`?caseId=${caseId}&selected=${key}`);
+    if(!isFilingParty){
+      history.replace(`?caseId=${caseId}&selected=${AccordionTabs.REVIEW_CASE_FILE}`)
+    }
+    else{
+      history.push(`?caseId=${caseId}&selected=${key}`);
+    }
   };
   const handleGoToHome = () => {
     history.push(homepagePath);
@@ -2327,6 +2357,8 @@ function EFilingCases({ path }) {
                   errorCount={scrutinyErrors?.[item.key]?.total || 0}
                   isCaseReAssigned={isCaseReAssigned}
                   isDraftInProgress={isDraftInProgress}
+                  isFilingParty={isFilingParty}
+                  AccordionTabs={AccordionTabs}
                 />
               ))}
             </div>
@@ -2350,6 +2382,8 @@ function EFilingCases({ path }) {
               errorCount={scrutinyErrors?.[item.key]?.total || 0}
               isCaseReAssigned={isCaseReAssigned}
               isDraftInProgress={isDraftInProgress}
+              isFilingParty={isFilingParty}
+              AccordionTabs={AccordionTabs}
             />
           ))}
         </div>
@@ -2419,7 +2453,7 @@ function EFilingCases({ path }) {
                   </div>
                 )}
                 <FormComposerV2
-                  label={actionName}
+                  label={showActionsLabels && actionName}
                   config={config}
                   onSubmit={() => onSubmit("SAVE_DRAFT")}
                   onSecondayActionClick={onSaveDraft}
@@ -2501,7 +2535,8 @@ function EFilingCases({ path }) {
               }}
             ></Modal>
           )}
-          {showMandatoryFieldsRemainingModal && showConfirmMandatoryModal && (
+          {/* show this modal only for filingParty */}
+          {isFilingParty && showMandatoryFieldsRemainingModal && showConfirmMandatoryModal && (
             <Modal
               headerBarMain={<Heading label={`${mandatoryFieldsLeftTotalCount} ${t("MANDATORY_FIELDS_REMAINING")}`} />}
               headerBarEnd={<CloseBtn onClick={() => takeUserToRemainingMandatoryFieldsPage()} />}
