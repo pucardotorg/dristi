@@ -9,6 +9,7 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 
+import jakarta.transaction.Transactional;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.RandomStringUtils;
@@ -173,5 +174,14 @@ public class StorageService {
 				+ "/" + calendar.get(Calendar.DATE) + "/";
 	}
 
-	
+	@Transactional
+	public List<String> deleteFiles(List<String> fileStoreIds, String tenantId, String module, boolean isSoftDelete) {
+		try {
+			storageValidator.validateDeleteFiles(fileStoreIds, tenantId);
+			return artifactRepository.delete(fileStoreIds, tenantId, module, isSoftDelete);
+		} catch (Exception e) {
+			log.error("Error occurred while deleting files", e);
+			throw new CustomException("EG_FILESTORE_DELETE_ERROR", "An error occurred while deleting files: " + e.getMessage());
+		}
+	}
 }

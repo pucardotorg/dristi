@@ -92,7 +92,10 @@ public class Artifact extends AbstractPersistable<Long> {
 
     private Long createdTime;
 
-    private Long lastModifiedTime; 
+    private Long lastModifiedTime;
+
+    @Column(name = "isdeleted")
+    private Boolean isDeleted = false;
 
     public FileLocation getFileLocation() {
         return new FileLocation(fileStoreId, module, tag,tenantId,fileName,fileSource);

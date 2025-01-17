@@ -18,6 +18,7 @@ import java.util.Map;
 import javax.imageio.ImageIO;
 
 import io.minio.PutObjectArgs;
+import io.minio.RemoveObjectArgs;
 import io.minio.errors.*;
 import org.apache.commons.io.FilenameUtils;
 import org.egov.filestore.config.FileStoreConfig;
@@ -186,7 +187,42 @@ public class MinioRepository implements CloudFilesManager {
 		}
 		return mapOfIdAndSASUrls;
 	}
-		
+
+	@Override
+	public void deleteFiles(List<Artifact> artifacts) {
+		for (Artifact artifact : artifacts) {
+			try {
+				log.info("Deleting files from MinIO.");
+				String fileLocation = artifact.getFileLocation().getFileName();
+				String fileName = fileLocation.substring(fileLocation.indexOf('/') + 1);
+				removeObject(fileName);
+				log.info("Successfully deleted file: {}", fileName);
+			} catch (Exception e) {
+				log.error("Error deleting file for artifact: {}", artifact.getFileStoreId(), e);
+			}
+		}
+	}
+
+	private void removeObject(String fileName) {
+		try {
+			RemoveObjectArgs removeObjectArgs = RemoveObjectArgs.builder()
+					.bucket(minioConfig.getBucketName())
+					.object(fileName)
+					.build();
+			minioClient.removeObject(removeObjectArgs);
+			log.info("Successfully deleted object: {}", fileName);
+		} catch (MinioException e) {
+			log.error("Minio error occurred while deleting object: {}", fileName, e);
+			throw new CustomException();
+		} catch (InvalidKeyException | IllegalArgumentException | NoSuchAlgorithmException e) {
+			log.error("Configuration error while deleting object: {}", fileName, e);
+			throw new CustomException();
+		} catch (IOException e) {
+			log.error("I/O error occurred while deleting object: {}", fileName, e);
+			throw new CustomException();
+		}
+	}
+
 	private String setThumnailSignedURL(String fileName, StringBuilder url) throws InvalidKeyException, ErrorResponseException, IllegalArgumentException, InsufficientDataException, InternalException, InvalidBucketNameException, InvalidExpiresRangeException, InvalidResponseException, NoSuchAlgorithmException, XmlParserException, IOException {
 		String[] imageFormats = { fileStoreConfig.get_large(), fileStoreConfig.get_medium(), fileStoreConfig.get_small() };
 		for (String  format : Arrays.asList(imageFormats)) {

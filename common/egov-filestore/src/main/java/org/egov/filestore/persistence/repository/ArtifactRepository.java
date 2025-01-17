@@ -14,6 +14,8 @@ import org.egov.filestore.repository.CloudFilesManager;
 import org.egov.filestore.repository.impl.AzureBlobStorageImpl;
 import org.egov.filestore.repository.impl.minio.MinioRepository;
 import org.egov.tracer.model.CustomException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
@@ -21,6 +23,7 @@ import org.springframework.stereotype.Service;
 @Service
 public class ArtifactRepository {
 
+	private static final Logger log = LoggerFactory.getLogger(ArtifactRepository.class);
 	private FileStoreJpaRepository fileStoreJpaRepository;
 	
 	@Autowired
@@ -137,5 +140,44 @@ public class ArtifactRepository {
 
 	public List<Artifact> getByTenantIdAndFileStoreIdList(String tenantId, List<String> fileStoreIds) {
 		return fileStoreJpaRepository.findByTenantIdAndFileStoreIdList(tenantId, fileStoreIds);
+	}
+
+	public List<String> delete(List<String> fileStoreIds, String tenantId,String module, boolean isSoftDelete) {
+		List<Artifact> artifacts = getArtifacts(fileStoreIds, tenantId, module);
+		if (artifacts == null || artifacts.isEmpty()) {
+			log.error("Error deleting files.");
+			throw new CustomException("EG_FILESTORE_NOT_FOUND", "No files found for the given filestore ids and tenant");
+		}
+		if (isSoftDelete) {
+			log.info("Soft Deleting Files in database");
+			artifacts.forEach(artifact -> artifact.setIsDeleted(true));
+			fileStoreJpaRepository.saveAll(artifacts);
+		} else {
+			try {
+				log.info("Hard Deleting Files.");
+				cloudFilesManager.deleteFiles(artifacts);
+				fileStoreJpaRepository.deleteAll(artifacts);
+				log.info("Deleted files from cloud and database.");
+			} catch (Exception e) {
+				log.error("Error deleting files: {}", e.getMessage());
+				throw new CustomException("EG_FILESTORE_DELETE_ERROR",
+						"Error deleting files from storage: " + e.getMessage());
+			}
+		}
+
+		return artifacts.stream()
+				.map(Artifact::getFileStoreId)
+				.collect(Collectors.toList());
+
+	}
+
+	private List<Artifact> getArtifacts(List<String> fileStoreIds, String tenantId, String module) {
+		List<Artifact> artifacts;
+		if(module != null && !module.isEmpty()){
+			artifacts = fileStoreJpaRepository.findByFileStoreAndModule(module, fileStoreIds, tenantId);
+		} else {
+			artifacts = getByTenantIdAndFileStoreIdList(tenantId, fileStoreIds);
+		}
+		return artifacts;
 	}
 }

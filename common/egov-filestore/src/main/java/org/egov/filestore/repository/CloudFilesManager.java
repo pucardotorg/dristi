@@ -28,4 +28,14 @@ public interface CloudFilesManager {
 	 */
 	public Map<String, String> getFiles(List<org.egov.filestore.persistence.entity.Artifact> artifacts);
 
+	/**
+	 * Interface to delete files from cloud storage.
+	 * Takes a list of artifacts to be deleted.
+	 * Current Implementations:
+	 * 1. AWS S3
+	 * 2. Azure Blob Storage
+	 *
+	 * @param artifacts List of artifacts to be deleted
+	 */
+	public void deleteFiles(List<org.egov.filestore.persistence.entity.Artifact> artifacts);
 }

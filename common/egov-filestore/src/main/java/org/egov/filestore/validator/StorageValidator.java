@@ -3,6 +3,7 @@ package org.egov.filestore.validator;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import org.apache.commons.io.FilenameUtils;
@@ -113,6 +114,15 @@ public class StorageValidator {
 	private void validateFileSize(MultipartFile file) {
 		if (file.getSize() > fileStoreConfig.getFileSizeMax()) {
 			throw new CustomException("EG_FILESTORE_INVALID_INPUT", "File size exceeds the maximum allowed size of " + fileStoreConfig.getFileSizeMax() + " bytes");
+		}
+	}
+
+	public void validateDeleteFiles(List<String> fileStoreIds, String tenantId){
+		if (fileStoreIds == null || fileStoreIds.isEmpty()) {
+			throw new CustomException("EG_FILESTORE_INVALID_INPUT", "fileStoreIds cannot be null or empty");
+		}
+		if (tenantId == null || tenantId.isEmpty()) {
+			throw new CustomException("EG_FILESTORE_INVALID_INPUT", "tenantId cannot be null or empty");
 		}
 	}
 }
