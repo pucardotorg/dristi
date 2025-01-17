@@ -1,0 +1,46 @@
+[
+  {
+    "tenantId": "kl",
+    "moduleName": "ACCESSCONTROL-ACTIONS-TEST",
+    "masterName": "actions-test",
+    "mdmsPayload": [
+      {
+        "tenantId": "kl",
+        "schemaCode": "ACCESSCONTROL-ACTIONS-TEST.actions-test",
+        "data": {
+          "id": 2703,
+          "url": "/filestore/v1/files/delete",
+          "code": "null",
+          "name": "FilestoreUrl",
+          "path": "",
+          "enabled": false,
+          "displayName": "Filestore files Delete",
+          "orderNumber": 1,
+          "serviceCode": "filestore url",
+          "parentModule": ""
+        },
+        "isActive": true
+      }
+    ]
+  },
+  {
+    "tenantId": "kl",
+    "moduleName": "ACCESSCONTROL-ROLEACTIONS",
+    "masterName": "roleactions",
+   "mdmsPayload":[
+     {
+       "tenantId": "kl",
+       "schemaCode": "ACCESSCONTROL-ROLEACTIONS.roleactions",
+       "uniqueIdentifier": "419",
+       "data": {
+         "id": 419,
+         "actioncode": "2703",
+         "actionid": 2703,
+         "rolecode": "SUPERUSER",
+         "tenantid": "kl"
+       },
+       "isActive": true
+     }
+   ]
+  }
+]
