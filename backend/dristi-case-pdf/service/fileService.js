@@ -335,7 +335,11 @@ async function appendPrayerSwornFilesToPDF(pdf, prayerSwornStatementDetails) {
       );
     }
     if (prayerSworn?.complaintAdditionalDocumentFileStore?.length > 0) {
-      for (let j = 0; j < prayerSworn?.complaintAdditionalDocumentFileStore.length; j++) {
+      for (
+        let j = 0;
+        j < prayerSworn?.complaintAdditionalDocumentFileStore.length;
+        j++
+      ) {
         await appendPdfPagesWithHeader(
           existingPdfDoc,
           prayerSworn?.complaintAdditionalDocumentFileStore?.[j],
