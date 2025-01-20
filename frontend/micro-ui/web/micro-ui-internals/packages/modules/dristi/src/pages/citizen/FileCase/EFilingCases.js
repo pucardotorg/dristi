@@ -2364,7 +2364,7 @@ function EFilingCases({ path }) {
                   title={item.title}
                   handlePageChange={handlePageChange}
                   handleAccordionClick={() => {
-                    handleAccordionClick(index);
+                    handleAccordionClick(isFilingParty ? index : accordion.length - 1);
                   }}
                   key={index}
                   children={item.children}
@@ -2388,7 +2388,7 @@ function EFilingCases({ path }) {
               title={item.title}
               handlePageChange={handlePageChange}
               handleAccordionClick={() => {
-                handleAccordionClick(index);
+                handleAccordionClick(isFilingParty ? index : accordion.length - 1);
               }}
               key={index}
               children={item.children}
@@ -2588,7 +2588,7 @@ function EFilingCases({ path }) {
               headerBarEnd={<CloseBtn onClick={() => setShowConfirmOptionalModal(false)} />}
               actionCancelLabel={t("SKIP_AND_CONTINUE")}
               actionCancelOnSubmit={handleSkip}
-              actionSaveLabel={t("FILL_NOW")}
+              actionSaveLabel={isFilingParty && t("FILL_NOW")}
               children={optionalFieldsRemainingText(optionalFieldsLeftTotalCount)}
               actionSaveOnSubmit={() => takeUserToRemainingOptionalFieldsPage()}
             ></Modal>
