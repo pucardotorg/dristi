@@ -622,15 +622,15 @@ const EvidenceModal = ({
     );
   }, [allCombineDocs, documentSubmission, modalType, tenantId, isLoading, t]);
 
-  const setApplicationStatus = (type, applicationType) =>{
-    if(["SUBMIT_BAIL_DOCUMENTS", "REQUEST_FOR_BAIL"].includes(applicationType)){
+  const setApplicationStatus = (type, applicationType) => {
+    if (["SUBMIT_BAIL_DOCUMENTS", "REQUEST_FOR_BAIL"].includes(applicationType)) {
       return type === "SET_TERM_BAIL" ? "SET_TERM_BAIL" : type === "accept" ? "APPROVED" : "REJECTED";
     }
-    if(["DELAY_CONDONATION"].includes(applicationType)){
-      return type === "accept" ? "APPROVED" : "REJECTED"
+    if (["DELAY_CONDONATION"].includes(applicationType)) {
+      return type === "accept" ? "APPROVED" : "REJECTED";
     }
-    return type === "accept" ? "APPROVED" : "REJECTED"
-  }
+    return type === "accept" ? "APPROVED" : "REJECTED";
+  };
 
   const handleApplicationAction = async (generateOrder, type) => {
     try {
@@ -642,7 +642,9 @@ const EvidenceModal = ({
           name: `ORDER_TYPE_${orderType}`,
         },
         refApplicationId: documentSubmission?.[0]?.applicationList?.applicationNumber,
-        applicationStatus: documentSubmission?.[0]?.applicationList?.applicationType ? setApplicationStatus(type, documentSubmission[0].applicationList.applicationType) : null,
+        applicationStatus: documentSubmission?.[0]?.applicationList?.applicationType
+          ? setApplicationStatus(type, documentSubmission[0].applicationList.applicationType)
+          : null,
         ...(documentSubmission?.[0]?.applicationList?.applicationType === "DELAY_CONDONATION" && {
           isDcaAcceptedOrRejected: {
             code: type === "reject" ? "REJECTED" : type === "accept" ? "ACCEPTED" : null,
@@ -675,7 +677,9 @@ const EvidenceModal = ({
             documents: [],
             additionalDetails: {
               formdata,
-              applicationStatus: documentSubmission?.[0]?.applicationList?.applicationType ? setApplicationStatus(type, documentSubmission[0].applicationList.applicationType) : null,
+              applicationStatus: documentSubmission?.[0]?.applicationList?.applicationType
+                ? setApplicationStatus(type, documentSubmission[0].applicationList.applicationType)
+                : null,
             },
             ...(documentSubmission?.[0]?.applicationList?.additionalDetails?.onBehalOfName && {
               orderDetails: { parties: [{ partyName: documentSubmission?.[0]?.applicationList?.additionalDetails?.onBehalOfName }] },
@@ -912,6 +916,19 @@ const EvidenceModal = ({
             />
           }
           className="evidence-modal"
+          style={{
+            backgroundColor: "#007e7e",
+          }}
+          textStyle={{
+            color: "#fff",
+          }}
+          actionCancelTextStyle={
+            customLabelShow
+              ? {
+                  color: "#BB2C2F",
+                }
+              : {}
+          }
         >
           <div className="evidence-modal-main">
             <div className={"application-details"}>

@@ -14,7 +14,7 @@ import {
 import React, { useCallback, useEffect, useMemo, useState } from "react";
 import { InfoCard } from "@egovernments/digit-ui-components";
 import { DRISTIService } from "../../../../dristi/src/services";
-import { AdvocateIcon, RightArrow, SearchIcon } from "../../../../dristi/src/icons/svgIndex";
+import { AdvocateIcon, RightArrow } from "../../../../dristi/src/icons/svgIndex";
 import isEqual from "lodash/isEqual";
 import { useTranslation } from "react-i18next";
 import { useHistory } from "react-router-dom/cjs/react-router-dom.min";
@@ -37,6 +37,9 @@ import { Urls } from "@egovernments/digit-ui-module-dristi/src/hooks";
 import { getAdvocates } from "@egovernments/digit-ui-module-dristi/src/pages/citizen/FileCase/EfilingValidationUtils";
 import { Urls as hearingUrls } from "../../../../hearings/src/hooks/services/Urls";
 import { getFilingType } from "@egovernments/digit-ui-module-dristi/src/Utils";
+import SearchCaseAndShowDetails from "./joinCaseComponent/SearchCaseAndShowDetails";
+import AccessCodeValidation from "./joinCaseComponent/AccessCodeValidation";
+import useDownloadCasePdf from "@egovernments/digit-ui-module-dristi/src/hooks/dristi/useDownloadCasePdf";
 
 const CloseBtn = (props) => {
   return (
@@ -202,6 +205,8 @@ const JoinCaseHome = ({ refreshInbox, setShowSubmitResponseModal, setResponsePen
   const history = useHistory();
   const todayDate = new Date().getTime();
 
+  const { downloadPdf } = useDownloadCasePdf();
+
   const Modal = window?.Digit?.ComponentRegistryService?.getComponent("Modal");
   const CustomCaseInfoDiv = window?.Digit?.ComponentRegistryService?.getComponent("CustomCaseInfoDiv");
   const DocViewerWrapper = window?.Digit?.ComponentRegistryService?.getComponent("DocViewerWrapper");
@@ -217,6 +222,7 @@ const JoinCaseHome = ({ refreshInbox, setShowSubmitResponseModal, setResponsePen
   const [caseNumber, setCaseNumber] = useState("");
   const [caseDetails, setCaseDetails] = useState({});
   const [userType, setUserType] = useState({ label: "", value: "" });
+  const [partyInvolve, setPartyInvolve] = useState({ label: "", value: "" });
   const [barRegNumber, setBarRegNumber] = useState("");
   const [barDetails, setBarDetails] = useState([]);
   const [selectedParty, setSelectedParty] = useState({});
@@ -230,7 +236,7 @@ const JoinCaseHome = ({ refreshInbox, setShowSubmitResponseModal, setResponsePen
 
   const [party, setParty] = useState("");
   const [validationCode, setValidationCode] = useState("");
-  const [isDisabled, setIsDisabled] = useState(true);
+  const [isDisabled, setIsDisabled] = useState(false);
   const [errors, setErrors] = useState({});
   const [caseInfo, setCaseInfo] = useState([]);
   const [success, setSuccess] = useState(false);
@@ -259,6 +265,8 @@ const JoinCaseHome = ({ refreshInbox, setShowSubmitResponseModal, setResponsePen
   const [registerId, setRegisterId] = useState({});
 
   const [nextHearing, setNextHearing] = useState("");
+
+  const [isVerified, setIsVerified] = useState(false);
 
   const userInfo = JSON.parse(window.localStorage.getItem("user-info"));
   const userInfoType = useMemo(() => (userInfo?.type === "CITIZEN" ? "citizen" : "employee"), [userInfo]);
@@ -306,6 +314,15 @@ const JoinCaseHome = ({ refreshInbox, setShowSubmitResponseModal, setResponsePen
           {}
         );
         setCaseList(response?.criteria[0]?.responseList?.slice(0, 5));
+        if (response?.criteria[0]?.responseList?.length === 0) {
+          setErrors({
+            ...errors,
+            caseNumber: {
+              type: "not-admitted",
+              message: "NO_CASE_FOUND",
+            },
+          });
+        }
       } catch (error) {
         console.error("error :>> ", error);
       }
@@ -415,8 +432,13 @@ const JoinCaseHome = ({ refreshInbox, setShowSubmitResponseModal, setResponsePen
         caseNumber: undefined,
       });
     }
-    if (step === 1) {
-      if (userType && userType?.value === "Litigant" && selectedParty?.label && !selectedParty?.individualId) {
+    if (step === 2) {
+      if (
+        userType &&
+        userType?.value === "Litigant" &&
+        partyInvolve?.value
+        // &&  selectedParty?.label && !selectedParty?.individualId
+      ) {
         setIsDisabled(false);
       } else if (userType && userType?.value === "Advocate" && selectedParty?.label) {
         const { isFound: advIsFound, representative, partyType } = searchAdvocateInRepresentives(advocateId);
@@ -522,7 +544,6 @@ const JoinCaseHome = ({ refreshInbox, setShowSubmitResponseModal, setResponsePen
 
   useEffect(() => {
     fetchBasicUserInfo();
-    setIsDisabled(true);
     setIsSearchingCase(false);
   }, [show]);
 
@@ -559,8 +580,6 @@ const JoinCaseHome = ({ refreshInbox, setShowSubmitResponseModal, setResponsePen
     ) {
       setIsDisabled(false);
       setCaseDetails(option);
-      setCaseNumber(option?.filingNumber);
-      setCaseList([]);
 
       setErrors({
         ...errors,
@@ -578,124 +597,58 @@ const JoinCaseHome = ({ refreshInbox, setShowSubmitResponseModal, setResponsePen
     }
   };
 
+  const handleDownloadPDF = async () => {
+    const caseId = caseDetails?.id;
+    try {
+      if (!caseId) {
+        throw new Error("Case ID is not available.");
+      }
+      const response = await DRISTIService.downloadCaseBundle({ tenantId, caseId }, { tenantId });
+      const fileStoreId = response?.fileStoreId?.toLowerCase();
+      if (!fileStoreId || ["null", "undefined"].includes(fileStoreId)) {
+        throw new Error("Invalid fileStoreId received in the response.");
+      }
+      downloadPdf(tenantId, response?.fileStoreId);
+    } catch (error) {
+      console.error("Error downloading PDF: ", error.message || error);
+    }
+  };
+
   const modalItem = [
     // 0
     {
       modalMain: (
-        <div className="case-number-input">
-          <LabelFieldPair className="case-label-field-pair">
-            <CardLabel className="case-input-label">{`${t(JoinHomeLocalisation.ENTER_CASE_NUMBER)}`}</CardLabel>
-            <div style={{ width: "100%", display: "flex" }}>
-              <TextInput
-                type={"text"}
-                name="caseNumber"
-                value={caseNumber}
-                onChange={(e) => {
-                  setCaseDetails({});
-                  setCaseList([]);
-                  let str = e.target.value;
-                  if (str) {
-                    str = str.replace(/[^a-zA-Z0-9.-]/g, "");
-                    if (str.length > 50) {
-                      str = str.substring(0, 50);
-                    }
-                    setIsSearchingCase(true);
-                    setIsDisabled(true);
-                    setCaseNumber(str);
-                  } else {
-                    setCaseNumber("");
-                  }
-                }}
-              />
-              <div
-                className="icon-div"
-                onClick={() => {
-                  if (isSearchingCase) searchCase(caseNumber);
-                }}
-              >
-                <SearchIcon />
-              </div>
-            </div>
-            {caseList &&
-              caseList?.map((option, index) => {
-                return (
-                  <div
-                    className={`cp profile-dropdown--item display: flex `}
-                    key={index}
-                    onClick={() => {
-                      onSelect(option);
-                    }}
-                  >
-                    <span> {option?.filingNumber}</span>
-                  </div>
-                );
-              })}
-            {caseList && caseNumber && !caseDetails?.cnrNumber && !isSearchingCase && caseList.length === 0 && (
-              <div className={`cp profile-dropdown--item display: flex `} key={"-1"} onClick={() => {}}>
-                {<span> {t("CMN_NOOPTION")}</span>}
-              </div>
-            )}
-            <p style={{ fontSize: "12px" }}>
-              {t(JoinHomeLocalisation.FILLING_NUMBER_FORMATE_TEXT)} {"KL-<6 digit sequence number>-<YYYY>"}
-            </p>
-          </LabelFieldPair>
-          {errors?.caseNumber && (
-            <InfoCard
-              variant={"default"}
-              label={t(JoinHomeLocalisation.INVALID_CASE_FILING_NUMBER)}
-              additionalElements={
-                !errors?.caseNumber?.type && [
-                  <p>
-                    {t(JoinHomeLocalisation.INVALID_CASE_INFO_TEXT)}{" "}
-                    <span style={{ fontWeight: "bold" }}>{t(JoinHomeLocalisation.NYAYA_MITRA_TEXT)}</span> {t(JoinHomeLocalisation.FOR_SUPPORT_TEXT)}
-                  </p>,
-                ]
-              }
-              text={errors?.caseNumber?.type === "not-admitted" && t(errors?.caseNumber?.message)}
-              inline
-              textStyle={{}}
-              className={`custom-info-card error`}
-            />
-          )}
-          {caseDetails?.cnrNumber && (
-            <React.Fragment>
-              <h3 className="sure-text">{t(JoinHomeLocalisation.CONFIRM_JOIN_CASE)}</h3>
-              <CustomCaseInfoDiv
-                t={t}
-                data={caseInfo}
-                column={4}
-                children={
-                  <div className="complainants-respondents">
-                    <div style={{ width: "50%" }}>
-                      <h2 className="case-info-title">{t(JoinHomeLocalisation.COMPLAINANTS_TEXT)}</h2>
-                      <div className="case-info-value">
-                        <span>{complainantList?.map((complainant) => complainant?.fullName).join(", ")}</span>
-                      </div>
-                    </div>
-                    <div style={{ width: "50%" }}>
-                      <h2 className="case-info-title">{t(JoinHomeLocalisation.RESPONDENTS_TEXT)}</h2>
-                      <div className="case-info-value">
-                        <span>{accusedName}</span>
-                      </div>
-                    </div>
-                  </div>
-                }
-              />
-              <InfoCard
-                variant={"default"}
-                label={t(JoinHomeLocalisation.PLEASE_NOTE)}
-                additionalElements={{}}
-                inline
-                text={t(JoinHomeLocalisation.SIX_DIGIT_CODE_INFO)}
-                textStyle={{}}
-                className={`custom-info-card`}
-              />
-            </React.Fragment>
-          )}
-        </div>
+        <SearchCaseAndShowDetails
+          t={t}
+          caseNumber={caseNumber}
+          setCaseNumber={setCaseNumber}
+          caseList={caseList}
+          setCaseList={setCaseList}
+          setIsSearchingCase={setIsSearchingCase}
+          errors={errors}
+          caseDetails={caseDetails}
+          onSelect={onSelect}
+          setCaseDetails={setCaseDetails}
+          complainantList={complainantList}
+          respondentList={respondentList}
+        />
       ),
     },
     // 1
+    {
+      modalMain: (
+        <AccessCodeValidation
+          t={t}
+          caseDetails={caseDetails}
+          validationCode={validationCode}
+          setValidationCode={setValidationCode}
+          setIsDisabled={setIsDisabled}
+          errors={errors}
+          setErrors={setErrors}
+        />
+      ),
+    },
+    // 2
     {
       modalMain: (
         <div className="select-user-join-case">
@@ -1085,56 +1038,7 @@ const JoinCaseHome = ({ refreshInbox, setShowSubmitResponseModal, setResponsePen
         </div>
       ),
     },
-    // 7
-    {
-      modalMain: (
-        <div className="enter-validation-code">
-          <InfoCard
-            variant={"default"}
-            label={t(JoinHomeLocalisation.PLEASE_NOTE)}
-            additionalElements={{}}
-            inline
-            text={t(JoinHomeLocalisation.SIX_DIGIT_CODE_INFO)}
-            textStyle={{}}
-            className={`custom-info-card`}
-          />
-          <LabelFieldPair className="case-label-field-pair">
-            <div className="join-case-tooltip-wrapper">
-              <CardLabel className="case-input-label">{`${t(JoinHomeLocalisation.ENTER_CODE_JOIN_CASE)}`}</CardLabel>
-              <CustomErrorTooltip message={`${t(JoinHomeLocalisation.ENTER_CODE_JOIN_CASE)}`} showTooltip={true} icon />
-            </div>
-            <div style={{ width: "100%", maxWidth: "960px" }}>
-              <TextInput
-                // t={t}
-                style={{ width: "100%" }}
-                type={"text"}
-                name="validationCode"
-                value={validationCode}
-                onChange={(e) => {
-                  let val = e.target.value;
-                  val = val.substring(0, 6);
-                  val = val.replace(/\D/g, "");
-                  setValidationCode(val);
-                  if (val.length === 6) {
-                    setIsDisabled(false);
-                  } else {
-                    setIsDisabled(true);
-                  }
 
-                  setErrors({
-                    ...errors,
-                    validationCode: undefined,
-                  });
-                }}
-                // disable={editScreen}
-              />
-              {errors?.validationCode && <CardLabelError> {t(errors?.validationCode?.message)} </CardLabelError>}
-              {}
-            </div>
-          </LabelFieldPair>
-        </div>
-      ),
-    },
     // 8
     {
       modalMain: (
@@ -1429,9 +1333,36 @@ const JoinCaseHome = ({ refreshInbox, setShowSubmitResponseModal, setResponsePen
           setStep(step + 1);
         }
         setIsDisabled(true);
+      } else {
+        searchCase(caseNumber);
       }
-    } else if (step === 1) {
-      if (userType && userType?.value === "Litigant" && selectedParty?.label) {
+    } else if (step === 1 && validationCode.length === 6) {
+      if (!isVerified) {
+        const [res, err] = await submitJoinCase({
+          caseFilingNumber: caseDetails?.filingNumber,
+          tenantId: tenantId,
+          accessCode: validationCode,
+        });
+        if (res) {
+          setIsVerified(true);
+        } else {
+          setErrors({
+            ...errors,
+            validationCode: {
+              message: JoinHomeLocalisation.INVALID_ACCESS_CODE_MESSAGE,
+            },
+          });
+        }
+      } else {
+        setStep(step + 1);
+      }
+    } else if (step === 2) {
+      if (
+        userType &&
+        userType?.value === "Litigant" &&
+        partyInvolve?.value
+        // && selectedParty?.label
+      ) {
         setBarRegNumber("");
         setIsDisabled(true);
         setStep(step + 6);
@@ -2453,17 +2384,24 @@ const JoinCaseHome = ({ refreshInbox, setShowSubmitResponseModal, setResponsePen
       <Button
         variation={"secondary"}
         className={"secondary-button-selector"}
-        label={t("JOIN_A_CASE")}
+        label={t("SEARCH_NEW_CASE")}
         labelClassName={"secondary-label-selector"}
         onButtonClick={() => setShow(true)}
       />
       {show && (
         <Modal
           headerBarEnd={<CloseBtn onClick={closeModal} />}
-          actionCancelLabel={((step === 0 && caseDetails?.caseNumber) || step !== 0) && t(JoinHomeLocalisation.JOIN_CASE_BACK_TEXT)}
+          actionCancelLabel={
+            step === 1
+              ? t("DOWNLOAD_CASE_FILE")
+              : ((step === 0 && caseDetails?.cnrNumber) || step !== 0) && t(JoinHomeLocalisation.JOIN_CASE_BACK_TEXT)
+          }
+          actionCustomLabel={step === 1 ? t(JoinHomeLocalisation.JOIN_CASE_BACK_TEXT) : ""}
           actionCancelOnSubmit={() => {
-            if (step === 0 && caseDetails?.caseNumber) {
+            if (step === 0 && caseDetails?.cnrNumber) {
               setCaseDetails({});
+            } else if (step === 1) {
+              handleDownloadPDF();
             } else if (step === 6) {
               setStep(step - 3);
             } else if (step === 7) {
@@ -2482,6 +2420,14 @@ const JoinCaseHome = ({ refreshInbox, setShowSubmitResponseModal, setResponsePen
             } else setStep(step - 1);
             setIsDisabled(false);
           }}
+          actionCustomLabelSubmit={() => {
+            if (step === 1) {
+              setStep(step - 1);
+              setIsDisabled(false);
+              setValidationCode("");
+              setIsVerified(false);
+            }
+          }}
           actionSaveLabel={
             step === 2 && roleOfNewAdvocate?.value === "SUPPORTING_ADVOCATE"
               ? t("GOT_IT_TEXT")
@@ -2491,15 +2437,23 @@ const JoinCaseHome = ({ refreshInbox, setShowSubmitResponseModal, setResponsePen
               ? "Done"
               : step === 5
               ? "Make Payment"
-              : userType?.value === "Litigant" && step === 0 && !caseDetails.filingNumber
-              ? "Search"
+              : step === 0 && !caseDetails.filingNumber
+              ? t("ES_COMMON_SEARCH")
+              : step === 1
+              ? !isVerified
+                ? t("CS_VERIFY")
+                : t("JOIN_A_CASE")
               : t("PROCEED_TEXT")
           }
           actionSaveOnSubmit={onProceed}
           formId="modal-action"
-          headerBarMain={<Heading label={step === 4 ? "E-Sign" : step === 5 ? "Payment" : t("JOIN_A_CASE")} />}
+          headerBarMain={<Heading label={step === 4 ? "E-Sign" : step === 5 ? "Payment" : t("SEARCH_NEW_CASE")} />}
           className={`join-a-case-modal ${success && "case-join-success"}`}
           isDisabled={isDisabled}
+          isBackButtonDisabled={step === 1 && !isVerified}
+          popupStyles={{ width: "fit-content", userSelect: "none" }}
+          customActionStyle={{ background: "#fff", boxShadow: "none", border: "1px solid #007e7e" }}
+          customActionTextStyle={{ color: "#007e7e" }}
         >
           {step >= 0 && modalItem[step]?.modalMain}
           {(step === 4 || step === 5) && (

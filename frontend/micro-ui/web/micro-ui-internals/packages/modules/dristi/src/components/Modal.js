@@ -19,6 +19,8 @@ const Modal = ({
   setError,
   formId,
   isDisabled,
+  isCustomButtonDisabled,
+  isBackButtonDisabled,
   hideSubmit,
   style = {},
   textStyle = { margin: "0px" },
@@ -31,6 +33,11 @@ const Modal = ({
   cancelButtonBody,
   popUpStyleMain = {},
   actionCancelStyle,
+  customActionStyle,
+  customActionTextStyle,
+  customActionTextClassName,
+  actionCancelTextStyle,
+  cancelTextClassName,
 }) => {
   /**
    * TODO: It needs to be done from the desgin changes
@@ -60,30 +67,32 @@ const Modal = ({
           >
             {actionCancelLabel ? (
               <ButtonSelector
-                textStyles={{ margin: "0px", color: "#007E7E" }}
+                textStyles={{ margin: "0px", color: "#007E7E", ...(actionCancelTextStyle ? actionCancelTextStyle : {}) }}
                 theme="border"
                 label={actionCancelLabel}
                 onSubmit={actionCancelOnSubmit}
                 style={{ border: "1px solid #007E7E", backgroundColor: "white", ...(actionCancelStyle ? actionCancelStyle : {}) }}
                 ButtonBody={cancelButtonBody}
+                isDisabled={isBackButtonDisabled}
+                textClassName={cancelTextClassName}
               />
             ) : (
               <div></div>
             )}
             {actionCustomLabel ? (
               <ButtonSelector
-                textStyles={textStyle}
+                textStyles={{ margin: "0px", ...(customActionTextStyle ? customActionTextStyle : {}) }}
                 label={actionCustomLabel}
                 onSubmit={actionCustomLabelSubmit}
                 formId={formId}
-                isDisabled={isDisabled}
-                style={style}
-                textClassName={submitTextClassName}
+                isDisabled={isCustomButtonDisabled}
+                style={customActionStyle}
+                textClassName={customActionTextClassName}
               />
             ) : null}
             {actionSaveLabel && !hideSubmit ? (
               <ButtonSelector
-                textStyles={textStyle}
+                textStyles={{ margin: "0px", ...(textStyle ? textStyle : {}) }}
                 label={actionSaveLabel}
                 onSubmit={actionSaveOnSubmit}
                 formId={formId}
