@@ -2304,14 +2304,18 @@ export const updateCaseDetails = async ({
       ...(caseComplaintDocument && { signedCaseDocument: caseComplaintDocument?.fileStore }),
     };
   }
-  const caseTitle = ["DRAFT_IN_PROGRESS", "CASE_REASSIGNED"].includes(caseDetails?.status)
-    ? `${getComplainantName(
-        data?.additionalDetails?.complainantDetails?.formdata?.[0]?.data || caseDetails?.additionalDetails?.complainantDetails?.formdata?.[0]?.data
-      )} vs ${getRespondentName(
-        data?.additionalDetails?.respondentDetails?.formdata?.[0]?.data || caseDetails?.additionalDetails?.respondentDetails?.formdata?.[0]?.data
-      )}`
-    : caseDetails?.caseTitle;
+  const complainantName = getComplainantName(
+    data?.additionalDetails?.complainantDetails?.formdata?.[0]?.data || caseDetails?.additionalDetails?.complainantDetails?.formdata?.[0]?.data
+  );
+  const respondentName = getRespondentName(
+    data?.additionalDetails?.respondentDetails?.formdata?.[0]?.data || caseDetails?.additionalDetails?.respondentDetails?.formdata?.[0]?.data
+  );
 
+  const caseTitle = caseDetails?.caseTitle
+    ? caseDetails?.caseTitle
+    : complainantName !== "" && respondentName !== ""
+    ? `${complainantName} vs ${respondentName}`
+    : "";
   setErrorCaseDetails({
     ...caseDetails,
     documents: tempDocList,

@@ -1,4 +1,15 @@
-import { ActionBar, Button, CloseSvg, FormComposerV2, Header, Loader, SubmitBar, Toast } from "@egovernments/digit-ui-react-components";
+import {
+  ActionBar,
+  Button,
+  CloseSvg,
+  EditIcon,
+  FormComposerV2,
+  Header,
+  Loader,
+  SubmitBar,
+  TextInput,
+  Toast,
+} from "@egovernments/digit-ui-react-components";
 import React, { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useHistory } from "react-router-dom/cjs/react-router-dom.min";
@@ -145,8 +156,8 @@ const stateSla = {
 };
 
 const AccordionTabs = {
-  REVIEW_CASE_FILE : "reviewCaseFile",
-}
+  REVIEW_CASE_FILE: "reviewCaseFile",
+};
 
 const dayInMillisecond = 24 * 3600 * 1000;
 
@@ -201,6 +212,9 @@ function EFilingCases({ path }) {
   const [isLoader, setIsLoader] = useState(false);
   const [pdfDetails, setPdfDetails] = useState(null);
   const { downloadPdf } = useDownloadCasePdf();
+  const [newCaseName, setNewCaseName] = useState("");
+  const [showEditCaseNameModal, setShowEditCaseNameModal] = useState(false);
+  const [modalCaseName, setModalCaseName] = useState("");
   const [isFilingParty, setIsFilingParty] = useState(false);
 
   const [{ showSuccessToast, successMsg }, setSuccessToast] = useState({
@@ -510,14 +524,14 @@ function EFilingCases({ path }) {
     }
   }, [caseDetails]);
 
-  useEffect(()=>{
+  useEffect(() => {
     const filingParty = caseDetails?.auditDetails?.createdBy === userInfo?.uuid;
-    setIsFilingParty(filingParty)
+    setIsFilingParty(filingParty);
 
     if (caseDetails && !filingParty && !isLoading) {
       history.replace(`?caseId=${caseId}&selected=${AccordionTabs.REVIEW_CASE_FILE}`);
     }
-  },[caseDetails, caseId, history, isFilingParty, isLoading, userInfo?.uuid])
+  }, [caseDetails, caseId, history, isFilingParty, isLoading, userInfo?.uuid]);
 
   useEffect(() => {
     const data =
@@ -772,7 +786,7 @@ function EFilingCases({ path }) {
                       return {
                         ...input,
                         data: dataobj,
-                        isFilingParty : isFilingParty
+                        isFilingParty: isFilingParty,
                       };
                     }),
                   },
@@ -1807,10 +1821,11 @@ function EFilingCases({ path }) {
             throw new Error("FILE_STORE_ID_MISSING");
           }
         }
+        const newCaseDetails = { ...caseDetails, caseTitle: newCaseName || caseDetails.caseTitle };
         await updateCaseDetails({
           t,
           isCompleted: true,
-          caseDetails: isCaseReAssigned && errorCaseDetails ? errorCaseDetails : caseDetails,
+          caseDetails: isCaseReAssigned && errorCaseDetails ? errorCaseDetails : newCaseDetails,
           prevCaseDetails: prevCaseDetails,
           formdata,
           pageConfig,
@@ -1863,9 +1878,11 @@ function EFilingCases({ path }) {
 
   const onSaveDraft = (props) => {
     setParmas({ ...params, [pageConfig.key]: formdata });
+    const newCaseDetails = { ...caseDetails, caseTitle: newCaseName || caseDetails.caseTitle };
+
     updateCaseDetails({
       t,
-      caseDetails,
+      caseDetails: newCaseDetails,
       prevCaseDetails: prevCaseDetails,
       formdata,
       setFormDataValue: setFormDataValue.current,
@@ -1936,10 +1953,11 @@ function EFilingCases({ path }) {
             JSON.parse(JSON.stringify(formdata.filter((data) => data.isenabled)))
           )
         : false;
+    const newCaseDetails = { ...caseDetails, caseTitle: newCaseName || caseDetails.caseTitle };
     updateCaseDetails({
       t,
       isCompleted: isDrafted,
-      caseDetails: isCaseReAssigned && errorCaseDetails ? errorCaseDetails : caseDetails,
+      caseDetails: isCaseReAssigned && errorCaseDetails ? errorCaseDetails : newCaseDetails,
       prevCaseDetails: prevCaseDetails,
       formdata,
       setFormDataValue: setFormDataValue.current,
@@ -1979,10 +1997,9 @@ function EFilingCases({ path }) {
         setIsDisabled(false);
       });
     setPrevSelected(selected);
-    if(!isFilingParty){
-      history.replace(`?caseId=${caseId}&selected=${key}`)
-    }
-    else{
+    if (!isFilingParty) {
+      history.replace(`?caseId=${caseId}&selected=${key}`);
+    } else {
       history.push(`?caseId=${caseId}&selected=${key}`);
     }
   };
@@ -2217,10 +2234,9 @@ function EFilingCases({ path }) {
   };
 
   const handleGoToPage = (key) => {
-    if(!isFilingParty){
-      history.replace(`?caseId=${caseId}&selected=${AccordionTabs.REVIEW_CASE_FILE}`)
-    }
-    else{
+    if (!isFilingParty) {
+      history.replace(`?caseId=${caseId}&selected=${AccordionTabs.REVIEW_CASE_FILE}`);
+    } else {
       history.push(`?caseId=${caseId}&selected=${key}`);
     }
   };
@@ -2392,28 +2408,49 @@ function EFilingCases({ path }) {
       <div className="file-case-form-section">
         <div className="employee-card-wrapper">
           <div className="header-content">
-            <div className="header-details" style={{ display: selected === "reviewCaseFile" ? "block" : "flex" }}>
-              <Header styles={{ display: "flex", gap: "10px", justifyContent: "space-between" }}>
-                {`${t(pageConfig.header)}`}
-                {pageConfig?.showOptionalInHeader && <span style={{ color: "#77787B", fontWeight: 100 }}>&nbsp;(optional)</span>}
-                {selected === "reviewCaseFile" && (
-                  <Button
-                    className="border-none dristi-font-bold"
-                    onButtonClick={handleViewCasePdf}
-                    label={t("CS_VIEW_PDF")}
-                    variation={"secondary"}
-                  />
-                )}
-              </Header>
+            {selected === "reviewCaseFile" && (
+              <div style={{ display: "flex", justifyContent: "flex-end" }}>
+                <Button className="border-none dristi-font-bold" onButtonClick={handleViewCasePdf} label={t("CS_VIEW_PDF")} variation={"secondary"} />
+              </div>
+            )}
+            <div className="header-details">
               <div
-                className="header-icon"
-                onClick={() => {
-                  setIsOpen(true);
+                className="header-title-icon"
+                style={{
+                  display: "flex",
+                  flexDirection: selected === "reviewCaseFile" ? "column" : "row",
+                  gap: "10px",
+                  alignItems: "center",
+                  justifyContent: "space-between",
                 }}
               >
-                <CustomArrowDownIcon />
+                <div style={{ display: "flex", alignItems: "center", gap: "10px", flexWrap: "wrap" }}>
+                  <Header>
+                    {t(pageConfig.header)}
+                    {pageConfig?.showOptionalInHeader && <span style={{ color: "#77787B", fontWeight: 100 }}>&nbsp;(optional)</span>}
+                    {selected === "reviewCaseFile" && (
+                      <React.Fragment>
+                        <span>: {newCaseName?.trim() ? newCaseName : caseDetails?.caseTitle}</span>
+                      </React.Fragment>
+                    )}
+                  </Header>
+                  {selected === "reviewCaseFile" && !isCaseReAssigned && isFilingParty && (
+                    <div className="case-edit-icon" onClick={() => setShowEditCaseNameModal(true)} style={{ cursor: "pointer" }}>
+                      <span style={{ position: "relative" }} data-tip data-for="Click">
+                        <EditIcon style={{ display: "block", position: "relative" }} />
+                      </span>
+                      <ReactTooltip id="Click" place="bottom" content={t("CS_CLICK_TO_EDIT") || ""}>
+                        {t("CS_CLICK_TO_EDIT")}
+                      </ReactTooltip>
+                    </div>
+                  )}
+                </div>
+                <div className="header-icon" onClick={() => setIsOpen(true)}>
+                  <CustomArrowDownIcon />
+                </div>
               </div>
             </div>
+
             <p>{t(pageConfig.subtext || "")}</p>
           </div>
           {isCaseReAssigned && selected === "reviewCaseFile" && (
@@ -2711,6 +2748,29 @@ function EFilingCases({ path }) {
           prevIsDcaSkipped={prevIsDcaSkipped}
           setPrevIsDcaSkipped={setPrevIsDcaSkipped}
         ></ConfirmDcaSkipModal>
+      )}
+      {showEditCaseNameModal && (
+        <Modal
+          headerBarEnd={
+            <CloseBtn
+              onClick={() => {
+                setShowEditCaseNameModal(false);
+              }}
+            />
+          }
+          actionCancelOnSubmit={() => setShowEditCaseNameModal(false)}
+          actionSaveLabel={t("CS_COMMON_CONFIRM")}
+          actionSaveOnSubmit={() => {
+            setNewCaseName(modalCaseName);
+            setShowEditCaseNameModal(false);
+          }}
+          formId="modal-action"
+          headerBarMain={<Heading label={t("CS_CHANGE_CASE_NAME")} />}
+          className="edit-case-name-modal"
+        >
+          <h3 className="input-label">{t("CS_CASE_NAME")}</h3>
+          <TextInput defaultValue={newCaseName || caseDetails?.caseTitle} type="text" onChange={(e) => setModalCaseName(e.target.value)} />
+        </Modal>
       )}
     </div>
   );
