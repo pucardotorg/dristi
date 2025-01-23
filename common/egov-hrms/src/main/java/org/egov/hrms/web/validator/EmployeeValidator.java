@@ -8,7 +8,6 @@ import java.util.Date;
 
 import com.jayway.jsonpath.JsonPath;
 import org.apache.commons.lang3.StringUtils;
-import org.apache.kafka.common.protocol.types.Field;
 import org.egov.common.contract.request.RequestInfo;
 import org.egov.common.contract.request.Role;
 import org.egov.hrms.config.PropertiesManager;
@@ -133,7 +132,7 @@ public class EmployeeValidator {
 			}
 		}
 		if(null != criteria.getAsOnDate()) {
-			if(CollectionUtils.isEmpty(criteria.getDepartments()) || CollectionUtils.isEmpty(criteria.getDesignations()))
+			if(CollectionUtils.isEmpty(criteria.getCourtEstablishment()) || CollectionUtils.isEmpty(criteria.getDesignations()))
 				errorMap.put(ErrorConstants.HRMS_INVALID_SEARCH_AOD_CODE, ErrorConstants.HRMS_INVALID_SEARCH_AOD_MSG);
 		}
 
@@ -369,8 +368,8 @@ public class EmployeeValidator {
 		for(Assignment assignment: employee.getAssignments()) {
 			if(!assignment.getIsCurrentAssignment() && !CollectionUtils.isEmpty(currentAssignments) && null != assignment.getToDate()&& currentAssignments.get(0).getFromDate() < assignment.getToDate() )
 				errorMap.put(ErrorConstants.HRMS_OVERLAPPING_ASSGN_CURRENT_CODE,ErrorConstants.HRMS_OVERLAPPING_ASSGN_CURRENT_MSG);
-		    if(!mdmsData.get(HRMSConstants.HRMS_MDMS_DEPT_CODE).contains(assignment.getDepartment()))
-				errorMap.put(ErrorConstants.HRMS_INVALID_DEPT_CODE, ErrorConstants.HRMS_INVALID_DEPT_MSG);
+		    if(!mdmsData.get(HRMSConstants.HRMS_MDMS_COURT_ESTABLISHMENT).contains(assignment.getCourtEstablishment()))
+				errorMap.put(ErrorConstants.HRMS_INVALID_COURT_ESTABLISHMENT, ErrorConstants.HRMS_INVALID_COURT_ESTABLISHMENT_MSG);
 			if(!mdmsData.get(HRMSConstants.HRMS_MDMS_DESG_CODE).contains(assignment.getDesignation()))
 				errorMap.put(ErrorConstants.HRMS_INVALID_DESG_CODE, ErrorConstants.HRMS_INVALID_DESG_MSG);
 			if(!mdmsData.get(HRMSConstants.HRMS_MDMS_COURT_CODE).contains(assignment.getCourtroom()))

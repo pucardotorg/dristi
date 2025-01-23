@@ -117,9 +117,9 @@ public class EmployeeQueryBuilder {
 	}
 
 	private void addWhereClauseAssignment(EmployeeSearchCriteria criteria, StringBuilder builder, List<Object> preparedStmtList) {
-		if(!CollectionUtils.isEmpty(criteria.getDepartments())){
-			builder.append(" and assignment.department IN (").append(createQuery(criteria.getDepartments())).append(")");
-			addToPreparedStatement(preparedStmtList, criteria.getDepartments());
+		if(!CollectionUtils.isEmpty(criteria.getCourtEstablishment())){
+			builder.append(" and assignment.courtestablishment IN (").append(createQuery(criteria.getCourtEstablishment())).append(")");
+			addToPreparedStatement(preparedStmtList, criteria.getCourtEstablishment());
 		}
 		if(!CollectionUtils.isEmpty(criteria.getDesignations())){
 			builder.append(" and assignment.designation IN (").append(createQuery(criteria.getDesignations())+")");

@@ -68,7 +68,7 @@ public class Assignment {
 
 	@SafeHtml
 	@NotNull
-	private String department;
+	private String courtEstablishment;
 
 	@SafeHtml
 	@NotNull

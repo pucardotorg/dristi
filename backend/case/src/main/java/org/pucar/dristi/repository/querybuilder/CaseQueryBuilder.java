@@ -116,6 +116,8 @@ public class CaseQueryBuilder {
 
                 firstCriteria = addCriteria(criteria.getJudgeId(), query, firstCriteria, "cases.judgeid = ?", preparedStmtList,preparedStmtArgList, Types.VARCHAR);
 
+                firstCriteria = addCriteria(criteria.getCourtId(), query, firstCriteria, "cases.courtId = ? ", preparedStmtList, preparedStmtArgList, Types.VARCHAR);
+
                 firstCriteria = addListCriteria(criteria.getStage(), query, firstCriteria, "cases.stage", preparedStmtList, preparedStmtArgList, Types.VARCHAR);
 
                 firstCriteria = addListCriteria(criteria.getOutcome(), query, firstCriteria, "cases.outcome", preparedStmtList, preparedStmtArgList, Types.VARCHAR);

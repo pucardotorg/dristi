@@ -66,6 +66,34 @@ paths:
               schema:
                 $ref: >-
                   https://raw.githubusercontent.com/egovernments/DIGIT-OSS/master/core-services/docs/common-contract_v1-1.yml#/components/schemas/ErrorRes
+  /case/v1/_search:
+    post:
+      tags:
+        - Case
+      summary: Fetch cases
+      description: | 
+        Api to Fetch cases.
+      requestBody:
+        description: Criteria for case search + RequestInfo meta data.
+        content:
+          '*/*':
+            schema:
+              $ref: '#/component/schemas/CaseSearchRequest'
+        required: true
+      responses:
+        '200':
+          description: ResponseInfo with case details inside responseList
+          content:
+            '*/*':
+              schema:
+                $ref: '#/component/schemas/CaseSearchResponse'
+        '400':
+          description: Fetch case failed
+          content:
+            '*/*':
+              schema:
+                $ref: >-
+                  https://raw.githubusercontent.com/egovernments/DIGIT-OSS/master/core-services/docs/common-contract_v1-1.yml#/components/schemas/ErrorRes
   /case/v1/admin/edit_case:
     post:
       tags:
@@ -845,6 +873,54 @@ components:
           items:
             type: string
             description: The CNR number of the case for which the case file is requested.
+    CaseCriteria:
+      type: object
+      required: [tenantId]
+      properties:
+        caseId:
+          type: String
+        defaultFields:
+          type: Boolean
+        cnrNumber:
+          type: String
+        filingNumber:
+          type: String
+        outcome:
+          type: array
+          items:
+            type: String
+        courtCaseNumber:
+          type: String
+        filingFromDate:
+          type: integer
+          format: int64
+        filingToDate:
+          type: integer
+          format: int64
+        registrationFromDate:
+          type: integer
+          format: int64
+        registrationToDate:
+          type: integer
+          format: int64
+        judgeId:
+          type: String
+        stage:
+          type: array
+          items:
+            type: string
+        subStage:
+          type: string
+        litigantId:
+          type: String
+        advocateId:
+          type: String
+        courtId:
+          type: String
+        status:
+          type: array
+          items:
+            type: String
 
     CaseListRequestCriteria:
       type: object
@@ -1048,7 +1124,7 @@ components:
           $ref: >-
             https://raw.githubusercontent.com/egovernments/DIGIT-OSS/master/core-services/docs/common-contract_v1-1.yml#/components/schemas/RequestInfo
         criteria:
-          $ref: '#/components/schemas/CaseSearchCriteria'
+          $ref: '#/components/schemas/CaseCriteria'
 
     CaseSearchResponse:
       type: object
@@ -1058,7 +1134,7 @@ components:
         cases:
           type: array
           items:
-            $ref: '#/components/schemas/CourtCase'
+            $ref: '#/components/schemas/CaseCriteria'
         pagination:
           $ref: https://raw.githubusercontent.com/egovernments/DIGIT-OSS/master/core-services/docs/common-contract_v1-1.yml#/components/schemas/Pagination
 

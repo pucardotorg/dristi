@@ -1,0 +1,162 @@
+[
+  {
+    "tenantId": "kl",
+    "moduleName": "ACCESSCONTROL-ROLES",
+    "masterName": "roles",
+    "mdmsPayload": [
+      {
+        "tenantId": "kl",
+        "schemaCode": "ACCESSCONTROL-ROLES.roles",
+        "uniqueIdentifier": "JUDGE",
+        "data": {
+          "code": "JUDGE",
+          "name": "Judge",
+          "description": "Judge"
+        },
+        "isActive": true
+      },
+      {
+        "tenantId": "kl",
+        "schemaCode": "ACCESSCONTROL-ROLES.roles",
+        "uniqueIdentifier": "GENERAL_COURT_ROOM_MANAGER",
+        "data": {
+          "name": "General Court Room Manager",
+          "description": "General Court Room Manager",
+          "code": "GENERAL_COURT_ROOM_MANAGER"
+        },
+        "isActive": true
+      },
+      {                    //to be updated
+        "tenantId": "kl",
+        "schemaCode": "ACCESSCONTROL-ROLES.roles",
+        "uniqueIdentifier": "COURT_ROOM_MANAGER",
+        "data": {
+          "code": "COURT_ROOM_MANAGER",
+          "name": "Court Room Manager",
+          "description": "Court Room Manager"
+        },
+        "isActive": true
+      },
+      {
+        "tenantId": "kl",
+        "schemaCode": "ACCESSCONTROL-ROLES.roles",
+        "uniqueIdentifier": "LEGAL_ASSISTANT",
+        "data": {
+          "name": "Legal Assistant",
+          "description": "Legal Assistant",
+          "code": "LEGAL_ASSISTANT"
+        },
+        "isActive": true
+      }
+    ]
+  },
+  {
+    "tenantId": "kl",
+    "moduleName": "egov-hrms",
+    "masterName": "EmployeeType",
+    "mdmsPayload": [
+      {
+        "tenantId": "kl",
+        "schemaCode": "egov-hrms.EmployeeType",
+        "uniqueIdentifier": "General Court Room Manager",
+        "data": {
+          "code": "General Court Room Manager",
+          "active": true
+        },
+        "isActive": true
+      },
+      {
+        "tenantId": "kl",
+        "schemaCode": "egov-hrms.EmployeeType",
+        "uniqueIdentifier": "Court Room Manager",
+        "data": {
+          "code": "Court Room Manager",
+          "active": true
+        },
+        "isActive": true
+      },
+      {
+        "tenantId": "kl",
+        "schemaCode": "egov-hrms.EmployeeType",
+        "uniqueIdentifier": "Legal Assistant",
+        "data": {
+          "code": "Legal Assistant",
+          "active": true
+        },
+        "isActive": true
+      },
+      {
+        "tenantId": "kl",
+        "schemaCode": "egov-hrms.EmployeeType",
+        "uniqueIdentifier": "E-Post",
+        "data": {
+          "code": "E-Post",
+          "active": true
+        },
+        "isActive": true
+      }
+    ]
+  },
+  {
+    "tenantId": "kl",
+    "moduleName": "common-masters",
+    "masterName": "CourtEstablishment",//old data is soft delete, new added
+    "mdmsPayload": [
+      {
+        "tenantId": "kl",
+        "schemaCode": "common-masters.CourtEstablishment",
+        "uniqueIdentifier": "JUDICIAL_MAGISTRATE_FIRST_CLASS",
+        "data": {
+          "code": "JUDICIAL_MAGISTRATE_FIRST_CLASS",
+          "name": "Special Court Of Judicial Magistrate of the First Class , for the trial of cases under section 138 of NI Act , 1881 at Kollam ( \"24X7 ON Court\" )",
+          "type": "2",
+          "active": true
+        },
+        "isActive": true
+      }
+    ]
+  },
+  {
+    "tenantId": "kl",
+    "moduleName": "common-masters",
+    "masterName": "Designation", // all the old data is soft deleted, add new ones
+    "mdmsPayload": [
+      {
+        "tenantId": "kl",
+        "schemaCode": "common-masters.Designation",
+        "uniqueIdentifier": "GENERAL_COURT_ROOM_MANAGER",
+        "data": {
+          "name": "General Court Room Manager",
+          "code": "GENERAL_COURT_ROOM_MANAGER",
+          "active": true,
+          "description": "General Court Room Manager"
+        },
+        "isActive": true
+      },
+      {
+        "tenantId": "kl",
+        "schemaCode": "common-masters.Designation",
+        "uniqueIdentifier": "COURT_ROOM_MANAGER",
+        "data": {
+          "name": "Court Room Manager",
+          "description": "Court Room Manager",
+          "code": "COURT_ROOM_MANAGER",
+          "active": true
+        },
+        "isActive": true
+      },
+      {
+        "tenantId": "kl",
+        "schemaCode": "common-masters.Designation",
+        "uniqueIdentifier": "LEGAL_ASSISTANT",
+        "data": {
+          "name": "Legal Assistant",
+          "description": "Legal Assistant",
+          "active": true,
+          "code": "LEGAL_ASSISTANT"
+        },
+        "isActive": true
+      }
+    ]
+  }
+]

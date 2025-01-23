@@ -77,6 +77,9 @@ public class CaseCriteria {
     @Valid
     private String advocateId = null;
 
+    @JsonProperty("courtId")
+    private String courtId;
+
     @JsonProperty("status")
     @Valid
     private List<String> status = null;

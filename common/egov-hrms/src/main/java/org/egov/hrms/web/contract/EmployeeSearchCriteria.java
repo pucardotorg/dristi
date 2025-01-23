@@ -27,7 +27,7 @@ public class EmployeeSearchCriteria {
 	
 	public List<String> names;
 	
-	public List<String> departments;
+	public List<String> courtEstablishment;
 	
 	public List<String> designations;
 
@@ -60,7 +60,7 @@ public class EmployeeSearchCriteria {
 
 	public boolean isCriteriaEmpty(EmployeeSearchCriteria criteria) {
 		if(CollectionUtils.isEmpty(criteria.getCodes()) && CollectionUtils.isEmpty(criteria.getNames()) 
-				&& CollectionUtils.isEmpty(criteria.getDepartments()) && CollectionUtils.isEmpty(criteria.getDesignations())
+				&& CollectionUtils.isEmpty(criteria.getCourtEstablishment()) && CollectionUtils.isEmpty(criteria.getDesignations())
 				&& CollectionUtils.isEmpty(criteria.getIds()) && CollectionUtils.isEmpty(criteria.getEmployeestatuses())
 				&& CollectionUtils.isEmpty(criteria.getEmployeetypes()) && CollectionUtils.isEmpty(criteria.getUuids())
 				&& CollectionUtils.isEmpty(criteria.getPositions()) && StringUtils.isEmpty(criteria.getTenantId())
