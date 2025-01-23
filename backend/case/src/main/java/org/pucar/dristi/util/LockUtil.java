@@ -39,8 +39,10 @@ public class LockUtil {
         RequestInfoWrapper requestInfoWrapper = RequestInfoWrapper.builder()
                 .requestInfo(requestInfo).build();
 
-        Object object = repository.fetchResult(uri, requestInfoWrapper);
-        return (Boolean)object;
+        Boolean result = repository.getResult(uri, requestInfoWrapper);
+        if (result == null)
+            result = false;
+        return result;
 
     }
 }

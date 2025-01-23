@@ -1,6 +1,5 @@
 package org.pucar.dristi.util;
 
-import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.egov.common.contract.request.RequestInfo;
 import org.junit.jupiter.api.BeforeEach;
@@ -50,14 +49,14 @@ public class LockUtilTest {
 
         // Mock the repository response
         Boolean mockResponse = true; // Replace with appropriate mock response
-        when(repository.fetchResult(any(), any())).thenReturn(mockResponse);
+        when(repository.getResult(any(), any())).thenReturn(mockResponse);
 
         // Execute method
         boolean result = lockUtil.isLockPresent(requestInfo, uniqueId, tenantId);
 
         // Verify
         assertTrue(result);
-        verify(repository, times(1)).fetchResult(any(), any());
+        verify(repository, times(1)).getResult(any(), any());
     }
 
     @Test
@@ -68,7 +67,7 @@ public class LockUtilTest {
 
         // Mock repository response
         Boolean mockResponse = false;
-        when(repository.fetchResult(any(), any())).thenReturn(mockResponse);
+        when(repository.getResult(any(), any())).thenReturn(mockResponse);
 
 
         // Execute method
@@ -76,6 +75,6 @@ public class LockUtilTest {
 
         // Verify
         assertFalse(result);
-        verify(repository, times(1)).fetchResult(any(), any());
+        verify(repository, times(1)).getResult(any(), any());
     }
 }
