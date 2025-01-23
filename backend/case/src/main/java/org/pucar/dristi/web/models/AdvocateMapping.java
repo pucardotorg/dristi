@@ -1,18 +1,15 @@
 package org.pucar.dristi.web.models;
 
-import java.util.List;
-
-import org.egov.common.contract.models.AuditDetails;
-import org.pucar.dristi.web.models.Document;
-import org.springframework.validation.annotation.Validated;
-
 import com.fasterxml.jackson.annotation.JsonProperty;
-
 import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.egov.common.contract.models.AuditDetails;
+import org.springframework.validation.annotation.Validated;
+
+import java.util.List;
 
 /**
  * AdvocateMapping
@@ -23,45 +20,43 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-public class AdvocateMapping   {
-        @JsonProperty("id")
+public class AdvocateMapping {
 
-        @Valid         private String id = null;
+    @JsonProperty("id")
+    @Valid
+    private String id = null;
 
-        @JsonProperty("tenantId")
-        //  @NotNull
+    @JsonProperty("tenantId")
+    //  @NotNull
+    private String tenantId = null;
 
-                private String tenantId = null;
+    @JsonProperty("advocateId")
+    private String advocateId = null;
 
-        @JsonProperty("advocateId")
+    @JsonProperty("caseId")
+    private String caseId = null;
 
-                private String advocateId = null;
+    @JsonProperty("representing")
+    @Valid
+    // @Size(min=1)
+    private List<Party> representing = null;
 
-        @JsonProperty("caseId")
+    @JsonProperty("isActive")
+    private Boolean isActive = true;
 
-                private String caseId = null;
+    @JsonProperty("documents")
+    @Valid
+    private List<Document> documents = null;
 
-        @JsonProperty("representing")
-          @Valid
-       // @Size(min=1)
-        private List<Party> representing = null;
+    @JsonProperty("auditDetails")
+    @Valid
+    private AuditDetails auditDetails = null;
 
-        @JsonProperty("isActive")
+    @JsonProperty("additionalDetails")
+    private Object additionalDetails = null;
 
-                private Boolean isActive = true;
-
-        @JsonProperty("documents")
-          @Valid
-                private List<Document> documents = null;
-
-        @JsonProperty("auditDetails")
-
-          @Valid
-                private AuditDetails auditDetails = null;
-
-        @JsonProperty("additionalDetails")
-
-                private Object additionalDetails = null;
+    @JsonProperty("hasSigned")
+    private Boolean hasSigned = false;
 
 
 }

@@ -1,22 +1,7 @@
 package org.pucar.dristi.validators;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.Map;
-import static org.pucar.dristi.config.ServiceConstants.DELETE_DRAFT_WORKFLOW_ACTION;
-import static org.pucar.dristi.config.ServiceConstants.INDIVIDUAL_NOT_FOUND;
-import static org.pucar.dristi.config.ServiceConstants.INVALID_ADVOCATE_DETAILS;
-import static org.pucar.dristi.config.ServiceConstants.INVALID_ADVOCATE_ID;
-import static org.pucar.dristi.config.ServiceConstants.INVALID_COMPLAINANT_DETAILS;
-import static org.pucar.dristi.config.ServiceConstants.INVALID_DOCUMENT_DETAILS;
-import static org.pucar.dristi.config.ServiceConstants.INVALID_FILESTORE_ID;
-import static org.pucar.dristi.config.ServiceConstants.INVALID_LINKEDCASE_ID;
-import static org.pucar.dristi.config.ServiceConstants.MDMS_DATA_NOT_FOUND;
-import static org.pucar.dristi.config.ServiceConstants.SAVE_DRAFT_CASE_WORKFLOW_ACTION;
-import static org.pucar.dristi.config.ServiceConstants.SUBMIT_CASE_WORKFLOW_ACTION;
-import static org.pucar.dristi.config.ServiceConstants.VALIDATION_ERR;
-import static org.pucar.dristi.config.ServiceConstants.SUBMIT_CASE_ADVOCATE_WORKFLOW_ACTION;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import net.minidev.json.JSONArray;
 import org.egov.common.contract.request.RequestInfo;
 import org.egov.tracer.model.CustomException;
 import org.pucar.dristi.config.Configuration;
@@ -24,232 +9,253 @@ import org.pucar.dristi.repository.CaseRepository;
 import org.pucar.dristi.service.IndividualService;
 import org.pucar.dristi.util.AdvocateUtil;
 import org.pucar.dristi.util.FileStoreUtil;
+import org.pucar.dristi.util.LockUtil;
 import org.pucar.dristi.util.MdmsUtil;
-import org.pucar.dristi.web.models.AdvocateMapping;
-import org.pucar.dristi.web.models.CaseCriteria;
-import org.pucar.dristi.web.models.CaseRequest;
-import org.pucar.dristi.web.models.CourtCase;
-import org.pucar.dristi.web.models.JoinCaseRequest;
-import org.pucar.dristi.web.models.Party;
+import org.pucar.dristi.web.models.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.util.ObjectUtils;
 
-import net.minidev.json.JSONArray;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+
+import static org.pucar.dristi.config.ServiceConstants.*;
 
 
 @Component
 public class CaseRegistrationValidator {
 
-	private IndividualService individualService;
+    private IndividualService individualService;
 
-	private CaseRepository repository;
+    private CaseRepository repository;
 
 
-	private MdmsUtil mdmsUtil;
+    private MdmsUtil mdmsUtil;
 
-	private FileStoreUtil fileStoreUtil;
+    private FileStoreUtil fileStoreUtil;
 
-	private AdvocateUtil advocateUtil;
+    private AdvocateUtil advocateUtil;
 
-	private Configuration config;
-	
-	@Autowired
-	public CaseRegistrationValidator(IndividualService indService, CaseRepository caseRepo,
-			 MdmsUtil mdmsUtil, FileStoreUtil fileStoreUtil, AdvocateUtil advocateUtil,
-			Configuration config) {
-		this.individualService = indService;
-		this.repository = caseRepo;
-		this.mdmsUtil = mdmsUtil;
-		this.fileStoreUtil = fileStoreUtil;
-		this.advocateUtil = advocateUtil;
-		this.config = config;
-		
-	}
+    private Configuration config;
 
-	/*
-	 * To do validation-> 1. Validate MDMS data 2. Fetch court department info from
-	 * HRMS 3. Validate artifact Ids
-	 */
+    private final LockUtil lockUtil;
 
-	public void validateCaseRegistration(CaseRequest caseRequest) throws CustomException {
-		CourtCase courtCase = caseRequest.getCases();
+    @Autowired
+    public CaseRegistrationValidator(IndividualService indService, CaseRepository caseRepo,
+                                     MdmsUtil mdmsUtil, FileStoreUtil fileStoreUtil, AdvocateUtil advocateUtil,
+                                     Configuration config, LockUtil lockUtil) {
+        this.individualService = indService;
+        this.repository = caseRepo;
+        this.mdmsUtil = mdmsUtil;
+        this.fileStoreUtil = fileStoreUtil;
+        this.advocateUtil = advocateUtil;
+        this.config = config;
 
-		if (ObjectUtils.isEmpty(courtCase.getCaseCategory()))
-			throw new CustomException(VALIDATION_ERR, "caseCategory is mandatory for creating case");
-		if (ObjectUtils.isEmpty(courtCase.getStatutesAndSections()))
-			throw new CustomException(VALIDATION_ERR, "statute and sections is mandatory for creating case");
-		if (!(SAVE_DRAFT_CASE_WORKFLOW_ACTION.equalsIgnoreCase(courtCase.getWorkflow().getAction())
-				|| DELETE_DRAFT_WORKFLOW_ACTION.equalsIgnoreCase(courtCase.getWorkflow().getAction())) && ObjectUtils.isEmpty(courtCase.getLitigants())) {
-				throw new CustomException(VALIDATION_ERR, "litigants is mandatory for creating case");
-		}
-		if (ObjectUtils.isEmpty(caseRequest.getRequestInfo().getUserInfo())) {
-			throw new CustomException(VALIDATION_ERR, "user info is mandatory for creating case");
-		}
-	}
+        this.lockUtil = lockUtil;
+    }
 
-	public boolean validateUpdateRequest(CaseRequest caseRequest, List<CourtCase> existingCourtCaseList) {
-		if(existingCourtCaseList.isEmpty()){
-			return false;
-		}
-		validateCaseRegistration(caseRequest);
-		CourtCase courtCase = caseRequest.getCases();
-		RequestInfo requestInfo = caseRequest.getRequestInfo();
+    /*
+     * To do validation-> 1. Validate MDMS data 2. Fetch court department info from
+     * HRMS 3. Validate artifact Ids
+     */
 
-		if (!(SUBMIT_CASE_WORKFLOW_ACTION.equalsIgnoreCase(courtCase.getWorkflow().getAction())
-				|| SAVE_DRAFT_CASE_WORKFLOW_ACTION.equalsIgnoreCase(courtCase.getWorkflow().getAction()) || SUBMIT_CASE_ADVOCATE_WORKFLOW_ACTION.equalsIgnoreCase(courtCase.getWorkflow().getAction())
-				|| DELETE_DRAFT_WORKFLOW_ACTION.equalsIgnoreCase(courtCase.getWorkflow().getAction())) && ObjectUtils.isEmpty(courtCase.getFilingDate())) {
-				throw new CustomException(VALIDATION_ERR, "filingDate is mandatory for updating case");
-		}
-		//For not allowing certain fields to update
-		setUnEditableOnUpdate(existingCourtCaseList.get(0), caseRequest);
+    public void validateCaseRegistration(CaseRequest caseRequest) throws CustomException {
+        CourtCase courtCase = caseRequest.getCases();
 
-		validateMDMSData(requestInfo,courtCase);
-		validateDocuments(courtCase);
-		validateRepresentative(requestInfo,courtCase);
-		validateLinkedCase(courtCase,existingCourtCaseList);
+        if (ObjectUtils.isEmpty(courtCase.getCaseCategory()))
+            throw new CustomException(VALIDATION_ERR, "caseCategory is mandatory for creating case");
+        if (ObjectUtils.isEmpty(courtCase.getStatutesAndSections()))
+            throw new CustomException(VALIDATION_ERR, "statute and sections is mandatory for creating case");
+        if (!(SAVE_DRAFT_CASE_WORKFLOW_ACTION.equalsIgnoreCase(courtCase.getWorkflow().getAction())
+                || DELETE_DRAFT_WORKFLOW_ACTION.equalsIgnoreCase(courtCase.getWorkflow().getAction())) && ObjectUtils.isEmpty(courtCase.getLitigants())) {
+            throw new CustomException(VALIDATION_ERR, "litigants is mandatory for creating case");
+        }
+        if (ObjectUtils.isEmpty(caseRequest.getRequestInfo().getUserInfo())) {
+            throw new CustomException(VALIDATION_ERR, "user info is mandatory for creating case");
+        }
+    }
 
-		return true;
-	}
+    public boolean validateUpdateRequest(CaseRequest caseRequest, List<CourtCase> existingCourtCaseList) {
+        if (existingCourtCaseList.isEmpty()) {
+            return false;
+        }
+        validateCaseRegistration(caseRequest);
+        checkForLock(caseRequest);
+        CourtCase courtCase = caseRequest.getCases();
+        RequestInfo requestInfo = caseRequest.getRequestInfo();
 
-	private void validateMDMSData(RequestInfo requestInfo, CourtCase courtCase){
-		Map<String, Map<String, JSONArray>> mdmsData = mdmsUtil.fetchMdmsData(requestInfo, courtCase.getTenantId(),
-				config.getCaseModule(), createMasterDetails());
+        if (!(SUBMIT_CASE_WORKFLOW_ACTION.equalsIgnoreCase(courtCase.getWorkflow().getAction())
+                || SAVE_DRAFT_CASE_WORKFLOW_ACTION.equalsIgnoreCase(courtCase.getWorkflow().getAction()) || SUBMIT_CASE_ADVOCATE_WORKFLOW_ACTION.equalsIgnoreCase(courtCase.getWorkflow().getAction())
+                || DELETE_DRAFT_WORKFLOW_ACTION.equalsIgnoreCase(courtCase.getWorkflow().getAction())) && ObjectUtils.isEmpty(courtCase.getFilingDate())) {
+            throw new CustomException(VALIDATION_ERR, "filingDate is mandatory for updating case");
+        }
+        //For not allowing certain fields to update
+        setUnEditableOnUpdate(existingCourtCaseList.get(0), caseRequest);
 
-		if (mdmsData.get(config.getCaseModule()) == null)
-			throw new CustomException(MDMS_DATA_NOT_FOUND, "MDMS data does not exist");
-		if (!courtCase.getLitigants().isEmpty()) {
-			courtCase.getLitigants().forEach(litigant -> {
-				if (litigant.getIndividualId() != null) {
-					if (!individualService.searchIndividual(requestInfo, litigant.getIndividualId()))
-						throw new CustomException(INDIVIDUAL_NOT_FOUND, INVALID_COMPLAINANT_DETAILS);
-				} else
-					throw new CustomException(INDIVIDUAL_NOT_FOUND, INVALID_COMPLAINANT_DETAILS);
-			});
-		}
-	}
+        validateMDMSData(requestInfo, courtCase);
+        validateDocuments(courtCase);
+        validateRepresentative(requestInfo, courtCase);
+        validateLinkedCase(courtCase, existingCourtCaseList);
 
-	private void validateDocuments(CourtCase courtCase){
-		if (courtCase.getDocuments() != null && !courtCase.getDocuments().isEmpty()) {
-			courtCase.getDocuments().forEach(document -> {
-				if (document.getFileStore() != null) {
-					if (!fileStoreUtil.doesFileExist(courtCase.getTenantId(), document.getFileStore()))
-						throw new CustomException(INVALID_FILESTORE_ID, INVALID_DOCUMENT_DETAILS);
-				} else
-					throw new CustomException(INVALID_FILESTORE_ID, INVALID_DOCUMENT_DETAILS);
-			});
-		}
-	}
+        return true;
+    }
 
-	private void validateRepresentative(RequestInfo requestInfo, CourtCase courtCase){
-		if (courtCase.getRepresentatives() != null && !courtCase.getRepresentatives().isEmpty()) {
-			courtCase.getRepresentatives().forEach(rep -> {
-				if (rep.getAdvocateId() != null) {
-					if (!advocateUtil.doesAdvocateExist(requestInfo, rep.getAdvocateId()))
-						throw new CustomException(INVALID_ADVOCATE_ID, INVALID_ADVOCATE_DETAILS);
-				} else
-					throw new CustomException(INVALID_ADVOCATE_ID, INVALID_ADVOCATE_DETAILS);
-			});
-		}
-	}
+    private void checkForLock(CaseRequest caseRequest) {
+        String uniqueId = caseRequest.getCases().getId().toString();
+        String tenantId = caseRequest.getCases().getTenantId();
 
-	private void validateLinkedCase(CourtCase courtCase, List<CourtCase> existingApplications ){
-		if (courtCase.getLinkedCases() != null && !courtCase.getLinkedCases().isEmpty()) {
-			boolean isValidLinkedCase = courtCase.getLinkedCases().stream().allMatch(linkedCase -> existingApplications
-					.stream()
-					.anyMatch(existingCase -> existingCase.getLinkedCases().stream()
-							.anyMatch(existingLinkedCase -> (linkedCase.getId() != null
-									&& linkedCase.getId().equals(existingLinkedCase.getId()))
-									|| (linkedCase.getIsActive() != null
-									&& linkedCase.getIsActive().equals(existingLinkedCase.getIsActive()))
-									|| (linkedCase.getCaseNumber() != null
-									&& linkedCase.getCaseNumber().equals(existingLinkedCase.getCaseNumber()))
-									|| (linkedCase.getReferenceUri() != null && linkedCase.getReferenceUri()
-									.equals(existingLinkedCase.getReferenceUri())))));
-			if (!isValidLinkedCase)
-				throw new CustomException(INVALID_LINKEDCASE_ID, "Invalid linked case details");
-		}
-	}
+        // check the lock for case if there is lock then throw an exception
+        boolean isLocked ;
+        try {
+            isLocked = lockUtil.isLockPresent(caseRequest.getRequestInfo(), uniqueId, tenantId);
+        } catch (JsonProcessingException e) {
+            throw new CustomException("JSON_PROCESSING_EXCEPTION", "Exception Occurred while processing json");
+        }
+        if (isLocked) {
+            throw new CustomException("CASE_LOCKED_EXCEPTION", "Case is locked please try after sometime");
+        }
 
-	private void setUnEditableOnUpdate(CourtCase courtCase, CaseRequest caseRequest) {
-		caseRequest.getCases().setFilingDate(courtCase.getFilingDate());
-		caseRequest.getCases().setCaseNumber(courtCase.getCaseNumber());
-		caseRequest.getCases().setCnrNumber(courtCase.getCnrNumber());
-		caseRequest.getCases().setRegistrationDate(courtCase.getRegistrationDate());
-		caseRequest.getCases().setTenantId(courtCase.getTenantId());
-	}
+    }
 
-	public boolean canLitigantJoinCase(JoinCaseRequest joinCaseRequest) {
-		RequestInfo requestInfo = joinCaseRequest.getRequestInfo();
-		Party litigant = joinCaseRequest.getLitigant();
+    private void validateMDMSData(RequestInfo requestInfo, CourtCase courtCase) {
+        Map<String, Map<String, JSONArray>> mdmsData = mdmsUtil.fetchMdmsData(requestInfo, courtCase.getTenantId(),
+                config.getCaseModule(), createMasterDetails());
 
-		if (litigant.getIndividualId() != null) { // validation for IndividualId for litigant
-			if (!individualService.searchIndividual(requestInfo, litigant.getIndividualId())) {
-				throw new CustomException(INDIVIDUAL_NOT_FOUND, INVALID_COMPLAINANT_DETAILS);
-			}
-		} else {
-			throw new CustomException(INDIVIDUAL_NOT_FOUND, INVALID_COMPLAINANT_DETAILS);
-		}
+        if (mdmsData.get(config.getCaseModule()) == null)
+            throw new CustomException(MDMS_DATA_NOT_FOUND, "MDMS data does not exist");
+        if (!courtCase.getLitigants().isEmpty()) {
+            courtCase.getLitigants().forEach(litigant -> {
+                if (litigant.getIndividualId() != null) {
+                    if (!individualService.searchIndividual(requestInfo, litigant.getIndividualId()))
+                        throw new CustomException(INDIVIDUAL_NOT_FOUND, INVALID_COMPLAINANT_DETAILS);
+                } else
+                    throw new CustomException(INDIVIDUAL_NOT_FOUND, INVALID_COMPLAINANT_DETAILS);
+            });
+        }
+    }
 
-		if (litigant.getDocuments() != null && !litigant.getDocuments().isEmpty()) {// validation for documents for
-																					// litigant
-			litigant.getDocuments().forEach(document -> {
-				if (document.getFileStore() != null) {
-					if (!fileStoreUtil.doesFileExist(litigant.getTenantId(), document.getFileStore()))
-						throw new CustomException(INVALID_FILESTORE_ID, INVALID_DOCUMENT_DETAILS);
-				} else
-					throw new CustomException(INVALID_FILESTORE_ID, INVALID_DOCUMENT_DETAILS);
-			});
-		}
-		return true;
+    private void validateDocuments(CourtCase courtCase) {
+        if (courtCase.getDocuments() != null && !courtCase.getDocuments().isEmpty()) {
+            courtCase.getDocuments().forEach(document -> {
+                if (document.getFileStore() != null) {
+                    if (!fileStoreUtil.doesFileExist(courtCase.getTenantId(), document.getFileStore()))
+                        throw new CustomException(INVALID_FILESTORE_ID, INVALID_DOCUMENT_DETAILS);
+                } else
+                    throw new CustomException(INVALID_FILESTORE_ID, INVALID_DOCUMENT_DETAILS);
+            });
+        }
+    }
 
-	}
+    private void validateRepresentative(RequestInfo requestInfo, CourtCase courtCase) {
+        if (courtCase.getRepresentatives() != null && !courtCase.getRepresentatives().isEmpty()) {
+            courtCase.getRepresentatives().forEach(rep -> {
+                if (rep.getAdvocateId() != null) {
+                    if (!advocateUtil.doesAdvocateExist(requestInfo, rep.getAdvocateId()))
+                        throw new CustomException(INVALID_ADVOCATE_ID, INVALID_ADVOCATE_DETAILS);
+                } else
+                    throw new CustomException(INVALID_ADVOCATE_ID, INVALID_ADVOCATE_DETAILS);
+            });
+        }
+    }
 
-	public boolean canRepresentativeJoinCase(JoinCaseRequest joinCaseRequest) {
-		RequestInfo requestInfo = joinCaseRequest.getRequestInfo();
-		AdvocateMapping representative = joinCaseRequest.getRepresentative();
+    private void validateLinkedCase(CourtCase courtCase, List<CourtCase> existingApplications) {
+        if (courtCase.getLinkedCases() != null && !courtCase.getLinkedCases().isEmpty()) {
+            boolean isValidLinkedCase = courtCase.getLinkedCases().stream().allMatch(linkedCase -> existingApplications
+                    .stream()
+                    .anyMatch(existingCase -> existingCase.getLinkedCases().stream()
+                            .anyMatch(existingLinkedCase -> (linkedCase.getId() != null
+                                    && linkedCase.getId().equals(existingLinkedCase.getId()))
+                                    || (linkedCase.getIsActive() != null
+                                    && linkedCase.getIsActive().equals(existingLinkedCase.getIsActive()))
+                                    || (linkedCase.getCaseNumber() != null
+                                    && linkedCase.getCaseNumber().equals(existingLinkedCase.getCaseNumber()))
+                                    || (linkedCase.getReferenceUri() != null && linkedCase.getReferenceUri()
+                                    .equals(existingLinkedCase.getReferenceUri())))));
+            if (!isValidLinkedCase)
+                throw new CustomException(INVALID_LINKEDCASE_ID, "Invalid linked case details");
+        }
+    }
 
-		if (representative.getAdvocateId() != null) { // validation for advocateId for representative
-			if (!advocateUtil.doesAdvocateExist(requestInfo, representative.getAdvocateId()))
-				throw new CustomException(INVALID_ADVOCATE_ID, INVALID_ADVOCATE_DETAILS);
-		} else {
-			throw new CustomException(INVALID_ADVOCATE_ID, INVALID_ADVOCATE_DETAILS);
-		}
-		if (representative.getDocuments() != null && !representative.getDocuments().isEmpty()) { // validation for
-																									// documents for
-																									// representative
-			representative.getDocuments().forEach(document -> {
-				if (document.getFileStore() != null) {
-					if (!fileStoreUtil.doesFileExist(representative.getTenantId(), document.getFileStore()))
-						throw new CustomException(INVALID_FILESTORE_ID, INVALID_DOCUMENT_DETAILS);
-				} else {
-					throw new CustomException(INVALID_FILESTORE_ID, INVALID_DOCUMENT_DETAILS);
-				}
-			});
-		}
-		return true;
-	}
+    private void setUnEditableOnUpdate(CourtCase courtCase, CaseRequest caseRequest) {
+        caseRequest.getCases().setFilingDate(courtCase.getFilingDate());
+        caseRequest.getCases().setCaseNumber(courtCase.getCaseNumber());
+        caseRequest.getCases().setCnrNumber(courtCase.getCnrNumber());
+        caseRequest.getCases().setRegistrationDate(courtCase.getRegistrationDate());
+        caseRequest.getCases().setTenantId(courtCase.getTenantId());
+    }
 
-	public void validateEditCase(CaseRequest caseRequest) throws CustomException {
+    public boolean canLitigantJoinCase(JoinCaseRequest joinCaseRequest) {
+        RequestInfo requestInfo = joinCaseRequest.getRequestInfo();
+        Party litigant = joinCaseRequest.getLitigant();
 
-		if(ObjectUtils.isEmpty(caseRequest.getCases().getId())){
-			throw new CustomException(VALIDATION_ERR, "case Id cannot be empty");
-		}
+        if (litigant.getIndividualId() != null) { // validation for IndividualId for litigant
+            if (!individualService.searchIndividual(requestInfo, litigant.getIndividualId())) {
+                throw new CustomException(INDIVIDUAL_NOT_FOUND, INVALID_COMPLAINANT_DETAILS);
+            }
+        } else {
+            throw new CustomException(INDIVIDUAL_NOT_FOUND, INVALID_COMPLAINANT_DETAILS);
+        }
 
-		if (ObjectUtils.isEmpty(caseRequest.getCases().getCaseTitle()) || ObjectUtils.isEmpty(caseRequest.getCases().getAdditionalDetails())
-		   || caseRequest.getCases().getCaseTitle().trim().isEmpty()) {
-			throw new CustomException(VALIDATION_ERR, "caseTitle or additionalDetails cannot be empty");
-		}
-	}
+        if (litigant.getDocuments() != null && !litigant.getDocuments().isEmpty()) {// validation for documents for
+            // litigant
+            litigant.getDocuments().forEach(document -> {
+                if (document.getFileStore() != null) {
+                    if (!fileStoreUtil.doesFileExist(litigant.getTenantId(), document.getFileStore()))
+                        throw new CustomException(INVALID_FILESTORE_ID, INVALID_DOCUMENT_DETAILS);
+                } else
+                    throw new CustomException(INVALID_FILESTORE_ID, INVALID_DOCUMENT_DETAILS);
+            });
+        }
+        return true;
 
-	private List<String> createMasterDetails() {
-		List<String> masterList = new ArrayList<>();
-		masterList.add("ComplainantType");
-		masterList.add("CaseCategory");
-		masterList.add("PaymentMode");
-		masterList.add("ResolutionMechanism");
+    }
 
-		return masterList;
-	}
+    public boolean canRepresentativeJoinCase(JoinCaseRequest joinCaseRequest) {
+        RequestInfo requestInfo = joinCaseRequest.getRequestInfo();
+        AdvocateMapping representative = joinCaseRequest.getRepresentative();
+
+        if (representative.getAdvocateId() != null) { // validation for advocateId for representative
+            if (!advocateUtil.doesAdvocateExist(requestInfo, representative.getAdvocateId()))
+                throw new CustomException(INVALID_ADVOCATE_ID, INVALID_ADVOCATE_DETAILS);
+        } else {
+            throw new CustomException(INVALID_ADVOCATE_ID, INVALID_ADVOCATE_DETAILS);
+        }
+        if (representative.getDocuments() != null && !representative.getDocuments().isEmpty()) { // validation for
+            // documents for
+            // representative
+            representative.getDocuments().forEach(document -> {
+                if (document.getFileStore() != null) {
+                    if (!fileStoreUtil.doesFileExist(representative.getTenantId(), document.getFileStore()))
+                        throw new CustomException(INVALID_FILESTORE_ID, INVALID_DOCUMENT_DETAILS);
+                } else {
+                    throw new CustomException(INVALID_FILESTORE_ID, INVALID_DOCUMENT_DETAILS);
+                }
+            });
+        }
+        return true;
+    }
+
+    public void validateEditCase(CaseRequest caseRequest) throws CustomException {
+
+        if (ObjectUtils.isEmpty(caseRequest.getCases().getId())) {
+            throw new CustomException(VALIDATION_ERR, "case Id cannot be empty");
+        }
+
+        if (ObjectUtils.isEmpty(caseRequest.getCases().getCaseTitle()) || ObjectUtils.isEmpty(caseRequest.getCases().getAdditionalDetails())
+                || caseRequest.getCases().getCaseTitle().trim().isEmpty()) {
+            throw new CustomException(VALIDATION_ERR, "caseTitle or additionalDetails cannot be empty");
+        }
+    }
+
+    private List<String> createMasterDetails() {
+        List<String> masterList = new ArrayList<>();
+        masterList.add("ComplainantType");
+        masterList.add("CaseCategory");
+        masterList.add("PaymentMode");
+        masterList.add("ResolutionMechanism");
+
+        return masterList;
+    }
 
 }

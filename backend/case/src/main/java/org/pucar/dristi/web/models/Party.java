@@ -1,20 +1,16 @@
 package org.pucar.dristi.web.models;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.UUID;
-
-import org.egov.common.contract.models.AuditDetails;
-import org.pucar.dristi.web.models.Document;
-import org.springframework.validation.annotation.Validated;
-
 import com.fasterxml.jackson.annotation.JsonProperty;
-
 import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.egov.common.contract.models.AuditDetails;
+import org.springframework.validation.annotation.Validated;
+
+import java.util.List;
+import java.util.UUID;
 
 /**
  * Party
@@ -26,53 +22,56 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @Builder
 public class Party {
-	@JsonProperty("id")
+    @JsonProperty("id")
 
-	@Valid
-	private UUID id = null;
+    @Valid
+    private UUID id = null;
 
-	@JsonProperty("tenantId")
-	//@NotNull
+    @JsonProperty("tenantId")
+    //@NotNull
 
-	private String tenantId = null;
+    private String tenantId = null;
 
-	@JsonProperty("caseId")
+    @JsonProperty("caseId")
 
-	private String caseId = null;
+    private String caseId = null;
 
-	@JsonProperty("partyCategory")
-	//@NotNull
+    @JsonProperty("partyCategory")
+    //@NotNull
 
-	private String partyCategory = null;
+    private String partyCategory = null;
 
-	@JsonProperty("organisationID")
+    @JsonProperty("organisationID")
 
-	private String organisationID = null;
+    private String organisationID = null;
 
-	@JsonProperty("individualId")
+    @JsonProperty("individualId")
 
-	private String individualId = null;
+    private String individualId = null;
 
-	@JsonProperty("partyType")
+    @JsonProperty("partyType")
 
-	private String partyType = null;
+    private String partyType = null;
 
-	@JsonProperty("isActive")
+    @JsonProperty("isActive")
 
-	private Boolean isActive = true;
+    private Boolean isActive = true;
 
-	@JsonProperty("documents")
-	@Valid
-	private List<Document> documents = null;
+    @JsonProperty("documents")
+    @Valid
+    private List<Document> documents = null;
 
-	@JsonProperty("auditDetails")
+    @JsonProperty("auditDetails")
 
-	@Valid
-	private AuditDetails auditDetails = null;
+    @Valid
+    private AuditDetails auditDetails = null;
 
-	@JsonProperty("additionalDetails")
+    @JsonProperty("additionalDetails")
 
-	private Object additionalDetails = null;
+    private Object additionalDetails = null;
+
+    @JsonProperty("hasSigned")
+    private Boolean hasSigned = false;
 
 
 }

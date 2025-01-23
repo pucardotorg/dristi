@@ -297,4 +297,10 @@ public class Configuration {
 	//Indexer
 	@Value("${indexer.join.case.kafka.topic}")
 	private String joinCaseTopicIndexer;
+
+	@Value("${pucar.lock.host}")
+	private String lockSvcHost;
+
+	@Value("${pucar.lock.search.endpoint}")
+	private String lockEndPoint;
 }

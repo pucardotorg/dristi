@@ -13,6 +13,7 @@ import java.util.*;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.egov.common.contract.models.AuditDetails;
+import org.egov.common.contract.models.Workflow;
 import org.egov.common.contract.request.RequestInfo;
 import org.egov.common.contract.request.Role;
 import org.egov.common.contract.request.User;
@@ -26,6 +27,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.pucar.dristi.config.Configuration;
 import org.pucar.dristi.config.ServiceConstants;
 import org.pucar.dristi.enrichment.CaseRegistrationEnrichment;
+import org.pucar.dristi.enrichment.EnrichmentService;
 import org.pucar.dristi.kafka.Producer;
 import org.pucar.dristi.repository.CaseRepository;
 import org.pucar.dristi.util.AdvocateUtil;
@@ -67,6 +69,9 @@ public class CaseServiceTest {
 
     @Mock
     private AdvocateUtil advocateUtil;
+
+    @Mock
+    private EnrichmentService enrichmentService;
 
 
     @InjectMocks
@@ -117,7 +122,8 @@ public class CaseServiceTest {
         joinCaseRequest.setAdditionalDetails("form-data");
         courtCase = new CourtCase();
         objectMapper = new ObjectMapper();
-        caseService = new CaseService(validator,enrichmentUtil,caseRepository,workflowService,config,producer,new BillingUtil(new RestTemplate(),config),encryptionDecryptionUtil,objectMapper,cacheService, notificationService, individualService, advocateUtil);
+        enrichmentService = new EnrichmentService(new ArrayList<>());
+        caseService = new CaseService(validator,enrichmentUtil,caseRepository,workflowService,config,producer,new BillingUtil(new RestTemplate(),config),encryptionDecryptionUtil,objectMapper,cacheService,enrichmentService, notificationService, individualService, advocateUtil);
     }
 
     CaseCriteria setupTestCaseCriteria(CourtCase courtCase) {
@@ -582,6 +588,7 @@ public class CaseServiceTest {
         String updatedStatus = "STATUS";
         CourtCase courtCase = new CourtCase(); // Mock case-indexer.yml CourtCase object with required fields
         courtCase.setId(UUID.randomUUID());
+        courtCase.setWorkflow(Workflow.builder().action("action").build());
         caseRequest.setCases(courtCase);
         courtCase.setStatus(updatedStatus);
         when(validator.validateUpdateRequest(any(CaseRequest.class),any())).thenReturn(true);

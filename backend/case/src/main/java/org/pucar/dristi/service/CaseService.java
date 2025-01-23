@@ -9,11 +9,13 @@ import jakarta.validation.Valid;
 import lombok.extern.slf4j.Slf4j;
 import org.egov.common.contract.models.AuditDetails;
 import org.egov.common.contract.request.RequestInfo;
+import org.egov.common.contract.request.Role;
 import org.egov.common.contract.request.User;
 import org.egov.tracer.model.CustomException;
 import org.jetbrains.annotations.NotNull;
 import org.pucar.dristi.config.Configuration;
 import org.pucar.dristi.enrichment.CaseRegistrationEnrichment;
+import org.pucar.dristi.enrichment.EnrichmentService;
 import org.pucar.dristi.kafka.Producer;
 import org.pucar.dristi.repository.CaseRepository;
 import org.pucar.dristi.util.AdvocateUtil;
@@ -29,7 +31,6 @@ import org.pucar.dristi.web.models.analytics.Outcome;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
-import org.springframework.util.ObjectUtils;
 
 import java.util.*;
 import java.util.stream.Collectors;
@@ -54,6 +55,8 @@ public class CaseService {
     private final ObjectMapper objectMapper;
     private final CacheService cacheService;
 
+    private final EnrichmentService enrichmentService;
+
     private final SmsNotificationService notificationService;
 
     private final IndividualService individualService;
@@ -70,7 +73,7 @@ public class CaseService {
                        Producer producer,
                        BillingUtil billingUtil,
                        EncryptionDecryptionUtil encryptionDecryptionUtil,
-                       ObjectMapper objectMapper, CacheService cacheService, SmsNotificationService notificationService, IndividualService individualService, AdvocateUtil advocateUtil) {
+                       ObjectMapper objectMapper, CacheService cacheService, EnrichmentService enrichmentService, SmsNotificationService notificationService, IndividualService individualService, AdvocateUtil advocateUtil) {
         this.validator = validator;
         this.enrichmentUtil = enrichmentUtil;
         this.caseRepository = caseRepository;
@@ -81,6 +84,7 @@ public class CaseService {
         this.encryptionDecryptionUtil = encryptionDecryptionUtil;
         this.objectMapper = objectMapper;
         this.cacheService = cacheService;
+        this.enrichmentService = enrichmentService;
         this.notificationService = notificationService;
         this.individualService = individualService;
         this.advocateUtil = advocateUtil;
@@ -118,7 +122,7 @@ public class CaseService {
         try {
             // Fetch applications from database according to the given search criteria
 
-            if(!FLOW_JAC.equals(caseSearchRequests.getFlow()))
+            if (!FLOW_JAC.equals(caseSearchRequests.getFlow()))
                 enrichmentUtil.enrichCaseSearchRequest(caseSearchRequests);
 
             List<CaseCriteria> caseCriteriaList = caseSearchRequests.getCriteria();
@@ -128,9 +132,9 @@ public class CaseService {
             for (CaseCriteria criteria : caseCriteriaList) {
                 CourtCase courtCase = null;
                 if (!criteria.getDefaultFields() && criteria.getCaseId() != null) {
-                    log.info("Searching in redis :: {}",criteria.getCaseId());
+                    log.info("Searching in redis :: {}", criteria.getCaseId());
                     courtCase = searchRedisCache(caseSearchRequests.getRequestInfo(), criteria.getCaseId());
-                    log.info("Redis Response :: {}",courtCase);
+                    log.info("Redis Response :: {}", courtCase);
                 }
                 if (courtCase != null) {
                     criteria.setResponseList(Collections.singletonList(courtCase));
@@ -174,15 +178,35 @@ public class CaseService {
                     caseRequest.getRequestInfo());
 
             // Validate whether the application that is being requested for update indeed exists
-            if(!validator.validateUpdateRequest(caseRequest, existingApplications.get(0).getResponseList())) {
+            if (!validator.validateUpdateRequest(caseRequest, existingApplications.get(0).getResponseList())) {
                 throw new CustomException(VALIDATION_ERR, "Case Application does not exist");
             }
+
 
             // Enrich application upon update
             enrichmentUtil.enrichCaseApplicationUponUpdate(caseRequest, existingApplications.get(0).getResponseList());
 
+
+            // conditional enrichment using strategy
+            enrichmentService.enrichCourtCase(caseRequest);
             String previousStatus = caseRequest.getCases().getStatus();
             workflowService.updateWorkflowStatus(caseRequest);
+
+            // check for last e-sign
+            // if its last e-sign update the process instance case will move to pending payment
+
+            Boolean lastSigned = checkItsLastSign(caseRequest);
+
+            if(lastSigned){
+                caseRequest.getRequestInfo()
+                        .getUserInfo().getRoles()
+                        .add(Role.builder()
+                                .id(123L).code(SYSTEM).name(SYSTEM)
+                                .tenantId(caseRequest.getCases().getTenantId()).build());
+                caseRequest.getCases().getWorkflow().setAction(E_SIGN_COMPLETE);
+                workflowService.updateWorkflowStatus(caseRequest);
+            }
+
 
             if (CASE_ADMIT_STATUS.equals(caseRequest.getCases().getStatus())) {
                 enrichmentUtil.enrichAccessCode(caseRequest);
@@ -215,7 +239,7 @@ public class CaseService {
             cases.setAccessCode(null);
             String updatedStatus = caseRequest.getCases().getStatus();
             String messageCode = getNotificationStatus(previousStatus, updatedStatus);
-            if(messageCode != null){
+            if (messageCode != null) {
                 callNotificationService(caseRequest, messageCode);
             }
 
@@ -231,6 +255,58 @@ public class CaseService {
 
     }
 
+    private Boolean checkItsLastSign(CaseRequest caseRequest) {
+
+        if (E_SIGN.equalsIgnoreCase(caseRequest.getCases().getWorkflow().getAction())) {
+
+            CourtCase cases = caseRequest.getCases();
+            // Check if all litigants have signed
+            boolean allLitigantsHaveSigned = cases.getLitigants().stream()
+                    .filter(Party::getIsActive)
+                    .allMatch(Party::getHasSigned);
+
+            // If any litigant hasn't signed, return false immediately
+            if (!allLitigantsHaveSigned) {
+                return false;
+            }
+
+            // Create a map of litigant IDs to their respective representatives
+            Map<UUID, List<AdvocateMapping>> representativesMap = cases.getRepresentatives().stream()
+                    .filter(AdvocateMapping::getIsActive)
+                    .flatMap(rep -> rep.getRepresenting().stream()
+                            .map(Party::getId)  // Get the ID of each litigant represented by this advocate
+                            .filter(Objects::nonNull)  // Ensure no null IDs
+                            .map(litigantId -> new AbstractMap.SimpleEntry<>(litigantId, rep)))  // Create entries with litigant ID and the rep
+                    .collect(Collectors.groupingBy(Map.Entry::getKey, // Group by litigant ID
+                            Collectors.mapping(Map.Entry::getValue, Collectors.toList())));
+
+
+            // Check if each active litigant  has a at least one signed representative
+            // Find the list of representatives for the current litigant
+            // If no representatives exist, the litigant's signature is enough
+            // If representatives exist, at least one must have signed
+
+            return cases.getLitigants().stream()
+                    .filter(Party::getIsActive)
+                    .allMatch(litigant -> {
+                        UUID litigantId = litigant.getId();
+
+                        // Find the list of representatives for the current litigant
+                        List<AdvocateMapping> representatives = representativesMap.get(litigantId);
+
+                        // If no representatives exist, the litigant's signature is enough
+                        if (representatives == null || representatives.isEmpty()) {
+                            return true;
+                        }
+
+                        // If representatives exist, at least one must have signed
+                        return representatives.stream().anyMatch(AdvocateMapping::getHasSigned);
+                    });
+        }
+
+        return false;
+    }
+
     public CourtCase editCase(CaseRequest caseRequest) {
 
         try {
@@ -242,10 +318,10 @@ public class CaseService {
                 log.debug("CourtCase not found in Redis cache for caseId :: {}", caseRequest.getCases().getId());
                 List<CaseCriteria> existingApplications = caseRepository.getCases(Collections.singletonList(CaseCriteria.builder().caseId(String.valueOf(caseRequest.getCases().getId())).build()), caseRequest.getRequestInfo());
 
-                if (existingApplications.get(0).getResponseList().isEmpty()){
+                if (existingApplications.get(0).getResponseList().isEmpty()) {
                     log.debug("CourtCase not found in DB for caseId :: {}", caseRequest.getCases().getId());
                     throw new CustomException(VALIDATION_ERR, "Case Application does not exist");
-                }else{
+                } else {
                     courtCase = existingApplications.get(0).getResponseList().get(0);
                 }
             }
@@ -312,8 +388,8 @@ public class CaseService {
                             .collect(Collectors.toSet())
             );
         }
-        if(!advocateId.isEmpty()){
-            advocateId = advocateUtil.getAdvocate(caseRequest.getRequestInfo(),advocateId.stream().toList());
+        if (!advocateId.isEmpty()) {
+            advocateId = advocateUtil.getAdvocate(caseRequest.getRequestInfo(), advocateId.stream().toList());
         }
         individualIds.addAll(advocateId);
     }
@@ -336,14 +412,13 @@ public class CaseService {
 
         Set<String> mobileNumber = new HashSet<>();
         try {
-            for(String id : individualIds){
+            for (String id : individualIds) {
                 List<Individual> individuals = individualService.getIndividualsByIndividualId(requestInfo, id);
-                if(individuals != null && individuals.get(0).getMobileNumber() != null){
+                if (individuals != null && individuals.get(0).getMobileNumber() != null) {
                     mobileNumber.add(individuals.get(0).getMobileNumber());
                 }
             }
-        }
-        catch (Exception e) {
+        } catch (Exception e) {
             // Log the exception and continue the execution without throwing
             log.error("Error occurred while sending notification: {}", e.toString());
         }
@@ -384,14 +459,13 @@ public class CaseService {
 
         List<String> mobileNumber = new ArrayList<>();
         try {
-            for(String id : individualIds){
+            for (String id : individualIds) {
                 List<Individual> individuals = individualService.getIndividualsByIndividualId(requestInfo, id);
-                if(individuals != null && individuals.get(0).getMobileNumber() != null){
+                if (individuals != null && individuals.get(0).getMobileNumber() != null) {
                     mobileNumber.add(individuals.get(0).getMobileNumber());
                 }
             }
-        }
-        catch (Exception e) {
+        } catch (Exception e) {
             // Log the exception and continue the execution without throwing
             log.error("Error occurred while sending notification: {}", e.toString());
         }
@@ -465,28 +539,21 @@ public class CaseService {
     }
 
     private String getNotificationStatus(String previousStatus, String updatedStatus) {
-        if (updatedStatus.equalsIgnoreCase(PENDING_E_SIGN)){
+        if (updatedStatus.equalsIgnoreCase(PENDING_E_SIGN)) {
             return ESIGN_PENDING;
-        }
-        else if(updatedStatus.equalsIgnoreCase(PAYMENT_PENDING)){
+        } else if (updatedStatus.equalsIgnoreCase(PAYMENT_PENDING)) {
             return CASE_SUBMITTED;
-        }
-        else if(previousStatus.equalsIgnoreCase(UNDER_SCRUTINY) && updatedStatus.equalsIgnoreCase(PENDING_REGISTRATION)){
-            return  FSO_VALIDATED;
-        }
-        else if(previousStatus.equalsIgnoreCase(UNDER_SCRUTINY) && updatedStatus.equalsIgnoreCase(CASE_REASSIGNED)){
+        } else if (previousStatus.equalsIgnoreCase(UNDER_SCRUTINY) && updatedStatus.equalsIgnoreCase(PENDING_REGISTRATION)) {
+            return FSO_VALIDATED;
+        } else if (previousStatus.equalsIgnoreCase(UNDER_SCRUTINY) && updatedStatus.equalsIgnoreCase(CASE_REASSIGNED)) {
             return FSO_SEND_BACK;
-        }
-        else if (previousStatus.equalsIgnoreCase(PENDING_REGISTRATION) && updatedStatus.equalsIgnoreCase(PENDING_ADMISSION_HEARING)){
-            return  CASE_REGISTERED;
-        }
-        else if(previousStatus.equalsIgnoreCase(PENDING_REGISTRATION) && updatedStatus.equalsIgnoreCase(CASE_REASSIGNED)){
+        } else if (previousStatus.equalsIgnoreCase(PENDING_REGISTRATION) && updatedStatus.equalsIgnoreCase(PENDING_ADMISSION_HEARING)) {
+            return CASE_REGISTERED;
+        } else if (previousStatus.equalsIgnoreCase(PENDING_REGISTRATION) && updatedStatus.equalsIgnoreCase(CASE_REASSIGNED)) {
             return JUDGE_SEND_BACK;
-        }
-        else if(previousStatus.equalsIgnoreCase(PENDING_ADMISSION_HEARING) && updatedStatus.equalsIgnoreCase(ADMISSION_HEARING_SCHEDULED)){
+        } else if (previousStatus.equalsIgnoreCase(PENDING_ADMISSION_HEARING) && updatedStatus.equalsIgnoreCase(ADMISSION_HEARING_SCHEDULED)) {
             return ADMISSION_HEARING_SCHEDULED;
-        }
-        else if(previousStatus.equalsIgnoreCase(PENDING_RESPONSE) && updatedStatus.equalsIgnoreCase(CASE_ADMITTED)){
+        } else if (previousStatus.equalsIgnoreCase(PENDING_RESPONSE) && updatedStatus.equalsIgnoreCase(CASE_ADMITTED)) {
             return CASE_ADMITTED;
         }
         return null;
@@ -504,7 +571,7 @@ public class CaseService {
         }
     }
 
-    public void updateCourtCaseInRedis(String tenantId, CourtCase courtCase){
+    public void updateCourtCaseInRedis(String tenantId, CourtCase courtCase) {
         if (tenantId == null || courtCase == null) {
             throw new CustomException("INVALID_INPUT", "Tenant ID or CourtCase is null");
         }
@@ -561,7 +628,7 @@ public class CaseService {
 
             publishToJoinCaseIndexer(addWitnessRequest.getRequestInfo(), courtCase);
 
-            caseObj = encryptionDecryptionUtil.decryptObject(caseObj, config.getCaseDecryptSelf(),CourtCase.class,addWitnessRequest.getRequestInfo());
+            caseObj = encryptionDecryptionUtil.decryptObject(caseObj, config.getCaseDecryptSelf(), CourtCase.class, addWitnessRequest.getRequestInfo());
             addWitnessRequest.setAdditionalDetails(caseObj.getAdditionalDetails());
 
             return AddWitnessResponse.builder().addWitnessRequest(addWitnessRequest).build();
@@ -576,7 +643,7 @@ public class CaseService {
     }
 
 
-    private void verifyAndEnrichLitigant(JoinCaseRequest joinCaseRequest, CourtCase courtCase,CourtCase caseObj, AuditDetails auditDetails) {
+    private void verifyAndEnrichLitigant(JoinCaseRequest joinCaseRequest, CourtCase courtCase, CourtCase caseObj, AuditDetails auditDetails) {
         log.info("enriching litigants");
         enrichLitigantsOnCreateAndUpdate(caseObj, auditDetails);
 
@@ -594,7 +661,7 @@ public class CaseService {
 
         if (joinCaseRequest.getAdditionalDetails() != null) {
 
-            caseObj.setAdditionalDetails(editRespondantDetails(joinCaseRequest.getAdditionalDetails(),courtCase.getAdditionalDetails(),joinCaseRequest.getLitigant().getIndividualId()));
+            caseObj.setAdditionalDetails(editRespondantDetails(joinCaseRequest.getAdditionalDetails(), courtCase.getAdditionalDetails(), joinCaseRequest.getLitigant().getIndividualId()));
             courtCase.setAdditionalDetails(caseObj.getAdditionalDetails());
             caseObj = encryptionDecryptionUtil.encryptObject(caseObj, config.getCourtCaseEncrypt(), CourtCase.class);
             courtCase = encryptionDecryptionUtil.encryptObject(courtCase, config.getCourtCaseEncrypt(), CourtCase.class);
@@ -607,8 +674,8 @@ public class CaseService {
             updateCourtCaseInRedis(tenantId, courtCase);
 
             caseObj.setAuditdetails(courtCase.getAuditdetails());
-            caseObj = encryptionDecryptionUtil.decryptObject(caseObj, config.getCaseDecryptSelf(),CourtCase.class,joinCaseRequest.getRequestInfo());
-            courtCase = encryptionDecryptionUtil.decryptObject(courtCase, config.getCaseDecryptSelf(),CourtCase.class,joinCaseRequest.getRequestInfo());
+            caseObj = encryptionDecryptionUtil.decryptObject(caseObj, config.getCaseDecryptSelf(), CourtCase.class, joinCaseRequest.getRequestInfo());
+            courtCase = encryptionDecryptionUtil.decryptObject(courtCase, config.getCaseDecryptSelf(), CourtCase.class, joinCaseRequest.getRequestInfo());
             joinCaseRequest.setAdditionalDetails(caseObj.getAdditionalDetails());
             courtCase.setAdditionalDetails(joinCaseRequest.getAdditionalDetails());
         } else {
@@ -637,7 +704,7 @@ public class CaseService {
         }
 
         if (joinCaseRequest.getAdditionalDetails() != null) {
-            caseObj.setAdditionalDetails(editAdvocateDetails(joinCaseRequest.getAdditionalDetails(),courtCase.getAdditionalDetails()));
+            caseObj.setAdditionalDetails(editAdvocateDetails(joinCaseRequest.getAdditionalDetails(), courtCase.getAdditionalDetails()));
             caseObj = encryptionDecryptionUtil.encryptObject(caseObj, config.getCourtCaseEncrypt(), CourtCase.class);
             courtCase = encryptionDecryptionUtil.encryptObject(courtCase, config.getCourtCaseEncrypt(), CourtCase.class);
             joinCaseRequest.setAdditionalDetails(caseObj.getAdditionalDetails());
@@ -648,7 +715,7 @@ public class CaseService {
             updateCourtCaseInRedis(tenantId, courtCase);
 
             caseObj.setAuditdetails(courtCase.getAuditdetails());
-            caseObj = encryptionDecryptionUtil.decryptObject(caseObj, config.getCaseDecryptSelf(),CourtCase.class,joinCaseRequest.getRequestInfo());
+            caseObj = encryptionDecryptionUtil.decryptObject(caseObj, config.getCaseDecryptSelf(), CourtCase.class, joinCaseRequest.getRequestInfo());
             joinCaseRequest.setAdditionalDetails(caseObj.getAdditionalDetails());
         } else {
             CourtCase encryptedCourtCase = encryptionDecryptionUtil.encryptObject(courtCase, config.getCourtCaseEncrypt(), CourtCase.class);
@@ -849,7 +916,7 @@ public class CaseService {
             throw new CustomException(CASE_EXIST_ERR, "Case does not exist");
         }
 
-        CourtCase courtCase = encryptionDecryptionUtil.decryptObject(courtCaseList.get(0), config.getCaseDecryptSelf(), CourtCase.class,joinCaseRequest.getRequestInfo());
+        CourtCase courtCase = encryptionDecryptionUtil.decryptObject(courtCaseList.get(0), config.getCaseDecryptSelf(), CourtCase.class, joinCaseRequest.getRequestInfo());
 
         if (courtCase.getAccessCode() == null || courtCase.getAccessCode().isEmpty()) {
             throw new CustomException(VALIDATION_ERR, "Access code not generated");
@@ -869,7 +936,7 @@ public class CaseService {
     public CourtCase searchRedisCache(RequestInfo requestInfo, String caseId) {
         try {
             Object value = cacheService.findById(getRedisKey(requestInfo, caseId));
-            log.info("Redis data received :: {}",value);
+            log.info("Redis data received :: {}", value);
             if (value != null) {
                 String caseObject = objectMapper.writeValueAsString(value);
                 return objectMapper.readValue(caseObject, CourtCase.class);
@@ -881,7 +948,7 @@ public class CaseService {
             throw new CustomException(SEARCH_CASE_ERR, e.getMessage());
         }
     }
-    
+
     public void saveInRedisCache(List<CaseCriteria> casesList, RequestInfo requestInfo) {
         for (CaseCriteria criteria : casesList) {
             if (!criteria.getDefaultFields() && criteria.getCaseId() != null && criteria.getResponseList() != null) {
@@ -938,7 +1005,7 @@ public class CaseService {
                 for (int i = 0; i < formData1.size(); i++) {
                     ObjectNode dataNode1 = (ObjectNode) formData1.get(i).path("data");
                     ObjectNode dataNode2 = (ObjectNode) formData2.get(i).path("data");
-                    if(dataNode1.has("respondentVerification")){
+                    if (dataNode1.has("respondentVerification")) {
                         JsonNode individualDetails1 = dataNode1.path("respondentVerification").path("individualDetails");
                         if (individualDetails1.has("individualId") && individualId.equals(individualDetails1.get("individualId").asText())) {
                             // Set or remove fields in dataNode2 based on dataNode1
@@ -961,7 +1028,7 @@ public class CaseService {
         return objectMapper.convertValue(details2Node, additionalDetails2.getClass());
     }
 
-    private CourtCase fetchCourtCaseByFilingNumber(RequestInfo requestInfo, String filingNumber){
+    private CourtCase fetchCourtCaseByFilingNumber(RequestInfo requestInfo, String filingNumber) {
 
         CaseCriteria caseCriteria = CaseCriteria.builder().filingNumber(filingNumber).build();
         List<CaseCriteria> caseCriteriaList = caseRepository.getCases(Collections.singletonList(caseCriteria), requestInfo);
@@ -979,14 +1046,14 @@ public class CaseService {
 
         CaseOverallStatus caseOverallStatus = caseStageSubStage.getCaseOverallStatus();
 
-        CourtCase courtCaseDb = fetchCourtCaseByFilingNumber(caseStageSubStage.getRequestInfo(),caseOverallStatus.getFilingNumber());
+        CourtCase courtCaseDb = fetchCourtCaseByFilingNumber(caseStageSubStage.getRequestInfo(), caseOverallStatus.getFilingNumber());
         CourtCase courtCaseRedis = searchRedisCache(caseStageSubStage.getRequestInfo(), courtCaseDb.getId().toString());
 
-        if (courtCaseRedis != null){
+        if (courtCaseRedis != null) {
             courtCaseRedis.setStage(caseOverallStatus.getStage());
             courtCaseRedis.setSubstage(caseOverallStatus.getSubstage());
         }
-        updateCourtCaseInRedis(caseOverallStatus.getTenantId(),courtCaseRedis);
+        updateCourtCaseInRedis(caseOverallStatus.getTenantId(), courtCaseRedis);
     }
 
     public void updateCaseOutcome(CaseOutcome caseOutcome) {
@@ -996,7 +1063,7 @@ public class CaseService {
         CourtCase courtCaseDb = fetchCourtCaseByFilingNumber(caseOutcome.getRequestInfo(), outcome.getFilingNumber());
         CourtCase courtCaseRedis = searchRedisCache(caseOutcome.getRequestInfo(), courtCaseDb.getId().toString());
 
-        if (courtCaseRedis != null){
+        if (courtCaseRedis != null) {
             courtCaseRedis.setOutcome(outcome.getOutcome());
         }
         updateCourtCaseInRedis(outcome.getTenantId(), courtCaseRedis);
