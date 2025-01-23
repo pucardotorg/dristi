@@ -1,0 +1,179 @@
+openapi: "3.0.2"
+info:
+  title: Locking related APIs
+  description: This API specification defines the locking related apis.
+  version: "1.0"
+tags:
+  - name: Locking
+paths:
+
+  /v1/_set:
+    post:
+      tags:
+        - Locking
+      summary: Set a new lock
+      description: Creates or updates a lock entry
+      operationId: setLock
+      requestBody:
+        description: Lock table metadata + RequestInfo meta data.
+        content:
+          'application/json':
+            schema:
+              $ref: '#/components/schemas/LockRequest'
+      responses:
+        "201":
+          description: ResponseInfo with diary entry added successfully
+          content:
+            'application/json':
+              schema:
+                $ref: '#/components/schemas/LockResponse'
+        "400":
+          description: Error
+          content:
+            'application/json':
+              schema:
+                $ref: 'https://raw.githubusercontent.com/egovernments/DIGIT-Specs/common-contract-update/Common%20Services/common-contract.yaml#/components/schemas/ErrorResponse'
+  /v1/_get:
+    post:
+      tags:
+        - Locking
+      summary: Get lock details
+      description: Retrieves lock information for given unique identifier and tenant
+      operationId: searchLock
+      parameters:
+        - name: uniqueId
+          in: query
+          required: true
+          schema:
+            type: string
+          description: Unique identifier for the lock
+        - name: tenantId
+          in: query
+          required: true
+          schema:
+            type: string
+          description: Tenant identifier
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: 'https://raw.githubusercontent.com/egovernments/DIGIT-Specs/common-contract-update/Common%20Services/common-contract.yaml#/components/schemas/RequestInfo'
+        description: Request metadata information
+      responses:
+        "200":
+          description: ResponseInfo with Lock details
+          content:
+            'application/json':
+              schema:
+                $ref: '#/components/schemas/LockResponse'
+        "400":
+          description: something went wrong
+          content:
+            'application/json':
+              schema:
+                $ref: 'https://raw.githubusercontent.com/egovernments/DIGIT-Specs/common-contract-update/Common%20Services/common-contract.yaml#/components/schemas/ErrorResponse'
+  /v1/_release:
+    post:
+      tags:
+        - Locking
+      summary: Release an existing lock
+      description: Releases a lock for given unique identifier and tenant
+      operationId: releaseLock
+      parameters:
+        - name: uniqueId
+          in: query
+          required: true
+          schema:
+            type: string
+          description: Unique identifier for the lock
+        - name: tenantId
+          in: query
+          required: true
+          schema:
+            type: string
+          description: Tenant identifier
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: 'https://raw.githubusercontent.com/egovernments/DIGIT-Specs/common-contract-update/Common%20Services/common-contract.yaml#/components/schemas/RequestInfo'
+        description: Request metadata information
+      responses:
+        "200":
+          description: ResponseInfo with Lock details
+          content:
+            'application/json':
+              schema:
+                $ref: '#/components/schemas/LockResponse'
+        "400":
+          description: something went wrong
+          content:
+            'application/json':
+              schema:
+                $ref: 'https://raw.githubusercontent.com/egovernments/DIGIT-Specs/common-contract-update/Common%20Services/common-contract.yaml#/components/schemas/ErrorResponse'
+components:
+  schemas:
+    LockRequest:
+      type: object
+      description: Request object for setting a lock
+      required:
+        - RequestInfo
+        - Lock
+      properties:
+        RequestInfo:
+          $ref: 'https://raw.githubusercontent.com/egovernments/DIGIT-Specs/common-contract-update/Common%20Services/common-contract.yaml#/components/schemas/RequestInfo'
+        Lock:
+          $ref: '#/components/schemas/Lock'
+
+    LockResponse:
+      type: object
+      description: Response object containing lock information
+      properties:
+        ResponseInfo:
+          $ref: 'https://raw.githubusercontent.com/egovernments/DIGIT-Specs/common-contract-update/Common%20Services/common-contract.yaml#/components/schemas/ResponseInfo'
+        Lock:
+          $ref: '#/components/schemas/Lock'
+    Lock:
+      type: object
+      description: object for Lock
+      required:
+        - tenantId
+        - uniqueId
+        - lockType
+
+      properties:
+        id:
+          type: string
+          description: Primary key to identify the entity.
+          format: uuid
+          minLength: 36
+          maxLength: 36
+          readOnly: true
+        tenantId:
+          type: string
+          description: Tenant ID of the application.
+        uniqueId:
+          type: string
+          description: unique id for which lock need to add.
+        lockDate:
+          type: integer
+          description: The date and time when the entity was locked.
+        individualId:
+          type: string
+          description: Unique identifier of the individual.
+        isLocked:
+          type: boolean
+          description: Indicates whether the entity is locked.
+        lockType:
+          type: string
+          description: describe the type of lock
+        lockReleaseTime:
+          type: integer
+          format: int64
+          description: Timestamp representing when the lock will be released.
+        auditDetails:
+          $ref: 'https://raw.githubusercontent.com/egovernments/DIGIT-Specs/common-contract-update/Common%20Services/common-contract.yaml#/components/schemas/AuditDetails'
+
+
