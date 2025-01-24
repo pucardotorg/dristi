@@ -1193,21 +1193,32 @@ const fetchBasicUserInfo = async (caseDetails, tenantId) => {
   return individualData?.Individual?.[0]?.individualId;
 };
 
-export const getComplainantName = (complainantDetails) => {
-  if (complainantDetails?.complainantType?.code === "INDIVIDUAL") {
-    return complainantDetails?.firstName && `${complainantDetails?.firstName || ""} ${complainantDetails?.lastName || ""}`.trim();
+export const getComplainantName = (complainantDetails, t) => {
+  const count = complainantDetails?.length;
+  var concatenatedComplainantName = "";
+  if (complainantDetails?.[0]?.data?.complainantType?.code === "INDIVIDUAL") {
+    concatenatedComplainantName =
+      complainantDetails?.[0]?.data?.firstName &&
+      `${complainantDetails?.[0]?.data?.firstName || ""} ${complainantDetails?.[0]?.data?.lastName || ""}`.trim();
+  } else concatenatedComplainantName = complainantDetails?.[0]?.data?.complainantCompanyName || "";
+  if (count > 1) {
+    concatenatedComplainantName = concatenatedComplainantName + ` and ${count - 1} ${t(count === 2 ? "TITLE_OTHER" : "TITLE_OTHERS")}`;
   }
-  return complainantDetails?.complainantCompanyName || "";
+  return concatenatedComplainantName;
 };
 
-export const getRespondentName = (respondentDetails) => {
-  if (respondentDetails?.respondentType?.code === "INDIVIDUAL") {
-    return (
-      respondentDetails?.respondentFirstName &&
-      `${respondentDetails?.respondentFirstName || ""} ${respondentDetails?.respondentLastName || ""}`.trim()
-    );
+export const getRespondentName = (respondentDetails, t) => {
+  const count = respondentDetails?.length;
+  var concatenatedRespondentName = "";
+  if (respondentDetails?.[0]?.data?.respondentType?.code === "INDIVIDUAL") {
+    concatenatedRespondentName =
+      respondentDetails?.[0]?.data?.respondentFirstName &&
+      `${respondentDetails?.[0]?.data?.respondentFirstName || ""} ${respondentDetails?.[0]?.data?.respondentLastName || ""}`.trim();
+  } else concatenatedRespondentName = respondentDetails?.[0]?.data?.respondentCompanyName || "";
+  if (count > 1) {
+    concatenatedRespondentName = concatenatedRespondentName + ` and ${count - 1} ${t(count === 2 ? "TITLE_OTHER" : "TITLE_OTHERS")}`;
   }
-  return respondentDetails?.respondentCompanyName || "";
+  return concatenatedRespondentName;
 };
 
 const updateComplaintDocInCaseDoc = (docList, complaintDoc) => {
@@ -2305,17 +2316,17 @@ export const updateCaseDetails = async ({
     };
   }
   const complainantName = getComplainantName(
-    data?.additionalDetails?.complainantDetails?.formdata?.[0]?.data || caseDetails?.additionalDetails?.complainantDetails?.formdata?.[0]?.data
+    data?.additionalDetails?.complainantDetails?.formdata || caseDetails?.additionalDetails?.complainantDetails?.formdata,
+    t
   );
   const respondentName = getRespondentName(
-    data?.additionalDetails?.respondentDetails?.formdata?.[0]?.data || caseDetails?.additionalDetails?.respondentDetails?.formdata?.[0]?.data
+    data?.additionalDetails?.respondentDetails?.formdata || caseDetails?.additionalDetails?.respondentDetails?.formdata,
+    t
   );
 
-  const caseTitle = caseDetails?.caseTitle
-    ? caseDetails?.caseTitle
-    : complainantName !== "" && respondentName !== ""
-    ? `${complainantName} vs ${respondentName}`
-    : "";
+  const caseTitle = ["DRAFT_IN_PROGRESS"].includes(caseDetails?.status)
+    ? caseDetails?.additionalDetails?.modifiedCaseTitle || (complainantName && respondentName ? `${complainantName} vs ${respondentName}` : "")
+    : caseDetails?.caseTitle;
   setErrorCaseDetails({
     ...caseDetails,
     documents: tempDocList,
