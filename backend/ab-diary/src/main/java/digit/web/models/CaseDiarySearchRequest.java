@@ -18,21 +18,21 @@ import lombok.Builder;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-public class CaseDiarySearchRequest   {
-        @JsonProperty("RequestInfo")
+public class CaseDiarySearchRequest {
+    @JsonProperty("RequestInfo")
 
-          @Valid
-                private RequestInfo requestInfo = null;
+    @Valid
+    private RequestInfo requestInfo = null;
 
-        @JsonProperty("criteria")
+    @JsonProperty("criteria")
 
-          @Valid
-                private CaseDiarySearchCriteria criteria = null;
+    @Valid
+    private CaseDiarySearchCriteria criteria = null;
 
-        @JsonProperty("pagination")
+    @JsonProperty("pagination")
 
-          @Valid
-                private Pagination pagination = null;
+    @Valid
+    private Pagination pagination = null;
 
 
 }

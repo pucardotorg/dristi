@@ -11,6 +11,7 @@ import org.springframework.http.converter.json.MappingJackson2HttpMessageConvert
 import org.springframework.stereotype.Component;
 
 import jakarta.annotation.PostConstruct;
+
 import java.util.TimeZone;
 
 @Component
@@ -89,4 +90,12 @@ public class Configuration {
     //SMSNotification
     @Value("${egov.sms.notification.topic}")
     private String smsNotificationTopic;
+
+    //DiaryEntry Create topic
+    @Value("${diaryentry.kafka.create.topic}")
+    private String aDiaryEntryCreateTopic;
+
+    @Value("${diaryentry.kafka.update.topic}")
+    private String aDiaryEntryUpdateTopic;
+
 }

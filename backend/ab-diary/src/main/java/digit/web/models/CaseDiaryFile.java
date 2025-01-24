@@ -18,15 +18,15 @@ import lombok.Builder;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-public class CaseDiaryFile   {
-        @JsonProperty("ResponseInfo")
+public class CaseDiaryFile {
+    @JsonProperty("ResponseInfo")
 
-          @Valid
-                private ResponseInfo responseInfo = null;
+    @Valid
+    private ResponseInfo responseInfo = null;
 
-        @JsonProperty("fileStoreID")
+    @JsonProperty("fileStoreID")
 
-                private String fileStoreID = null;
+    private String fileStoreID = null;
 
 
 }

@@ -22,28 +22,28 @@ import lombok.Builder;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-public class CaseDiaryEntryListResponse   {
-        @JsonProperty("ResponseInfo")
+public class CaseDiaryEntryListResponse {
+    @JsonProperty("ResponseInfo")
 
-          @Valid
-                private ResponseInfo responseInfo = null;
+    @Valid
+    private ResponseInfo responseInfo = null;
 
-        @JsonProperty("entries")
-          @Valid
-                private List<CaseDiaryEntry> entries = null;
+    @JsonProperty("entries")
+    @Valid
+    private List<CaseDiaryEntry> entries = null;
 
-        @JsonProperty("pagination")
+    @JsonProperty("pagination")
 
-          @Valid
-                private Pagination pagination = null;
+    @Valid
+    private Pagination pagination = null;
 
 
-        public CaseDiaryEntryListResponse addEntriesItem(CaseDiaryEntry entriesItem) {
-            if (this.entries == null) {
+    public CaseDiaryEntryListResponse addEntriesItem(CaseDiaryEntry entriesItem) {
+        if (this.entries == null) {
             this.entries = new ArrayList<>();
-            }
+        }
         this.entries.add(entriesItem);
         return this;
-        }
+    }
 
 }

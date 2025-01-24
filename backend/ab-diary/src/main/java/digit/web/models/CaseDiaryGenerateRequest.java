@@ -18,16 +18,16 @@ import lombok.Builder;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-public class CaseDiaryGenerateRequest   {
-        @JsonProperty("RequestInfo")
+public class CaseDiaryGenerateRequest {
+    @JsonProperty("RequestInfo")
 
-          @Valid
-                private RequestInfo requestInfo = null;
+    @Valid
+    private RequestInfo requestInfo = null;
 
-        @JsonProperty("diary")
+    @JsonProperty("diary")
 
-          @Valid
-                private CaseDiary diary = null;
+    @Valid
+    private CaseDiary diary = null;
 
 
 }

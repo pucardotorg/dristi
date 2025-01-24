@@ -2,6 +2,7 @@ package digit.web.models;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import io.swagger.v3.oas.annotations.media.Schema;
+
 import java.util.UUID;
 
 import org.egov.common.contract.models.AuditDetails;
@@ -23,57 +24,57 @@ import lombok.Builder;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-public class CaseDiaryEntry   {
-        @JsonProperty("id")
-          @NotNull
+public class CaseDiaryEntry {
+    @JsonProperty("id")
 
-          @Valid
-                private UUID id = null;
+    @Valid
+    private UUID id = null;
 
-        @JsonProperty("tenantId")
-          @NotNull
+    @JsonProperty("tenantId")
+    @NotNull
 
-                private String tenantId = null;
+    private String tenantId = null;
 
-        @JsonProperty("entryDate")
-          @NotNull
+    @JsonProperty("entryDate")
+    @NotNull
 
-                private Long entryDate = null;
+    private Long entryDate = null;
 
-        @JsonProperty("caseNumber")
+    @JsonProperty("caseNumber")
 
-                private String caseNumber = null;
+    private String caseNumber = null;
 
-        @JsonProperty("judgeId")
-          @NotNull
+    @JsonProperty("judgeId")
+    @NotNull
 
-                private String judgeId = null;
+    private String judgeId = null;
 
-        @JsonProperty("businessOfDay")
-          @NotNull
+    @JsonProperty("businessOfDay")
+    @NotNull
 
-        @Size(max=1024)         private String businessOfDay = null;
+    @Size(max = 1024)
+    private String businessOfDay = null;
 
-        @JsonProperty("referenceId")
+    @JsonProperty("referenceId")
 
-                private String referenceId = null;
+    private String referenceId = null;
 
-        @JsonProperty("referenceType")
+    @JsonProperty("referenceType")
 
-                private String referenceType = null;
+    private String referenceType = null;
 
-        @JsonProperty("hearingDate")
+    @JsonProperty("hearingDate")
 
-                private Long hearingDate = null;
+    private Long hearingDate = null;
 
-        @JsonProperty("additionalDetails")
+    @JsonProperty("additionalDetails")
 
-                private Object additionalDetails = null;
+    private Object additionalDetails = null;
 
-        @JsonProperty("auditDetails")
+    @JsonProperty("auditDetails")
 
-          @Valid
-                private AuditDetails auditDetails = null;
+    @Valid
+    private AuditDetails auditDetails = null;
 
 
 }

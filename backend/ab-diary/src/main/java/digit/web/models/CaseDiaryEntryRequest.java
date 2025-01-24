@@ -1,6 +1,7 @@
 package digit.web.models;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+import jakarta.validation.constraints.NotNull;
 import org.egov.common.contract.request.RequestInfo;
 import org.springframework.validation.annotation.Validated;
 import jakarta.validation.Valid;
@@ -18,16 +19,16 @@ import lombok.Builder;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-public class CaseDiaryEntryRequest   {
-        @JsonProperty("RequestInfo")
+public class CaseDiaryEntryRequest {
+    @JsonProperty("RequestInfo")
 
-          @Valid
-                private RequestInfo requestInfo = null;
+    @Valid
+    private RequestInfo requestInfo = null;
 
-        @JsonProperty("diaryEntry")
+    @JsonProperty("diaryEntry")
 
-          @Valid
-                private CaseDiaryEntry diaryEntry = null;
+    @Valid
+    private CaseDiaryEntry diaryEntry = null;
 
 
 }

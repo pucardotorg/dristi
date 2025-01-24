@@ -1,7 +1,7 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
     <modelVersion>4.0.0</modelVersion>
     <groupId>org.egov</groupId>
-    <artifactId>birth-registration</artifactId>
+    <artifactId>ab-diary</artifactId>
     <packaging>jar</packaging>
     <name>birth-registration</name>
     <version>1.0.0</version>
@@ -54,7 +54,7 @@
         <dependency>
            <groupId>org.postgresql</groupId>
            <artifactId>postgresql</artifactId>
-           <version>42.7.1</version>
+           <version>42.7.2</version>
         </dependency>
         <dependency>
             <groupId>org.springframework.boot</groupId>

@@ -1,6 +1,7 @@
 package digit.web.models;
 
 import java.util.Objects;
+
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import io.swagger.v3.oas.annotations.media.Schema;
@@ -21,28 +22,28 @@ import lombok.Builder;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-public class CaseDiarySearchCriteria   {
-        @JsonProperty("tenantId")
-          @NotNull
+public class CaseDiarySearchCriteria {
+    @JsonProperty("tenantId")
+    @NotNull
 
-                private String tenantId = null;
+    private String tenantId = null;
 
-        @JsonProperty("date")
+    @JsonProperty("date")
 
-                private Long date = null;
+    private Long date = null;
 
-        @JsonProperty("caseId")
+    @JsonProperty("caseId")
 
-                private String caseId = null;
+    private String caseId = null;
 
-        @JsonProperty("diaryType")
+    @JsonProperty("diaryType")
 
-                private String diaryType = null;
+    private String diaryType = null;
 
-        @JsonProperty("judgeId")
-          @NotNull
+    @JsonProperty("judgeId")
+    @NotNull
 
-                private String judgeId = null;
+    private String judgeId = null;
 
 
 }

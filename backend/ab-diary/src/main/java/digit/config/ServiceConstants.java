@@ -47,4 +47,11 @@ public class ServiceConstants {
     public static final String BUSINESS_SERVICES = "&businessServices=";
 
 
+    public static final String VALIDATION_EXCEPTION = "VALIDATION_EXCEPTION";
+    public static final String ENRICHMENT_EXCEPTION = "ENRICHMENT_EXCEPTION";
+    public static final String DIARY_ENTRY_CREATE_EXCEPTION = "Exception during creating diary entry";
+    public static final String DIARY_ENTRY_UPDATE_EXCEPTION = "Exception during updating diary entry";
+    public static final String DIARY_ENTRY_QUERY_EXCEPTION = "DIARY_ENTRY_QUERY_EXCEPTION";
+    public static final String DIARY_ENTRY_SEARCH_EXCEPTION = "DIARY_ENTRY_SEARCH_EXCEPTION";
+    public static final String ROW_MAPPER_EXCEPTION = "ROW_MAPPER_EXCEPTION";
 }

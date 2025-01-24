@@ -18,16 +18,16 @@ import lombok.Builder;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-public class CaseDiaryEntryResponse   {
-        @JsonProperty("ResponseInfo")
+public class CaseDiaryEntryResponse {
+    @JsonProperty("ResponseInfo")
 
-          @Valid
-                private ResponseInfo responseInfo = null;
+    @Valid
+    private ResponseInfo responseInfo = null;
 
-        @JsonProperty("diaryEntry")
+    @JsonProperty("diaryEntry")
 
-          @Valid
-                private CaseDiaryEntry diaryEntry = null;
+    @Valid
+    private CaseDiaryEntry diaryEntry = null;
 
 
 }

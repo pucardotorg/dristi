@@ -1,10 +1,13 @@
 package digit.web.models;
 
 import java.util.Objects;
+
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import io.swagger.v3.oas.annotations.media.Schema;
+
 import java.util.UUID;
+
 import org.springframework.validation.annotation.Validated;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.*;
@@ -23,27 +26,27 @@ import lombok.Builder;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-public class CaseDiaryListItem   {
-        @JsonProperty("diaryId")
+public class CaseDiaryListItem {
+    @JsonProperty("diaryId")
 
-          @Valid
-                private UUID diaryId = null;
+    @Valid
+    private UUID diaryId = null;
 
-        @JsonProperty("tenantId")
+    @JsonProperty("tenantId")
 
-                private String tenantId = null;
+    private String tenantId = null;
 
-        @JsonProperty("date")
+    @JsonProperty("date")
 
-                private Long date = null;
+    private Long date = null;
 
-        @JsonProperty("diaryType")
+    @JsonProperty("diaryType")
 
-                private String diaryType = null;
+    private String diaryType = null;
 
-        @JsonProperty("fileStoreID")
+    @JsonProperty("fileStoreID")
 
-                private String fileStoreID = null;
+    private String fileStoreID = null;
 
 
 }
