@@ -53,7 +53,15 @@ const getStyles = () => ({
     borderRadius: "999px",
     color: "#00703C",
     backgroundColor: "#E4F2E4",
-    fontSize: "14px",
+    fontSize: "12px",
+    fontWeight: 400,
+  },
+  unSignedLabel: {
+    padding: "6px 8px",
+    borderRadius: "999px",
+    color: "#9E400A",
+    backgroundColor: "#FFF6E8",
+    fontSize: "12px",
     fontWeight: 400,
   },
   centerPanel: { flex: 3, padding: "24px 16px 16px 16px", border: "1px solid #e0e0e0" },
@@ -70,7 +78,7 @@ const getStyles = () => ({
     cursor: "pointer",
     whiteSpace: "nowrap",
   },
-  details: { color: "#231F20", fontWeight: 700, fontSize: "18px" },
+  details: { color: "#231F20", fontWeight: 700, fontSize: "20px" },
   description: { color: "#77787B", fontSize: "16px", fontWeight: 400 },
   docViewer: { marginTop: "24px", border: "1px solid #e0e0e0", display: "flex", overflow: "hidden" },
   rightPanel: { flex: 1, padding: "24px 16px 24px 24px", borderLeft: "1px solid #ccc" },
@@ -130,18 +138,14 @@ const caseType = {
 
 const complainantWorkflowACTION = {
   UPLOAD_DOCUMENT: "UPLOAD",
-  ADVOCATE_ESIGN_SEND: "E-SIGN",
-  LITIGANT_SUBMIT_CASE: "E-SIGN_PARTY_IN_PERSON",
-  ADVOCATE_SUBMIT_CASE: "E-SIGN",
+  ESIGN: "E-SIGN",
 };
 
 const complainantWorkflowState = {
-  PENDING_ESIGN_LITIGANT: "PENDING_E-SIGN",
-  PENDING_ESIGN_ADVOCATE: "PENDING_E-SIGN-2",
+  PENDING_ESIGN: "PENDING_E-SIGN",
+  PENDING_ESIGN_SCRUTINY: "PENDING_RE_E-SIGN",
   UPLOAD_SIGN_DOC: "PENDING_SIGN",
-  PENDING_ESIGN_LITIGANT_SCRUTINITY: "PENDING_RE_E-SIGN",
-  UPLOAD_SIGN_DOC_SCRUTINITY: "PENDING_RE_SIGN",
-  PENDING_ESIGN_ADVOCATE_SCRUTINITY: "PENDING_RE_E-SIGN-2",
+  UPLOAD_SIGN_DOC_SCRUTINY: "PENDING_RE_SIGN",
 };
 
 const stateSla = {
@@ -261,50 +265,48 @@ const ComplainantSignature = ({ path }) => {
   }, [advocateDetails]);
 
   const litigants = useMemo(() => {
-    return caseDetails?.litigants?.filter((litigant) => litigant.partyType === "complainant.primary")?.[0];
+    return caseDetails?.litigants
+      ?.filter((litigant) => litigant.partyType.includes("complainant"))
+      ?.map((litigant) => ({
+        ...litigant,
+        representatives:
+          caseDetails?.representatives?.filter((rep) => rep.representing.some((complainant) => complainant.individualId === litigant.individualId)) ||
+          [],
+      }));
   }, [caseDetails]);
 
-  const isScrutiny = useMemo(() => {
-    const scrutinyDataExists = !!caseDetails?.additionalDetails?.scrutiny?.data;
-    const judgeDataExists = caseDetails?.additionalDetails?.judge && Object.keys(caseDetails.additionalDetails.judge).length > 0;
+  const isFilingParty = useMemo(() => {
+    return caseDetails?.auditDetails?.createdBy === userInfo?.uuid;
+  }, [caseDetails?.auditDetails?.createdBy, userInfo?.uuid]);
 
-    return scrutinyDataExists || judgeDataExists;
-  }, [caseDetails]);
+  const isCurrentLitigantSigned = useMemo(() => {
+    return litigants?.some((lit) => lit?.hasSigned && lit?.additionalDetails?.uuid === userInfo?.uuid);
+  }, [litigants, userInfo?.uuid]);
 
-  const isLitigantPartyInPerson = useMemo(() => {
-    return !isAdvocateFilingCase && !advocateDetails;
-  }, [advocateDetails, isAdvocateFilingCase]);
+  const isCurrentAdvocateSigned = useMemo(() => {
+    return caseDetails?.representatives?.some((advocate) => advocate?.hasSigned && advocate?.additionalDetails?.uuid === userInfo?.uuid);
+  }, [caseDetails?.representatives, userInfo?.uuid]);
 
   const state = useMemo(() => caseDetails?.status, [caseDetails]);
   const isSelectedEsign = useMemo(() => {
-    const esignStates = [
-      complainantWorkflowState.PENDING_ESIGN_LITIGANT,
-      complainantWorkflowState.PENDING_ESIGN_ADVOCATE,
-      complainantWorkflowState.PENDING_ESIGN_ADVOCATE_SCRUTINITY,
-      complainantWorkflowState.PENDING_ESIGN_LITIGANT_SCRUTINITY,
-    ];
+    const esignStates = [complainantWorkflowState.PENDING_ESIGN, complainantWorkflowState.PENDING_ESIGN_SCRUTINY];
 
     return esignStates.includes(state);
   }, [state]);
 
   const isSelectedUploadDoc = useMemo(
-    () => [complainantWorkflowState.UPLOAD_SIGN_DOC, complainantWorkflowState.UPLOAD_SIGN_DOC_SCRUTINITY].includes(state),
+    () => [complainantWorkflowState.UPLOAD_SIGN_DOC, complainantWorkflowState.UPLOAD_SIGN_DOC_SCRUTINY].includes(state),
     [state]
   );
 
-  const isLitigantEsignCompleted = useMemo(
-    () => [complainantWorkflowState.PENDING_ESIGN_ADVOCATE, complainantWorkflowState.PENDING_ESIGN_ADVOCATE_SCRUTINITY].includes(state),
-    [state]
-  );
-
-  const closePendingTask = async ({ status }) => {
+  const closePendingTask = async ({ status, assignee }) => {
     const entityType = "case-default";
     const filingNumber = caseDetails?.filingNumber;
     await DRISTIService.customApiService(Urls.dristi.pendingTask, {
       pendingTask: {
         entityType,
         status,
-        referenceId: `MANUAL_${filingNumber}`,
+        referenceId: `MANUAL_${filingNumber}_${assignee}`,
         cnrNumber: caseDetails?.cnrNumber,
         filingNumber: filingNumber,
         isCompleted: true,
@@ -314,13 +316,60 @@ const ComplainantSignature = ({ path }) => {
     });
   };
 
+  function getOtherAdvocatesForClosing() {
+    // Step 1: Find the representative with current uuid
+    const currentAdvocate = caseDetails?.representatives?.find((rep) => rep?.additionalDetails?.uuid === userInfo?.uuid);
+
+    if (!currentAdvocate) {
+      return [];
+    }
+
+    // Extract the representing objects for the target representative
+    const currentAdvocateLitigants = currentAdvocate?.representing;
+
+    // Step 2: Iterate through other representatives to compare
+    const matchingRepresentatives = caseDetails?.representatives?.filter((rep) => {
+      // Skip the target representative itself
+      if (rep?.additionalDetails?.uuid === userInfo?.uuid) return true;
+
+      const otherAdvocateLitigants = rep?.representing;
+
+      // If otherAdvocateLitigants has one item, check if it's in the currentAdvocateLitigants
+      if (otherAdvocateLitigants?.length === 1) {
+        return otherAdvocateLitigants?.some((item) =>
+          currentAdvocateLitigants?.some((targetItem) => targetItem?.individualId === item?.individualId)
+        );
+      }
+
+      // If otherAdvocateLitigants has multiple items, check if all are in the currentAdvocateLitigants
+      if (otherAdvocateLitigants?.length > 1) {
+        return currentAdvocateLitigants?.every((targetItem) =>
+          otherAdvocateLitigants?.some((item) => item?.individualId === targetItem?.individualId)
+        );
+      }
+
+      return false;
+    });
+
+    return matchingRepresentatives;
+  }
+
   const handleCasePdf = () => {
     downloadPdf(tenantId, signatureDocumentId ? signatureDocumentId : DocumentFileStoreId);
   };
 
+  const getPlaceholder = () => {
+    if (isAdvocateFilingCase) {
+      const advocate = caseDetails?.representatives?.find((advocate) => advocate?.additionalDetails?.uuid === userInfo?.uuid);
+      return `Advocate ${advocate?.representing?.[0]?.additionalDetails?.currentPosition} Signature`;
+    } else {
+      const litigant = litigants?.find((litigant) => litigant?.additionalDetails?.uuid === userInfo?.uuid);
+      return `Complainant ${litigant?.additionalDetails?.currentPosition} Signature`;
+    }
+  };
+
   const handleEsignAction = () => {
-    const signPlaceHolder = isLitigantPartyInPerson || !isLitigantEsignCompleted ? complainantPlaceholder : advocatePlaceholder;
-    handleEsign(name, "ci", DocumentFileStoreId, signPlaceHolder);
+    handleEsign(name, "ci", DocumentFileStoreId, getPlaceholder());
   };
 
   const handleUploadFile = () => {
@@ -430,27 +479,6 @@ const ComplainantSignature = ({ path }) => {
     return calculationResponse;
   };
 
-  const SubmitLabel = useMemo(() => {
-    if (!isAdvocateFilingCase && isSelectedUploadDoc) {
-      return "CS_SUBMIT_CASE";
-    }
-
-    if (!isAdvocateFilingCase && advocateDetails && !isLitigantEsignCompleted) {
-      return "CS_ADVOCATE_SIGN";
-    }
-    return "CS_SUBMIT_CASE";
-  }, [isAdvocateFilingCase, isSelectedUploadDoc, advocateDetails, isLitigantEsignCompleted]);
-
-  const isSubmit = (state) => {
-    const pendingStates = [complainantWorkflowState.PENDING_ESIGN_LITIGANT, complainantWorkflowState.PENDING_ESIGN_LITIGANT_SCRUTINITY];
-
-    if (pendingStates.includes(state) && advocateDetails) {
-      return false;
-    }
-
-    return true;
-  };
-
   const updateSignedDocInCaseDoc = () => {
     const tempDocList = structuredClone(caseDetails?.documents || []);
     const index = tempDocList.findIndex((doc) => doc.documentType === "case.complaint.signed");
@@ -474,78 +502,7 @@ const ComplainantSignature = ({ path }) => {
 
     const caseDocList = updateSignedDocInCaseDoc();
 
-    if (isSubmit(state)) {
-      try {
-        await DRISTIService.caseUpdateService(
-          {
-            cases: {
-              ...caseDetails,
-              additionalDetails: {
-                ...caseDetails?.additionalDetails,
-                signedCaseDocument: signatureDocumentId ? signatureDocumentId : DocumentFileStoreId,
-              },
-              documents: caseDocList,
-              workflow: {
-                ...caseDetails?.workflow,
-                action: isSelectedUploadDoc
-                  ? complainantWorkflowACTION.UPLOAD_DOCUMENT
-                  : isAdvocateFilingCase
-                  ? complainantWorkflowACTION.ADVOCATE_SUBMIT_CASE
-                  : complainantWorkflowACTION.LITIGANT_SUBMIT_CASE,
-                assignes: [],
-              },
-            },
-            tenantId,
-          },
-          tenantId
-        )
-          .then(async (res) => {
-            await closePendingTask({
-              status: isSelectedUploadDoc
-                ? complainantWorkflowState.UPLOAD_SIGN_DOC
-                : isAdvocateFilingCase
-                ? complainantWorkflowState.PENDING_ESIGN_ADVOCATE
-                : complainantWorkflowState.PENDING_ESIGN_LITIGANT,
-            });
-
-            if (res?.cases?.[0]?.status === "PENDING_PAYMENT") {
-              await DRISTIService.customApiService(Urls.dristi.pendingTask, {
-                pendingTask: {
-                  name: "Pending Payment",
-                  entityType: "case-default",
-                  referenceId: `MANUAL_${caseDetails?.filingNumber}`,
-                  status: "PENDING_PAYMENT",
-                  assignedTo: [...assignees?.map((uuid) => ({ uuid }))],
-                  assignedRole: ["CASE_CREATOR"],
-                  cnrNumber: null,
-                  filingNumber: caseDetails?.filingNumber,
-                  isCompleted: false,
-                  stateSla: stateSla.PENDING_PAYMENT * dayInMillisecond + todayDate,
-                  additionalDetails: {},
-                  tenantId,
-                },
-              });
-            }
-          })
-          .catch((error) => {
-            toast.error(t("SOMETHING_WENT_WRONG"));
-            throw error;
-          });
-
-        if (isScrutiny) {
-          setLoader(false);
-          history.push(`/${window?.contextPath}/${userInfoType}/dristi/landing-page`);
-        } else {
-          calculationResponse = await callCreateDemandAndCalculation(caseDetails, tenantId, caseId);
-          setLoader(false);
-          history.push(`${path}/e-filing-payment?caseId=${caseId}`, { state: { calculationResponse } });
-        }
-      } catch (error) {
-        console.error("Error:", error);
-        toast.error(t("SOMETHING_WENT_WRONG"));
-        setLoader(false);
-      }
-    } else {
+    try {
       await DRISTIService.caseUpdateService(
         {
           cases: {
@@ -554,9 +511,10 @@ const ComplainantSignature = ({ path }) => {
               ...caseDetails?.additionalDetails,
               signedCaseDocument: signatureDocumentId ? signatureDocumentId : DocumentFileStoreId,
             },
+            documents: caseDocList,
             workflow: {
               ...caseDetails?.workflow,
-              action: complainantWorkflowACTION.ADVOCATE_ESIGN_SEND,
+              action: isSelectedUploadDoc ? complainantWorkflowACTION.UPLOAD_DOCUMENT : complainantWorkflowACTION.ESIGN,
               assignes: [],
             },
           },
@@ -565,18 +523,37 @@ const ComplainantSignature = ({ path }) => {
         tenantId
       )
         .then(async (res) => {
-          await closePendingTask({
-            status: complainantWorkflowState.PENDING_ESIGN_LITIGANT,
-          });
-
-          if (res?.cases?.[0]?.status === complainantWorkflowState.PENDING_ESIGN_ADVOCATE) {
+          if (isAdvocateFilingCase && isSelectedUploadDoc) {
+            await closePendingTask({
+              status: state,
+              assignee: userInfo?.uuid,
+            });
+          }
+          if (isSelectedEsign) {
+            if (!isAdvocateFilingCase) {
+              await closePendingTask({
+                status: state,
+                assignee: userInfo?.uuid,
+              });
+            } else {
+              const advocates = getOtherAdvocatesForClosing();
+              const promises = advocates?.map(async (advocate) => {
+                return closePendingTask({
+                  status: state,
+                  assignee: advocate?.additionalDetails?.uuid,
+                });
+              });
+              await Promise.all(promises);
+            }
+          }
+          if (res?.cases?.[0]?.status === "PENDING_PAYMENT") {
             await DRISTIService.customApiService(Urls.dristi.pendingTask, {
               pendingTask: {
-                name: "Pending Advocate Sign",
+                name: "Pending Payment",
                 entityType: "case-default",
                 referenceId: `MANUAL_${caseDetails?.filingNumber}`,
-                status: complainantWorkflowState.PENDING_ESIGN_ADVOCATE,
-                assignedTo: [{ uuid: advocateUuid }],
+                status: "PENDING_PAYMENT",
+                assignedTo: [...assignees?.map((uuid) => ({ uuid }))],
                 assignedRole: ["CASE_CREATOR"],
                 cnrNumber: null,
                 filingNumber: caseDetails?.filingNumber,
@@ -586,16 +563,22 @@ const ComplainantSignature = ({ path }) => {
                 tenantId,
               },
             });
+            calculationResponse = await callCreateDemandAndCalculation(caseDetails, tenantId, caseId);
+            setLoader(false);
+            history.replace(`${path}/e-filing-payment?caseId=${caseId}`, { state: { calculationResponse } });
+          } else {
+            setLoader(false);
+            history.replace(`/${window?.contextPath}/${userInfoType}/dristi/landing-page`);
           }
         })
-        .then(() => {
-          setLoader(false);
-          history.push(`/${window?.contextPath}/${userInfoType}/dristi/landing-page`);
-        })
         .catch((error) => {
-          setLoader(false);
           toast.error(t("SOMETHING_WENT_WRONG"));
+          throw error;
         });
+    } catch (error) {
+      console.error("Error:", error);
+      toast.error(t("SOMETHING_WENT_WRONG"));
+      setLoader(false);
     }
   };
 
@@ -627,8 +610,7 @@ const ComplainantSignature = ({ path }) => {
     if (isAdvocateFilingCase) {
       return !(isEsignSuccess || uploadDoc);
     }
-
-    return !(isLitigantEsignCompleted || isEsignSuccess || (isLitigantPartyInPerson && uploadDoc));
+    return !(isCurrentLitigantSigned || isEsignSuccess);
   };
 
   if (isLoading) {
@@ -675,24 +657,36 @@ const ComplainantSignature = ({ path }) => {
         </div>
 
         <div style={styles.detailsSection}>
-          <div style={styles.litigantDetails}>
-            <div style={styles.details}>
-              <div>{t("COMPLAINT_SIGN")}:</div>
-              <div style={{ marginTop: "5px" }}>{litigants?.additionalDetails?.fullName}</div>
-            </div>
-            {!isAdvocateFilingCase
-              ? (isEsignSuccess || isLitigantEsignCompleted || (isLitigantPartyInPerson && uploadDoc)) && (
-                  <span style={styles.signedLabel}>{t("SIGNED")}</span>
-                )
-              : (isLitigantEsignCompleted || uploadDoc) && <span style={styles.signedLabel}>{t("SIGNED")}</span>}
-          </div>
-          {advocateDetails && (
-            <div style={styles.advocateDetails}>
-              <div style={styles.details}>
-                <div>{t("ADVOCATE_SIGN")}:</div>
-                <div style={{ marginTop: "5px" }}>{advocateDetails?.advocateName}</div>
+          <div style={styles.details}>
+            <div>{t("COMPLAINT_SIGN")}:</div>
+            {litigants?.map((litigant, index) => (
+              <div key={index} style={{ ...styles.litigantDetails, marginTop: "5px", fontSize: "15px" }}>
+                {litigant?.additionalDetails?.fullName}
+                {litigant?.hasSigned || (!isAdvocateFilingCase && isEsignSuccess) ? (
+                  <span style={{ ...styles.signedLabel, alignItems: "right" }}>{t("SIGNED")}</span>
+                ) : (
+                  <span style={{ ...styles.unSignedLabel, alignItems: "right" }}>{t("PENDING")}</span>
+                )}
               </div>
-              {isAdvocateFilingCase && (isEsignSuccess || uploadDoc) && <span style={styles.signedLabel}>{t("SIGNED")}</span>}
+            ))}
+          </div>
+          {Array.isArray(caseDetails?.representatives) && caseDetails?.representatives?.length > 0 && (
+            <div style={{ ...styles.details, marginTop: "15px" }}>
+              <div>{t("ADVOCATE_SIGN")}:</div>
+              {litigants?.map(
+                (litigant) =>
+                  litigant?.representatives?.length > 0 && (
+                    <div style={{ ...styles.advocateDetails, marginTop: "5px", fontSize: "15px" }}>
+                      {`${t("ADVOCATE_FOR")} ${litigant?.additionalDetails?.fullName}`}
+                      {litigant.representatives.some((rep) => rep?.hasSigned) ||
+                      (litigant.representatives.some((rep) => rep?.additionalDetails?.uuid === userInfo?.uuid) && (isEsignSuccess || uploadDoc)) ? (
+                        <span style={styles.signedLabel}>{t("SIGNED")}</span>
+                      ) : (
+                        <span style={styles.unSignedLabel}>{t("PENDING")}</span>
+                      )}
+                    </div>
+                  )
+              )}
             </div>
           )}
         </div>
@@ -730,24 +724,21 @@ const ComplainantSignature = ({ path }) => {
           <div style={styles.signaturePanel}>
             <div style={styles.signatureTitle}>{t("ADD_SIGNATURE")}</div>
             <p style={styles.signatureDescription}>{t("EITHER_ESIGN_UPLOAD")}</p>
-            {isSelectedEsign &&
-              (!(isAdvocateFilingCase && !isLitigantEsignCompleted) ? (
-                <button style={styles.esignButton} onClick={handleEsignAction}>
-                  {t("CS_ESIGN")}
-                </button>
-              ) : (
-                <p style={{ fontSize: "18px", fontWeight: 700 }}>{t("WAIT_FOR_LITIGANT_SIGNATURE")}</p>
-              ))}
+            {isSelectedEsign && (
+              <button style={styles.esignButton} onClick={handleEsignAction}>
+                {t("CS_ESIGN")}
+              </button>
+            )}
 
-            {(isSelectedUploadDoc || isLitigantPartyInPerson) && (
+            {(isSelectedUploadDoc || (isAdvocateFilingCase && isFilingParty)) && (
               <button
                 style={{
                   ...styles.uploadButton,
-                  opacity: isAdvocateFilingCase || isLitigantPartyInPerson ? 1 : 0.5,
-                  cursor: isAdvocateFilingCase || isLitigantPartyInPerson ? "pointer" : "default",
+                  opacity: isAdvocateFilingCase && isFilingParty ? 1 : 0.5,
+                  cursor: isAdvocateFilingCase && isFilingParty ? "pointer" : "default",
                 }}
                 onClick={handleUploadFile}
-                disabled={!(isAdvocateFilingCase || isLitigantPartyInPerson)}
+                disabled={!(isAdvocateFilingCase && isFilingParty)}
               >
                 <FileUploadIcon />
                 <span style={{ marginLeft: "8px" }}>{t("UPLOAD_SIGNED_PDF")}</span>
@@ -761,7 +752,7 @@ const ComplainantSignature = ({ path }) => {
           <SubmitBar
             label={
               <div style={{ display: "flex", alignItems: "center", justifyContent: "center", width: "100%" }}>
-                <span>{t(SubmitLabel)}</span>
+                <span>{t("CS_SUBMIT_CASE")}</span>
                 <RightArrow />
               </div>
             }

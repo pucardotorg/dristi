@@ -90,7 +90,23 @@ function CaseLockModal({
           return;
         }
         try {
-          await createPendingTask({ name: t("PENDING_E_SIGN_FOR_CASE"), status: "PENDING_E-SIGN" });
+          const promises = [
+            ...caseDetails?.litigants?.map(async (litigant) => {
+              return createPendingTask({
+                name: t("PENDING_E_SIGN_FOR_CASE"),
+                status: "PENDING_E-SIGN",
+                assignee: litigant?.additionalDetails?.uuid,
+              });
+            }),
+            ...caseDetails?.representatives?.map(async (advocate) => {
+              return createPendingTask({
+                name: t("PENDING_E_SIGN_FOR_CASE"),
+                status: "PENDING_E-SIGN",
+                assignee: advocate?.additionalDetails?.uuid,
+              });
+            }),
+          ];
+          await Promise.all(promises);
           history.push(`${path}/sign-complaint?filingNumber=${filingNumber}`);
         } catch (error) {
           console.error("An error occurred:", error);
