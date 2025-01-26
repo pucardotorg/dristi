@@ -1,5 +1,5 @@
 import React, { useEffect, useMemo, useState } from "react";
-import { ActionBar, SubmitBar, Loader } from "@egovernments/digit-ui-react-components";
+import { ActionBar, SubmitBar, Loader, Button, CloseSvg } from "@egovernments/digit-ui-react-components";
 import { useHistory } from "react-router-dom/cjs/react-router-dom.min";
 import DocViewerWrapper from "../../employee/docViewerWrapper";
 import { FileUploadIcon } from "../../../icons/svgIndex";
@@ -13,6 +13,7 @@ import UploadSignatureModal from "../../../components/UploadSignatureModal";
 import { getAllAssignees } from "./EfilingValidationUtils";
 import { Urls } from "../../../hooks";
 import { useToast } from "../../../components/Toast/useToast";
+import Modal from "../../../components/Modal";
 
 const getStyles = () => ({
   container: { display: "flex", flexDirection: "row", height: "100vh", marginBottom: "50px" },
@@ -97,6 +98,7 @@ const getStyles = () => ({
     border: "none",
     cursor: "pointer",
     padding: "0 20px",
+    marginTop: "20px",
   },
   uploadButton: {
     marginBottom: "16px",
@@ -114,7 +116,30 @@ const getStyles = () => ({
   },
   actionBar: { display: "flex", justifyContent: "flex-end", width: "100%" },
   submitButton: { backgroundColor: "#008080", color: "#fff", fontWeight: "bold", cursor: "pointer" },
+  editCaseButton: { backgroundColor: "#fff", border: "#007E7E solid", color: "#007E7E", cursor: "pointer" },
 });
+
+const Heading = (props) => {
+  return <h1 className="heading-m">{props.label}</h1>;
+};
+
+const CloseBtn = (props) => {
+  return (
+    <div
+      onClick={props?.onClick}
+      style={{
+        height: "100%",
+        display: "flex",
+        alignItems: "center",
+        paddingRight: "20px",
+        cursor: "pointer",
+        ...(props?.backgroundColor && { backgroundColor: props.backgroundColor }),
+      }}
+    >
+      <CloseSvg />
+    </div>
+  );
+};
 
 const RightArrow = () => (
   <svg style={{ marginLeft: "8px" }} width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -139,6 +164,7 @@ const caseType = {
 const complainantWorkflowACTION = {
   UPLOAD_DOCUMENT: "UPLOAD",
   ESIGN: "E-SIGN",
+  EDIT_CASE: "",
 };
 
 const complainantWorkflowState = {
@@ -146,6 +172,7 @@ const complainantWorkflowState = {
   PENDING_ESIGN_SCRUTINY: "PENDING_RE_E-SIGN",
   UPLOAD_SIGN_DOC: "PENDING_SIGN",
   UPLOAD_SIGN_DOC_SCRUTINY: "PENDING_RE_SIGN",
+  EDITING_CASE: "",
 };
 
 const stateSla = {
@@ -165,6 +192,7 @@ const ComplainantSignature = ({ path }) => {
   const [isEsignSuccess, setEsignSuccess] = useState(false);
   const [uploadDoc, setUploadDoc] = useState(false);
   const [isDocumentUpload, setDocumentUpload] = useState(false);
+  const [isEditCaseModal, setEditCaseModal] = useState(false);
   const [formData, setFormData] = useState({});
   const tenantId = window?.Digit.ULBService.getCurrentTenantId();
   const styles = getStyles();
@@ -313,6 +341,42 @@ const ComplainantSignature = ({ path }) => {
         additionalDetails: {},
         tenantId,
       },
+    });
+  };
+
+  const handleEditCase = async () => {
+    await DRISTIService.caseUpdateService(
+      {
+        cases: {
+          ...caseDetails,
+          workflow: {
+            ...caseDetails?.workflow,
+            action: complainantWorkflowACTION.EDIT_CASE,
+            assignes: [],
+          },
+        },
+        tenantId,
+      },
+      tenantId
+    ).then(async (res) => {
+      if (res?.status === complainantWorkflowState.EDITING_CASE) {
+        const promises = [
+          ...caseDetails?.litigants?.map(async (litigant) => {
+            return closePendingTask({
+              status: state,
+              assignee: litigant?.additionalDetails?.uuid,
+            });
+          }),
+          ...caseDetails?.representatives?.map(async (advocate) => {
+            return closePendingTask({
+              status: state,
+              assignee: advocate?.additionalDetails?.uuid,
+            });
+          }),
+        ];
+        await Promise.all(promises);
+        history.replace(`/${window?.contextPath}/${userInfoType}/dristi/home/file-case/case?caseId=${res?.id}&selected=complainantDetails`);
+      }
     });
   };
 
@@ -662,7 +726,7 @@ const ComplainantSignature = ({ path }) => {
             {litigants?.map((litigant, index) => (
               <div key={index} style={{ ...styles.litigantDetails, marginTop: "5px", fontSize: "15px" }}>
                 {litigant?.additionalDetails?.fullName}
-                {litigant?.hasSigned || (!isAdvocateFilingCase && isEsignSuccess) ? (
+                {litigant?.hasSigned || (litigant?.additionalDetails?.uuid === userInfo?.uuid && isEsignSuccess) ? (
                   <span style={{ ...styles.signedLabel, alignItems: "right" }}>{t("SIGNED")}</span>
                 ) : (
                   <span style={{ ...styles.unSignedLabel, alignItems: "right" }}>{t("PENDING")}</span>
@@ -723,7 +787,9 @@ const ComplainantSignature = ({ path }) => {
         {isRightPannelEnable() && (
           <div style={styles.signaturePanel}>
             <div style={styles.signatureTitle}>{t("ADD_SIGNATURE")}</div>
-            <p style={styles.signatureDescription}>{t("EITHER_ESIGN_UPLOAD")}</p>
+            {(isSelectedUploadDoc || (isAdvocateFilingCase && isFilingParty)) && (
+              <p style={styles.signatureDescription}>{t("EITHER_ESIGN_UPLOAD")}</p>
+            )}
             {isSelectedEsign && (
               <button style={styles.esignButton} onClick={handleEsignAction}>
                 {t("CS_ESIGN")}
@@ -749,6 +815,24 @@ const ComplainantSignature = ({ path }) => {
       </div>
       <ActionBar>
         <div style={styles.actionBar}>
+          {isFilingParty && (
+            <Button
+              label={t("EDIT_A_CASE")}
+              variation={"secondary"}
+              onButtonClick={() => {
+                setEditCaseModal(true);
+              }}
+              style={{ boxShadow: "none", backgroundColor: "#fff", padding: "10px", width: "240px", marginRight: "20px" }}
+              textStyles={{
+                fontFamily: "Roboto",
+                fontSize: "16px",
+                fontWeight: 700,
+                lineHeight: "18.75px",
+                textAlign: "center",
+                color: "#007E7E",
+              }}
+            />
+          )}
           <SubmitBar
             label={
               <div style={{ display: "flex", alignItems: "center", justifyContent: "center", width: "100%" }}>
@@ -772,7 +856,33 @@ const ComplainantSignature = ({ path }) => {
           onSelect={onSelect}
           config={uploadModalConfig}
           formData={formData}
+          showWarning={true}
+          warningText={t("UPLOAD_SIGNED_DOC_WARNING")}
         />
+      )}
+      {isEditCaseModal && (
+        <Modal
+          headerBarMain={<Heading label={t("CS_CONFIRM_EDIT")} />}
+          headerBarEnd={
+            <CloseBtn
+              onClick={() => {
+                setEditCaseModal(false);
+              }}
+            />
+          }
+          actionSaveLabel={t("EDIT_CONFIRM")}
+          actionCancelLabel={t("CS_EDIT_BACK")}
+          actionCancelOnSubmit={() => {
+            setEditCaseModal(false);
+          }}
+          style={{
+            backgroundColor: "#007E7E",
+          }}
+          children={<div style={{ margin: "16px 0px" }}>{t("CS_CONFIRM_EDIT_TEXT")}</div>}
+          actionSaveOnSubmit={() => {
+            handleEditCase();
+          }}
+        ></Modal>
       )}
     </div>
   );
