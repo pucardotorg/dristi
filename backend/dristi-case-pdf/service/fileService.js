@@ -362,13 +362,23 @@ async function appendPrayerSwornFilesToPDF(pdf, prayerSwornStatementDetails) {
 async function appendAdvocateFilesToPDF(pdf, advocates) {
   const existingPdfDoc = await PDFDocument.load(pdf);
 
+  let vakalatnamaCount = 0;
+  let affidavitCount = 0;
   for (let i = 0; i < advocates.length; i++) {
     const advocate = advocates[i];
     if (advocate.vakalatnamaFileStore) {
+      vakalatnamaCount++;
       await appendPdfPagesWithHeader(
         existingPdfDoc,
         advocate.vakalatnamaFileStore,
-        `Vakalatnama Document ${i + 1}`
+        `Vakalatnama Document ${vakalatnamaCount}`
+      );
+    } else if (advocate.pipAffidavitFileStore) {
+      affidavitCount++;
+      await appendPdfPagesWithHeader(
+        existingPdfDoc,
+        advocate.pipAffidavitFileStore,
+        `Affidavit Document ${affidavitCount}`
       );
     }
   }

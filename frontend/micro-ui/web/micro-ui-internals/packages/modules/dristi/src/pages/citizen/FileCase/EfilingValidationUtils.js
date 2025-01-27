@@ -1399,6 +1399,7 @@ export const updateCaseDetails = async ({
                 additionalDetails: {
                   fullName: getFullName(" ", data?.data?.firstName, data?.data?.middleName, data?.data?.lastName),
                   uuid: userUuid ? userUuid : null,
+                  currentPosition: index + 1,
                 },
               };
             } else {

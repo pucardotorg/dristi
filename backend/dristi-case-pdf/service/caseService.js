@@ -569,11 +569,17 @@ function getComplainantsDetailsForComplaint(cases) {
         (data?.complainantVerification &&
           data?.complainantVerification?.mobileNumber) ||
         "";
+      const allAdvocateDetails = getAdvocateDetailsForComplainant(cases);
+      const currentAdvocateDetails = allAdvocateDetails.find(
+        (advocateDetails) => {
+          advocateDetails?.individualId ===
+            data?.complainantVerification?.individualDetails?.individualId;
+        }
+      );
 
       if (complainantType.code === "REPRESENTATIVE") {
         const companyDetails = data.addressCompanyDetails || {};
         const companyAddress = getStringAddressDetails(companyDetails);
-        const advocateList = getAdvocateDetailsForComplaint(cases);
 
         return {
           ifIndividual: false,
@@ -587,8 +593,8 @@ function getComplainantsDetailsForComplaint(cases) {
               data?.companyDetailsUpload,
               "Company documents"
             ) || "",
-          advocateList: advocateList,
-          isPartyInPerson: advocateList?.[0]?.isPartyInPerson,
+          advocateList: currentAdvocateDetails?.advocateList,
+          isPartyInPerson: currentAdvocateDetails?.isPartyInPerson,
         };
       } else {
         const addressDetails =
@@ -597,7 +603,6 @@ function getComplainantsDetailsForComplaint(cases) {
             data?.complainantVerification?.individualDetails?.addressDetails) ||
           {};
         const address = getStringAddressDetails(addressDetails);
-        const advocateList = getAdvocateDetailsForComplaint(cases);
 
         return {
           ifIndividual: true,
@@ -610,15 +615,15 @@ function getComplainantsDetailsForComplaint(cases) {
             getDocumentFileStore(
               data?.complainantVerification?.individualDetails
             ) || "",
-          advocateList: advocateList,
-          isPartyInPerson: advocateList?.[0]?.isPartyInPerson,
+          advocateList: currentAdvocateDetails?.advocateList,
+          isPartyInPerson: currentAdvocateDetails?.isPartyInPerson,
         };
       }
     }
   );
 }
 
-function getAdvocateDetailsForComplaint(cases) {
+function getAdvocateDetailsForComplainant(cases) {
   if (
     !cases.additionalDetails ||
     !cases.additionalDetails.advocateDetails ||
@@ -626,30 +631,45 @@ function getAdvocateDetailsForComplaint(cases) {
   ) {
     return [];
   }
-  return cases.additionalDetails.advocateDetails.formdata.map(
-    (formData, index) => {
-      const data = formData.data;
-
-      if (data.isAdvocateRepresenting.code === "NO") {
-        return {
-          isPartyInPerson: true,
-        };
-      } else {
-        return {
-          index: index,
-          adjustedIndex: index + 1,
-          isPartyInPerson: false,
-          advocateName: data.advocateName || "",
-          barId: data.barRegistrationNumber || "",
-          advocatePhoneNumber:
-            data.AdvocateNameDetails.advocateMobileNumber || "",
-          vakalatnamaFileStore:
-            getDocumentFileStore(data.vakalatnamaFileUpload, "VAKALATNAMA") ||
-            "",
-        };
-      }
+  return cases.additionalDetails.advocateDetails.formdata.map((formdata) => {
+    const data = formdata.data;
+    if (data.isComplainantPip.code === "YES") {
+      return {
+        isPartyInPerson: true,
+        individualId: data.boxComplainant.individualId,
+        pipAffidavitFileStore:
+          getDocumentFileStore(
+            currentComplainant.data.pipAffidavitFileUpload,
+            "COMPLAINANT_PIP_AFFIDAVIT"
+          ) || "",
+        advocateList: [],
+      };
+    } else {
+      return {
+        isPartyInPerson: false,
+        individualId: data.boxComplainant.individualId,
+        vakalatnamaFileStore:
+          getDocumentFileStore(
+            data.vakalatnamaFileUpload,
+            "UPLOAD_VAKALATNAMA"
+          ) || "",
+        advocateList: data.MultipleAdvocateNameDetails.map(
+          (advocate, index) => {
+            return {
+              index: index,
+              advocateName:
+                advocate.advocateBarRegNumberWithName.advocateName || "",
+              barId:
+                advocate.advocateBarRegNumberWithName
+                  .barRegistrationNumberOriginal || "",
+              advocatePhoneNumber:
+                advocate.advocateNameDetails.advocateMobileNumber || "",
+            };
+          }
+        ),
+      };
     }
-  );
+  });
 }
 
 function getRespondentsDetailsForComplaint(cases) {
@@ -827,6 +847,8 @@ function generateOptionalDocDescriptions(documentList) {
           return `Digital record of proof of Complaint Additional Documents`;
         case "VAKALATNAMA_DOC":
           return `Digital record of proof of Advocate Vakalatnama`;
+        case "COMPLAINANT_PIP_AFFIDAVIT":
+          return `Digital record of proof of Pip Affidavit`;
         default:
           return null;
       }
@@ -895,7 +917,7 @@ module.exports = {
   getDelayCondonationDetails,
   getPrayerSwornStatementDetails,
   getComplainantsDetailsForComplaint,
-  getAdvocateDetailsForComplaint,
+  getAdvocateDetailsForComplainant,
   getRespondentsDetailsForComplaint,
   getDocumentList,
   generateBounceChequeDescriptions,

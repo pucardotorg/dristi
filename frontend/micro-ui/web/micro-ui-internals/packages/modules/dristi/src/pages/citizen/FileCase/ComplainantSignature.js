@@ -164,7 +164,7 @@ const caseType = {
 const complainantWorkflowACTION = {
   UPLOAD_DOCUMENT: "UPLOAD",
   ESIGN: "E-SIGN",
-  EDIT_CASE: "",
+  EDIT_CASE: "EDIT_CASE",
 };
 
 const complainantWorkflowState = {
@@ -172,7 +172,8 @@ const complainantWorkflowState = {
   PENDING_ESIGN_SCRUTINY: "PENDING_RE_E-SIGN",
   UPLOAD_SIGN_DOC: "PENDING_SIGN",
   UPLOAD_SIGN_DOC_SCRUTINY: "PENDING_RE_SIGN",
-  EDITING_CASE: "",
+  DRAFT_IN_PROGRESS: "DRAFT_IN_PROGRESS",
+  CASE_REASSIGNED: "CASE_REASSIGNED",
 };
 
 const stateSla = {
@@ -359,7 +360,7 @@ const ComplainantSignature = ({ path }) => {
       },
       tenantId
     ).then(async (res) => {
-      if (res?.status === complainantWorkflowState.EDITING_CASE) {
+      if ([complainantWorkflowState.CASE_REASSIGNED, complainantWorkflowState.DRAFT_IN_PROGRESS].includes(res?.status)) {
         const promises = [
           ...caseDetails?.litigants?.map(async (litigant) => {
             return closePendingTask({
@@ -796,7 +797,7 @@ const ComplainantSignature = ({ path }) => {
               </button>
             )}
 
-            {(isSelectedUploadDoc || (isAdvocateFilingCase && isFilingParty)) && (
+            {isSelectedUploadDoc && (
               <button
                 style={{
                   ...styles.uploadButton,

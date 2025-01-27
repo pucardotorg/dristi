@@ -24,7 +24,7 @@ exports.generateCasePdf = async (req, res, next) => {
     const complainants =
       caseService.getComplainantsDetailsForComplaint(caseData);
     const accuseds = caseService.getRespondentsDetailsForComplaint(caseData);
-    const advocates = caseService.getAdvocateDetailsForComplaint(caseData);
+    const advocates = caseService.getAdvocateDetailsForComplainant(caseData);
     const complaint =
       caseService.getPrayerSwornStatementDetails(caseData)?.[0]
         ?.memorandumOfComplaintText;
