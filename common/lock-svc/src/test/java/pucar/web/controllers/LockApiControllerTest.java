@@ -52,10 +52,10 @@ class LockApiControllerTest {
     void testIsLocked_ReturnsTrue() {
         when(lockService.isLocked(any(), anyString(), anyString())).thenReturn(true);
 
-        ResponseEntity<Boolean> response = lockApiController.isLocked(requestInfoWrapper, "12345", "tenant1");
+        ResponseEntity<LockResponse> response = lockApiController.isLocked(requestInfoWrapper, "12345", "tenant1");
         assertNotNull(response);
         assertEquals(200, response.getStatusCodeValue());
-        assertTrue(response.getBody());
+        assertTrue(response.getBody().getLock().getIsLocked());
     }
 
     @Test
@@ -72,9 +72,9 @@ class LockApiControllerTest {
     void testReleaseLock_Success() {
         when(lockService.releaseLock(any(), anyString(), anyString())).thenReturn(true);
 
-        ResponseEntity<?> response = lockApiController.releaseLock(requestInfoWrapper, "12345", "tenant1");
+        ResponseEntity<LockResponse> response = lockApiController.releaseLock(requestInfoWrapper, "12345", "tenant1");
         assertNotNull(response);
         assertEquals(200, response.getStatusCodeValue());
-        assertTrue((Boolean) response.getBody());
+        assertFalse( response.getBody().getLock().getIsLocked());
     }
 }

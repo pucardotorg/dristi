@@ -30,11 +30,15 @@ public class LockApiController {
 
 
     @RequestMapping(value = "/v1/_get", method = RequestMethod.POST)
-    public ResponseEntity<Boolean> isLocked(@Parameter(in = ParameterIn.DEFAULT, description = "Details for the search of lock + RequestInfo meta data.", required = true, schema = @Schema()) @Valid @RequestBody RequestInfoWrapper requestInfo,
-                                              @RequestParam(name = "uniqueId") String uniqueId,
-                                              @RequestParam(name = "tenantId") String tenantId) {
+    public ResponseEntity<LockResponse> isLocked(@Parameter(in = ParameterIn.DEFAULT, description = "Details for the search of lock + RequestInfo meta data.", required = true, schema = @Schema()) @Valid @RequestBody RequestInfoWrapper requestInfo,
+                                                 @RequestParam(name = "uniqueId") String uniqueId,
+                                                 @RequestParam(name = "tenantId") String tenantId) {
 
-        Boolean response = lockService.isLocked(requestInfo.getRequestInfo(), uniqueId, tenantId);
+        Boolean isLocked = lockService.isLocked(requestInfo.getRequestInfo(), uniqueId, tenantId);
+
+        LockResponse response = LockResponse.builder().responseInfo(
+                        ResponseInfoFactory.createResponseInfoFromRequestInfo(requestInfo.getRequestInfo(), true))
+                .lock(Lock.builder().uniqueId(uniqueId).tenantId(tenantId).isLocked(isLocked).build()).build();
 
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
@@ -50,11 +54,15 @@ public class LockApiController {
     }
 
     @RequestMapping(value = "/v1/_release", method = RequestMethod.POST)
-    public ResponseEntity<?> releaseLock(@Parameter(in = ParameterIn.DEFAULT, description = "uniqueId and tenantId + RequestInfo meta data.", schema = @Schema()) @Valid @RequestBody RequestInfoWrapper requestInfo,
-                                         @RequestParam(name = "uniqueId") String uniqueId,
-                                         @RequestParam(name = "tenantId") String tenantId) {
+    public ResponseEntity<LockResponse> releaseLock(@Parameter(in = ParameterIn.DEFAULT, description = "uniqueId and tenantId + RequestInfo meta data.", schema = @Schema()) @Valid @RequestBody RequestInfoWrapper requestInfo,
+                                                    @RequestParam(name = "uniqueId") String uniqueId,
+                                                    @RequestParam(name = "tenantId") String tenantId) {
 
-        Boolean response = lockService.releaseLock(requestInfo.getRequestInfo(), uniqueId, tenantId);
+        Boolean releaseLock = lockService.releaseLock(requestInfo.getRequestInfo(), uniqueId, tenantId);
+
+        LockResponse response = LockResponse.builder().responseInfo(
+                        ResponseInfoFactory.createResponseInfoFromRequestInfo(requestInfo.getRequestInfo(), releaseLock))
+                .lock(Lock.builder().uniqueId(uniqueId).tenantId(tenantId).isLocked(!releaseLock).build()).build();
 
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
