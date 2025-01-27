@@ -570,11 +570,10 @@ function getComplainantsDetailsForComplaint(cases) {
           data?.complainantVerification?.mobileNumber) ||
         "";
       const allAdvocateDetails = getAdvocateDetailsForComplainant(cases);
-      const currentAdvocateDetails = allAdvocateDetails.find(
-        (advocateDetails) => {
+      const currentAdvocateDetails = allAdvocateDetails?.find(
+        (advocateDetails) =>
           advocateDetails?.individualId ===
-            data?.complainantVerification?.individualDetails?.individualId;
-        }
+          data?.complainantVerification?.individualDetails?.individualId
       );
 
       if (complainantType.code === "REPRESENTATIVE") {
@@ -633,7 +632,7 @@ function getAdvocateDetailsForComplainant(cases) {
   }
   return cases.additionalDetails.advocateDetails.formdata.map((formdata) => {
     const data = formdata.data;
-    if (data.isComplainantPip.code === "YES") {
+    if (data?.isComplainantPip?.code === "YES") {
       return {
         isPartyInPerson: true,
         individualId: data.boxComplainant.individualId,
@@ -644,7 +643,7 @@ function getAdvocateDetailsForComplainant(cases) {
           ) || "",
         advocateList: [],
       };
-    } else {
+    } else if (data?.isComplainantPip?.code === "NO") {
       return {
         isPartyInPerson: false,
         individualId: data.boxComplainant.individualId,
@@ -669,6 +668,7 @@ function getAdvocateDetailsForComplainant(cases) {
         ),
       };
     }
+    return [];
   });
 }
 
