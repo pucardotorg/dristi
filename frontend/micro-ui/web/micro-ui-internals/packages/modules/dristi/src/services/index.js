@@ -335,4 +335,29 @@ export const DRISTIService = {
       data,
       params,
     }),
+  setCaseLock: (data, params) =>
+    Request({
+      url: Urls.dristi.setCaseLock,
+      useCache: false,
+      userService: false,
+      data,
+      params,
+    }),
+  getCaseLockStatus: (data, params) =>
+    Request({
+      url: Urls.dristi.getCaseLockStatus,
+      useCache: false,
+      userService: false,
+      data,
+      params,
+    }
+  ),
+  setCaseUnlock: (data, params) =>
+    Request({
+      url: Urls.dristi.setCaseUnlock,
+      useCache: false,
+      userService: false,
+      data,
+      params,
+    }),
 };

@@ -75,6 +75,9 @@ export const Urls = {
     summonsPayment: "/payment-calculator/v1/_calculate",
     repondentPincodeSearch: "/payment-calculator/hub/v1/_search",
     downloadCaseBundle: "/casemanagement/casemanager/case/v1/_buildcasebundle",
+    setCaseUnlock: "/lock-svc/v1/_release",
+    getCaseLockStatus: "/lock-svc/v1/_get",
+    setCaseLock: "/lock-svc/v1/_set",
   },
   case: {
     addWitness: "/case/v1/add/witness",

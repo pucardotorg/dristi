@@ -1,5 +1,5 @@
-import { Banner, CardLabel, CloseSvg, Loader, Modal } from "@egovernments/digit-ui-react-components";
-import React, { useMemo, useState, useEffect } from "react";
+import { Banner, CardLabel, CloseSvg, Loader, Toast } from "@egovernments/digit-ui-react-components";
+import React, { useMemo, useState, useEffect, useCallback } from "react";
 import Button from "../../../components/Button";
 import { InfoCard } from "@egovernments/digit-ui-components";
 import { Link, useHistory, useLocation } from "react-router-dom/cjs/react-router-dom.min";
@@ -11,6 +11,7 @@ import { Urls } from "../../../hooks";
 import usePaymentProcess from "../../../../../home/src/hooks/usePaymentProcess";
 import { getSuffixByBusinessCode } from "../../../Utils";
 import useDownloadCasePdf from "../../../hooks/dristi/useDownloadCasePdf";
+import Modal from "@egovernments/digit-ui-module-dristi/src/components/Modal";
 
 const mockSubmitModalInfo = {
   header: "CS_HEADER_FOR_E_FILING_PAYMENT",
@@ -49,6 +50,9 @@ function EFilingPayment({ t, submitModalInfo = mockSubmitModalInfo, path }) {
   const fileStoreId = localStorage.getItem("fileStoreId");
   const location = useLocation();
   const calculationResponse = location.state.state.calculationResponse;
+  const [toastMsg, setToastMsg] = useState(null);
+  const [isCaseLocked, setIsCaseLocked] = useState(false);
+  const [payOnlineButtonTitle, setPayOnlineButtonTitle] = useState("CS_BUTTON_PAY_ONLINE_SOMEONE_PAYING");
   const { data: paymentTypeData, isLoading: isPaymentTypeLoading } = Digit.Hooks.useCustomMDMS(
     Digit.ULBService.getStateId(),
     "payment",
@@ -98,6 +102,26 @@ function EFilingPayment({ t, submitModalInfo = mockSubmitModalInfo, path }) {
       };
     }
   }, [caseDetails]);
+  const fetchCaseLockStatus = useCallback(async () => {
+    try {
+      const status = await DRISTIService.getCaseLockStatus(
+        {},
+        {
+          uniqueId: caseDetails?.filingNumber,
+          tenantId: tenantId,
+        }
+      );
+      setIsCaseLocked(status?.Lock?.isLocked);
+    } catch (error) {
+      console.error("Error fetching case lock status", error);
+    }
+  });
+
+  useEffect(() => {
+    if (caseDetails?.filingNumber) {
+      fetchCaseLockStatus();
+    }
+  }, [caseDetails?.filingNumber]);
 
   const totalAmount = useMemo(() => {
     const totalAmount = calculationResponse?.Calculation?.[0]?.totalAmount || 0;
@@ -153,8 +177,30 @@ function EFilingPayment({ t, submitModalInfo = mockSubmitModalInfo, path }) {
   const onSubmitCase = async () => {
     try {
       const bill = await fetchBill(caseDetails?.filingNumber + `_${suffix}`, tenantId, "case-default");
+      if (!bill?.Bill?.length) {
+        showToast("success", t("CS_NO_PENDING_PAYMENT"), 50000);
+        setIsCaseLocked(true);
+        setPayOnlineButtonTitle("CS_BUTTON_PAY_ONLINE_NO_PENDING_PAYMENT");
+        return;
+      }
+      const caseLockStatus = await DRISTIService.getCaseLockStatus(
+        {},
+        {
+          uniqueId: caseDetails?.filingNumber,
+          tenantId: tenantId,
+        }
+      );
+      if (caseLockStatus?.Lock?.isLocked) {
+        setIsCaseLocked(true);
+        showToast("success", t("CS_CASE_LOCKED_BY_ANOTHER_USER"), 50000);
+        setPayOnlineButtonTitle("CS_BUTTON_PAY_ONLINE_SOMEONE_PAYING");
+        return;
+      }
+      await DRISTIService.setCaseLock({ Lock: { uniqueId: caseDetails?.filingNumber, tenantId: tenantId, lockType: "PAYMENT" } }, {});
       if (bill?.Bill?.length) {
         const paymentStatus = await openPaymentPortal(bill);
+        await DRISTIService.setCaseUnlock({}, { uniqueId: caseDetails?.filingNumber, tenantId: tenantId });
+
         if (paymentStatus) {
           await DRISTIService.customApiService(Urls.dristi.pendingTask, {
             pendingTask: {
@@ -242,6 +288,12 @@ function EFilingPayment({ t, submitModalInfo = mockSubmitModalInfo, path }) {
   if (isLoading || paymentLoader || isPaymentTypeLoading) {
     return <Loader />;
   }
+  const showToast = (type, message, duration = 5000) => {
+    setToastMsg({ key: type, action: message });
+    setTimeout(() => {
+      setToastMsg(null);
+    }, duration);
+  };
 
   const fileStoreIdToUse = caseDetails?.additionalDetails?.signedCaseDocument || fileStoreId;
 
@@ -313,6 +365,8 @@ function EFilingPayment({ t, submitModalInfo = mockSubmitModalInfo, path }) {
             headerBarEnd={<CloseBtn onClick={onCancel} />}
             actionSaveLabel={t("CS_PAY_ONLINE")}
             formId="modal-action"
+            titleSaveButton={isCaseLocked ? t(payOnlineButtonTitle) : ""}
+            isDisabled={isCaseLocked}
             actionSaveOnSubmit={() => onSubmitCase()}
             headerBarMain={<Heading label={t("CS_PAY_TO_FILE_CASE")} />}
           >
@@ -396,6 +450,9 @@ function EFilingPayment({ t, submitModalInfo = mockSubmitModalInfo, path }) {
           </Modal>
         )}
       </div>
+      {toastMsg && (
+        <Toast error={toastMsg.key === "error"} label={t(toastMsg.action)} onClose={() => setToastMsg(null)} style={{ maxWidth: "670px" }} />
+      )}
     </div>
   );
 }

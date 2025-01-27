@@ -38,6 +38,7 @@ const Modal = ({
   customActionTextClassName,
   actionCancelTextStyle,
   cancelTextClassName,
+  titleSaveButton,
 }) => {
   /**
    * TODO: It needs to be done from the desgin changes
@@ -99,6 +100,7 @@ const Modal = ({
                 isDisabled={isDisabled}
                 style={style}
                 textClassName={submitTextClassName}
+                title={titleSaveButton ? titleSaveButton : ""}
               />
             ) : null}
           </div>

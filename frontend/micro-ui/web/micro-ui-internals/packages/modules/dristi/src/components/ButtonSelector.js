@@ -19,6 +19,7 @@ const ButtonSelector = (props) => {
       onClick={props.onSubmit}
       disabled={props.isDisabled}
       style={props.style ? props.style : null}
+      title={props.title ? props.title : null}
     >
       <h2 style={{ ...props?.textStyles, ...{ width: "100%" } }} className={props?.textClassName}>
         {props.label}
