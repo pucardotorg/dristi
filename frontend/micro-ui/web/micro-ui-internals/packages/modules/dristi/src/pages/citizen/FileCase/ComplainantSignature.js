@@ -346,39 +346,56 @@ const ComplainantSignature = ({ path }) => {
   };
 
   const handleEditCase = async () => {
-    await DRISTIService.caseUpdateService(
-      {
-        cases: {
-          ...caseDetails,
-          workflow: {
-            ...caseDetails?.workflow,
-            action: complainantWorkflowACTION.EDIT_CASE,
-            assignes: [],
+    setLoader(true);
+    setEditCaseModal(false);
+    try {
+      await DRISTIService.caseUpdateService(
+        {
+          cases: {
+            ...caseDetails,
+            additionalDetails: {
+              ...caseDetails?.additionalDetails,
+              signedCaseDocument: null,
+            },
+            documents: caseDetails?.documents?.filter(
+              (doc) => doc?.documentType !== "case.complaint.signed" && doc?.documentType !== "case.complaint.unsigned"
+            ),
+            workflow: {
+              ...caseDetails?.workflow,
+              action: complainantWorkflowACTION.EDIT_CASE,
+              assignes: [],
+            },
           },
+          tenantId,
         },
-        tenantId,
-      },
-      tenantId
-    ).then(async (res) => {
-      if ([complainantWorkflowState.CASE_REASSIGNED, complainantWorkflowState.DRAFT_IN_PROGRESS].includes(res?.status)) {
-        const promises = [
-          ...caseDetails?.litigants?.map(async (litigant) => {
-            return closePendingTask({
-              status: state,
-              assignee: litigant?.additionalDetails?.uuid,
-            });
-          }),
-          ...caseDetails?.representatives?.map(async (advocate) => {
-            return closePendingTask({
-              status: state,
-              assignee: advocate?.additionalDetails?.uuid,
-            });
-          }),
-        ];
-        await Promise.all(promises);
-        history.replace(`/${window?.contextPath}/${userInfoType}/dristi/home/file-case/case?caseId=${res?.id}&selected=complainantDetails`);
-      }
-    });
+        tenantId
+      ).then(async (res) => {
+        if ([complainantWorkflowState.CASE_REASSIGNED, complainantWorkflowState.DRAFT_IN_PROGRESS].includes(res?.cases?.[0]?.status)) {
+          const promises = [
+            ...caseDetails?.litigants?.map(async (litigant) => {
+              return closePendingTask({
+                status: state,
+                assignee: litigant?.additionalDetails?.uuid,
+              });
+            }),
+            ...caseDetails?.representatives?.map(async (advocate) => {
+              return closePendingTask({
+                status: state,
+                assignee: advocate?.additionalDetails?.uuid,
+              });
+            }),
+          ];
+          await Promise.all(promises);
+          history.replace(
+            `/${window?.contextPath}/${userInfoType}/dristi/home/file-case/case?caseId=${res?.cases?.[0]?.id}&selected=complainantDetails`
+          );
+        }
+      });
+    } catch (error) {
+      console.error("Error:", error);
+      toast.error(t("SOMETHING_WENT_WRONG"));
+      setLoader(false);
+    }
   };
 
   function getOtherAdvocatesForClosing() {
@@ -433,8 +450,31 @@ const ComplainantSignature = ({ path }) => {
     }
   };
 
-  const handleEsignAction = () => {
-    handleEsign(name, "ci", DocumentFileStoreId, getPlaceholder());
+  const handleEsignAction = async () => {
+    setLoader(true);
+    try {
+      const caseLockStatus = await DRISTIService.getCaseLockStatus(
+        {},
+        {
+          uniqueId: caseDetails?.filingNumber,
+          tenantId: tenantId,
+        }
+      );
+      if (caseLockStatus?.Lock?.isLocked) {
+        toast.error(t("SOMEONEELSE_IS_ESIGNING_CURRENTLY"));
+        setLoader(false);
+        return;
+      } else {
+        await DRISTIService.setCaseLock({ Lock: { uniqueId: caseDetails?.filingNumber, tenantId: tenantId, lockType: "ESIGN" } }, {}).then(() => {
+          setLoader(false);
+          handleEsign(name, "ci", DocumentFileStoreId, getPlaceholder());
+        });
+      }
+    } catch (error) {
+      console.error("Error:", error);
+      toast.error(t("SOMETHING_WENT_WRONG"));
+      setLoader(false);
+    }
   };
 
   const handleUploadFile = () => {
@@ -652,9 +692,14 @@ const ComplainantSignature = ({ path }) => {
   };
 
   useEffect(() => {
+    const handleCaseUnlocking = async () => {
+      await DRISTIService.setCaseUnlock({}, { uniqueId: caseDetails?.filingNumber, tenantId: tenantId });
+    };
+
     const isSignSuccess = localStorage.getItem("isSignSuccess");
     const storedESignObj = localStorage.getItem("signStatus");
     const parsedESignObj = JSON.parse(storedESignObj);
+    const esignProcess = localStorage.getItem("esignProcess");
 
     if (isSignSuccess) {
       const matchedSignStatus = parsedESignObj?.find((obj) => obj.name === name && obj.isSigned === true);
@@ -664,12 +709,15 @@ const ComplainantSignature = ({ path }) => {
         setEsignSuccess(true);
       }
     }
+    if (esignProcess && caseDetails?.filingNumber) {
+      handleCaseUnlocking();
+      localStorage.removeItem("esignProcess");
+    }
 
     localStorage.removeItem("isSignSuccess");
     localStorage.removeItem("signStatus");
     localStorage.removeItem("fileStoreId");
-    localStorage.removeItem("esignProcess");
-  }, []);
+  }, [caseDetails?.filingNumber, tenantId]);
 
   const isRightPannelEnable = () => {
     if (isAdvocateFilingCase) {
@@ -788,9 +836,8 @@ const ComplainantSignature = ({ path }) => {
         {isRightPannelEnable() && (
           <div style={styles.signaturePanel}>
             <div style={styles.signatureTitle}>{t("ADD_SIGNATURE")}</div>
-            {(isSelectedUploadDoc || (isAdvocateFilingCase && isFilingParty)) && (
-              <p style={styles.signatureDescription}>{t("EITHER_ESIGN_UPLOAD")}</p>
-            )}
+            {isSelectedUploadDoc && isAdvocateFilingCase && isFilingParty && <p style={styles.signatureDescription}>{t("EITHER_ESIGN_UPLOAD")}</p>}
+            {isSelectedUploadDoc && !isAdvocateFilingCase && <p style={styles.signatureDescription}>{t("ONLY_ADVOCATES_CAN_UPLOAD_SIGNED_COPY")}</p>}
             {isSelectedEsign && (
               <button style={styles.esignButton} onClick={handleEsignAction}>
                 {t("CS_ESIGN")}
