@@ -4,7 +4,6 @@ package org.drishti.esign.util;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.drishti.esign.config.Configuration;
 import org.drishti.esign.repository.ServiceRequestRepository;
-import org.drishti.esign.web.models.StorageResponse;
 import org.egov.tracer.model.CustomException;
 import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -13,6 +12,7 @@ import org.springframework.http.*;
 import org.springframework.stereotype.Component;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
+import org.springframework.web.client.RestClientException;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -102,12 +102,39 @@ public class FileStoreUtil {
 
 
     }
+
     private boolean isValidFileStoreId(String fileStoreId) {
         return fileStoreId != null && fileStoreId.matches("[a-zA-Z0-9_-]+");
     }
 
     private boolean isValidTenantId(String tenantId) {
         return tenantId != null && tenantId.matches("[a-zA-Z0-9_-]+");
+    }
+
+
+    public List<String> deleteFileFromFileStore(String filestoreId, String tenantId, Boolean isSoftDelete) {
+
+        StringBuilder uri = new StringBuilder();
+        uri.append(configs.getFilestoreHost())
+                .append(configs.getFilestoreDeleteEndPoint())
+                .append("?tenantId=").append(tenantId);
+
+        MultiValueMap<String, Object> request = new LinkedMultiValueMap<>();
+        request.add("fileStoreIds", filestoreId);
+        request.add("isSoftDelete", isSoftDelete);
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(MediaType.MULTIPART_FORM_DATA);
+
+        // hit the serviceRequest Repo
+
+        HttpEntity<MultiValueMap<String, Object>> entity = new HttpEntity<>(request, headers);
+        try {
+            ResponseEntity<String> response = restTemplate.exchange(uri.toString(), HttpMethod.POST, entity, String.class);
+        } catch (Exception e) {
+            throw new CustomException("FILESTORE_SERVICE_EXCEPTION","Error occurred while deleting file from filestore");
+        }
+
+        return null; // list of filestore ids which is deleted
     }
 
 

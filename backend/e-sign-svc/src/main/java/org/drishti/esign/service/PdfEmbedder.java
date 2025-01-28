@@ -4,26 +4,24 @@ import com.itextpdf.text.Font;
 import com.itextpdf.text.Rectangle;
 import com.itextpdf.text.pdf.*;
 import com.itextpdf.text.pdf.parser.PdfContentStreamProcessor;
+import com.itextpdf.text.pdf.security.MakeSignature;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.codec.digest.DigestUtils;
-import org.drishti.esign.config.PdfSignatureAppearanceCache;
 import org.drishti.esign.util.ByteArrayMultipartFile;
+import org.drishti.esign.util.FileStoreUtil;
 import org.drishti.esign.util.TextLocationFinder;
 import org.drishti.esign.web.models.Coordinate;
 import org.drishti.esign.web.models.ESignParameter;
+import org.egov.tracer.model.CustomException;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.Resource;
 import org.springframework.stereotype.Component;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.IOException;
+import java.io.ByteArrayOutputStream;
 import java.io.InputStream;
-import java.nio.file.Files;
-import java.nio.file.Path;
 import java.util.Calendar;
-import java.util.HashMap;
 
 import static org.drishti.esign.config.ServiceConstants.*;
 
@@ -32,59 +30,18 @@ import static org.drishti.esign.config.ServiceConstants.*;
 @Slf4j
 public class PdfEmbedder {
 
+    private final FileStoreUtil fileStoreUtil;
 
-    public MultipartFile signPdfWithDSAndReturnMultipartFile(String filepath, String response,String fileStoreId) throws IOException {
-
-        PdfSignatureAppearance appearance = PdfSignatureAppearanceCache.get(fileStoreId);
-
-        int contentEstimated = 8192;
-        String errorCode = response.substring(response.indexOf(ERR_CODE), response.indexOf(ERR_MSG));
-        errorCode = errorCode.trim();
-
-        byte[] fileContent = new byte[0];
-        if (errorCode.contains("NA")) {
-
-            try {
-                String pkcsResponse = new XmlSigning().parseXml(response.trim());
-                byte[] sigbytes = Base64.decodeBase64(pkcsResponse);
-                byte[] paddedSig = new byte[contentEstimated];
-                System.arraycopy(sigbytes, 0, paddedSig, 0, sigbytes.length);
-                PdfDictionary dic2 = new PdfDictionary();
-                dic2.put(PdfName.CONTENTS,
-                        new PdfString(paddedSig).setHexWriting(true));
-                appearance.close(dic2);
-
-                fileContent = Files.readAllBytes(Path.of(filepath));
-
-
-            } catch (Exception ex) {
-                throw new RuntimeException(ex);
-            } finally {
-                File file = new File(filepath);
-                file.deleteOnExit();
-                PdfSignatureAppearanceCache.remove(fileStoreId);
-            }
-
-        } else {
-            File file = new File(filepath);
-            file.deleteOnExit();
-            PdfSignatureAppearanceCache.remove(fileStoreId);
-        }
-
-        return new ByteArrayMultipartFile(FILE_NAME, fileContent);
-    }
-
-
-    public String generateHash(Resource resource) {
-        try (InputStream inputStream = resource.getInputStream()) {
-            return DigestUtils.sha256Hex(inputStream);
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
+    @Autowired
+    public PdfEmbedder(FileStoreUtil fileStoreUtil) {
+        this.fileStoreUtil = fileStoreUtil;
     }
 
 
     private Coordinate findLocationToSign(PdfReader reader, String signaturePlace) {
+
+        log.info("Method=findLocationToSign ,Result=Inprogress ,placeholder={}", signaturePlace);
+
         Coordinate coordinate = new Coordinate();
         Rectangle cropBox = reader.getCropBox(1);
         coordinate.setX(cropBox.getLeft());
@@ -92,12 +49,14 @@ public class PdfEmbedder {
         coordinate.setFound(false);
         coordinate.setPageNumber(reader.getNumberOfPages());
 
-        if (signaturePlace == null || signaturePlace.isEmpty() || signaturePlace.isBlank()) {
+        if (signaturePlace == null || signaturePlace.isBlank()) {
             return coordinate;
         }
         TextLocationFinder finder = new TextLocationFinder(signaturePlace);
 
         try {
+            log.info("Method=findLocationToSign ,Result=Inprogress ,Reading pdf for placeholder={}", signaturePlace);
+
             for (int i = 1; i <= reader.getNumberOfPages(); i++) {
                 PdfContentStreamProcessor processor = new PdfContentStreamProcessor(finder);
                 PdfDictionary pageDic = reader.getPageN(i);
@@ -120,32 +79,67 @@ public class PdfEmbedder {
                     coordinate.setY(y);
                     coordinate.setFound(true);
                     coordinate.setPageNumber(i);
+                    log.info("Method=findLocationToSign,Result=Success,Coordinate found for placeholder={}", signaturePlace);
                     return coordinate;
 
                 }
             }
+            log.info("Method=findLocationToSign,Result=Success,No Coordinate found for placeholder={}", signaturePlace);
 
-        } catch (IOException e) {
-            throw new RuntimeException(e);
+        } catch (Exception e) {
+            log.info("Method=findLocationToSign ,Result=Error,placeholder={}",signaturePlace);
+            log.error("Method=findLocationToSign, Error:{}", e.toString());
+            throw new CustomException("SIGNATURE_EMBED_EXCEPTION","Error occurred while finding coordinate for placeholder");
         }
         return coordinate;
     }
 
 
-    public String pdfSigner(Resource resource, File destFile, ESignParameter eSignParameter) {
-
-        String signPlaceHolder = eSignParameter.getSignPlaceHolder();
-
-        PdfSignatureAppearance appearance;
-        String hashDocument = null;
-        PdfReader reader;
+    public MultipartFile signPdfWithDSAndReturnMultipartFileV2(Resource resource, String response, ESignParameter eSignParameter) {
+        log.info("Method=signPdfWithDSAndReturnMultipartFileV2 ,Result=Inprogress ,filestoreId={}", eSignParameter.getFileStoreId());
         try {
-            reader = new PdfReader(resource.getInputStream());
-            FileOutputStream fout = new FileOutputStream(destFile);
-            PdfStamper stamper = PdfStamper.createSignature(reader, fout, '\0', null, true);
-            appearance = stamper.getSignatureAppearance();
+            int contentEstimated = 8192;
+
+            PdfReader reader = new PdfReader(resource.getInputStream());
+            ByteArrayOutputStream baos = new ByteArrayOutputStream();
+
+            String pkcsResponse = new XmlSigning().parseXml(response.trim());
+            byte[] sigbytes = Base64.decodeBase64(pkcsResponse);
+            byte[] paddedSig = new byte[contentEstimated];
+            System.arraycopy(sigbytes, 0, paddedSig, 0, sigbytes.length);
+            MyExternalSignatureContainer container = new MyExternalSignatureContainer(paddedSig, null, null);
+
+            MakeSignature.signDeferred(reader, eSignParameter.getSignPlaceHolder(), baos, container);
+
+            return new ByteArrayMultipartFile(FILE_NAME, baos.toByteArray());
+
+        } catch (Exception e) {
+            log.info("Method=signPdfWithDSAndReturnMultipartFileV2 ,Result=Error ,filestoreId={}", eSignParameter.getFileStoreId());
+            log.error("Method=signPdfWithDSAndReturnMultipartFileV2, Error:{}", e.toString());
+            throw new CustomException("SIGNATURE_EMBED_EXCEPTION", "Error Occurred while embedding signature");
+        } finally {
+            log.info("Deleting partially signed pdf in finally block, filestoreId={}", eSignParameter.getFileStoreId());
+            fileStoreUtil.deleteFileFromFileStore(eSignParameter.getFileStoreId(), eSignParameter.getTenantId(), false);
+            log.info("Method=signPdfWithDSAndReturnMultipartFileV2 ,Result=Success ,filestoreId={}", eSignParameter.getFileStoreId());
+
+        }
+
+    }
+
+    public String pdfSignerV2(Resource resource, ESignParameter eSignParameter) {
+        String hashDocument = null;
+        log.info("Method=pdfSignerV2 ,Result=InProgress ,filestoreId={}", eSignParameter.getFileStoreId());
+
+        try {
+            PdfReader reader = new PdfReader(resource.getInputStream());
+            ByteArrayOutputStream baos = new ByteArrayOutputStream();
+
+            String signPlaceHolder = eSignParameter.getSignPlaceHolder();
+
+            PdfStamper stamper = PdfStamper.createSignature(reader, baos, '\0', null, true);
+            PdfSignatureAppearance appearance = stamper.getSignatureAppearance();
             appearance.setRenderingMode(PdfSignatureAppearance.RenderingMode.DESCRIPTION);
-            appearance.setAcro6Layers(false);
+            appearance.setAcro6Layers(false);// deprecated
 
             Coordinate locationToSign = findLocationToSign(reader, signPlaceHolder);
             Rectangle rectangle = new Rectangle(locationToSign.getX(), locationToSign.getY(), locationToSign.getX() + (100), locationToSign.getY() + (50));
@@ -165,26 +159,30 @@ public class PdfEmbedder {
             appearance.setVisibleSignature(rectangle,
                     locationToSign.getPageNumber(), signPlaceHolder);
             int contentEstimated = 8192;
-            HashMap<PdfName, Integer> exc = new HashMap();
-            exc.put(PdfName.CONTENTS, contentEstimated * 2 + 2);
-            PdfSignature dic = new PdfSignature(PdfName.ADOBE_PPKLITE,
-                    PdfName.ADBE_PKCS7_DETACHED);
-            dic.setReason(appearance.getReason());
-            dic.setLocation(appearance.getLocation());
-            dic.setDate(new PdfDate(appearance.getSignDate()));
+            MyExternalSignatureContainer container = new MyExternalSignatureContainer(new byte[]{0}, PdfName.ADOBE_PPKLITE, PdfName.ADBE_PKCS7_DETACHED);
 
-            appearance.setCryptoDictionary(dic);
-            appearance.preClose(exc);
+            MakeSignature.signExternalContainer(appearance, container, contentEstimated);
 
-            PdfSignatureAppearanceCache.put(eSignParameter.getFileStoreId(), appearance);
 
             InputStream is = appearance.getRangeStream();
             hashDocument = DigestUtils.sha256Hex(is);
 
+            MultipartFile dummySignedPdf = new ByteArrayMultipartFile(FILE_NAME, baos.toByteArray());
+
+            String dummyFileStoreId = fileStoreUtil.storeFileInFileStore(dummySignedPdf, "kl");
+
+            eSignParameter.setFileStoreId(dummyFileStoreId);
+            stamper.close();
+
         } catch (Exception e) {
-            log.error("Something went wrong");
+            log.info("Method=pdfSignerV2 ,Result=Error ,filestoreId={}", eSignParameter.getFileStoreId());
+            log.error("Method=pdfSignerV2, Error:{}", e.toString());
+            throw new CustomException("SIGNATURE_PLACEHOLDER_EXCEPTION","Error occurred while creating placeholder");
         }
+
+        log.info("Method=pdfSignerV2 ,Result=Success ,filestoreId={}", eSignParameter.getFileStoreId());
         return hashDocument;
+
     }
 }
 

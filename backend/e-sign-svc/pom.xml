@@ -10,7 +10,8 @@
         <java.version>17</java.version>
         <maven.compiler.source>${java.version}</maven.compiler.source>
         <maven.compiler.target>${java.version}</maven.compiler.target>
-              <jacoco.version>0.8.9</jacoco.version>
+        <jacoco.version>0.8.9</jacoco.version>
+        <project.version>9.1.0-SNAPSHOT</project.version>
     </properties>
     <parent>
         <groupId>org.springframework.boot</groupId>
@@ -101,11 +102,25 @@
 
         <!--        PDF Dependency-->
 
+        <!-- https://mvnrepository.com/artifact/com.itextpdf/itextpdf -->
         <dependency>
             <groupId>com.itextpdf</groupId>
             <artifactId>itextpdf</artifactId>
-            <version>5.0.6</version>
+            <version>5.5.13.4</version>
         </dependency>
+
+        <dependency>
+            <groupId>org.bouncycastle</groupId>
+            <artifactId>bcprov-jdk15on</artifactId>
+            <version>1.70</version> <!-- Check for the latest version -->
+        </dependency>
+
+
+        <!--        <dependency>-->
+<!--            <groupId>com.itextpdf</groupId>-->
+<!--            <artifactId>itextpdf</artifactId>-->
+<!--            <version>5.0.6</version>-->
+<!--        </dependency>-->
         <!-- Egov dependencies -->
         <dependency>
             <groupId>org.egov.services</groupId>
@@ -152,8 +167,12 @@
             <artifactId>postgresql</artifactId>
             <version>42.7.2</version>
         </dependency>
+
+
+
     </dependencies>
     <repositories>
+
         <repository>
             <id>repo.egovernments.org</id>
             <name>eGov ERP Releases Repository</name>

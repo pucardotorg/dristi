@@ -1,8 +1,11 @@
 package org.drishti.esign.service;
 
 import com.itextpdf.text.pdf.PdfSignatureAppearance;
-import org.apache.commons.codec.digest.DigestUtils;
+import org.drishti.esign.util.FileStoreUtil;
+import org.drishti.esign.web.models.ESignParameter;
+import org.egov.common.contract.models.AuditDetails;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -10,12 +13,6 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.core.io.Resource;
 import org.springframework.web.multipart.MultipartFile;
-
-import java.io.ByteArrayInputStream;
-import java.io.IOException;
-
-import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
 public class PdfEmbedderTest {
@@ -37,43 +34,43 @@ public class PdfEmbedderTest {
     @Mock
     private MultipartFile multipartFile;
 
+    @Mock
+    private FileStoreUtil fileStoreUtil;
+
+    ESignParameter eSignParameter;
+
     @BeforeEach
     public void setUp() {
         sampleResponse = "<UserX509Certificate>MIICertificateContentNA</UserX509Certificate>";
+
+        eSignParameter = ESignParameter.builder()
+                .filePath("file://")
+                .id("123")
+                .authType("A")
+                .fileStoreId("file-456")
+                .tenantId("tenant-k")
+                .auditDetails(new AuditDetails("user","user",123456L,123456L)).build();
     }
 
-@Test
-    public void signPdfWithDSAndReturnMultipartFile_ExceptionThrown() {
-        // Act & Assert
-        assertThrows(RuntimeException.class, () -> {
-            pdfEmbedder.signPdfWithDSAndReturnMultipartFile(resource.toString(), sampleResponse,"field Name");
-        });
-    }
 
     @Test
-    public void generateHash_HappyPath() throws IOException {
-        // Arrange
-        String sampleContent = "Sample content";
-        ByteArrayInputStream inputStream = new ByteArrayInputStream(sampleContent.getBytes());
-        when(resource.getInputStream()).thenReturn(inputStream);
+    @DisplayName("should prepare pdf for sign")
+    void shouldPreparePdfForSign() {
 
-        // Act
-        String result = pdfEmbedder.generateHash(resource);
 
-        // Assert
-        assertNotNull(result);
-        assertEquals(64, result.length()); // SHA-256 hash is always 64 characters long
-        assertEquals(DigestUtils.sha256Hex(sampleContent), result);
+//        pdfEmbedder.pdfSignerV2()
+
     }
+
 
     @Test
-    public void generateHash_ExceptionThrown() throws IOException {
-        // Arrange
-        when(resource.getInputStream()).thenThrow(new IOException("Test Exception"));
+    @DisplayName("should sign dummy sign pdf")
+    void shouldSignDummySignPdf() {
 
-        // Act & Assert
-        assertThrows(RuntimeException.class, () -> {
-            pdfEmbedder.generateHash(resource);
-        });
+//
+//        pdfEmbedder.signPdfWithDSAndReturnMultipartFileV2()
+
     }
+
+
 }

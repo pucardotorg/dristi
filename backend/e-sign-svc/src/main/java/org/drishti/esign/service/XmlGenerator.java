@@ -174,18 +174,11 @@ public class XmlGenerator {
             stream.write(writer.toString().getBytes());
             stream.close();
 
-
-
-
         } catch (Exception e) {
             e.printStackTrace();
         }
 
     }
-
-
-
-
 
 
 }

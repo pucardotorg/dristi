@@ -1,6 +1,7 @@
 package org.drishti.esign.repository;
 
 
+import lombok.extern.slf4j.Slf4j;
 import org.drishti.esign.repository.rowmapper.EsignRowMapper;
 import org.drishti.esign.web.models.ESignParameter;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -12,6 +13,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Repository
+@Slf4j
 public class EsignRequestRepository {
 
 
@@ -57,11 +59,13 @@ public class EsignRequestRepository {
     }
 
     public ESignParameter getESignDetails(String id) {
+        log.info("Method=getESignDetails, Result=InProgress,id={}", id);
 
         List<Integer> preparedStmtArgList = new ArrayList<>(List.of(Types.VARCHAR, Types.INTEGER, Types.INTEGER));
         List<Object> preparedStmtList = new ArrayList<>(List.of(id, 1, 0));
         String query = getSignQuery();
         List<ESignParameter> parameter = jdbcTemplate.query(query, preparedStmtList.toArray(), preparedStmtArgList.stream().mapToInt(Integer::intValue).toArray(), rowMapper);
+        log.info("Method=getESignDetails, Result=Success,id={}", id);
 
         return parameter.get(0);
 
