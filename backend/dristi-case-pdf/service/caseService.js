@@ -638,8 +638,8 @@ function getAdvocateDetailsForComplainant(cases) {
         individualId: data.boxComplainant.individualId,
         pipAffidavitFileStore:
           getDocumentFileStore(
-            currentComplainant.data.pipAffidavitFileUpload,
-            "COMPLAINANT_PIP_AFFIDAVIT"
+            data.pipAffidavitFileUpload,
+            "UPLOAD_PIP_AFFIDAVIT"
           ) || "",
         advocateList: [],
       };
