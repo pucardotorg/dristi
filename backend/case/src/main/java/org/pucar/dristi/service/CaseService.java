@@ -271,10 +271,10 @@ public class CaseService {
             }
 
             // Create a map of litigant IDs to their respective representatives
-            Map<UUID, List<AdvocateMapping>> representativesMap = cases.getRepresentatives().stream()
+            Map<String, List<AdvocateMapping>> representativesMap = cases.getRepresentatives().stream()
                     .filter(AdvocateMapping::getIsActive)
                     .flatMap(rep -> rep.getRepresenting().stream()
-                            .map(Party::getId)  // Get the ID of each litigant represented by this advocate
+                            .map(Party::getIndividualId)  // Get the ID of each litigant represented by this advocate
                             .filter(Objects::nonNull)  // Ensure no null IDs
                             .map(litigantId -> new AbstractMap.SimpleEntry<>(litigantId, rep)))  // Create entries with litigant ID and the rep
                     .collect(Collectors.groupingBy(Map.Entry::getKey, // Group by litigant ID
@@ -289,7 +289,7 @@ public class CaseService {
             return cases.getLitigants().stream()
                     .filter(Party::getIsActive)
                     .allMatch(litigant -> {
-                        UUID litigantId = litigant.getId();
+                        String litigantId = litigant.getIndividualId();
 
                         // Find the list of representatives for the current litigant
                         List<AdvocateMapping> representatives = representativesMap.get(litigantId);
