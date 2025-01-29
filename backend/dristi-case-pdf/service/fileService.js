@@ -364,16 +364,27 @@ async function appendAdvocateFilesToPDF(pdf, advocates) {
 
   let vakalatnamaCount = 0;
   let affidavitCount = 0;
+  const uniqueFileStores = new Set();
+
   for (let i = 0; i < advocates.length; i++) {
     const advocate = advocates[i];
-    if (advocate.vakalatnamaFileStore) {
+
+    if (
+      advocate.vakalatnamaFileStore &&
+      !uniqueFileStores.has(advocate.vakalatnamaFileStore)
+    ) {
       vakalatnamaCount++;
+      uniqueFileStores.add(advocate.vakalatnamaFileStore);
       await appendPdfPagesWithHeader(
         existingPdfDoc,
         advocate.vakalatnamaFileStore,
         `Vakalatnama Document ${vakalatnamaCount}`
       );
-    } else if (advocate.pipAffidavitFileStore) {
+    } else if (
+      advocate.pipAffidavitFileStore &&
+      !uniqueFileStores.has(advocate.pipAffidavitFileStore)
+    ) {
+      uniqueFileStores.add(advocate.pipAffidavitFileStore);
       affidavitCount++;
       await appendPdfPagesWithHeader(
         existingPdfDoc,
