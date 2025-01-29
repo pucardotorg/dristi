@@ -163,6 +163,7 @@ export const documentsTypeMapping = {
   SelectUploadDocWithName: "case.docs",
   vakalatnamaFileUpload: "VAKALATNAMA_DOC",
   submissionDocuments: "SUBMISSION_DOCUMENTS",
+  pipAffidavitFileUpload: "COMPLAINANT_PIP_AFFIDAVIT",
 };
 
 export const getFileByFileStoreId = async (uri) => {

@@ -69,6 +69,14 @@ export const DRISTIService = {
       data,
       params,
     }),
+  searchAllAdvocates: (url, data, params) =>
+    Request({
+      url: Urls.dristi.searchAllAdvocates,
+      useCache: false,
+      userService: true,
+      data,
+      params,
+    }),
   caseCreateService: (data, tenantId) => {
     return Request({
       url: Urls.dristi.caseCreate,

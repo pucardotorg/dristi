@@ -2,9 +2,21 @@ const advocateDetailsFormConfig = [
   {
     body: [
       {
+        type: "component",
+        component: "BoxComplainant",
+        key: "boxComplainant",
+        withoutLabel: true,
+        isMandatory: true,
+        populators: {},
+      },
+    ],
+  },
+  {
+    body: [
+      {
         type: "radio",
-        key: "isAdvocateRepresenting",
-        label: "CS_IF_ADVOCATE_IS_COMPLAINANT",
+        key: "isComplainantPip",
+        label: "CS_IF_COMPLAINANT_IS_PIP",
         isMandatory: true,
         populators: {
           type: "radioButton",
@@ -18,15 +30,15 @@ const advocateDetailsFormConfig = [
             {
               code: "YES",
               name: "Yes",
-              showForm: true,
+              showAddAdvocates: false,
+              showAffidavit: true,
               isEnabled: true,
             },
             {
               code: "NO",
               name: "No",
-              showForm: false,
-              isVerified: true,
-              hasBarRegistrationNo: true,
+              showAddAdvocates: true,
+              showAffidavit: false,
               isEnabled: true,
             },
           ],
@@ -35,100 +47,36 @@ const advocateDetailsFormConfig = [
     ],
   },
   {
-    dependentKey: { isAdvocateRepresenting: ["showForm"] },
-    head: "CS_ADVOCATE_BASIC_DETAILS",
-    body: [
-      {
-        type: "apidropdown",
-        key: "advocateBarRegistrationNumber",
-        label: "CS_BAR_REGISTRATION",
-        isMandatory: true,
-        populators: {
-          allowMultiSelect: false,
-          name: "advocateBarRegNumberWithName",
-          isMandatory: true,
-          validation: {},
-          masterName: "commonUiConfig",
-          moduleName: "getAdvocateNameUsingBarRegistrationNumber",
-          customfn: "getNames",
-          optionsKey: "barRegistrationNumber",
-          optionsCustomStyle: {
-            marginTop: "40px",
-            justifyContent: "space-between",
-            flexDirection: "row-reverse",
-            maxHeight: "200px",
-            overflowY: "scroll",
-          },
-        },
-      },
-    ],
-  },
-  {
-    dependentKey: { isAdvocateRepresenting: ["showForm"] },
+    dependentKey: { isComplainantPip: ["showAddAdvocates"] },
     body: [
       {
         type: "component",
-        component: "AdvocateNameDetails",
-        key: "AdvocateNameDetails",
+        component: "MultipleAdvocateNameDetails",
+        key: "MultipleAdvocateNameDetails",
         withoutLabel: true,
+        label: "ADVOCATE_BASIC_DETAILS",
         populators: {
           inputs: [
             {
               label: "FIRST_NAME",
-              type: "text",
               name: "firstName",
-              isDisabled: true,
-              inputFieldClassName: "user-details-form-style",
-              validation: {
-                isRequired: true,
-              },
-              isMandatory: true,
             },
             {
-              label: "MIDDLE_NAME",
-              type: "text",
+              label: "MIDDLE_NAME_OPTIONAL",
               name: "middleName",
-              isDisabled: true,
-              inputFieldClassName: "user-details-form-style",
-              validation: {},
             },
             {
               label: "LAST_NAME",
-              type: "text",
               name: "lastName",
-              isDisabled: true,
-              inputFieldClassName: "user-details-form-style",
-              validation: {
-                isRequired: true,
-              },
-              isMandatory: true,
             },
           ],
-          validation: {},
         },
       },
     ],
   },
   {
-    dependentKey: { isAdvocateRepresenting: ["showForm"] },
-    body: [
-      {
-        type: "number",
-        label: "NUMBER_OF_ADVOCATES",
-        isMandatory: true,
-        populators: {
-          error: "FIRST_LAST_NAME_MANDATORY_MESSAGE",
-          validation: {
-            minLength: 1,
-          },
-          defaultValue: "1",
-          name: "numberOfAdvocate",
-        },
-      },
-    ],
-  },
-  {
-    dependentKey: { isAdvocateRepresenting: ["showForm"] },
+    dependentKey: { boxComplainant: ["showVakalatNamaUpload"] },
+
     body: [
       {
         type: "component",
@@ -156,19 +104,45 @@ const advocateDetailsFormConfig = [
     ],
   },
   {
-    dependentKey: { isAdvocateRepresenting: ["showForm"] },
+    dependentKey: { isComplainantPip: ["showAffidavit"] },
     body: [
       {
         type: "component",
         component: "SelectCustomNote",
-        key: "addressDetailsNote",
+        key: "pipAffidavitNote",
+        withoutLabel: true,
         populators: {
           inputs: [
             {
-              infoHeader: "CS_COMMON_NOTE",
-              infoText: "ADVOCATE_DETAIL_NOTE",
+              infoHeader: "CS_PLEASE_NOTE",
+              infoText: "AFFIDAVIT_NECESSARY_FOR_PIP",
               infoTooltipMessage: "ADVOCATE_DETAIL_NOTE",
               type: "InfoComponent",
+            },
+          ],
+        },
+      },
+    ],
+  },
+  {
+    dependentKey: { isComplainantPip: ["showAffidavit"] },
+    body: [
+      {
+        type: "component",
+        component: "SelectCustomDragDrop",
+        key: "pipAffidavitFileUpload",
+        isMandatory: true,
+        populators: {
+          inputs: [
+            {
+              name: "document",
+              documentHeader: "UPLOAD_AFFIDAVIT",
+              type: "DragDropComponent",
+              uploadGuidelines: "UPLOAD_DOC_50",
+              maxFileSize: 50,
+              maxFileErrorMessage: "CS_FILE_LIMIT_50_MB",
+              fileTypes: ["JPG", "PDF", "PNG"],
+              isMultipleUpload: true,
             },
           ],
         },
@@ -184,5 +158,6 @@ export const advocateDetailsConfig = {
   className: "advocate-detail",
   selectDocumentName: {
     vakalatnamaFileUpload: "UPLOAD_VAKALATNAMA",
+    pipAffidavitFileUpload: "UPLOAD_PIP_AFFIDAVIT",
   },
 };

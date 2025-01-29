@@ -58,7 +58,9 @@ import CustomCheckBoxCard from "./components/CustomCheckBoxCard";
 import useBillSearch from "./hooks/dristi/useBillSearch";
 import SelectTranscriptTextArea from "./components/SelectTranscriptTextArea";
 import SelectMultiUpload from "./components/SelectMultiUpload";
-import SupportingDocsComponent from "./components/SupportingDocsComponent"
+import SupportingDocsComponent from "./components/SupportingDocsComponent";
+import MultipleAdvocateNameDetails from "./components/MultipleAdvocateNameDetails";
+import BoxComplainant from "./components/BoxComplainant";
 
 export const DRISTIModule = ({ stateCode, userType, tenants }) => {
   const Digit = useMemo(() => window?.Digit || {}, []);
@@ -86,7 +88,6 @@ export const DRISTIModule = ({ stateCode, userType, tenants }) => {
   const urlParams = new URLSearchParams(window.location.search);
   const result = urlParams.get("result");
   const fileStoreId = urlParams.get("filestoreId");
-  console.log(result, fileStoreId, "result");
   if (userType === "citizen" && userInfo?.type !== "EMPLOYEE") {
     return (
       <ToastProvider>
@@ -164,7 +165,9 @@ const componentsToRegister = {
   useBillSearch,
   SelectTranscriptTextArea,
   SelectMultiUpload,
-  SupportingDocsComponent
+  SupportingDocsComponent,
+  MultipleAdvocateNameDetails,
+  BoxComplainant,
 };
 
 const overrideHooks = () => {

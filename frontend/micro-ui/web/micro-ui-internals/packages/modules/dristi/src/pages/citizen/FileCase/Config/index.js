@@ -1,3 +1,4 @@
+import { advocateDetailsConfig } from "./advocateDetailsConfig";
 import { delayApplicationConfig } from "./delayApplicationConfig";
 
 export const sideMenuConfig = [
@@ -316,6 +317,7 @@ export const sideMenuConfig = [
         checked: false,
         isCompleted: false,
         isDisabled: false,
+        // pageConfig: advocateDetailsConfig,
         pageConfig: [
           {
             moduleName: "commonUiConfig",
@@ -326,21 +328,23 @@ export const sideMenuConfig = [
             ],
           },
         ],
-        mandatoryFields: [
-          "isAdvocateRepresenting",
-          // if advocateBarRegistrationNumber is present, 3 name fields will be filled automatically.
-        ],
-        initialMandatoryFieldCount: 1,
-        dependentMandatoryFields: [
-          { field: "barRegistrationNumber", dependentOn: "isAdvocateRepresenting", dependentOnKey: "showForm" },
-          { field: "advocateName", dependentOn: "isAdvocateRepresenting", dependentOnKey: "showForm" },
-          { field: "numberOfAdvocate", dependentOn: "isAdvocateRepresenting", dependentOnKey: "showForm" },
-          {
-            field: "vakalatnamaFileUpload.document",
-            dependentOn: "isAdvocateRepresenting",
-            dependentOnKey: "showForm",
-          },
-        ],
+        mandatoryFields: 0,
+        initialMandatoryFieldCount: 0,
+
+        optionalFields: [],
+        dependentOptionalFields: [],
+        dependentMandatoryFields: [],
+
+        // dependentMandatoryFields: [
+        //   { field: "barRegistrationNumber", dependentOn: "isAdvocateRepresenting", dependentOnKey: "showForm" },
+        //   { field: "advocateName", dependentOn: "isAdvocateRepresenting", dependentOnKey: "showForm" },
+        //   { field: "numberOfAdvocate", dependentOn: "isAdvocateRepresenting", dependentOnKey: "showForm" },
+        //   {
+        //     field: "vakalatnamaFileUpload.document",
+        //     dependentOn: "isAdvocateRepresenting",
+        //     dependentOnKey: "showForm",
+        //   },
+        // ],
         optionalFields: [],
         dependentOptionalFields: [],
         initialOptionalFieldCount: 0,

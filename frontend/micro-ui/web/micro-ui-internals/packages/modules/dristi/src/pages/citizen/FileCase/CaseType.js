@@ -214,14 +214,7 @@ function CaseType({ t }) {
                             {
                               isenabled: true,
                               displayindex: 0,
-                              data: {
-                                isAdvocateRepresenting: {
-                                  code: "YES",
-                                  name: "Yes",
-                                  showForm: true,
-                                  isEnabled: true,
-                                },
-                              },
+                              data: {},
                             },
                           ],
                         },
@@ -250,7 +243,13 @@ function CaseType({ t }) {
                                   individualDetails: {
                                     individualId: individualId,
                                     document: identifierIdDetails?.fileStoreId
-                                      ? [{ fileName: idType, fileStore: identifierIdDetails?.fileStoreId, documentName: identifierIdDetails?.filename }]
+                                      ? [
+                                          {
+                                            fileName: idType,
+                                            fileStore: identifierIdDetails?.fileStoreId,
+                                            documentName: identifierIdDetails?.filename,
+                                          },
+                                        ]
                                       : null,
                                     "addressDetails-select": {
                                       pincode: pincode,

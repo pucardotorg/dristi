@@ -173,6 +173,9 @@ function EFilingCases({ path }) {
   const userInfo = Digit?.UserService?.getUser()?.info;
   const roles = Digit.UserService.getUser()?.info?.roles;
   const isAdvocateFilingCase = roles?.some((role) => role.code === "ADVOCATE_ROLE");
+  const moduleCode = "DRISTI";
+  const token = window.localStorage.getItem("token");
+  const isUserLoggedIn = Boolean(token);
 
   const setFormErrors = useRef(null);
   const setFormState = useRef(null);
@@ -184,6 +187,7 @@ function EFilingCases({ path }) {
   const selected = urlParams.get("selected") || sideMenuConfig?.[0]?.children?.[0]?.key;
   const caseId = urlParams.get("caseId");
   const [formdata, setFormdata] = useState(selected === "witnessDetails" ? [{}] : [{ isenabled: true, data: {}, displayindex: 0 }]);
+  const [advPageData, setAdvPageData] = useState([]);
   const [errorCaseDetails, setErrorCaseDetails] = useState(null);
   const tenantId = window?.Digit.ULBService.getCurrentTenantId();
   const [parentOpen, setParentOpen] = useState(sideMenuConfig.findIndex((parent) => parent.children.some((child) => child.key === selected)));
@@ -297,6 +301,22 @@ function EFilingCases({ path }) {
     caseId,
     Boolean(caseId)
   );
+
+  const { data: individualData, isIndividualLoading, refetch } = window?.Digit.Hooks.dristi.useGetIndividualUser(
+    {
+      Individual: {
+        userUuid: [userInfo?.uuid],
+      },
+    },
+    { tenantId, limit: 1000, offset: 0 },
+    moduleCode,
+    "HOME",
+    userInfo?.uuid && isUserLoggedIn
+  );
+
+  const userType = useMemo(() => individualData?.Individual?.[0]?.additionalFields?.fields?.find((obj) => obj.key === "userType")?.value, [
+    individualData?.Individual,
+  ]);
 
   const { data: filingTypeData, isLoading: isFilingTypeLoading } = Digit.Hooks.dristi.useGetStatuteSection("common-masters", [
     { name: "FilingType" },
@@ -526,19 +546,49 @@ function EFilingCases({ path }) {
     }
   }, [caseDetails, caseId, history, isFilingParty, isLoading, userInfo?.uuid]);
 
+  const completedComplainants = useMemo(() => {
+    // check TODO: apply filter for formdata which is enabled and completed
+    return caseDetails?.additionalDetails?.["complainantDetails"]?.formdata;
+  }, [caseDetails]);
+
   useEffect(() => {
     const data =
       caseDetails?.additionalDetails?.[selected]?.formdata ||
       caseDetails?.caseDetails?.[selected]?.formdata ||
       (selected === "witnessDetails" ? [{}] : [{ isenabled: true, data: {}, displayindex: 0 }]);
-    setFormdata(data);
+    if (selected === "advocateDetails") {
+      const newAdvData = []; //  we will update the advocate data in the same order as order of complainant forms
+      const advData = caseDetails?.additionalDetails?.[selected]?.formdata || [];
+      for (let i = 0; i < completedComplainants?.length; i++) {
+        const complainantIndividualId = completedComplainants?.[i]?.data?.complainantVerification?.individualDetails?.individualId;
+        let isAdvDataFound = false;
+        for (let j = 0; j < advData?.length; j++) {
+          // we are checking if already an advocate data exist for this complaiant
+          if (advData?.[j]?.data?.boxComplainant?.individualId === complainantIndividualId) {
+            isAdvDataFound = true;
+            advData[j].data.boxComplainant = { ...advData[j].data.boxComplainant, index: i };
+            newAdvData.push(advData[j]);
+            break;
+          }
+        }
+        // if no adv data is found corr to this complaint, add a new adv data form with this complainant details.
+        if (!isAdvDataFound) {
+          newAdvData.push({ isenabled: true, data: {}, displayindex: 0 });
+        }
+      }
+      setFormdata(newAdvData);
+      setAdvPageData(newAdvData);
+    }
+    if (selected !== "advocateDetails") {
+      setFormdata(data);
+    }
     if (selected === "addSignature" && !caseDetails?.additionalDetails?.signedCaseDocument && !isLoading) {
       setShowReviewCorrectionModal(true);
     }
     if (selected === "addSignature" && !caseDetails?.additionalDetails?.["reviewCaseFile"]?.isCompleted && !isLoading) {
       setShowReviewCorrectionModal(true);
     }
-  }, [selected, caseDetails, isLoading]);
+  }, [selected, caseDetails, isLoading, completedComplainants]);
 
   const closeToast = () => {
     setShowErrorToast(false);
@@ -629,6 +679,50 @@ function EFilingCases({ path }) {
         }
       }
 
+      if (caseDetails?.status === "DRAFT_IN_PROGRESS" && selected === "advocateDetails") {
+        const newData = structuredClone(advPageData?.[index]?.data || {});
+        if (!newData?.boxComplainant && !formdata[index]?.data?.boxComplainant) {
+          const complainant = {
+            firstName: completedComplainants?.[index]?.data?.firstName || "",
+            individualId: completedComplainants?.[index]?.data?.complainantVerification?.individualDetails?.individualId || "",
+            mobileNumber: completedComplainants?.[index]?.data?.complainantVerification?.mobileNumber || "",
+            index: index,
+          };
+          newData.boxComplainant = complainant;
+        }
+        if (!newData?.isComplainantPip && !formdata[index]?.data?.isComplainantPip) {
+          if (userType !== "ADVOCATE") {
+            newData.isComplainantPip = {
+              code: "NO",
+              name: "No",
+              showAddAdvocates: true,
+              showAffidavit: false,
+              isEnabled: true,
+            };
+          }
+          if (userType === "ADVOCATE" && index === 0) {
+            newData.isComplainantPip = {
+              code: "NO",
+              name: "No",
+              showAddAdvocates: true,
+              showAffidavit: false,
+              isEnabled: true,
+            };
+            newData.boxComplainant = { ...newData.boxComplainant, showVakalatNamaUpload: true };
+          }
+          if (userType === "ADVOCATE" && index !== 0) {
+            newData.isComplainantPip = {
+              code: "NO",
+              name: "No",
+              showAddAdvocates: true,
+              showAffidavit: false,
+              isEnabled: true,
+            };
+          }
+        }
+        return newData;
+      }
+
       return (
         caseDetails?.additionalDetails?.[selected]?.formdata?.[index]?.data ||
         caseDetails?.caseDetails?.[selected]?.formdata?.[index]?.data ||
@@ -644,6 +738,10 @@ function EFilingCases({ path }) {
       isCaseReAssigned,
       selected,
       scrutinyObj,
+      userType,
+      completedComplainants,
+      isDelayCondonation,
+      advPageData,
     ]
   );
 
@@ -1375,14 +1473,18 @@ function EFilingCases({ path }) {
   };
 
   const onFormValueChange = (setValue, formData, formState, reset, setError, clearErrors, trigger, getValues, index, currentDisplayIndex) => {
-    if (formData.advocateBarRegNumberWithName?.[0] && !formData.advocateBarRegNumberWithName[0].modified) {
-      setValue("advocateBarRegNumberWithName", [
-        {
-          ...formData.advocateBarRegNumberWithName[0],
-          modified: true,
-          barRegistrationNumber: formData.advocateBarRegNumberWithName[0].barRegistrationNumberOriginal,
-        },
-      ]);
+    if (formData?.isComplainantPip?.code === "YES" && formData?.boxComplainant?.showVakalatNamaUpload) {
+      const { showVakalatNamaUpload, ...updatedBoxComplainant } = formData?.boxComplainant || {};
+      setValue("boxComplainant", updatedBoxComplainant);
+    }
+    if (
+      formData?.isComplainantPip?.code === "NO" &&
+      formData?.MultipleAdvocateNameDetails?.length > 0 &&
+      Object.keys(formData?.MultipleAdvocateNameDetails?.[0])?.length !== 0 &&
+      !formData?.boxComplainant?.showVakalatNamaUpload
+    ) {
+      setValue("boxComplainant", { ...formData?.boxComplainant, showVakalatNamaUpload: true });
+      setValue("isComplainantPip", { ...formData?.isComplainantPip, showAddAdvocates: true });
     }
     checkIfscValidation({ formData, setValue, selected });
     checkNameValidation({ formData, setValue, selected, formdata, index, reset, clearErrors, formState });
@@ -2197,7 +2299,7 @@ function EFilingCases({ path }) {
   }, [isFilingParty, mandatoryFieldsLeftTotalCount, isDisableAllFieldsMode]);
 
   const [isOpen, setIsOpen] = useState(false);
-  if (isLoading || isGetAllCasesLoading || isCourtIdsLoading || isLoader) {
+  if (isLoading || isGetAllCasesLoading || isCourtIdsLoading || isLoader || isIndividualLoading || isFilingTypeLoading) {
     return <Loader />;
   }
 
@@ -2468,17 +2570,20 @@ function EFilingCases({ path }) {
                 {pageConfig?.addFormText && (
                   <div className="form-item-name">
                     <h1>{`${t(pageConfig?.formItemName)} ${formdata[index]?.displayindex + 1}`}</h1>
-                    {(activeForms > 1 || t(pageConfig?.formItemName) === "Witness" || pageConfig?.isOptional) && isDraftInProgress && (
-                      <span
-                        style={{ cursor: "pointer" }}
-                        onClick={() => {
-                          setConfirmDeleteModal(true);
-                          setDeleteFormIndex(index);
-                        }}
-                      >
-                        <CustomDeleteIcon />
-                      </span>
-                    )}
+                    {(activeForms > 1 || t(pageConfig?.formItemName) === "Witness" || pageConfig?.isOptional) &&
+                      isDraftInProgress &&
+                      // check- TODO: instedd of comparison from mobile number, compare with individualId
+                      completedComplainants?.[index]?.data?.complainantVerification?.mobileNumber !== userInfo?.mobileNumber && (
+                        <span
+                          style={{ cursor: "pointer" }}
+                          onClick={() => {
+                            setConfirmDeleteModal(true);
+                            setDeleteFormIndex(index);
+                          }}
+                        >
+                          <CustomDeleteIcon />
+                        </span>
+                      )}
                   </div>
                 )}
                 <FormComposerV2
