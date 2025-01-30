@@ -447,12 +447,12 @@ function EFilingPayment({ t, submitModalInfo = mockSubmitModalInfo, path }) {
                 />
               </div>
             </div>
+            {toastMsg && (
+              <Toast error={toastMsg.key === "error"} label={t(toastMsg.action)} onClose={() => setToastMsg(null)} style={{ maxWidth: "670px" }} />
+            )}
           </Modal>
         )}
       </div>
-      {toastMsg && (
-        <Toast error={toastMsg.key === "error"} label={t(toastMsg.action)} onClose={() => setToastMsg(null)} style={{ maxWidth: "670px" }} />
-      )}
     </div>
   );
 }

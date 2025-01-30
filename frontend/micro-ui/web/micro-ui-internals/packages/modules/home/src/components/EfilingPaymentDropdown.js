@@ -347,10 +347,11 @@ function EfilingPaymentBreakdown({ setShowModal, header, subHeader }) {
             />
           </div>
         </div>
-      </Modal>
-      {toastMsg && (
+        {toastMsg && (
         <Toast error={toastMsg.key === "error"} label={t(toastMsg.action)} onClose={() => setToastMsg(null)} style={{ maxWidth: "500px" }} />
       )}
+      </Modal>
+      
     </div>
   );
 }
