@@ -171,11 +171,9 @@ public class CaseService {
     public CourtCase updateCase(CaseRequest caseRequest) {
 
         try {
+            log.info("Method=updateCase,Result=IN_PROGRESS, CaseId={}", caseRequest.getCases().getId());
             //Search and validate case Exist
-            List<CaseCriteria> existingApplications = caseRepository.getCases(Collections.singletonList(CaseCriteria
-                            .builder().filingNumber(caseRequest.getCases().getFilingNumber()).caseId(String.valueOf(caseRequest.getCases().getId()))
-                            .cnrNumber(caseRequest.getCases().getCnrNumber()).courtCaseNumber(caseRequest.getCases().getCourtCaseNumber()).build()),
-                    caseRequest.getRequestInfo());
+            List<CaseCriteria> existingApplications = caseRepository.getCases(Collections.singletonList(CaseCriteria.builder().filingNumber(caseRequest.getCases().getFilingNumber()).caseId(String.valueOf(caseRequest.getCases().getId())).cnrNumber(caseRequest.getCases().getCnrNumber()).courtCaseNumber(caseRequest.getCases().getCourtCaseNumber()).build()), caseRequest.getRequestInfo());
 
             // Validate whether the application that is being requested for update indeed exists
             if (!validator.validateUpdateRequest(caseRequest, existingApplications.get(0).getResponseList())) {
@@ -197,13 +195,11 @@ public class CaseService {
 
             Boolean lastSigned = checkItsLastSign(caseRequest);
 
-            if(lastSigned){
-                caseRequest.getRequestInfo()
-                        .getUserInfo().getRoles()
-                        .add(Role.builder()
-                                .id(123L).code(SYSTEM).name(SYSTEM)
-                                .tenantId(caseRequest.getCases().getTenantId()).build());
+            if (lastSigned) {
+                log.info("Last e-sign for case {}", caseRequest.getCases().getId());
+                caseRequest.getRequestInfo().getUserInfo().getRoles().add(Role.builder().id(123L).code(SYSTEM).name(SYSTEM).tenantId(caseRequest.getCases().getTenantId()).build());
                 caseRequest.getCases().getWorkflow().setAction(E_SIGN_COMPLETE);
+                log.info("Updating workflow status for case {} in last e-sign", caseRequest.getCases().getId());
                 workflowService.updateWorkflowStatus(caseRequest);
             }
 
@@ -227,11 +223,7 @@ public class CaseService {
             producer.push(config.getCaseUpdateTopic(), caseRequest);
 
             log.info("Updating cache");
-            List<Document> isActiveTrueDocuments = Optional.ofNullable(caseRequest.getCases().getDocuments())
-                    .orElse(Collections.emptyList())
-                    .stream()
-                    .filter(Document::getIsActive)
-                    .toList();
+            List<Document> isActiveTrueDocuments = Optional.ofNullable(caseRequest.getCases().getDocuments()).orElse(Collections.emptyList()).stream().filter(Document::getIsActive).toList();
             caseRequest.getCases().setDocuments(isActiveTrueDocuments);
             cacheService.save(caseRequest.getCases().getTenantId() + ":" + caseRequest.getCases().getId(), caseRequest.getCases());
 
@@ -243,12 +235,12 @@ public class CaseService {
                 callNotificationService(caseRequest, messageCode);
             }
 
+            log.info("Method=updateCase,Result=SUCCESS, CaseId={}", caseRequest.getCases().getId());
+
             return cases;
 
-
-        } catch (CustomException e) {
-            throw e;
         } catch (Exception e) {
+            log.error("Method=updateCase,Result=FAILURE, CaseId={}", caseRequest.getCases().getId());
             log.error("Error occurred while updating case :: {}", e.toString());
             throw new CustomException(UPDATE_CASE_ERR, "Exception occurred while updating case: " + e.getMessage());
         }
@@ -259,51 +251,53 @@ public class CaseService {
 
         if (E_SIGN.equalsIgnoreCase(caseRequest.getCases().getWorkflow().getAction())) {
 
+            log.info("Method=checkItsLastSign, Result= IN_ProgressChecking if its last e-sign for case {}", caseRequest.getCases().getId());
+
             CourtCase cases = caseRequest.getCases();
             // Check if all litigants have signed
-            boolean allLitigantsHaveSigned = cases.getLitigants().stream()
-                    .filter(Party::getIsActive)
-                    .allMatch(Party::getHasSigned);
+            boolean allLitigantsHaveSigned = cases.getLitigants().stream().filter(Party::getIsActive).allMatch(Party::getHasSigned);
 
             // If any litigant hasn't signed, return false immediately
             if (!allLitigantsHaveSigned) {
+                log.info("Not all litigants have signed for case {}", cases.getId());
                 return false;
             }
 
             // Create a map of litigant IDs to their respective representatives
-            Map<String, List<AdvocateMapping>> representativesMap = cases.getRepresentatives().stream()
-                    .filter(AdvocateMapping::getIsActive)
-                    .flatMap(rep -> rep.getRepresenting().stream()
-                            .map(Party::getIndividualId)  // Get the ID of each litigant represented by this advocate
+            log.info("Generating a litigant-representative map for case {} ", cases.getId());
+            // add null check here if representative is null then there should not be stream
+            Map<String, List<AdvocateMapping>> representativesMap = Optional.ofNullable(cases.getRepresentatives()).orElse(Collections.emptyList()).stream().filter(AdvocateMapping::getIsActive).flatMap(rep -> rep.getRepresenting().stream().map(Party::getIndividualId)  // Get the ID of each litigant represented by this advocate
                             .filter(Objects::nonNull)  // Ensure no null IDs
                             .map(litigantId -> new AbstractMap.SimpleEntry<>(litigantId, rep)))  // Create entries with litigant ID and the rep
                     .collect(Collectors.groupingBy(Map.Entry::getKey, // Group by litigant ID
                             Collectors.mapping(Map.Entry::getValue, Collectors.toList())));
 
+            log.info("Generated a litigant-representative map for case {} with size {} ", cases.getId(), representativesMap.size());
 
             // Check if each active litigant  has a at least one signed representative
             // Find the list of representatives for the current litigant
             // If no representatives exist, the litigant's signature is enough
             // If representatives exist, at least one must have signed
 
-            return cases.getLitigants().stream()
-                    .filter(Party::getIsActive)
-                    .allMatch(litigant -> {
-                        String litigantId = litigant.getIndividualId();
+            return cases.getLitigants().stream().filter(Party::getIsActive).allMatch(litigant -> {
+                String litigantId = litigant.getIndividualId();
 
-                        // Find the list of representatives for the current litigant
-                        List<AdvocateMapping> representatives = representativesMap.get(litigantId);
+                // Find the list of representatives for the current litigant
+                List<AdvocateMapping> representatives = representativesMap.get(litigantId);
 
-                        // If no representatives exist, the litigant's signature is enough
-                        if (representatives == null || representatives.isEmpty()) {
-                            return true;
-                        }
+                // If no representatives exist, the litigant's signature is enough
+                if (representatives == null || representatives.isEmpty()) {
+                    log.info("Litigant {} has no representatives", litigantId);
+                    return true;
+                }
+                log.info("Litigant {} has representatives {}", litigantId, representatives.size());
 
-                        // If representatives exist, at least one must have signed
-                        return representatives.stream().anyMatch(AdvocateMapping::getHasSigned);
-                    });
+
+                // If representatives exist, at least one must have signed
+                return representatives.stream().anyMatch(AdvocateMapping::getHasSigned);
+            });
         }
-
+        log.info("Method=checkItsLastSign, Result= SUCCESS, Not last e-sign for case {}", caseRequest.getCases().getId());
         return false;
     }
 

@@ -1,26 +1,23 @@
 package org.pucar.dristi.enrichment;
 
-import jakarta.validation.Valid;
+import lombok.extern.slf4j.Slf4j;
 import org.egov.common.contract.request.RequestInfo;
 import org.pucar.dristi.enrichment.strategy.EnrichmentStrategy;
 import org.pucar.dristi.service.IndividualService;
 import org.pucar.dristi.util.AdvocateUtil;
-import org.pucar.dristi.web.models.*;
+import org.pucar.dristi.web.models.Advocate;
+import org.pucar.dristi.web.models.CaseRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
-import java.util.AbstractMap;
 
-
+import java.util.Collections;
 import java.util.List;
-import java.util.Map;
-import java.util.Objects;
-import java.util.UUID;
-import java.util.stream.Collectors;
+import java.util.Optional;
 
 import static org.pucar.dristi.config.ServiceConstants.E_SIGN;
-import static org.pucar.dristi.config.ServiceConstants.E_SIGN_COMPLETE;
 
 @Component
+@Slf4j
 public class EnrichCaseWhenESign implements EnrichmentStrategy {
 
     private final IndividualService individualService;
@@ -39,10 +36,13 @@ public class EnrichCaseWhenESign implements EnrichmentStrategy {
 
     @Override
     public void enrich(CaseRequest caseRequest) {
+        log.info("Method=EnrichCaseWhenESign,Result=IN_PROGRESS, CaseId={}", caseRequest.getCases().getId());
+
         RequestInfo requestInfo = caseRequest.getRequestInfo();
         String individualId = individualService.getIndividualId(requestInfo);
+        log.info("Method=EnrichCaseWhenESign,Result=IN_PROGRESS, IndividualId={}", individualId);
 
-        boolean isLitigantSigned = caseRequest.getCases().getLitigants().stream()
+        boolean isLitigantSigned = Optional.ofNullable(caseRequest.getCases().getLitigants()).orElse(Collections.emptyList()).stream()
                 .filter(party -> individualId.equals(party.getIndividualId()))
                 .findFirst()
                 .map(party -> {
@@ -50,8 +50,10 @@ public class EnrichCaseWhenESign implements EnrichmentStrategy {
                     return true;
                 })
                 .orElse(false);
+        log.info("Method=EnrichCaseWhenESign,Result=IN_PROGRESS, LitigantSigned={}", isLitigantSigned);
 
         if (!isLitigantSigned) {
+            log.info("Method=EnrichCaseWhenESign,Result=IN_PROGRESS, checking if advocate signed");
 
             List<Advocate> advocates = advocateUtil.fetchAdvocatesByIndividualId(requestInfo, individualId);
 
@@ -63,7 +65,8 @@ public class EnrichCaseWhenESign implements EnrichmentStrategy {
                 //expecting only one advocate
                 String advocateId = activeAdvocate.get(0).getId().toString();
 
-                boolean isAdvocateSigned = caseRequest.getCases().getRepresentatives().stream()
+                boolean isAdvocateSigned = Optional.ofNullable(caseRequest.getCases().getRepresentatives())
+                        .orElse(Collections.emptyList()).stream()
                         .filter(advocate -> advocateId.equals(advocate.getAdvocateId()))
                         .findFirst()
                         .map(advocate -> {
@@ -71,10 +74,10 @@ public class EnrichCaseWhenESign implements EnrichmentStrategy {
                             return true;
                         })
                         .orElse(false);
+                log.info("Method=EnrichCaseWhenESign,Result=IN_PROGRESS, AdvocateSigned={}", isAdvocateSigned);
             }
-
-
         }
+        log.info("Method=EnrichCaseWhenESign,Result=SUCCESS, CaseId={}", caseRequest.getCases().getId());
     }
 
 }
