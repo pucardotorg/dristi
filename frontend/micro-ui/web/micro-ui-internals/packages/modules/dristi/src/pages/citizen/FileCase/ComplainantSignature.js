@@ -85,7 +85,7 @@ const getStyles = () => ({
   rightPanel: { flex: 1, padding: "24px 16px 24px 24px", borderLeft: "1px solid #ccc" },
   signaturePanel: { display: "flex", flexDirection: "column" },
   signatureTitle: { fontSize: "24px", fontWeight: 700, color: "#3D3C3C" },
-  signatureDescription: { fontWeight: "400", fontSize: "16px", color: "#3D3C3C" },
+  signatureDescription: { fontWeight: "400", fontSize: "16px", color: "#3D3C3C", marginBottom: 0 },
   esignButton: {
     height: "40px",
     alignItems: "center",
@@ -102,6 +102,7 @@ const getStyles = () => ({
   },
   uploadButton: {
     marginBottom: "16px",
+    marginTop: "8px",
     height: "40px",
     fontWeight: 700,
     fontSize: "16px",
@@ -775,7 +776,7 @@ const ComplainantSignature = ({ path }) => {
             {litigants?.map((litigant, index) => (
               <div key={index} style={{ ...styles.litigantDetails, marginTop: "5px", fontSize: "15px" }}>
                 {litigant?.additionalDetails?.fullName}
-                {litigant?.hasSigned || (litigant?.additionalDetails?.uuid === userInfo?.uuid && isEsignSuccess) ? (
+                {litigant?.hasSigned || (litigant?.additionalDetails?.uuid === userInfo?.uuid && (isEsignSuccess || uploadDoc)) ? (
                   <span style={{ ...styles.signedLabel, alignItems: "right" }}>{t("SIGNED")}</span>
                 ) : (
                   <span style={{ ...styles.unSignedLabel, alignItems: "right" }}>{t("PENDING")}</span>
@@ -848,11 +849,11 @@ const ComplainantSignature = ({ path }) => {
               <button
                 style={{
                   ...styles.uploadButton,
-                  opacity: isAdvocateFilingCase && isFilingParty ? 1 : 0.5,
-                  cursor: isAdvocateFilingCase && isFilingParty ? "pointer" : "default",
+                  opacity: isAdvocateFilingCase ? 1 : 0.5,
+                  cursor: isAdvocateFilingCase ? "pointer" : "default",
                 }}
                 onClick={handleUploadFile}
-                disabled={!(isAdvocateFilingCase && isFilingParty)}
+                disabled={!isAdvocateFilingCase}
               >
                 <FileUploadIcon />
                 <span style={{ marginLeft: "8px" }}>{t("UPLOAD_SIGNED_PDF")}</span>
