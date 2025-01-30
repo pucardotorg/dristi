@@ -722,7 +722,7 @@ const ComplainantSignature = ({ path }) => {
 
   const isRightPannelEnable = () => {
     if (isAdvocateFilingCase) {
-      return !(isEsignSuccess || uploadDoc);
+      return !(isCurrentAdvocateSigned || isEsignSuccess || uploadDoc);
     }
     return !(isCurrentLitigantSigned || isEsignSuccess);
   };
