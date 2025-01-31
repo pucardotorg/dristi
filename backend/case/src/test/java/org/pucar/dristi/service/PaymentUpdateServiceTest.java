@@ -21,15 +21,10 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.pucar.dristi.config.Configuration;
+import org.pucar.dristi.enrichment.CaseRegistrationEnrichment;
 import org.pucar.dristi.kafka.Producer;
 import org.pucar.dristi.repository.CaseRepository;
-import org.pucar.dristi.web.models.AuditDetails;
-import org.pucar.dristi.web.models.Bill;
-import org.pucar.dristi.web.models.CaseCriteria;
-import org.pucar.dristi.web.models.CourtCase;
-import org.pucar.dristi.web.models.Payment;
-import org.pucar.dristi.web.models.PaymentDetail;
-import org.pucar.dristi.web.models.PaymentRequest;
+import org.pucar.dristi.web.models.*;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 
@@ -50,6 +45,9 @@ public class PaymentUpdateServiceTest {
 
     @Mock
     private Configuration configuration;
+
+    @Mock
+    private CaseRegistrationEnrichment caseRegistrationEnrichment;
 
     @InjectMocks
     private PaymentUpdateService paymentUpdateService;
@@ -93,6 +91,7 @@ public class PaymentUpdateServiceTest {
 
 
         when(mapper.convertValue(record, PaymentRequest.class)).thenReturn(paymentRequest);
+        doNothing().when(caseRegistrationEnrichment).enrichAccessCode(any());
         when(repository.getCases(any(), any())).thenReturn(Collections.singletonList(caseCriteria));
         when(configuration.getCaseUpdateStatusTopic()).thenReturn("kafkaUpdateTopic");
 
