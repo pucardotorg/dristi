@@ -631,7 +631,7 @@ function getAdvocateDetailsForComplainant(cases) {
     return [];
   }
   return cases.additionalDetails.advocateDetails.formdata.map((formdata) => {
-    const data = formdata.data;
+    const data = formdata.data?.multipleAdvocatesAndPip;
     if (data?.isComplainantPip?.code === "YES") {
       return {
         isPartyInPerson: true,
@@ -652,7 +652,7 @@ function getAdvocateDetailsForComplainant(cases) {
             data.vakalatnamaFileUpload,
             "UPLOAD_VAKALATNAMA"
           ) || "",
-        advocateList: data.MultipleAdvocateNameDetails.map(
+        advocateList: data.multipleAdvocateNameDetails.map(
           (advocate, index) => {
             return {
               index: index,

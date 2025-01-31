@@ -300,8 +300,9 @@ const ComplainantSignature = ({ path }) => {
       ?.map((litigant) => ({
         ...litigant,
         representatives:
-          caseDetails?.representatives?.filter((rep) => rep.representing.some((complainant) => complainant.individualId === litigant.individualId)) ||
-          [],
+          caseDetails?.representatives?.filter((rep) =>
+            rep?.representing?.some((complainant) => complainant?.individualId === litigant?.individualId)
+          ) || [],
       }));
   }, [caseDetails]);
 
@@ -587,7 +588,7 @@ const ComplainantSignature = ({ path }) => {
 
   const updateSignedDocInCaseDoc = () => {
     const tempDocList = structuredClone(caseDetails?.documents || []);
-    const index = tempDocList.findIndex((doc) => doc.documentType === "case.complaint.signed");
+    const index = tempDocList.findIndex((doc) => doc?.documentType === "case.complaint.signed");
     const signedDoc = {
       documentType: "case.complaint.signed",
       fileStore: signatureDocumentId ? signatureDocumentId : DocumentFileStoreId,
