@@ -24,6 +24,7 @@ import org.pucar.dristi.config.Configuration;
 import org.pucar.dristi.enrichment.CaseRegistrationEnrichment;
 import org.pucar.dristi.kafka.Producer;
 import org.pucar.dristi.repository.CaseRepository;
+import org.pucar.dristi.util.EncryptionDecryptionUtil;
 import org.pucar.dristi.web.models.*;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -48,6 +49,9 @@ public class PaymentUpdateServiceTest {
 
     @Mock
     private CaseRegistrationEnrichment caseRegistrationEnrichment;
+
+    @Mock
+    private EncryptionDecryptionUtil encryptionDecryptionUtil;
 
     @InjectMocks
     private PaymentUpdateService paymentUpdateService;
@@ -96,6 +100,7 @@ public class PaymentUpdateServiceTest {
         when(configuration.getCaseUpdateStatusTopic()).thenReturn("kafkaUpdateTopic");
 
         when(workflowService.callWorkFlow(any())).thenReturn(new State());
+        when(encryptionDecryptionUtil.encryptObject(any(), any(),any())).thenReturn(new CourtCase());
         doNothing().when(producer).push(any(), any());
 
         paymentUpdateService.process(record);
