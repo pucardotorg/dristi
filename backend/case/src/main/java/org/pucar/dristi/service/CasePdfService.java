@@ -23,7 +23,6 @@ import org.springframework.util.CollectionUtils;
 import java.util.Collections;
 import java.util.UUID;
 
-import static org.pucar.dristi.config.ServiceConstants.CASE_DECRYPT_SELF;
 import static org.pucar.dristi.config.ServiceConstants.CASE_PDF_SERVICE_EXCEPTION;
 
 @Service
@@ -64,7 +63,7 @@ public class CasePdfService {
         try {
             caseRepository.getCases(body.getCriteria(), body.getRequestInfo());
             CourtCase courtCase = body.getCriteria().get(0).getResponseList().get(0);
-            courtCase = encryptionDecryptionUtil.decryptObject(courtCase, CASE_DECRYPT_SELF, CourtCase.class, body.getRequestInfo());
+            courtCase = encryptionDecryptionUtil.decryptObject(courtCase, config.getCaseDecryptSelf(), CourtCase.class, body.getRequestInfo());
 
             if (!CollectionUtils.isEmpty(courtCase.getDocuments())) {
                 for (Document document : courtCase.getDocuments()) {
@@ -96,7 +95,7 @@ public class CasePdfService {
             }
 
             log.info("Encrypting: {}", caseRequest);
-            caseRequest.setCases(encryptionDecryptionUtil.encryptObject(caseRequest.getCases(), "CourtCase", CourtCase.class));
+            caseRequest.setCases(encryptionDecryptionUtil.encryptObject(caseRequest.getCases(), config.getCourtCaseEncrypt(), CourtCase.class));
             cacheService.save(caseRequest.getCases().getTenantId() + ":" + caseRequest.getCases().getId(), caseRequest.getCases());
 
             producer.push(config.getCaseUpdateTopic(), caseRequest);
