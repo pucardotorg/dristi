@@ -61,6 +61,7 @@ import SelectMultiUpload from "./components/SelectMultiUpload";
 import SupportingDocsComponent from "./components/SupportingDocsComponent";
 import MultipleAdvocateNameDetails from "./components/MultipleAdvocateNameDetails";
 import BoxComplainant from "./components/BoxComplainant";
+import MultipleAdvocatesAndPip from "./components/MultipleAdvocatesAndPip";
 
 export const DRISTIModule = ({ stateCode, userType, tenants }) => {
   const Digit = useMemo(() => window?.Digit || {}, []);
@@ -167,6 +168,7 @@ const componentsToRegister = {
   SelectMultiUpload,
   SupportingDocsComponent,
   MultipleAdvocateNameDetails,
+  MultipleAdvocatesAndPip,
   BoxComplainant,
 };
 

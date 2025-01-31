@@ -564,16 +564,38 @@ function EFilingCases({ path }) {
         let isAdvDataFound = false;
         for (let j = 0; j < advData?.length; j++) {
           // we are checking if already an advocate data exist for this complaiant
-          if (advData?.[j]?.data?.boxComplainant?.individualId === complainantIndividualId) {
+          if (advData?.[j]?.data?.multipleAdvocatesAndPip?.boxComplainant?.individualId === complainantIndividualId) {
             isAdvDataFound = true;
-            advData[j].data.boxComplainant = { ...advData[j].data.boxComplainant, index: i };
-            newAdvData.push(advData[j]);
+            const newObj = structuredClone(advData[j]);
+            newObj.data.multipleAdvocatesAndPip.boxComplainant = { ...newObj.data.multipleAdvocatesAndPip.boxComplainant, index: i };
+            newAdvData.push(newObj);
             break;
           }
         }
         // if no adv data is found corr to this complaint, add a new adv data form with this complainant details.
         if (!isAdvDataFound) {
-          newAdvData.push({ isenabled: true, data: {}, displayindex: 0 });
+          newAdvData.push({
+            isenabled: true,
+            data: {
+              multipleAdvocatesAndPip: {
+                boxComplainant: {
+                  firstName: completedComplainants?.[i]?.data?.firstName || "",
+                  middleName: completedComplainants?.[i]?.data?.middleName || "",
+                  lastName: completedComplainants?.[i]?.data?.lastName || "",
+                  individualId: completedComplainants?.[i]?.data?.complainantVerification?.individualDetails?.individualId || "",
+                  mobileNumber: completedComplainants?.[i]?.data?.complainantVerification?.mobileNumber || "",
+                  index: i,
+                },
+                isComplainantPip: {
+                  code: "NO",
+                  name: "No",
+                  isEnabled: true,
+                },
+                showAffidavit: false,
+              },
+            },
+            displayindex: 0,
+          });
         }
       }
       setFormdata(newAdvData);
@@ -680,47 +702,7 @@ function EFilingCases({ path }) {
       }
 
       if (caseDetails?.status === "DRAFT_IN_PROGRESS" && selected === "advocateDetails") {
-        const newData = structuredClone(advPageData?.[index]?.data || {});
-        if (!newData?.boxComplainant && !formdata[index]?.data?.boxComplainant) {
-          const complainant = {
-            firstName: completedComplainants?.[index]?.data?.firstName || "",
-            individualId: completedComplainants?.[index]?.data?.complainantVerification?.individualDetails?.individualId || "",
-            mobileNumber: completedComplainants?.[index]?.data?.complainantVerification?.mobileNumber || "",
-            index: index,
-          };
-          newData.boxComplainant = complainant;
-        }
-        if (!newData?.isComplainantPip && !formdata[index]?.data?.isComplainantPip) {
-          if (userType !== "ADVOCATE") {
-            newData.isComplainantPip = {
-              code: "NO",
-              name: "No",
-              showAddAdvocates: true,
-              showAffidavit: false,
-              isEnabled: true,
-            };
-          }
-          if (userType === "ADVOCATE" && index === 0) {
-            newData.isComplainantPip = {
-              code: "NO",
-              name: "No",
-              showAddAdvocates: true,
-              showAffidavit: false,
-              isEnabled: true,
-            };
-            newData.boxComplainant = { ...newData.boxComplainant, showVakalatNamaUpload: true };
-          }
-          if (userType === "ADVOCATE" && index !== 0) {
-            newData.isComplainantPip = {
-              code: "NO",
-              name: "No",
-              showAddAdvocates: true,
-              showAffidavit: false,
-              isEnabled: true,
-            };
-          }
-        }
-        return newData;
+        return advPageData[index]?.data?.multipleAdvocatesAndPip;
       }
 
       return (
@@ -1473,19 +1455,6 @@ function EFilingCases({ path }) {
   };
 
   const onFormValueChange = (setValue, formData, formState, reset, setError, clearErrors, trigger, getValues, index, currentDisplayIndex) => {
-    if (formData?.isComplainantPip?.code === "YES" && formData?.boxComplainant?.showVakalatNamaUpload) {
-      const { showVakalatNamaUpload, ...updatedBoxComplainant } = formData?.boxComplainant || {};
-      setValue("boxComplainant", updatedBoxComplainant);
-    }
-    if (
-      formData?.isComplainantPip?.code === "NO" &&
-      formData?.MultipleAdvocateNameDetails?.length > 0 &&
-      Object.keys(formData?.MultipleAdvocateNameDetails?.[0])?.length !== 0 &&
-      !formData?.boxComplainant?.showVakalatNamaUpload
-    ) {
-      setValue("boxComplainant", { ...formData?.boxComplainant, showVakalatNamaUpload: true });
-      setValue("isComplainantPip", { ...formData?.isComplainantPip, showAddAdvocates: true });
-    }
     checkIfscValidation({ formData, setValue, selected });
     checkNameValidation({ formData, setValue, selected, formdata, index, reset, clearErrors, formState });
     checkOnlyCharInCheque({ formData, setValue, selected });
@@ -1540,6 +1509,15 @@ function EFilingCases({ path }) {
             : item;
         })
       );
+    }
+    if (selected === "advocateDetails") {
+      if (
+        !formdata[index]?.data?.multipleAdvocatesAndPip &&
+        advPageData[index]?.data?.multipleAdvocatesAndPip &&
+        !isEqual(formdata[index].data, advPageData[index].data)
+      ) {
+        setValue("multipleAdvocatesAndPip", advPageData[index].data?.multipleAdvocatesAndPip);
+      }
     }
 
     setFormErrors.current = setError;

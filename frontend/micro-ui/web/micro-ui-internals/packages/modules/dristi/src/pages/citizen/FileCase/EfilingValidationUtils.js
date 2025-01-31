@@ -1625,6 +1625,7 @@ export const updateCaseDetails = async ({
           updateTempDocListMultiForm(docList, complainantDocTypes);
           return {
             ...data,
+            isFormCompleted: true,
             data: {
               ...data.data,
               ...documentData,
@@ -2187,10 +2188,10 @@ export const updateCaseDetails = async ({
         .filter((item) => item.isenabled)
         .map(async (data, index) => {
           const vakalatnamaDocumentData = { vakalatnamaFileUpload: null };
-          if (data?.data?.vakalatnamaFileUpload?.document) {
+          if (data?.data?.multipleAdvocatesAndPip?.vakalatnamaFileUpload?.document) {
             vakalatnamaDocumentData.vakalatnamaFileUpload = {};
             vakalatnamaDocumentData.vakalatnamaFileUpload.document = await Promise.all(
-              data?.data?.vakalatnamaFileUpload?.document?.map(async (document) => {
+              data?.data?.multipleAdvocatesAndPip?.vakalatnamaFileUpload?.document?.map(async (document) => {
                 if (document) {
                   const documentType = documentsTypeMapping["vakalatnamaFileUpload"];
                   const uploadedData = await onDocumentUpload(documentType, document, document.name, tenantId);
@@ -2217,10 +2218,10 @@ export const updateCaseDetails = async ({
             setFormDataValue("vakalatnamaFileUpload", vakalatnamaDocumentData?.vakalatnamaFileUpload);
           }
           const pipAffidavitDocumentData = { pipAffidavitFileUpload: null };
-          if (data?.data?.pipAffidavitFileUpload?.document) {
+          if (data?.data?.multipleAdvocatesAndPip?.pipAffidavitFileUpload?.document) {
             pipAffidavitDocumentData.pipAffidavitFileUpload = {};
             pipAffidavitDocumentData.pipAffidavitFileUpload.document = await Promise.all(
-              data?.data?.pipAffidavitFileUpload?.document?.map(async (document) => {
+              data?.data?.multipleAdvocatesAndPip?.pipAffidavitFileUpload?.document?.map(async (document) => {
                 if (document) {
                   const documentType = documentsTypeMapping["pipAffidavitFileUpload"];
                   const uploadedData = await onDocumentUpload(documentType, document, document.name, tenantId);
@@ -2240,33 +2241,42 @@ export const updateCaseDetails = async ({
           const advocateDetailsDocTypes = [documentsTypeMapping["vakalatnamaFileUpload"], documentsTypeMapping["pipAffidavitFileUpload"]];
           updateTempDocListMultiForm(docList, advocateDetailsDocTypes);
 
-          if (data?.data?.MultipleAdvocateNameDetails?.length > 0) {
-            const advSearchPromises = data?.data?.MultipleAdvocateNameDetails?.map((detail) => {
-              return DRISTIService.searchAdvocateClerk("/advocate/v1/_search", {
-                criteria: [
-                  {
-                    barRegistrationNumber: detail?.advocateBarRegNumberWithName?.barRegistrationNumberOriginal,
-                  },
-                ],
-                tenantId,
+          if (
+            data?.data?.multipleAdvocatesAndPip?.multipleAdvocateNameDetails?.length > 0 &&
+            data?.data?.multipleAdvocatesAndPip?.multipleAdvocateNameDetails?.length
+          ) {
+            const advSearchPromises = data?.data?.multipleAdvocatesAndPip?.multipleAdvocateNameDetails
+              ?.filter((detail) => detail?.advocateBarRegNumberWithName?.barRegistrationNumberOriginal)
+              .map((detail) => {
+                return DRISTIService.searchAdvocateClerk("/advocate/v1/_search", {
+                  criteria: [
+                    {
+                      barRegistrationNumber: detail?.advocateBarRegNumberWithName?.barRegistrationNumberOriginal,
+                    },
+                  ],
+                  tenantId,
+                });
               });
-            });
 
             const allAdvocateSearchData = await Promise.all(advSearchPromises);
             for (let i = 0; i < allAdvocateSearchData?.length; i++) {
               advocateDetails.push({
                 advocate: allAdvocateSearchData?.[i].advocates?.[0]?.responseList?.[0],
                 documents: [vakalatnamaDocumentData?.vakalatnamaFileUpload?.document?.[0]],
-                complainantIndividualId: data?.data?.boxComplainant?.individualId,
+                complainantIndividualId: data?.data?.multipleAdvocatesAndPip?.boxComplainant?.individualId,
               });
             }
           }
           return {
             ...data,
+            isFormCompleted: true,
             data: {
               ...data.data,
-              ...vakalatnamaDocumentData,
-              ...pipAffidavitDocumentData,
+              multipleAdvocatesAndPip: {
+                ...data.data.multipleAdvocatesAndPip,
+                vakalatnamaFileUpload: vakalatnamaDocumentData?.vakalatnamaFileUpload,
+                pipAffidavitFileUpload: pipAffidavitDocumentData?.pipAffidavitFileUpload,
+              },
             },
           };
         })

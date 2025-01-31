@@ -19,101 +19,52 @@
               "body": [
                 {
                   "type": "component",
-                  "component": "BoxComplainant",
-                  "key": "boxComplainant",
+                  "component": "MultipleAdvocatesAndPip",
+                  "key": "multipleAdvocatesAndPip",
                   "withoutLabel": true,
-                  "isMandatory": true,
-                  "populators": {}
-                }
-              ]
-            },
-            {
-              "body": [
-                {
-                  "type": "radio",
-                  "key": "isComplainantPip",
-                  "label": "CS_IF_COMPLAINANT_IS_PIP",
-                  "isMandatory": true,
                   "populators": {
-                    "type": "radioButton",
-                    "optionsKey": "name",
-                    "error": "CORE_REQUIRED_FIELD_ERROR",
-                    "required": false,
-                    "isMandatory": true,
                     "isDependent": true,
-                    "clearFields": {
-                      "stateOfRegistration": "",
-                      "barRegistrationNumber": "",
-                      "barCouncilId": [],
-                      "stateRegnNumber": ""
-                    },
-                    "options": [
-                      {
-                        "code": "YES",
-                        "name": "Yes",
-                        "showAddAdvocates": false,
-                        "showAffidavit": true,
-                        "isEnabled": true
-                      },
-                      {
-                        "code": "NO",
-                        "name": "No",
-                        "showAddAdvocates": true,
-                        "showAffidavit": false,
-                        "isEnabled": true
-                      }
-                    ]
-                  }
-                }
-              ]
-            },
-            {
-              "dependentKey": {
-                "isComplainantPip": ["showAddAdvocates"]
-              },
-              "body": [
-                {
-                  "type": "component",
-                  "component": "MultipleAdvocateNameDetails",
-                  "key": "MultipleAdvocateNameDetails",
-                  "withoutLabel": true,
-                  "label": "ADVOCATE_BASIC_DETAILS",
-                  "populators": {
                     "inputs": [
                       {
+                        "type": "radioInput",
+                        "label": "CS_IF_COMPLAINANT_IS_PIP",
+                        "name": "isComplainantPip",
+                        "options": [
+                          {
+                            "code": "YES",
+                            "name": "Yes",
+                            "isEnabled": true
+                          },
+                          {
+                            "code": "NO",
+                            "name": "No",
+                            "isEnabled": true
+                          }
+                        ]
+                      },
+                      {
+                        "type": "textInput",
                         "label": "FIRST_NAME",
                         "name": "firstName"
                       },
                       {
+                        "type": "textInput",
                         "label": "MIDDLE_NAME_OPTIONAL",
                         "name": "middleName"
                       },
                       {
+                        "type": "textInput",
                         "label": "LAST_NAME",
                         "name": "lastName"
-                      }
-                    ]
-                  }
-                }
-              ]
-            },
-            {
-              "dependentKey": {
-                "boxComplainant": ["showVakalatNamaUpload"]
-              },
-              "body": [
-                {
-                  "type": "component",
-                  "component": "SelectCustomDragDrop",
-                  "key": "vakalatnamaFileUpload",
-                  "isMandatory": true,
-                  "populators": {
-                    "inputs": [
+                      },
                       {
+                        "fileKey": "vakalatnamaFileUpload",
+                        "type": "DragDropComponent",
                         "name": "document",
+                        "isDocDependentOn": "multipleAdvocatesAndPip",
+                        "isDocDependentKey": "showVakalatNamaUpload",
                         "documentHeader": "UPLOAD_VAKALATNAMA",
                         "infoTooltipMessage": "UPLOAD_VAKALATNAMA",
-                        "type": "DragDropComponent",
                         "uploadGuidelines": "UPLOAD_DOC_50",
                         "maxFileSize": 50,
                         "maxFileErrorMessage": "CS_FILE_LIMIT_50_MB",
@@ -121,51 +72,20 @@
                         "isMultipleUpload": true,
                         "downloadTemplateText": "VAKALATNAMA_TEMPLATE_TEXT",
                         "downloadTemplateLink": "https://www.jsscacs.edu.in/sites/default/files/Department%20Files/Number%20System%20.pdf"
-                      }
-                    ]
-                  }
-                }
-              ]
-            },
-            {
-              "dependentKey": {
-                "isComplainantPip": ["showAffidavit"]
-              },
-              "body": [
-                {
-                  "type": "component",
-                  "component": "SelectCustomNote",
-                  "key": "pipAffidavitNote",
-                  "withoutLabel": true,
-                  "populators": {
-                    "inputs": [
+                      },
                       {
                         "infoHeader": "CS_PLEASE_NOTE",
                         "infoText": "AFFIDAVIT_NECESSARY_FOR_PIP",
                         "infoTooltipMessage": "ADVOCATE_DETAIL_NOTE",
                         "type": "InfoComponent"
-                      }
-                    ]
-                  }
-                }
-              ]
-            },
-            {
-              "dependentKey": {
-                "isComplainantPip": ["showAffidavit"]
-              },
-              "body": [
-                {
-                  "type": "component",
-                  "component": "SelectCustomDragDrop",
-                  "key": "pipAffidavitFileUpload",
-                  "isMandatory": true,
-                  "populators": {
-                    "inputs": [
+                      },
                       {
-                        "name": "document",
-                        "documentHeader": "UPLOAD_AFFIDAVIT",
+                        "fileKey": "pipAffidavitFileUpload",
                         "type": "DragDropComponent",
+                        "name": "document",
+                        "isDocDependentOn": "multipleAdvocatesAndPip",
+                        "isDocDependentKey": "showAffidavit",
+                        "documentHeader": "UPLOAD_AFFIDAVIT",
                         "uploadGuidelines": "UPLOAD_DOC_50",
                         "maxFileSize": 50,
                         "maxFileErrorMessage": "CS_FILE_LIMIT_50_MB",
