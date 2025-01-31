@@ -4,7 +4,8 @@ import React, { useEffect, useMemo, useState } from "react";
 import { useQuery } from "react-query";
 import Modal from "../../../dristi/src/components/Modal";
 import { Urls } from "../hooks/services/Urls";
-import { Toast } from "@egovernments/digit-ui-react-components";
+import { Toast, TextInput } from "@egovernments/digit-ui-react-components";
+import Button from "@egovernments/digit-ui-module-dristi/src/components/Button";
 
 const OrderPreviewOrderTypeMap = {
   MANDATORY_SUBMISSIONS_RESPONSES: "mandatory-async-submissions-responses",
@@ -88,13 +89,26 @@ const applicationStatusType = (Type) => {
   }
 };
 
-function OrderReviewModal({ setShowReviewModal, t, order, setShowsignatureModal, showActions = true, setOrderPdfFileStoreID }) {
+function OrderReviewModal({
+  setShowReviewModal,
+  t,
+  order,
+  setShowsignatureModal,
+  showActions = true,
+  setOrderPdfFileStoreID,
+  setBusinessOfTheDay,
+  currentDiaryEntry,
+  handleUpdateBusinessOfDayEntry,
+  handleReviewGoBack,
+}) {
   const [fileStoreId, setFileStoreID] = useState(null);
   const [fileName, setFileName] = useState();
   const tenantId = window?.Digit.ULBService.getCurrentTenantId();
   const DocViewerWrapper = Digit?.ComponentRegistryService?.getComponent("DocViewerWrapper");
   const filestoreId = "9d23b127-c9e9-4fd1-9dc8-e2e762269046";
   const [showErrorToast, setShowErrorToast] = useState(null);
+  const [isDisabled, setIsDisabled] = useState();
+  const orderFileStore = order?.documents?.find((doc) => doc?.documentType === "SIGNED")?.fileStore;
 
   const closeToast = () => {
     setShowErrorToast(null);
@@ -188,17 +202,18 @@ function OrderReviewModal({ setShowReviewModal, t, order, setShowsignatureModal,
           display: "flex",
           flexDirection: "column",
           alignItems: "center",
-          height: "100%",
           width: "100%",
           maxHeight: "100%",
           maxWidth: "100%",
         }}
       >
-        {orderPreviewPdf ? (
+        {orderPreviewPdf || orderFileStore ? (
           <DocViewerWrapper
             docWidth={"calc(80vw* 62/ 100)"}
-            docHeight={"60vh"}
+            docHeight={"50vh"}
             selectedDocs={[orderPreviewPdf]}
+            fileStoreId={orderFileStore}
+            tenantId={tenantId}
             displayFilename={fileName}
             showDownloadOption={false}
           />
@@ -215,7 +230,7 @@ function OrderReviewModal({ setShowReviewModal, t, order, setShowsignatureModal,
     <React.Fragment>
       <Modal
         headerBarMain={<Heading label={t("REVIEW_ORDERS_HEADING")} />}
-        headerBarEnd={<CloseBtn onClick={() => setShowReviewModal(false)} />}
+        headerBarEnd={<CloseBtn onClick={handleReviewGoBack} />}
         actionSaveLabel={showActions && t("ADD_SIGNATURE")}
         isDisabled={isLoading}
         actionSaveOnSubmit={() => {
@@ -247,7 +262,30 @@ function OrderReviewModal({ setShowReviewModal, t, order, setShowsignatureModal,
               <h1> {t(order?.orderType)}</h1>
             </div>
           </div>
-          <div className="review-order-modal-document-div">{showDocument} </div>
+          <div className="review-order-modal-document-div" style={{ padding: 0 }}>
+            {showDocument}
+            <h3 style={{ marginTop: 0, marginBottom: "2px" }}>{t("BUSINESS_OF_THE_DAY")} </h3>
+            <div style={{ display: "flex", gap: "10px" }}>
+              <TextInput
+                className="field desktop-w-full"
+                onChange={(e) => {
+                  setBusinessOfTheDay(e.target.value);
+                }}
+                disable={isDisabled}
+                defaultValue={currentDiaryEntry?.businessOfDay}
+                style={{ minWidth: "500px" }}
+                textInputStyle={{ maxWidth: "100%" }}
+              />
+              {currentDiaryEntry && (
+                <Button
+                  label={t("SAVE")}
+                  variation={"primary"}
+                  style={{ padding: 15, boxShadow: "none" }}
+                  onButtonClick={handleUpdateBusinessOfDayEntry}
+                />
+              )}
+            </div>
+          </div>
         </div>
         {showErrorToast && (
           <Toast

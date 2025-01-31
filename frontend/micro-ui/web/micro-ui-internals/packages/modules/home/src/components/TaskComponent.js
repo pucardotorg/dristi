@@ -36,6 +36,7 @@ const TasksComponent = ({
   joinCaseShowSubmitResponseModal,
   setJoinCaseShowSubmitResponseModal,
   hideTaskComponent,
+  hideFilters = false,
 }) => {
   const tenantId = useMemo(() => Digit.ULBService.getCurrentTenantId(), []);
   const [pendingTasks, setPendingTasks] = useState([]);
@@ -522,38 +523,40 @@ const TasksComponent = ({
           <h2>{!isLitigant ? t("YOUR_TASK") : t("ALL_PENDING_TASK_TEXT")}</h2>
           {totalPendingTask !== undefined && totalPendingTask > 0 ? (
             <React.Fragment>
-              <div className="task-filters">
-                <style>{customStyles}</style>
-                <LabelFieldPair>
-                  <CardLabel style={{ fontSize: "16px" }} className={"card-label"}>
-                    {t("CASE_TYPE")}
-                  </CardLabel>
-                  <Dropdown
-                    option={caseTypes}
-                    selected={caseType}
-                    optionKey={"name"}
-                    select={(value) => {
-                      setCaseType(value);
-                    }}
-                    placeholder={t("CS_CASE_TYPE")}
-                  />
-                </LabelFieldPair>
-                <LabelFieldPair>
-                  <CardLabel style={{ fontSize: "16px" }} className={"card-label"}>
-                    {t("CS_TASK_TYPE")}
-                  </CardLabel>
-                  <Dropdown
-                    t={t}
-                    option={taskTypes}
-                    optionKey={"name"}
-                    selected={taskType}
-                    select={(value) => {
-                      setTaskType(value);
-                    }}
-                    placeholder={t("CS_TASK_TYPE")}
-                  />
-                </LabelFieldPair>
-              </div>
+              {!hideFilters && (
+                <div className="task-filters">
+                  <style>{customStyles}</style>
+                  <LabelFieldPair>
+                    <CardLabel style={{ fontSize: "16px" }} className={"card-label"}>
+                      {t("CASE_TYPE")}
+                    </CardLabel>
+                    <Dropdown
+                      option={caseTypes}
+                      selected={caseType}
+                      optionKey={"name"}
+                      select={(value) => {
+                        setCaseType(value);
+                      }}
+                      placeholder={t("CS_CASE_TYPE")}
+                    />
+                  </LabelFieldPair>
+                  <LabelFieldPair>
+                    <CardLabel style={{ fontSize: "16px" }} className={"card-label"}>
+                      {t("CS_TASK_TYPE")}
+                    </CardLabel>
+                    <Dropdown
+                      t={t}
+                      option={taskTypes}
+                      optionKey={"name"}
+                      selected={taskType}
+                      select={(value) => {
+                        setTaskType(value);
+                      }}
+                      placeholder={t("CS_TASK_TYPE")}
+                    />
+                  </LabelFieldPair>
+                </div>
+              )}
 
               <React.Fragment>
                 {searchCaseLoading && <Loader />}

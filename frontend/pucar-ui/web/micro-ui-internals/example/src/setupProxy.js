@@ -107,6 +107,7 @@ module.exports = function (app) {
     "/e-sign-svc",
     "/ocr-service",
     "/lock-svc",
+    "/ab-diary"
   ].forEach((location) => app.use(location, createProxy));
   ["/pb-egov-assets"].forEach((location) => app.use(location, assetsProxy));
   ["/mdms-v2/v2/_create"].forEach((location) => app.use(location, mdmsProxy));

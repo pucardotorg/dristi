@@ -31,6 +31,7 @@ import { extractFeeMedium, getTaskType, combineMultipleFiles, getFilingType } fr
 import useRepondentPincodeDetails from "./dristi/useRepondentPincodeDetails.js";
 import downloadPdfFromFile from "../Utils/downloadPdfFromFile.js";
 import useGetAllAdvocates from "./dristi/useGetAllAdvocates.js";
+import useSearchADiaryService from "./dristi/useSearchADiaryService.js";
 
 export const Urls = {
   Authenticate: "/user/oauth/token",
@@ -80,6 +81,9 @@ export const Urls = {
     setCaseUnlock: "/lock-svc/v1/_release",
     getCaseLockStatus: "/lock-svc/v1/_get",
     setCaseLock: "/lock-svc/v1/_set",
+    addADiaryEntry: "/ab-diary/case/diary/v1/addDiaryEntry",
+    aDiaryEntryUpdate: "/ab-diary/case/diary/entry/v1/update",
+    aDiaryEntrySearch: "/ab-diary/case/diary/entries/v1/search",
   },
   case: {
     addWitness: "/case/v1/add/witness",
@@ -117,6 +121,7 @@ const dristi = {
   useRepondentPincodeDetails,
   downloadPdfFromFile,
   useGetAllAdvocates,
+  useSearchADiaryService,
 };
 
 const Hooks = {

@@ -14,6 +14,7 @@ import PaymentStatus from "../../../../orders/src/components/PaymentStatus";
 import ScheduleNextHearing from "./ScheduleNextHearing";
 import DashboardPage from "./Dashboard";
 import { useHistory } from "react-router-dom/cjs/react-router-dom.min";
+import ADiaryPage from "./ADiaryPage";
 const bredCrumbStyle = { maxWidth: "min-content" };
 
 const ProjectBreadCrumb = ({ location }) => {
@@ -70,6 +71,7 @@ const App = ({ path, stateCode, userType, tenants }) => {
         <PrivateRoute path={`${path}/home-pending-task`} component={() => <HomeView></HomeView>} />
 
         <PrivateRoute path={`${path}/dashboard`} component={() => <DashboardPage></DashboardPage>} />
+        <PrivateRoute path={`${path}/adiary`} component={() => <ADiaryPage></ADiaryPage>} />
         <PrivateRoute
           path={`${path}/home-pending-task/e-filing-payment-breakdown`}
           component={() => <EfilingPaymentBreakdown></EfilingPaymentBreakdown>}

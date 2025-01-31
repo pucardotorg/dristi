@@ -1,5 +1,8 @@
-import React, { useState } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import axios from "axios";
+import { useHistory } from "react-router-dom/cjs/react-router-dom.min";
+import { useTranslation } from "react-i18next";
+import TasksComponent from "../../components/TaskComponent";
 
 const DownloadIcon = () => {
   return (
@@ -9,6 +12,8 @@ const DownloadIcon = () => {
   );
 };
 const DashboardPage = () => {
+  const { t } = useTranslation();
+  const { select } = Digit.Hooks.useQueryParams();
   const getCurrentDate = () => {
     const today = new Date();
     const year = today.getFullYear();
@@ -22,6 +27,15 @@ const DashboardPage = () => {
   const [selectedRange, setSelectedRange] = useState({ startDate: startDate, endDate: endDate });
   const [downloadingIndices, setDownloadingIndices] = useState([]);
   const [downloadTimers, setDownloadTimers] = useState({});
+  const history = useHistory();
+  const userInfo = Digit?.UserService?.getUser()?.info;
+  const userInfoType = useMemo(() => (userInfo?.type === "CITIZEN" ? "citizen" : "employee"), [userInfo]);
+  const userRoles = Digit?.UserService?.getUser?.()?.info?.roles || [];
+  const [taskType, setTaskType] = useState({});
+
+  useEffect(() => {
+    setStepper(Number(select));
+  }, [select]);
 
   const handleSubmit = () => {
     if (startDate == null || endDate == null || startDate > endDate) {
@@ -103,6 +117,10 @@ const DashboardPage = () => {
         "https://dristi-kerala-dev.pucar.org/kibana/api/reporting/generate/csv_searchsource?jobParams=%28browserTimezone%3AAsia%2FCalcutta%2Ccolumns%3A%21%28caseNumber%2CcaseYear%2CaccusedName%2CsentenceDate%2CfineAmount%2CsanctioningDate%2CsanctioningNumber%2CstepsToRealiseFine%2Cremarks%29%2CobjectType%3Asearch%2CsearchSource%3A%28fields%3A%21%28%28field%3AcaseNumber%2Cinclude_unmapped%3Atrue%29%2C%28field%3AcaseYear%2Cinclude_unmapped%3Atrue%29%2C%28field%3AaccusedName%2Cinclude_unmapped%3Atrue%29%2C%28field%3AsentenceDate%2Cinclude_unmapped%3Atrue%29%2C%28field%3AfineAmount%2Cinclude_unmapped%3Atrue%29%2C%28field%3AsanctioningDate%2Cinclude_unmapped%3Atrue%29%2C%28field%3AsanctioningNumber%2Cinclude_unmapped%3Atrue%29%2C%28field%3AstepsToRealiseFine%2Cinclude_unmapped%3Atrue%29%2C%28field%3Aremarks%2Cinclude_unmapped%3Atrue%29%29%2Cfilter%3A%21%28%29%2Cindex%3Aaefc863e-2678-40dd-ac9a-5e32cf8bb2b5%2Cquery%3A%28language%3Akuery%2Cquery%3A%27%27%29%2Csort%3A%21%28%28_score%3Adesc%29%29%29%2Ctitle%3A%27Statement%20of%20cases%20in%20which%20sanction%20to%20write-off%20is%20requested%27%2Cversion%3A%278.11.3%27%29",
     },
   ];
+
+  const handleClick = () => {
+    history.push(`/${window?.contextPath}/${userInfoType}/home/adiary`);
+  };
 
   const handleDownload = async (downloadLink, index) => {
     setDownloadingIndices((prev) => [...prev, index]);
@@ -209,6 +227,17 @@ const DashboardPage = () => {
         >
           Download Reports
         </button>
+        <button
+          className="dashboard-btn"
+          style={{
+            padding: "16px",
+            color: stepper === 5 ? "#007E7E" : "#77787B",
+            fontWeight: stepper === 5 ? "600" : "400",
+          }}
+          onClick={() => setStepper(5)}
+        >
+          {t("DASHBOARD_REPORTS")}
+        </button>
       </div>
       <div
         style={{
@@ -220,7 +249,7 @@ const DashboardPage = () => {
           border: "none",
         }}
       >
-        {stepper != 4 && (
+        {stepper !== 4 && stepper !== 5 && (
           <div style={{ display: "flex", flexDirection: "row", gap: "15px", justifyContent: "flex-start", marginBottom: "10px" }}>
             <label style={{ display: "flex", gap: "8px" }}>
               From
@@ -294,6 +323,40 @@ const DashboardPage = () => {
                       </button>
                     </div>
                   ))}
+                </div>
+              </div>
+            )}
+            {stepper === 5 && (
+              <div style={{ display: "flex", gap: "15px" }}>
+                <div style={{ marginTop: "20px", flex: 4 }}>
+                  <h2 style={{ fontWeight: "bold", margin: "10px" }}>{t("AVAILABLE_REPORTS")}</h2>
+                  <div style={{ display: "flex", flexDirection: "column", gap: "10px" }}>
+                    <div
+                      style={{
+                        display: "flex",
+                        alignItems: "center",
+                        justifyContent: "space-between",
+                        padding: "10px",
+                        border: "1px solid #ccc",
+                        borderRadius: "4px",
+                        minWidth: "100%",
+                      }}
+                      onClick={handleClick}
+                    >
+                      <span>{t("A_DIARY_REGISTER")}</span>
+                    </div>
+                  </div>
+                  {}
+                </div>
+                <div style={{ flex: 2 }}>
+                  <TasksComponent
+                    taskType={taskType}
+                    setTaskType={setTaskType}
+                    isLitigant={userRoles.includes("CITIZEN")}
+                    uuid={userInfo?.uuid}
+                    userInfoType={userInfoType}
+                    hideFilters={true}
+                  />
                 </div>
               </div>
             )}

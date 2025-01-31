@@ -54,6 +54,7 @@ import { useGetPendingTask } from "../../hooks/orders/useGetPendingTask";
 import useSearchOrdersService from "../../hooks/orders/useSearchOrdersService";
 import { DRISTIService } from "@egovernments/digit-ui-module-dristi/src/services";
 import { constructFullName, removeInvalidNameParts } from "../../utils";
+import { useToast } from "@egovernments/digit-ui-module-dristi/src/components/Toast/useToast";
 
 const configKeys = {
   SECTION_202_CRPC: configsOrderSection202CRPC,
@@ -179,6 +180,11 @@ const GenerateOrders = () => {
   const canESign = roles?.some((role) => role.code === "ORDER_ESIGN");
   const { downloadPdf } = Digit.Hooks.dristi.useDownloadCasePdf();
   const judgeName = window?.globalConfigs?.getConfig("JUDGE_NAME");
+  const [businessOfTheDay, setBusinessOfTheDay] = useState(null);
+  const toast = useToast();
+  const [currentPublishedOrder, setCurrentPublishedOrder] = useState(null);
+  const currentDiaryEntry = history.location?.state?.diaryEntry;
+
   const setSelectedOrder = (orderIndex) => {
     _setSelectedOrder(orderIndex);
   };
@@ -443,6 +449,38 @@ const GenerateOrders = () => {
       localStorage.removeItem("orderPDF");
     }
   }, [defaultIndex]);
+
+  useEffect(() => {
+    const getOrder = async () => {
+      try {
+        const response = await DRISTIService.searchOrders(
+          {
+            criteria: {
+              filingNumber: filingNumber,
+              orderNumber: orderNumber,
+              status: "PUBLISHED",
+            },
+            tenantId,
+          },
+          { tenantId: tenantId }
+        );
+
+        const order = response?.list?.[0];
+
+        if (order) {
+          setCurrentPublishedOrder(order);
+          setBusinessOfTheDay(currentDiaryEntry?.businessOfDay);
+          setShowReviewModal(true);
+        }
+      } catch (error) {
+        console.error("Error fetching order:", error);
+      }
+    };
+
+    if (orderNumber && currentDiaryEntry) {
+      getOrder();
+    }
+  }, [currentDiaryEntry, filingNumber, orderNumber, tenantId]);
 
   const currentOrder = useMemo(() => formList?.[selectedOrder], [formList, selectedOrder]);
   const orderType = useMemo(() => currentOrder?.orderType || {}, [currentOrder]);
@@ -2069,6 +2107,33 @@ const GenerateOrders = () => {
     });
   };
 
+  const handleUpdateBusinessOfDayEntry = async () => {
+    try {
+      await DRISTIService.aDiaryEntryUpdate(
+        {
+          diaryEntry: {
+            ...currentDiaryEntry,
+            businessOfDay: businessOfTheDay,
+          },
+        },
+        {}
+      ).then(async () => {
+        history.goBack();
+      });
+    } catch (error) {
+      console.error("error: ", error);
+      toast.error(t("SOMETHING_WENT_WRONG"));
+    }
+  };
+
+  const handleReviewGoBack = () => {
+    if (currentDiaryEntry) {
+      history.goBack();
+    } else {
+      setShowReviewModal(false);
+    }
+  };
+
   const handleIssueNotice = async (hearingDate, hearingNumber) => {
     try {
       const orderbody = {
@@ -2222,6 +2287,28 @@ const GenerateOrders = () => {
         });
       }
       referenceId && (await handleApplicationAction(currentOrder));
+      if (businessOfTheDay) {
+        await DRISTIService.addADiaryEntry(
+          {
+            diaryEntry: {
+              judgeId: "super",
+              businessOfDay: businessOfTheDay,
+              tenantId: tenantId,
+              entryDate: new Date().setHours(0, 0, 0, 0),
+              caseNumber: caseDetails?.cmpNumber,
+              referenceId: currentOrder?.orderNumber,
+              referenceType: "Order",
+              additionalDetails: {
+                filingNumber: currentOrder?.filingNumber,
+              },
+            },
+          },
+          {}
+        ).catch((error) => {
+          console.error("error: ", error);
+          toast.error(t("SOMETHING_WENT_WRONG"));
+        });
+      }
       const orderResponse = await updateOrder(
         {
           ...currentOrder,
@@ -2603,11 +2690,15 @@ const GenerateOrders = () => {
       {showReviewModal && (
         <OrderReviewModal
           t={t}
-          order={currentOrder}
+          order={currentPublishedOrder || currentOrder}
           setShowReviewModal={setShowReviewModal}
           setShowsignatureModal={setShowsignatureModal}
           setOrderPdfFileStoreID={setOrderPdfFileStoreID}
-          showActions={canESign}
+          showActions={canESign && !currentDiaryEntry}
+          setBusinessOfTheDay={setBusinessOfTheDay}
+          currentDiaryEntry={currentDiaryEntry}
+          handleUpdateBusinessOfDayEntry={handleUpdateBusinessOfDayEntry}
+          handleReviewGoBack={handleReviewGoBack}
         />
       )}
       {showsignatureModal && (

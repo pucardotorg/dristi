@@ -1,4 +1,4 @@
-import { CloseSvg, TextInput } from "@egovernments/digit-ui-react-components";
+import { CloseSvg, TextInput, Toast } from "@egovernments/digit-ui-react-components";
 import React, { useEffect, useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useHistory } from "react-router-dom/cjs/react-router-dom.min";
@@ -16,8 +16,10 @@ import DocViewerWrapper from "../docViewerWrapper";
 import SelectCustomDocUpload from "../../../components/SelectCustomDocUpload";
 import ESignSignatureModal from "../../../components/ESignSignatureModal";
 import useDownloadCasePdf from "../../../hooks/dristi/useDownloadCasePdf";
-import { cleanString, removeInvalidNameParts } from "../../../Utils";
+import { cleanString, getDate, removeInvalidNameParts } from "../../../Utils";
 import useGetAllOrderApplicationRelatedDocuments from "../../../hooks/dristi/useGetAllOrderApplicationRelatedDocuments";
+import { useToast } from "../../../components/Toast/useToast";
+import Button from "../../../components/Button";
 
 const stateSla = {
   DRAFT_IN_PROGRESS: 2,
@@ -35,6 +37,8 @@ const EvidenceModal = ({
   showToast,
   caseId,
   setIsDelayApplicationPending,
+  currentDiaryEntry,
+  artifact,
 }) => {
   const [comments, setComments] = useState(documentSubmission[0]?.comments ? documentSubmission[0].comments : []);
   const [showConfirmationModal, setShowConfirmationModal] = useState(null);
@@ -61,6 +65,10 @@ const EvidenceModal = ({
   const [showFileIcon, setShowFileIcon] = useState(false);
   const { downloadPdf } = useDownloadCasePdf();
   const { documents: allCombineDocs, isLoading, fetchRecursiveData } = useGetAllOrderApplicationRelatedDocuments();
+  const [isDisabled, setIsDisabled] = useState();
+  const [businessOfTheDay, setBusinessOfTheDay] = useState(null);
+  const toast = useToast();
+
   const setData = (data) => {
     setFormData(data);
   };
@@ -498,6 +506,29 @@ const EvidenceModal = ({
   };
 
   const handleEvidenceAction = async () => {
+    if (businessOfTheDay) {
+      await DRISTIService.addADiaryEntry(
+        {
+          diaryEntry: {
+            judgeId: "super",
+            businessOfDay: businessOfTheDay,
+            tenantId: tenantId,
+            entryDate: new Date().setHours(0, 0, 0, 0),
+            caseNumber: caseData?.case?.cmpNumber,
+            referenceId: documentSubmission?.[0]?.artifactList?.artifactNumber,
+            referenceType: "Documents",
+            additionalDetails: {
+              filingNumber: filingNumber,
+              caseId: caseId,
+            },
+          },
+        },
+        {}
+      ).catch((error) => {
+        console.error("error: ", error);
+        toast.error(t("SOMETHING_WENT_WRONG"));
+      });
+    }
     await handleMarkEvidence();
   };
 
@@ -582,23 +613,35 @@ const EvidenceModal = ({
     return (
       <React.Fragment>
         {modalType !== "Submissions" ? (
-          documentSubmission?.map((docSubmission, index) => (
-            <React.Fragment key={index}>
-              {docSubmission.applicationContent && (
-                <div className="application-view">
-                  <DocViewerWrapper
-                    fileStoreId={docSubmission.applicationContent.fileStoreId}
-                    displayFilename={docSubmission.applicationContent.fileName}
-                    tenantId={docSubmission.applicationContent.tenantId}
-                    docWidth={"calc(80vw * 62 / 100)"}
-                    docHeight={"60vh"}
-                    showDownloadOption={false}
-                    documentName={docSubmission.applicationContent.fileName}
-                  />
-                </div>
-              )}
-            </React.Fragment>
-          ))
+          currentDiaryEntry && artifact ? (
+            <div className="application-view">
+              <DocViewerWrapper
+                fileStoreId={artifact?.file?.fileStore}
+                tenantId={tenantId}
+                docWidth={"calc(80vw * 62 / 100)"}
+                docHeight={"60vh"}
+                showDownloadOption={false}
+              />
+            </div>
+          ) : (
+            documentSubmission?.map((docSubmission, index) => (
+              <React.Fragment key={index}>
+                {docSubmission.applicationContent && (
+                  <div className="application-view">
+                    <DocViewerWrapper
+                      fileStoreId={docSubmission.applicationContent.fileStoreId}
+                      displayFilename={docSubmission.applicationContent.fileName}
+                      tenantId={docSubmission.applicationContent.tenantId}
+                      docWidth={"calc(80vw * 62 / 100)"}
+                      docHeight={"60vh"}
+                      showDownloadOption={false}
+                      documentName={docSubmission.applicationContent.fileName}
+                    />
+                  </div>
+                )}
+              </React.Fragment>
+            ))
+          )
         ) : allCombineDocs?.length > 0 ? (
           allCombineDocs.map((docs, index) => (
             <React.Fragment key={index}>
@@ -734,6 +777,9 @@ const EvidenceModal = ({
     if (modalType === "Submissions" && history.location?.state?.applicationDocObj) {
       history.push(`/${window.contextPath}/${userType}/dristi/home/view-case?caseId=${caseId}&filingNumber=${filingNumber}&tab=Submissions`);
     } else {
+      if (currentDiaryEntry) {
+        history.goBack();
+      }
       setShow(false);
       setShowSuccessModal(false);
       counterUpdate();
@@ -816,6 +862,25 @@ const EvidenceModal = ({
     }
   };
 
+  const handleUpdateBusinessOfDayEntry = async () => {
+    try {
+      await DRISTIService.aDiaryEntryUpdate(
+        {
+          diaryEntry: {
+            ...currentDiaryEntry,
+            businessOfDay: businessOfTheDay,
+          },
+        },
+        {}
+      ).then(async () => {
+        history.goBack();
+      });
+    } catch (error) {
+      console.error("error: ", error);
+      toast.error(t("SOMETHING_WENT_WRONG"));
+    }
+  };
+
   const documentUploaderConfig = useMemo(
     () => [
       {
@@ -875,8 +940,10 @@ const EvidenceModal = ({
   };
 
   useEffect(() => {
-    fetchRecursiveData(documentSubmission?.[0]?.applicationList);
-  }, [documentSubmission, fetchRecursiveData]);
+    if (!(currentDiaryEntry && artifact)) {
+      fetchRecursiveData(documentSubmission?.[0]?.applicationList);
+    }
+  }, [artifact, currentDiaryEntry, documentSubmission, fetchRecursiveData]);
 
   const customLabelShow = useMemo(() => {
     return (
@@ -895,8 +962,8 @@ const EvidenceModal = ({
           headerBarEnd={<CloseBtn onClick={handleBack} />}
           actionSaveLabel={actionSaveLabel}
           actionSaveOnSubmit={actionSaveOnSubmit}
-          hideSubmit={!showSubmit} // Not allowing submit action for court room manager
-          actionCancelLabel={!isJudge ? false : actionCancelLabel} // Not allowing cancel action for court room manager
+          hideSubmit={currentDiaryEntry || !showSubmit} // Not allowing submit action for court room manager
+          actionCancelLabel={currentDiaryEntry || !isJudge ? false : actionCancelLabel} // Not allowing cancel action for court room manager
           actionCustomLabel={!customLabelShow ? false : actionCustomLabel} // Not allowing cancel action for court room manager
           actionCancelOnSubmit={actionCancelOnSubmit}
           actionCustomLabelSubmit={actionCustomLabelSubmit}
@@ -932,7 +999,7 @@ const EvidenceModal = ({
         >
           <div className="evidence-modal-main">
             <div className={"application-details"}>
-              <div style={{ display: "flex", flexDirection: "column" }}>
+              <div style={{ display: "flex", flexDirection: "column", overflowY: "auto" }}>
                 {isJudge && documentSubmission?.[0]?.applicationList?.applicationType === "DELAY_CONDONATION" && (
                   <div
                     className="dca-infobox-message"
@@ -961,7 +1028,7 @@ const EvidenceModal = ({
                       <h3>{t("APPLICATION_TYPE")}</h3>
                     </div>
                     <div className="info-value">
-                      <h3>{t(documentSubmission[0]?.details?.applicationType)}</h3>
+                      <h3>{currentDiaryEntry && artifact ? t(artifact?.artifactType) : t(documentSubmission[0]?.details?.applicationType)}</h3>
                     </div>
                   </div>
                   <div className="info-row">
@@ -969,7 +1036,11 @@ const EvidenceModal = ({
                       <h3>{t("APPLICATION_SENT_ON")}</h3>
                     </div>
                     <div className="info-value">
-                      <h3>{documentSubmission[0]?.details.applicationSentOn}</h3>
+                      <h3>
+                        {currentDiaryEntry && artifact
+                          ? t(getDate(parseInt(artifact?.createdDate)))
+                          : documentSubmission[0]?.details.applicationSentOn}
+                      </h3>
                     </div>
                   </div>
                   <div className="info-row">
@@ -977,7 +1048,7 @@ const EvidenceModal = ({
                       <h3>{t("SENDER")}</h3>
                     </div>
                     <div className="info-value">
-                      <h3>{removeInvalidNameParts(documentSubmission[0]?.details.sender)}</h3>
+                      <h3>{currentDiaryEntry && artifact ? artifact?.sender : removeInvalidNameParts(documentSubmission[0]?.details.sender)}</h3>
                     </div>
                   </div>
                   <div className="info-row">
@@ -992,6 +1063,33 @@ const EvidenceModal = ({
                 </div>
                 <div style={{ display: "flex", flexDirection: "column" }}>{showDocument}</div>
               </div>
+              {modalType === "Documents" && (
+                <div>
+                  <h3 style={{ marginTop: 0, marginBottom: "2px" }}>{t("BUSINESS_OF_THE_DAY")} </h3>
+                  <div style={{ display: "flex", gap: "10px" }}>
+                    <TextInput
+                      className="field desktop-w-full"
+                      onChange={(e) => {
+                        setBusinessOfTheDay(e.target.value);
+                      }}
+                      disable={isDisabled}
+                      defaultValue={currentDiaryEntry?.businessOfDay}
+                      style={{ minWidth: "500px" }}
+                      textInputStyle={{ maxWidth: "100%" }}
+                    />
+                    {currentDiaryEntry && (
+                      <Button
+                        label={t("SAVE")}
+                        variation={"primary"}
+                        style={{ padding: 15, boxShadow: "none" }}
+                        onButtonClick={() => {
+                          handleUpdateBusinessOfDayEntry();
+                        }}
+                      />
+                    )}
+                  </div>
+                </div>
+              )}
             </div>
             {(userRoles.includes("SUBMISSION_RESPONDER") || userRoles.includes("JUDGE_ROLE")) && (
               <div className={`application-comment ${isCourtRoomManager && "disabled"}`}>
@@ -1022,6 +1120,7 @@ const EvidenceModal = ({
                           onChange={(e) => {
                             setCurrentComment(e.target.value);
                           }}
+                          disable={currentDiaryEntry}
                         />
                         <div
                           className="send-comment-btn"
@@ -1111,17 +1210,19 @@ const EvidenceModal = ({
                           <RightArrow />
                         </div>
                       </div>
-                      <div style={{ display: "flex" }}>
-                        <SelectCustomDocUpload
-                          t={t}
-                          formUploadData={formData}
-                          config={[documentUploaderConfig?.[0]]}
-                          setData={setData}
-                          documentSubmission={documentSubmission}
-                          showDocument={showFileIcon}
-                          setShowDocument={setShowFileIcon}
-                        />
-                      </div>
+                      {!currentDiaryEntry && (
+                        <div style={{ display: "flex" }}>
+                          <SelectCustomDocUpload
+                            t={t}
+                            formUploadData={formData}
+                            config={[documentUploaderConfig?.[0]]}
+                            setData={setData}
+                            documentSubmission={documentSubmission}
+                            showDocument={showFileIcon}
+                            setShowDocument={setShowFileIcon}
+                          />
+                        </div>
+                      )}
                     </div>
                   </div>
                 )}

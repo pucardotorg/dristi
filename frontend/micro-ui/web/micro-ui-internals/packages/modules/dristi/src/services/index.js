@@ -358,11 +358,34 @@ export const DRISTIService = {
       userService: false,
       data,
       params,
-    }
-  ),
+    }),
   setCaseUnlock: (data, params) =>
     Request({
       url: Urls.dristi.setCaseUnlock,
+      useCache: false,
+      userService: false,
+      data,
+      params,
+    }),
+  addADiaryEntry: (data, params) =>
+    Request({
+      url: Urls.dristi.addADiaryEntry,
+      useCache: false,
+      userService: false,
+      data,
+      params,
+    }),
+  aDiaryEntryUpdate: (data, params) =>
+    Request({
+      url: Urls.dristi.aDiaryEntryUpdate,
+      useCache: false,
+      userService: false,
+      data,
+      params,
+    }),
+  aDiaryEntrySearch: (data, params) =>
+    Request({
+      url: Urls.dristi.aDiaryEntrySearch,
       useCache: false,
       userService: false,
       data,

@@ -38,6 +38,7 @@ import useWorkflowDetails from "../../../hooks/dristi/useWorkflowDetails";
 import useSearchOrdersService from "@egovernments/digit-ui-module-orders/src/hooks/orders/useSearchOrdersService";
 import VoidSubmissionBody from "./VoidSubmissionBody";
 import DocumentModal from "@egovernments/digit-ui-module-orders/src/components/DocumentModal";
+import { getFullName } from "../../../../../cases/src/utils/joinCaseUtils";
 
 const defaultSearchValues = {};
 
@@ -163,7 +164,7 @@ const AdmittedCases = () => {
   const { t } = useTranslation();
   const { path } = useRouteMatch();
   const urlParams = new URLSearchParams(window.location.search);
-  const { hearingId, taskOrderType } = Digit.Hooks.useQueryParams();
+  const { hearingId, taskOrderType, artifactNumber } = Digit.Hooks.useQueryParams();
   const caseId = urlParams.get("caseId");
   const roles = Digit.UserService.getUser()?.info?.roles;
   const isFSO = roles.some((role) => role.code === "FSO_ROLE");
@@ -176,6 +177,7 @@ const AdmittedCases = () => {
   const [show, setShow] = useState(false);
   const [openAdmitCaseModal, setOpenAdmitCaseModal] = useState(true);
   const [documentSubmission, setDocumentSubmission] = useState();
+  const [artifact, setArtifact] = useState();
   const [showOrderReviewModal, setShowOrderReviewModal] = useState(false);
   const [showHearingTranscriptModal, setShowHearingTranscriptModal] = useState(false);
   const [currentOrder, setCurrentOrder] = useState();
@@ -213,6 +215,7 @@ const AdmittedCases = () => {
   const isJudge = userInfo?.roles?.some((role) => role.code === "JUDGE_ROLE");
   const todayDate = new Date().getTime();
   const { downloadPdf } = useDownloadCasePdf();
+  const currentDiaryEntry = history.location?.state?.diaryEntry;
 
   const reqEvidenceUpdate = {
     url: Urls.dristi.evidenceUpdate,
@@ -1046,6 +1049,42 @@ const AdmittedCases = () => {
     return caseDetails?.status === "CASE_ADMITTED";
   }, [caseDetails?.status]);
 
+  const getEvidence = async () => {
+    try {
+      const response = await DRISTIService.searchEvidence(
+        {
+          criteria: {
+            filingNumber: filingNumber,
+            artifactNumber: artifactNumber,
+            tenantId: tenantId,
+          },
+          tenantId,
+        },
+        {}
+      );
+
+      const evidence = response?.artifacts?.[0];
+
+      const individualResponse = await DRISTIService.searchIndividualUser(
+        {
+          Individual: {
+            individualId: evidence?.sourceID,
+          },
+        },
+        { tenantId, limit: 1000, offset: 0 }
+      );
+      const individualData = individualResponse?.Individual?.[0];
+      const fullName = getFullName(" ", individualData?.name?.givenName, individualData?.name?.otherNames, individualData?.name?.familyName);
+      if (evidence) {
+        setArtifact({ ...evidence, sender: fullName });
+        setShow(true);
+      }
+    } catch (error) {
+      console.error("Error fetching evidence:", error);
+      history.goBack();
+    }
+  };
+
   useEffect(() => {
     if (
       history?.location?.state?.triggerAdmitCase &&
@@ -1090,6 +1129,12 @@ const AdmittedCases = () => {
       setShow(true);
     }
   }, [history.location?.state?.applicationDocObj, show]);
+
+  useEffect(() => {
+    if (currentDiaryEntry && artifactNumber) {
+      getEvidence();
+    }
+  }, [artifactNumber, currentDiaryEntry]);
 
   useEffect(() => {
     // Set default values when component mounts
@@ -2318,6 +2363,8 @@ const AdmittedCases = () => {
           caseData={caseRelatedData}
           caseId={caseId}
           setIsDelayApplicationPending={setIsDelayApplicationPending}
+          currentDiaryEntry={currentDiaryEntry}
+          artifact={artifact}
         />
       )}
       {showOrderReviewModal && (
