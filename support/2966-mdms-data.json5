@@ -1,0 +1,75 @@
+[
+  {
+    "tenantId": "kl",
+    "moduleName": "egov-hrms",
+    "masterName": "EmployeeType",
+    "mdmsPayload": [
+      {
+        "tenantId": "kl",
+        "schemaCode": "egov-hrms.EmployeeType",
+        "uniqueIdentifier": "E-Post Personnel",
+        "data": {
+          "code": "E-Post Personnel",
+          "active": true
+        },
+        "isActive": true
+      },
+      {
+        "tenantId": "kl",
+        "schemaCode": "egov-hrms.EmployeeType",
+        "uniqueIdentifier": "E-Post",
+        "data": {
+          "code": "E-Post",
+          "active": true
+        },
+        "isActive": false
+      }
+    ]
+  },
+  {
+    "tenantId": "kl",
+    "moduleName": "common-masters",
+    "masterName": "District",
+    "mdmsPayload": [
+      {
+        "tenantId": "kl",
+        "schemaCode": "common-masters.District",
+        "uniqueIdentifier": "KOLLAM",
+        "data": {
+          "code": "KOLLAM",
+          "name": "Kollam",
+          "state": "kl",
+          "active": true
+        },
+        "isActive": true
+      }
+    ]
+  },
+  {
+    "tenantId": "kl",
+    "moduleName": "common-masters", //update this data
+    "masterName": "District",
+    "mdmsPayload":[
+      {
+        "id": "819d5e18-a0ea-4559-9a9a-f966b564e496",
+        "tenantId": "kl",
+        "schemaCode": "common-masters.CourtEstablishment",
+        "uniqueIdentifier": "JUDICIAL_MAGISTRATE_FIRST_CLASS",
+        "data": {
+          "code": "JUDICIAL_MAGISTRATE_FIRST_CLASS",
+          "name": "Special Court Of Judicial Magistrate of the First Class , for the trial of cases under section 138 of NI Act , 1881 at Kollam ( \"24X7 ON Court\" )",
+          "type": "2",
+          "active": true,
+          "district": "KOLLAM"
+        },
+        "isActive": true,
+        "auditDetails": {
+          "createdBy": "d4308cee-8733-41c0-8059-26c2c7050b92",
+          "lastModifiedBy": "d4308cee-8733-41c0-8059-26c2c7050b92",
+          "createdTime": 1737612663210,
+          "lastModifiedTime": 1738581877560
+        }
+      }
+    ]
+  }
+]

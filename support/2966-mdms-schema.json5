@@ -1,0 +1,87 @@
+[
+  {
+    "tenantId": "kl",
+    "mdmsPayload": {
+      "tenantId": "kl",
+      "code": "common-masters.District",
+      "description": null,
+      "definition": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "code",
+          "type"
+        ],
+        "x-unique": [
+          "code"
+        ],
+        "properties": {
+          "code": {
+            "type": "string"
+          },
+          "name": {
+            "type": "string"
+          },
+          "state": {
+            "type": "string"
+          },
+          "active": {
+            "type": "boolean"
+          }
+        },
+        "additionalProperties": false
+      },
+      "isActive": true
+    }
+  },
+  { //update this schema
+    "tenantId": "kl",
+    "moduleName": "common-masters",
+    "masterName": "CourtEstablishment",
+    "mdmsPayload":  {
+      "tenantId": "kl",
+      "code": "common-masters.CourtEstablishment",
+      "description": null,
+      "definition": {
+        "type": "object",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "required": [
+          "code",
+          "type"
+        ],
+        "x-unique": [
+          "code"
+        ],
+        "properties": {
+          "code": {
+            "type": "string"
+          },
+          "name": {
+            "type": "string"
+          },
+          "type": {
+            "type": "string"
+          },
+          "district": {
+            "type": "string"
+          },
+          "active": {
+            "type": "boolean"
+          }
+        },
+        "x-ref-schema": [
+          {
+            "fieldPath": "type",
+            "schemaCode": "common-masters.CourtType"
+          },
+          {
+            "fieldPath": "district",
+            "schemaCode": "common-masters.District"
+          }
+        ],
+        "additionalProperties": false
+      },
+      "isActive": true
+    }
+  }
+]
