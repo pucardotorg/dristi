@@ -2380,7 +2380,7 @@ export const updateCaseDetails = async ({
   );
 
   const caseTitle = ["DRAFT_IN_PROGRESS"].includes(caseDetails?.status)
-    ? caseDetails?.additionalDetails?.modifiedCaseTitle || (complainantName ? `${complainantName} vs ${respondentName}` : "")
+    ? caseDetails?.additionalDetails?.modifiedCaseTitle || (complainantName || respondentName ? `${complainantName} vs ${respondentName}` : "")
     : caseDetails?.caseTitle;
   setErrorCaseDetails({
     ...caseDetails,
