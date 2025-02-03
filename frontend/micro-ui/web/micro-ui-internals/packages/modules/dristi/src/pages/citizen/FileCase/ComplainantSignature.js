@@ -585,26 +585,7 @@ const ComplainantSignature = ({ path }) => {
 
     return calculationResponse;
   };
-  const createPendingTask = async ({ name, status, assignee, isCompleted = false, stateSla = null, isAssignedRole = false, assignedRole = [] }) => {
-    const entityType = "case-default";
-    const filingNumber = caseDetails?.filingNumber;
-    await DRISTIService.customApiService(Urls.dristi.pendingTask, {
-      pendingTask: {
-        name,
-        entityType,
-        referenceId: `MANUAL_${filingNumber}`,
-        status,
-        assignedTo: [{ uuid: assignee || userInfo?.uuid }],
-        assignedRole: assignedRole,
-        cnrNumber: caseDetails?.cnrNumber,
-        filingNumber: filingNumber,
-        isCompleted,
-        stateSla,
-        additionalDetails: {},
-        tenantId,
-      },
-    });
-  };
+
   const updateSignedDocInCaseDoc = () => {
     const tempDocList = structuredClone(caseDetails?.documents || []);
     const index = tempDocList.findIndex((doc) => doc?.documentType === "case.complaint.signed");
@@ -673,43 +654,26 @@ const ComplainantSignature = ({ path }) => {
             }
           }
           if (res?.cases?.[0]?.status === "PENDING_PAYMENT") {
-            // await DRISTIService.customApiService(Urls.dristi.pendingTask, {
-            //   pendingTask: {
-            //     name: "Pending Payment",
-            //     entityType: "case-default",
-            //     referenceId: `MANUAL_${caseDetails?.filingNumber}`,
-            //     status: "PENDING_PAYMENT",
-            //     assignedTo: [...assignees?.map((uuid) => ({ uuid }))],
-            //     assignedRole: ["CASE_CREATOR"],
-            //     cnrNumber: null,
-            //     filingNumber: caseDetails?.filingNumber,
-            //     isCompleted: false,
-            //     stateSla: stateSla.PENDING_PAYMENT * dayInMillisecond + todayDate,
-            //     additionalDetails: {},
-            //     tenantId,
-            //   },
-            // });
-            const promises = [
-              ...caseDetails?.litigants?.map(async (litigant) => {
-                return createPendingTask({
-                  name: "Pending Payment",
-                  status: "PENDING_PAYMENT",
-                  assignee: litigant?.additionalDetails?.uuid,
-                  assignedRole: ["CASE_CREATOR"],
-                  stateSla: stateSla.PENDING_PAYMENT * dayInMillisecond + todayDate,
-                });
-              }),
-              ...caseDetails?.representatives?.map(async (advocate) => {
-                return createPendingTask({
-                  name: "Pending Payment",
-                  status: "PENDING_PAYMENT",
-                  assignee: advocate?.additionalDetails?.uuid,
-                  assignedRole: ["CASE_CREATOR"],
-                  stateSla: stateSla.PENDING_PAYMENT * dayInMillisecond + todayDate,
-                });
-              }),
+            const uuids = [
+              ...caseDetails?.litigants?.map((litigant) => ({ uuid: litigant?.additionalDetails?.uuid })),
+              ...caseDetails?.representatives?.map((advocate) => ({ uuid: advocate?.additionalDetails?.uuid })),
             ];
-            await Promise.all(promises);
+            await DRISTIService.customApiService(Urls.dristi.pendingTask, {
+              pendingTask: {
+                name: "Pending Payment",
+                entityType: "case-default",
+                referenceId: `MANUAL_${caseDetails?.filingNumber}`,
+                status: "PENDING_PAYMENT",
+                assignedTo: uuids,
+                assignedRole: ["CASE_CREATOR"],
+                cnrNumber: null,
+                filingNumber: caseDetails?.filingNumber,
+                isCompleted: false,
+                stateSla: stateSla.PENDING_PAYMENT * dayInMillisecond + todayDate,
+                additionalDetails: {},
+                tenantId,
+              },
+            });
             calculationResponse = await callCreateDemandAndCalculation(caseDetails, tenantId, caseId);
             setLoader(false);
             history.replace(`${path}/e-filing-payment?caseId=${caseId}`, { state: { calculationResponse } });
