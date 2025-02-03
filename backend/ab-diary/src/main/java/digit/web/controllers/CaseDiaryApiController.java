@@ -2,6 +2,7 @@ package digit.web.controllers;
 
 
 import digit.service.DiaryEntryService;
+import digit.service.DiaryService;
 import digit.util.ResponseInfoFactory;
 import digit.web.models.*;
 
@@ -44,12 +45,15 @@ public class CaseDiaryApiController {
 
     private final ResponseInfoFactory responseInfoFactory;
 
+    private final DiaryService diaryService;
+
     @Autowired
-    public CaseDiaryApiController(ObjectMapper objectMapper, HttpServletRequest request, DiaryEntryService diaryEntryService, ResponseInfoFactory responseInfoFactory) {
+    public CaseDiaryApiController(ObjectMapper objectMapper, HttpServletRequest request, DiaryEntryService diaryEntryService, ResponseInfoFactory responseInfoFactory, DiaryService diaryService) {
         this.objectMapper = objectMapper;
         this.request = request;
         this.diaryEntryService = diaryEntryService;
         this.responseInfoFactory = responseInfoFactory;
+        this.diaryService = diaryService;
     }
 
     @RequestMapping(value = "/case/diary/v1/addDiaryEntry", method = RequestMethod.POST)
@@ -76,30 +80,24 @@ public class CaseDiaryApiController {
 
     @RequestMapping(value = "/case/diary/v1/update", method = RequestMethod.POST)
     public ResponseEntity<CaseDiaryResponse> caseDiaryV1UpdatePost(@Parameter(in = ParameterIn.DEFAULT, description = "updated diary + RequestInfo meta data.", schema = @Schema()) @Valid @RequestBody CaseDiaryRequest body) {
-        String accept = request.getHeader("Accept");
-        if (accept != null && accept.contains("application/json")) {
-            try {
-                return new ResponseEntity<CaseDiaryResponse>(objectMapper.readValue("{  \"ResponseInfo\" : {    \"ver\" : \"ver\",    \"resMsgId\" : \"resMsgId\",    \"msgId\" : \"msgId\",    \"apiId\" : \"apiId\",    \"ts\" : 0,    \"status\" : \"SUCCESSFUL\"  },  \"diaryEntry\" : {    \"diaryType\" : \"ADiary, BDiary\",    \"diaryDate\" : 6,    \"documents\" : \"documentType = casediary.signed / casediary.unsigned\",    \"caseNumber\" : \"caseNumber\",    \"auditDetails\" : {      \"lastModifiedTime\" : 5,      \"createdBy\" : \"createdBy\",      \"lastModifiedBy\" : \"lastModifiedBy\",      \"createdTime\" : 1    },    \"tenantId\" : \"tenantId\",    \"id\" : \"046b6c7f-0b8a-43b9-b35d-6489e6daee91\",    \"additionalDetails\" : { },    \"judgeId\" : \"judgeId\"  }}", CaseDiaryResponse.class), HttpStatus.NOT_IMPLEMENTED);
-            } catch (IOException e) {
-                return new ResponseEntity<CaseDiaryResponse>(HttpStatus.INTERNAL_SERVER_ERROR);
-            }
-        }
-
-        return new ResponseEntity<CaseDiaryResponse>(HttpStatus.NOT_IMPLEMENTED);
+        log.info("api = /case/diary/v1/update, result = IN_PROGRESS");
+        CaseDiary response = diaryService.updateDiary(body);
+        ResponseInfo responseInfo = responseInfoFactory.createResponseInfoFromRequestInfo(body.getRequestInfo(), true);
+        CaseDiaryResponse updateCaseDiaryResponse = CaseDiaryResponse.builder().diaryEntry(response)
+                .responseInfo(responseInfo).build();
+        log.info("api = /case/diary/v1/update, result = SUCCESS");
+        return new ResponseEntity<>(updateCaseDiaryResponse, HttpStatus.OK);
     }
 
     @RequestMapping(value = "/case/diary/v1/generate", method = RequestMethod.POST)
     public ResponseEntity<CaseDiaryFile> generate(@Parameter(in = ParameterIn.DEFAULT, description = "Details for diary whose PDF is being created + RequestInfo meta data.", schema = @Schema()) @Valid @RequestBody CaseDiaryGenerateRequest body) {
-        String accept = request.getHeader("Accept");
-        if (accept != null && accept.contains("application/json")) {
-            try {
-                return new ResponseEntity<CaseDiaryFile>(objectMapper.readValue("{  \"ResponseInfo\" : {    \"ver\" : \"ver\",    \"resMsgId\" : \"resMsgId\",    \"msgId\" : \"msgId\",    \"apiId\" : \"apiId\",    \"ts\" : 0,    \"status\" : \"SUCCESSFUL\"  },  \"fileStoreID\" : \"fileStoreID\"}", CaseDiaryFile.class), HttpStatus.NOT_IMPLEMENTED);
-            } catch (IOException e) {
-                return new ResponseEntity<CaseDiaryFile>(HttpStatus.INTERNAL_SERVER_ERROR);
-            }
-        }
-
-        return new ResponseEntity<CaseDiaryFile>(HttpStatus.NOT_IMPLEMENTED);
+        log.info("api = /case/diary/v1/generate, result = IN_PROGRESS");
+        String response = diaryService.generateDiary(body);
+        ResponseInfo responseInfo = responseInfoFactory.createResponseInfoFromRequestInfo(body.getRequestInfo(), true);
+        CaseDiaryFile caseDiaryFile = CaseDiaryFile.builder().fileStoreID(response)
+                .responseInfo(responseInfo).build();
+        log.info("api = /case/diary/v1/generate, result = SUCCESS");
+        return new ResponseEntity<>(caseDiaryFile, HttpStatus.OK);
     }
 
     @RequestMapping(value = "/case/diary/v1/{tenantId}/{judgeId}/{diaryType}", method = RequestMethod.GET)
@@ -117,17 +115,16 @@ public class CaseDiaryApiController {
     }
 
     @RequestMapping(value = "/case/diary/v1/search", method = RequestMethod.POST)
-    public ResponseEntity<CaseDiaryListResponse> searchDiary(@Parameter(in = ParameterIn.DEFAULT, description = "Details for the search of diaries + RequestInfo meta data.", required = true, schema = @Schema()) @Valid @RequestBody CaseDiarySearchRequest body) {
-        String accept = request.getHeader("Accept");
-        if (accept != null && accept.contains("application/json")) {
-            try {
-                return new ResponseEntity<CaseDiaryListResponse>(objectMapper.readValue("{  \"ResponseInfo\" : {    \"ver\" : \"ver\",    \"resMsgId\" : \"resMsgId\",    \"msgId\" : \"msgId\",    \"apiId\" : \"apiId\",    \"ts\" : 0,    \"status\" : \"SUCCESSFUL\"  },  \"pagination\" : {    \"offSet\" : 1.4658129805029452,    \"limit\" : 60.27456183070403,    \"sortBy\" : \"sortBy\",    \"totalCount\" : 5.962133916683182,    \"order\" : \"\"  },  \"diaries\" : [ {    \"date\" : 0,    \"diaryType\" : \"ADiary, BDiary\",    \"diaryId\" : \"046b6c7f-0b8a-43b9-b35d-6489e6daee91\",    \"tenantId\" : \"tenantId\",    \"fileStoreID\" : \"fileStoreID\"  }, {    \"date\" : 0,    \"diaryType\" : \"ADiary, BDiary\",    \"diaryId\" : \"046b6c7f-0b8a-43b9-b35d-6489e6daee91\",    \"tenantId\" : \"tenantId\",    \"fileStoreID\" : \"fileStoreID\"  } ]}", CaseDiaryListResponse.class), HttpStatus.NOT_IMPLEMENTED);
-            } catch (IOException e) {
-                return new ResponseEntity<CaseDiaryListResponse>(HttpStatus.INTERNAL_SERVER_ERROR);
-            }
-        }
-
-        return new ResponseEntity<CaseDiaryListResponse>(HttpStatus.NOT_IMPLEMENTED);
+    public ResponseEntity<CaseDiaryListResponse> searchDiaries(@Parameter(in = ParameterIn.DEFAULT, description = "Details for the search of diaries + RequestInfo meta data.", required = true, schema = @Schema()) @Valid @RequestBody CaseDiarySearchRequest body) {
+        log.info("api = /case/diary/v1/search, result = calling API");
+        List<CaseDiaryListItem> caseDiaryListItems = diaryService.searchCaseDiaries(body);
+        ResponseInfo responseInfo = responseInfoFactory.createResponseInfoFromRequestInfo(body.getRequestInfo(), true);
+        CaseDiaryListResponse caseDiaryListResponse = CaseDiaryListResponse.builder()
+                .responseInfo(responseInfo).pagination(body.getPagination())
+                .diaries(caseDiaryListItems)
+                .build();
+        log.info("api = /case/diary/v1/search, result = SUCCESS");
+        return new ResponseEntity<>(caseDiaryListResponse, HttpStatus.OK);
     }
 
     @RequestMapping(value = "/case/diary/entries/v1/search", method = RequestMethod.POST)

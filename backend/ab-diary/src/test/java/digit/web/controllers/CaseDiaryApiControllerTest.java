@@ -1,6 +1,7 @@
 package digit.web.controllers;
 
 import digit.service.DiaryEntryService;
+import digit.service.DiaryService;
 import digit.util.ResponseInfoFactory;
 import digit.web.models.*;
 import org.egov.common.contract.request.RequestInfo;
@@ -29,6 +30,9 @@ public class CaseDiaryApiControllerTest {
 
     @Mock
     private DiaryEntryService diaryEntryService;
+
+    @Mock
+    private DiaryService diaryService;
 
     @InjectMocks
     private CaseDiaryApiController caseDiaryApiController;
@@ -117,6 +121,51 @@ public class CaseDiaryApiControllerTest {
         assertEquals(HttpStatus.OK, response.getStatusCode());
         assertNotNull(response.getBody());
         assertTrue(response.getBody().getEntries().isEmpty());
+    }
+
+    @Test
+    void searchDiariesSuccess() {
+        List<CaseDiaryListItem> diaries = Collections.singletonList(new CaseDiaryListItem());
+        when(diaryService.searchCaseDiaries(any())).thenReturn(diaries);
+        when(responseInfoFactory.createResponseInfoFromRequestInfo(any(), eq(true))).thenReturn(new ResponseInfo());
+
+        CaseDiarySearchRequest searchRequest = new CaseDiarySearchRequest();
+        searchRequest.setRequestInfo(new RequestInfo());
+        searchRequest.setPagination(new Pagination());
+
+        ResponseEntity<CaseDiaryListResponse> response = caseDiaryApiController.searchDiaries(searchRequest);
+
+        assertEquals(HttpStatus.OK, response.getStatusCode());
+        assertNotNull(response.getBody());
+        assertEquals(1, response.getBody().getDiaries().size());
+    }
+
+    @Test
+    void updateDiarySuccess() {
+        CaseDiaryRequest caseDiaryRequest = new CaseDiaryRequest();
+        caseDiaryRequest.setDiary(new CaseDiary());
+        when(diaryService.updateDiary(caseDiaryRequest)).thenReturn(caseDiaryRequest.getDiary());
+        when(responseInfoFactory.createResponseInfoFromRequestInfo(any(), eq(true))).thenReturn(new ResponseInfo());
+
+        ResponseEntity<CaseDiaryResponse> response = caseDiaryApiController.caseDiaryV1UpdatePost(caseDiaryRequest);
+
+        assertEquals(HttpStatus.OK, response.getStatusCode());
+        assertNotNull(response.getBody());
+        assertNotNull(response.getBody().getDiaryEntry());
+    }
+
+    @Test
+    void testGenerateSuccess() {
+        when(diaryService.generateDiary(any())).thenReturn("file.pdf");
+        when(responseInfoFactory.createResponseInfoFromRequestInfo(any(), eq(true))).thenReturn(new ResponseInfo());
+
+        CaseDiaryGenerateRequest generateRequest = new CaseDiaryGenerateRequest();
+        generateRequest.setRequestInfo(new RequestInfo());
+
+        ResponseEntity<CaseDiaryFile> response = caseDiaryApiController.generate(generateRequest);
+
+        assertEquals(HttpStatus.OK, response.getStatusCode());
+        assertNotNull(response.getBody());
     }
 
 }

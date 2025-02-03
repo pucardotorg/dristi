@@ -29,5 +29,6 @@ public class CaseDiaryRequest {
     @Valid
     private CaseDiary diary = null;
 
-
+    @JsonProperty("courtName")
+    private String courtName;
 }

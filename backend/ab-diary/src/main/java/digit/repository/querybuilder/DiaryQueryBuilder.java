@@ -1,6 +1,5 @@
 package digit.repository.querybuilder;
 
-import digit.web.models.CaseDiaryExistCriteria;
 import digit.web.models.CaseDiarySearchCriteria;
 import digit.web.models.Pagination;
 import jakarta.validation.Valid;
@@ -12,24 +11,28 @@ import java.util.List;
 
 @Component
 @Slf4j
-public class DiaryEntryQueryBuilder {
+public class DiaryQueryBuilder {
 
-    private static final String BASE_DIARY_ENTRY_QUERY = "SELECT dde.id as id,dde.tenant_id as tenantId,dde.case_number as caseNumber,dde.judge_id as judgeId, " +
-            "dde.entry_date as entryDate,dde.businessOfDay as businessOfDay,dde.reference_id as referenceId,dde.reference_type as referenceType," +
-            "dde.hearingDate as hearingDate,dde.additional_details as additionalDetails,dde.created_by as createdBy,dde.last_modified_by as lastModifiedBy," +
-            "dde.created_time as createdTime,dde.last_modified_time as lastModifiedTime ";
+    private static final String BASE_DIARY_QUERY = "SELECT dcd.id as id, dcd.tenant_id as tenantId,dcd.case_number as caseNumber," +
+            "dcd.diary_date as diaryDate, dcd.diary_type as diaryType,dcd.judge_id as judgeId,dcd.additional_details as additionalDetails," +
+            "dcd.created_by as diaryCreateBy,dcd.last_modified_by as diaryLastModifiedBy,dcd.created_time as diaryCreatedTime," +
+            "dcd.last_modified_time as diaryLastModifiedTime, dcdd.filestore_id as fileStoreId , dcdd.id as documentId," +
+            "dcdd.document_uid as documentUid,dcdd.document_name as documentName,dcdd.document_type as documentType," +
+            "dcdd.casediary_id as caseDiaryId,dcdd.is_active as documentIsActive,dcdd.additional_details as documentAdditionalDetails," +
+            "dcdd.created_by as documentCreatedBy,dcdd.last_modified_by as documentLastModifiedBy," +
+            "dcdd.created_time as documentCreatedTime , dcdd.last_modified_time as documentLastModifiedTime ";
 
-    private static final String FROM_DIARY_ENTRY_TABLE = "FROM dristi_diaryentries dde";
+    private static final String FROM_DIARY_ENTRY_TABLE = "FROM dristi_casediary dcd join dristi_casediary_documents dcdd on dcd.id = dcdd.casediary_id ";
 
     private static final String TOTAL_COUNT_QUERY = "SELECT COUNT(*) FROM ({baseQuery}) total_result";
 
-    private static final String DEFAULT_ORDERBY_CLAUSE = " ORDER BY createdtime DESC ";
+    private static final String DEFAULT_ORDER_BY_CLAUSE = " ORDER BY dcd.created_time DESC ";
 
-    private static final String ORDERBY_CLAUSE = " ORDER BY {orderBy} {sortingOrder} ";
+    private static final String ORDER_BY_CLAUSE = " ORDER BY {orderBy} {sortingOrder} ";
 
-    public String getDiaryEntryQuery(CaseDiarySearchCriteria searchCriteria, List<Object> preparedStatementValues, List<Integer> preparedStatementTypeValues) {
+    public String getCaseDiaryQuery(CaseDiarySearchCriteria searchCriteria, List<Object> preparedStatementValues, List<Integer> preparedStatementTypeValues) {
 
-        StringBuilder query = new StringBuilder(BASE_DIARY_ENTRY_QUERY);
+        StringBuilder query = new StringBuilder(BASE_DIARY_QUERY);
         query.append(FROM_DIARY_ENTRY_TABLE);
 
         boolean firstCriteria = true;
@@ -37,30 +40,38 @@ public class DiaryEntryQueryBuilder {
         if (searchCriteria != null) {
             if (searchCriteria.getTenantId() != null) {
                 addWhereClause(query, firstCriteria);
-                query.append("dde.tenant_id = ?");
+                query.append("dcd.tenant_id = ?");
                 preparedStatementValues.add(searchCriteria.getTenantId());
                 preparedStatementTypeValues.add(Types.VARCHAR);
                 firstCriteria = false;
             }
             if (searchCriteria.getDate() != null) {
                 addWhereClause(query, firstCriteria);
-                query.append("dde.entry_date = ?");
+                query.append("dcd.diary_date = ?");
                 preparedStatementValues.add(searchCriteria.getDate());
                 preparedStatementTypeValues.add(Types.BIGINT);
                 firstCriteria = false;
             }
             if (searchCriteria.getCaseId() != null) {
                 addWhereClause(query, firstCriteria);
-                query.append("dde.case_number = ?");
+                query.append("dcd.case_number = ?");
                 preparedStatementValues.add(searchCriteria.getCaseId());
-                preparedStatementTypeValues.add(Types.VARCHAR);
+                preparedStatementTypeValues.add(Types.BIGINT);
                 firstCriteria = false;
             }
 
             if (searchCriteria.getJudgeId() != null) {
                 addWhereClause(query, firstCriteria);
-                query.append("dde.judge_id = ?");
+                query.append("dcd.judge_id = ?");
                 preparedStatementValues.add(searchCriteria.getJudgeId());
+                preparedStatementTypeValues.add(Types.VARCHAR);
+                firstCriteria =false;
+            }
+
+            if (searchCriteria.getDiaryType() != null) {
+                addWhereClause(query,firstCriteria);
+                query.append("dcd.diary_type = ?");
+                preparedStatementValues.add(searchCriteria.getDiaryType());
                 preparedStatementTypeValues.add(Types.VARCHAR);
             }
         }
@@ -92,9 +103,9 @@ public class DiaryEntryQueryBuilder {
 
     public String addOrderByQuery(String query, Pagination pagination) {
         if (isPaginationInvalid(pagination) || pagination.getSortBy().contains(";")) {
-            return query + DEFAULT_ORDERBY_CLAUSE;
+            return query + DEFAULT_ORDER_BY_CLAUSE;
         } else {
-            query = query + ORDERBY_CLAUSE;
+            query = query + ORDER_BY_CLAUSE;
         }
         return query.replace("{orderBy}", pagination.getSortBy()).replace("{sortingOrder}", pagination.getOrder().name());
     }
@@ -102,32 +113,4 @@ public class DiaryEntryQueryBuilder {
     private static boolean isPaginationInvalid(Pagination pagination) {
         return pagination == null || pagination.getSortBy() == null || pagination.getOrder() == null;
     }
-
-    public String getExistingDiaryEntry(CaseDiaryExistCriteria caseDiaryExistCriteria, List<Object> preparedStatementValues, List<Integer> preparedStatementTypeValues) {
-
-        StringBuilder query = new StringBuilder(BASE_DIARY_ENTRY_QUERY);
-        query.append(FROM_DIARY_ENTRY_TABLE);
-
-        boolean firstCriteria = true;
-
-        if (caseDiaryExistCriteria != null) {
-
-            if (caseDiaryExistCriteria.getId() != null) {
-                addWhereClause(query, firstCriteria);
-                query.append("dde.id = ?");
-                preparedStatementValues.add(caseDiaryExistCriteria.getId());
-                preparedStatementTypeValues.add(Types.VARCHAR);
-                firstCriteria = false;
-            }
-            if (caseDiaryExistCriteria.getTenantId() != null) {
-                addWhereClause(query,firstCriteria);
-                query.append("dde.tenant_id = ?");
-                preparedStatementValues.add(caseDiaryExistCriteria.getTenantId());
-                preparedStatementTypeValues.add(Types.VARCHAR);
-            }
-        }
-
-        return query.toString();
-    }
-
 }

@@ -53,7 +53,7 @@ public class DiaryEntryServiceTest {
 
     @Test
     void addDiaryEntrySuccess() {
-        when(configuration.getADiaryEntryCreateTopic()).thenReturn("topic");
+        when(configuration.getDiaryEntryCreateTopic()).thenReturn("topic");
 
         CaseDiaryEntry result = diaryEntryService.addDiaryEntry(diaryEntryRequest);
 
@@ -80,7 +80,7 @@ public class DiaryEntryServiceTest {
 
     @Test
     void updateDiaryEntrySuccess() {
-        when(configuration.getADiaryEntryUpdateTopic()).thenReturn("topic");
+        when(configuration.getDiaryEntryUpdateTopic()).thenReturn("topic");
 
         CaseDiaryEntry result = diaryEntryService.updateDiaryEntry(diaryEntryRequest);
 

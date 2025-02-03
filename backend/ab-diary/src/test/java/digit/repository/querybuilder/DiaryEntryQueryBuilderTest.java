@@ -83,7 +83,7 @@ class DiaryEntryQueryBuilderTest {
         assertEquals(BASE_QUERY + " WHERE dde.case_number = ?", query);
         assertEquals(1, preparedStatementValues.size());
         assertEquals("CASE-123", preparedStatementValues.get(0));
-        assertEquals(Types.BIGINT, preparedStatementTypeValues.get(0).intValue());
+        assertEquals(Types.VARCHAR, preparedStatementTypeValues.get(0));
     }
 
     @Test

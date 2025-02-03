@@ -48,7 +48,7 @@ public class DiaryEntryService {
 
             enrichment.enrichCreateDiaryEntry(caseDiaryEntryRequest);
 
-            producer.push(configuration.getADiaryEntryCreateTopic(), caseDiaryEntryRequest);
+            producer.push(configuration.getDiaryEntryCreateTopic(), caseDiaryEntryRequest);
 
         } catch (CustomException e) {
             log.error("Custom exception occurred while creating diary entry");
@@ -71,7 +71,7 @@ public class DiaryEntryService {
 
             enrichment.enrichUpdateEntry(caseDiaryEntryRequest);
 
-            producer.push(configuration.getADiaryEntryUpdateTopic(), caseDiaryEntryRequest);
+            producer.push(configuration.getDiaryEntryUpdateTopic(), caseDiaryEntryRequest);
 
         } catch (CustomException e) {
             log.error("Custom exception occurred while updating diary entry");

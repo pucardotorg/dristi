@@ -3,7 +3,7 @@
     <groupId>org.egov</groupId>
     <artifactId>ab-diary</artifactId>
     <packaging>jar</packaging>
-    <name>birth-registration</name>
+    <name>ab-diary</name>
     <version>1.0.0</version>
     <properties>
     <java.version>17</java.version>

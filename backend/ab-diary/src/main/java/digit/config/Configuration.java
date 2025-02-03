@@ -93,9 +93,69 @@ public class Configuration {
 
     //DiaryEntry Create topic
     @Value("${diaryentry.kafka.create.topic}")
-    private String aDiaryEntryCreateTopic;
+    private String diaryEntryCreateTopic;
 
     @Value("${diaryentry.kafka.update.topic}")
-    private String aDiaryEntryUpdateTopic;
+    private String diaryEntryUpdateTopic;
+
+    @Value("${diary.kafka.update.topic}")
+    private String diaryUpdateTopic;
+
+    // Filestore Config
+    @Value("${egov.filestore.host}")
+    private String fileStoreHost;
+
+    @Value("${egov.file.store.save.endpoint}")
+    private String fileStoreSaveEndPoint;
+
+    @Value("${egov.filestore.path}")
+    private String fileStorePath;
+
+    @Value("${egov.filestore.caseDiary.module}")
+    private String fileStoreCaseDiaryModule;
+
+    @Value("${caseDiary.create.topic}")
+    private String caseDiaryTopic;
+
+    //court details
+    @Value("${court.id}")
+    private String courtId;
+
+    @Value("${court.name}")
+    private String courtName;
+
+    @Value("${court.enabled}")
+    private Boolean courtEnabled;
+
+    @Value("${judge.name}")
+    private String judgeName;
+
+    @Value("${judge.designation}")
+    private String judgeDesignation;
+
+    //Pdf Services
+    @Value("${egov.pdf.service.host}")
+    private String pdfServiceHost;
+
+    @Value("${egov.pdf.service.create.endpoint}")
+    private String pdfServiceEndpoint;
+
+    @Value("${aDiary.pdf.template.key}")
+    private String aDiaryPdfTemplateKey;
+
+    @Value("${bDiary.pdf.template.key}")
+    private String bDiaryPdfTemplateKey;
+
+    @Value("${egov.workflow.case.diary.business.name}")
+    private String caseDiaryBusinessName;
+
+    @Value("${egov.workflow.case.diary.business.service.name}")
+    private String caseDiaryBusinessServiceName;
+
+    @Value("${dristi.case.host}")
+    private String caseHost;
+
+    @Value("${dristi.case.search.path}")
+    private String caseSearchPath;
 
 }

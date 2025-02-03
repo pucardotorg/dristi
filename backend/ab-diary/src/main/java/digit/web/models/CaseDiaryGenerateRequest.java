@@ -20,12 +20,10 @@ import lombok.Builder;
 @Builder
 public class CaseDiaryGenerateRequest {
     @JsonProperty("RequestInfo")
-
     @Valid
     private RequestInfo requestInfo = null;
 
     @JsonProperty("diary")
-
     @Valid
     private CaseDiary diary = null;
 

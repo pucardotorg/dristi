@@ -8,7 +8,7 @@ import java.util.List;
 import java.util.UUID;
 
 import org.egov.common.contract.models.AuditDetails;
-import org.egov.common.contract.models.Document;
+import org.egov.common.contract.models.Workflow;
 import org.springframework.validation.annotation.Validated;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.*;
@@ -29,49 +29,54 @@ import lombok.Builder;
 @Builder
 public class CaseDiary {
     @JsonProperty("id")
-
     @Valid
     private UUID id = null;
 
     @JsonProperty("tenantId")
-    @NotNull
-
+    @NotNull(message = "tenant id cannot be null")
     private String tenantId = null;
 
     @JsonProperty("caseNumber")
-
     private String caseNumber = null;
 
     @JsonProperty("diaryDate")
-    @NotNull
-
+    @NotNull(message = "Diary Date cannot be null")
     private Long diaryDate = null;
 
     @JsonProperty("diaryType")
-    @NotNull
-
+    @NotNull(message = "Diary type cannot be null")
     private String diaryType = null;
 
     @JsonProperty("judgeId")
-    @NotNull
-
+    @NotNull(message = "JudgeId cannot be null")
     private String judgeId = null;
 
     @JsonProperty("documents")
     @Valid
-    private List<Document> documents = null;
+    private List<CaseDiaryDocument> documents = null;
+
+    @JsonProperty("caseDiaryEntries")
+    private List<CaseDiaryEntry> caseDiaryEntries = null;
 
     @JsonProperty("additionalDetails")
-
     private Object additionalDetails = null;
 
     @JsonProperty("auditDetails")
-
     @Valid
     private AuditDetails auditDetails = null;
 
+    @JsonProperty("date")
+    private String date = null;
 
-    public CaseDiary addDocumentsItem(Document documentsItem) {
+    @JsonProperty("workflow")
+    @Valid
+    private Workflow workflow = null;
+
+    @JsonProperty("status")
+    private String status = null;
+
+
+    public CaseDiary addDocumentsItem(CaseDiaryDocument documentsItem) {
         if (this.documents == null) {
             this.documents = new ArrayList<>();
         }

@@ -76,5 +76,9 @@ public class CaseDiaryEntry {
     @Valid
     private AuditDetails auditDetails = null;
 
+    @JsonProperty("date")
+
+    private String date;
+
 
 }

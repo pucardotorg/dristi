@@ -54,4 +54,17 @@ public class ServiceConstants {
     public static final String DIARY_ENTRY_QUERY_EXCEPTION = "DIARY_ENTRY_QUERY_EXCEPTION";
     public static final String DIARY_ENTRY_SEARCH_EXCEPTION = "DIARY_ENTRY_SEARCH_EXCEPTION";
     public static final String ROW_MAPPER_EXCEPTION = "ROW_MAPPER_EXCEPTION";
+
+    public static final String DIARY_UPDATE_EXCEPTION = "Exception during updating case diary";
+    public static final String DIARY_QUERY_EXCEPTION = "DIARY_QUERY_EXCEPTION";
+    public static final String DIARY_SEARCH_EXCEPTION = "DIARY_SEARCH_EXCEPTION";
+    public static final String DIARY_GENERATE_EXCEPTION = "DIARY_GENERATE_EXCEPTION";
+    public static final String FILE_STORE_UTILITY_EXCEPTION = "FILE_STORE_UTILITY_EXCEPTION";
+    public static final String WORKFLOW_SERVICE_EXCEPTION = "WORKFLOW_SERVICE_EXCEPTION";
+
+    public static final String ERROR_FROM_CASE = "ERROR_WHILE_FETCHING_FROM_CASE_SERVICE";
+
+    public static final String SIGN_ACTION = "SIGN";
+
+    public static final String GENERATE_ACTION = "GENERATE";
 }

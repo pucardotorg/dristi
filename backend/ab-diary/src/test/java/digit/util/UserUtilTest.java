@@ -6,16 +6,19 @@ import digit.repository.ServiceRequestRepository;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
+import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.util.*;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
+@ExtendWith(MockitoExtension.class)
 class UserUtilTest {
 
     @InjectMocks
@@ -29,11 +32,6 @@ class UserUtilTest {
 
     @Mock
     private Configuration configs;
-
-    @BeforeEach
-    void setup() {
-        MockitoAnnotations.initMocks(this);
-    }
 
     @Test
     void testUserCall_UserSearchEndpoint() {
