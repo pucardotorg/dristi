@@ -2260,9 +2260,10 @@ export const updateCaseDetails = async ({
 
             const allAdvocateSearchData = await Promise.all(advSearchPromises);
             for (let i = 0; i < allAdvocateSearchData?.length; i++) {
+              const document = vakalatnamaDocumentData?.vakalatnamaFileUpload?.document?.[0];
               advocateDetails.push({
                 advocate: allAdvocateSearchData?.[i].advocates?.[0]?.responseList?.[0],
-                documents: [vakalatnamaDocumentData?.vakalatnamaFileUpload?.document?.[0]],
+                documents: document ? [document] : [],
                 complainantIndividualId: data?.data?.multipleAdvocatesAndPip?.boxComplainant?.individualId,
               });
             }
