@@ -219,8 +219,6 @@ public class CaseService {
             log.info("Encrypting: {}", caseRequest);
             caseRequest.setCases(encryptionDecryptionUtil.encryptObject(caseRequest.getCases(), config.getCourtCaseEncrypt(), CourtCase.class));
 
-            log.info("Updating Case withFilingNumber:{} with no of Litigant:{} and No of representative :{}", caseRequest.getCases().getFilingNumber(), caseRequest.getCases().getLitigants().size(), caseRequest.getCases().getRepresentatives().size());
-
             producer.push(config.getCaseUpdateTopic(), caseRequest);
 
             log.info("Updating cache");
