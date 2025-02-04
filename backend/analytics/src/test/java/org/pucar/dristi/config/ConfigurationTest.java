@@ -24,6 +24,7 @@ class ConfigurationTest {
         ReflectionTestUtils.setField(configuration, "taskBusinessServices", "taskService1,taskService2");
         ReflectionTestUtils.setField(configuration, "applicationBusinessServices", "applicationService1,applicationService2");
         ReflectionTestUtils.setField(configuration, "orderBusinessServices", "orderService1,orderService2");
+        ReflectionTestUtils.setField(configuration, "aDiaryBusinessServices", "aDiaryService1,aDiaryService2");
     }
 
     @Test
@@ -36,6 +37,7 @@ class ConfigurationTest {
         List<String> expectedTaskList = Arrays.asList("taskService1", "taskService2");
         List<String> expectedApplicationList = Arrays.asList("applicationService1", "applicationService2");
         List<String> expectedOrderList = Arrays.asList("orderService1", "orderService2");
+        List<String> expectedADiaryList = Arrays.asList("aDiaryService1", "aDiaryService2");
 
         assertEquals(expectedHearingList, configuration.getHearingBusinessServiceList());
         assertEquals(expectedCaseList, configuration.getCaseBusinessServiceList());
@@ -43,6 +45,7 @@ class ConfigurationTest {
         assertEquals(expectedTaskList, configuration.getTaskBusinessServiceList());
         assertEquals(expectedApplicationList, configuration.getApplicationBusinessServiceList());
         assertEquals(expectedOrderList, configuration.getOrderBusinessServiceList());
+        assertEquals(expectedADiaryList, configuration.getADiaryBusinessServiceList());
     }
 
     @Test

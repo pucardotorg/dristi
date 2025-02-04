@@ -160,6 +160,10 @@ public class Configuration {
 	private String orderBusinessServices;
 	private List<String> orderBusinessServiceList;
 
+	@Value("${egov.adiary.business.services}")
+	private String aDiaryBusinessServices;
+	private List<String> aDiaryBusinessServiceList;
+
 	//Localization
 	@Value("${egov.localization.host}")
 	private String localizationHost;
@@ -199,6 +203,7 @@ public class Configuration {
 		taskBusinessServiceList = Arrays.asList(taskBusinessServices.split(","));
 		applicationBusinessServiceList = Arrays.asList(applicationBusinessServices.split(","));
 		orderBusinessServiceList = Arrays.asList(orderBusinessServices.split(","));
+		aDiaryBusinessServiceList = Arrays.asList(aDiaryBusinessServices.split(","));
 	}
 
 

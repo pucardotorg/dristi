@@ -169,6 +169,7 @@ public class IndexerUtils {
         String cnrNumber = pendingTask.getCnrNumber();
         String filingNumber = pendingTask.getFilingNumber();
         String additionalDetails = "{}";
+        Boolean isDiary = pendingTask.getIsDiary();
         try {
             additionalDetails = mapper.writeValueAsString(pendingTask.getAdditionalDetails());
         } catch (Exception e) {
@@ -179,7 +180,7 @@ public class IndexerUtils {
 
         return String.format(
                 ES_INDEX_HEADER_FORMAT + ES_INDEX_DOCUMENT_FORMAT,
-                config.getIndex(), referenceId, id, name, entityType, referenceId, status, assignedTo, assignedRole, cnrNumber, filingNumber, isCompleted, stateSla, businessServiceSla, additionalDetails
+                config.getIndex(), referenceId, id, name, entityType, referenceId, status, assignedTo, assignedRole, cnrNumber, filingNumber, isCompleted, stateSla, businessServiceSla, additionalDetails, isDiary
         );
     }
 
@@ -213,6 +214,7 @@ public class IndexerUtils {
         // Validate details map using the utility function
         String cnrNumber = details.get("cnrNumber");
         String filingNumber = details.get("filingNumber");
+        Boolean isDiary = details.containsKey("isDiary");
         String name = details.get("name");
         isCompleted = isNullOrEmpty(name);
         isGeneric = details.containsKey("isGeneric");
@@ -261,13 +263,12 @@ public class IndexerUtils {
 
         return String.format(
                 ES_INDEX_HEADER_FORMAT + ES_INDEX_DOCUMENT_FORMAT,
-                config.getIndex(), referenceId, id, name, entityType, referenceId, status, assignedTo, assignedRole, cnrNumber, filingNumber, isCompleted, stateSla, businessServiceSla, additionalDetails
+                config.getIndex(), referenceId, id, name, entityType, referenceId, status, assignedTo, assignedRole, cnrNumber, filingNumber, isCompleted, stateSla, businessServiceSla, additionalDetails, isDiary
         );
     }
 
 	public static List<String> extractIndividualIds(JsonNode rootNode) {
 		List<String> individualIds = new ArrayList<>();
-
 
 		JsonNode complainantDetailsNode = rootNode.path("complainantDetails")
 				.path("formdata");
@@ -383,6 +384,8 @@ public class IndexerUtils {
                 return processOrderEntity(object);
             else if (config.getTaskBusinessServiceList().contains(entityType))
                 return processTaskEntity(request, referenceId);
+            else if (config.getADiaryBusinessServiceList().contains(entityType))
+                return processADiaryEntity(request, referenceId);
             else {
                 log.error("Unexpected entityType: {}", entityType);
                 return new HashMap<>();
@@ -458,6 +461,15 @@ public class IndexerUtils {
 
         caseDetails.put("cnrNumber", cnrNumber);
         caseDetails.put("filingNumber", filingNumber);
+
+        return caseDetails;
+    }
+
+    private Map<String, String> processADiaryEntity(JSONObject request, String referenceId) throws InterruptedException {
+        Map<String, String> caseDetails = new HashMap<>();
+        caseDetails.put("cnrNumber", null);
+        caseDetails.put("filingNumber", null);
+        caseDetails.put("isDiary", "true");
 
         return caseDetails;
     }

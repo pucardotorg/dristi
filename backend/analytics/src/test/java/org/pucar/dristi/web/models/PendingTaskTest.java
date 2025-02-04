@@ -36,7 +36,7 @@ class PendingTaskTest {
         Object additionalDetails = new Object();
         PendingTask pendingTask = new PendingTask("1", "TaskName", "Ref123", "EntityType1", "Status1",
                 assignedTo, assignedRole, "CNR123", "Filing123",
-                true, 10L, 20L, additionalDetails);
+                true, 10L, 20L, additionalDetails, true);
 
         assertEquals("1", pendingTask.getId());
         assertEquals("TaskName", pendingTask.getName());
@@ -144,9 +144,10 @@ class PendingTaskTest {
                 .stateSla(10L)
                 .businessServiceSla(20L)
                 .additionalDetails(additionalDetails)
+                .isDiary(true)
                 .build();
 
-        String expected = "PendingTask(id=1, name=TaskName, referenceId=Ref123, entityType=EntityType1, status=Status1, assignedTo=[], assignedRole=[], cnrNumber=CNR123, filingNumber=Filing123, isCompleted=true, stateSla=10, businessServiceSla=20, additionalDetails=" + additionalDetails + ")";
+        String expected = "PendingTask(id=1, name=TaskName, referenceId=Ref123, entityType=EntityType1, status=Status1, assignedTo=[], assignedRole=[], cnrNumber=CNR123, filingNumber=Filing123, isCompleted=true, stateSla=10, businessServiceSla=20, additionalDetails=" + additionalDetails + ", isDiary=true)";
         assertEquals(expected, pendingTask.toString());
     }
 }
