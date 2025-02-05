@@ -2182,9 +2182,7 @@ export const updateCaseDetails = async ({
     };
   }
   if (selected === "advocateDetails") {
-    const caseRepresentatives = () => {
-      return caseDetails?.representatives || [];
-    };
+    const caseRepresentatives = caseDetails?.representatives || [];
     const advocateDetails = [];
     let docList = [];
     const newFormData = await Promise.all(
@@ -2356,7 +2354,7 @@ export const updateCaseDetails = async ({
     // We will check that if a representative is already present in representatives array in case search api data,
     // we will just update the new documents and representinng data to that object.
     const updatedRepresentatives = representatives.map((rep) => {
-      const existingRep = caseRepresentatives().find((caseRep) => caseRep.advocateId === rep.advocateId);
+      const existingRep = caseRepresentatives.find((caseRep) => caseRep.advocateId === rep.advocateId);
       if (existingRep) {
         if (!isMatch(existingRep.documents, rep.documents)) {
           existingRep.documents = rep.documents;
@@ -2367,6 +2365,7 @@ export const updateCaseDetails = async ({
         if (!isMatch(existingRep.additionalDetails, rep.additionalDetails)) {
           existingRep.additionalDetails = rep.additionalDetails;
         }
+        existingRep.isActive = true;
         return existingRep;
       }
       return rep;
@@ -2374,7 +2373,7 @@ export const updateCaseDetails = async ({
 
     // If a representative object was present previously and now that representative is not present now,
     // the same object should again be copied with isActive as false and added in the updatedRepresentatives.
-    caseRepresentatives().forEach((caseRep) => {
+    caseRepresentatives.forEach((caseRep) => {
       const isAlreadyIncluded = updatedRepresentatives.some((rep) => rep.advocateId === caseRep.advocateId);
 
       if (!isAlreadyIncluded) {
