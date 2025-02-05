@@ -30,7 +30,7 @@ public class DiaryRowMapper implements ResultSetExtractor<List<CaseDiaryListItem
                         .tenantId(rs.getString("tenantId"))
                         .date(rs.getLong("diaryDate"))
                         .diaryType(rs.getString("diaryType"))
-                        .fileStoreID("fileStoreID")
+                        .fileStoreID(rs.getString("fileStoreId"))
                         .build();
                 caseDiaryListItems.add(caseDiaryListItem);
             }

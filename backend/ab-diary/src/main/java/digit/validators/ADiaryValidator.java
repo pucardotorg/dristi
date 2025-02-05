@@ -86,9 +86,6 @@ public class ADiaryValidator {
         if (ObjectUtils.isEmpty(diary)) {
             throw new CustomException(VALIDATION_EXCEPTION, "case diary is mandatory to create/update an entry");
         }
-        if (diary.getId() == null) {
-            throw new CustomException(VALIDATION_EXCEPTION, "Id is mandatory to update entry");
-        }
         if (requestInfo == null || requestInfo.getUserInfo() == null) {
             throw new CustomException(VALIDATION_EXCEPTION, "request Info or user info can not be null");
         }
@@ -106,18 +103,18 @@ public class ADiaryValidator {
 
         List<CaseDiaryListItem> diaryResponse = diaryRepository.getCaseDiaries(caseDiarySearchRequest);
 
-        if (diaryResponse == null) {
+        if (null == diaryResponse || diaryResponse.isEmpty()) {
             throw new CustomException(VALIDATION_EXCEPTION, "diary does not exist");
-        }
-
-        List<CaseDiaryListItem> diaries = diaryResponse.stream()
-                .filter(diary1 -> diary1.getDiaryId().equals(diary.getId())).toList();
-
-        if (diaries.size() > 1) {
+        } else if (diaryResponse.size() > 1) {
             throw new CustomException(VALIDATION_EXCEPTION, "multiple entries found with same id");
-        } else if (diaries.isEmpty()) {
-            throw new CustomException(VALIDATION_EXCEPTION, "diary does not exist");
         }
+        diary.setId(diaryResponse.get(0).getDiaryId());
     }
 
+    public void validateGenerateRequest(CaseDiaryGenerateRequest generateRequest) {
+        //check if diaryDate is greater than current date
+        if (generateRequest.getDiary().getDiaryDate() != null && generateRequest.getDiary().getDiaryDate() > System.currentTimeMillis()) {
+            throw new CustomException(VALIDATION_EXCEPTION, "diary date can not be in future");
+        }
+    }
 }

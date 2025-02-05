@@ -56,7 +56,7 @@ public class DiaryQueryBuilder {
                 addWhereClause(query, firstCriteria);
                 query.append("dcd.case_number = ?");
                 preparedStatementValues.add(searchCriteria.getCaseId());
-                preparedStatementTypeValues.add(Types.BIGINT);
+                preparedStatementTypeValues.add(Types.VARCHAR);
                 firstCriteria = false;
             }
 
@@ -112,5 +112,49 @@ public class DiaryQueryBuilder {
 
     private static boolean isPaginationInvalid(Pagination pagination) {
         return pagination == null || pagination.getSortBy() == null || pagination.getOrder() == null;
+    }
+
+    private static final String BASE_SEARCH_DIARY_QUERY = "SELECT dcd.id as id, dcd.tenant_id as tenantId,dcd.case_number as caseNumber," +
+            " dcd.diary_date as diaryDate, dcd.diary_type as diaryType, dcdd.filestore_id as fileStoreId ";
+
+    private static final String FROM_DIARY_TABLE = "FROM dristi_casediary dcd join dristi_casediary_documents dcdd on dcd.id = dcdd.casediary_id " +
+            "WHERE dcdd.document_type = 'casediary.signed' ";
+
+    public String getSearchDiaryQuery(CaseDiarySearchCriteria searchCriteria, List<Object> preparedStatementValues, List<Integer> preparedStatementTypeValues) {
+
+        StringBuilder query = new StringBuilder(BASE_SEARCH_DIARY_QUERY);
+        query.append(FROM_DIARY_TABLE);
+
+        if (searchCriteria != null) {
+            if (searchCriteria.getTenantId() != null) {
+                query.append(" and dcd.tenant_id = ?");
+                preparedStatementValues.add(searchCriteria.getTenantId());
+                preparedStatementTypeValues.add(Types.VARCHAR);
+            }
+            if (searchCriteria.getDate() != null) {
+                query.append(" and dcd.diary_date = ?");
+                preparedStatementValues.add(searchCriteria.getDate());
+                preparedStatementTypeValues.add(Types.BIGINT);
+            }
+            if (searchCriteria.getCaseId() != null) {
+                query.append(" and dcd.case_number = ?");
+                preparedStatementValues.add(searchCriteria.getCaseId());
+                preparedStatementTypeValues.add(Types.VARCHAR);
+            }
+
+            if (searchCriteria.getJudgeId() != null) {
+                query.append(" and dcd.judge_id = ?");
+                preparedStatementValues.add(searchCriteria.getJudgeId());
+                preparedStatementTypeValues.add(Types.VARCHAR);
+            }
+
+            if (searchCriteria.getDiaryType() != null) {
+                query.append(" and dcd.diary_type = ?");
+                preparedStatementValues.add(searchCriteria.getDiaryType());
+                preparedStatementTypeValues.add(Types.VARCHAR);
+            }
+        }
+
+        return query.toString();
     }
 }

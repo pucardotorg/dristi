@@ -114,10 +114,11 @@ public class DiaryService {
 
         log.info("operation = generateDiary ,  result = IN_PROGRESS , CaseDiaryGenerateRequest : {} ", generateRequest);
         try {
-
+            validator.validateGenerateRequest(generateRequest);
             enrichment.enrichGenerateRequestForDiary(generateRequest);
 
             SimpleDateFormat dateFormat = new SimpleDateFormat(DOB_FORMAT_D_M_Y);
+            dateFormat.setTimeZone(TimeZone.getDefault());
 
             //TODO: use strategy design pattern to get case diary entries based on diaryType
 

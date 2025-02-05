@@ -42,7 +42,7 @@ public class DiaryRepository {
             List<Object> preparedStmtList = new ArrayList<>();
             List<Integer> preparedStmtArgList = new ArrayList<>();
 
-            String caseDiaryQuery = queryBuilder.getCaseDiaryQuery(searchRequest.getCriteria(), preparedStmtList, preparedStmtArgList);
+            String caseDiaryQuery = queryBuilder.getSearchDiaryQuery(searchRequest.getCriteria(), preparedStmtList, preparedStmtArgList);
             caseDiaryQuery = queryBuilder.addOrderByQuery(caseDiaryQuery, searchRequest.getPagination());
             log.info("Case Diary query : {} ", caseDiaryQuery);
 
