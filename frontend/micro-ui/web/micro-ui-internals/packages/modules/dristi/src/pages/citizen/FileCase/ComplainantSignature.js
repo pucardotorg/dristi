@@ -654,9 +654,19 @@ const ComplainantSignature = ({ path }) => {
             }
           }
           if (res?.cases?.[0]?.status === "PENDING_PAYMENT") {
+
+           // Extract UUIDs of litigants and representatives if available
             const uuids = [
-              ...caseDetails?.litigants?.map((litigant) => ({ uuid: litigant?.additionalDetails?.uuid })),
-              ...caseDetails?.representatives?.map((advocate) => ({ uuid: advocate?.additionalDetails?.uuid })),
+              ...(Array.isArray(caseDetails?.litigants)
+                ? caseDetails?.litigants?.map((litigant) => ({
+                    uuid: litigant?.additionalDetails?.uuid,
+                  }))
+                : []),
+              ...(Array.isArray(caseDetails?.representatives)
+                ? caseDetails?.representatives?.map((advocate) => ({
+                    uuid: advocate?.additionalDetails?.uuid,
+                  }))
+                : []),
             ];
             await DRISTIService.customApiService(Urls.dristi.pendingTask, {
               pendingTask: {
