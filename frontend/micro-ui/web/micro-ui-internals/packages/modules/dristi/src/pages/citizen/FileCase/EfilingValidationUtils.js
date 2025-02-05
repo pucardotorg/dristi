@@ -6,7 +6,7 @@ import { DocumentUploadError } from "../../../Utils/errorUtil";
 
 import { userTypeOptions } from "../registration/config";
 import { efilingDocumentKeyAndTypeMapping } from "./Config/efilingDocumentKeyAndTypeMapping";
-import { isMatch } from "lodash";
+import isMatch from "lodash/isMatch";
 
 export const showDemandNoticeModal = ({ selected, setValue, formData, setError, clearErrors, index, setServiceOfDemandNoticeModal, caseDetails }) => {
   if (selected === "demandNoticeDetails") {
