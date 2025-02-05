@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import Modal from "./Modal";
 import { CheckBox, CloseSvg, TextArea } from "@egovernments/digit-ui-react-components";
 
-function ConfirmEvidenceAction({ t, setShowConfirmationModal, handleAction, isEvidence }) {
+function ConfirmEvidenceAction({ t, setShowConfirmationModal, handleAction, isEvidence ,isDisabled =false }) {
   const CloseBtn = (props) => {
     return (
       <div onClick={props?.onClick} style={{ height: "100%", display: "flex", alignItems: "center", paddingRight: "20px", cursor: "pointer" }}>
@@ -32,6 +32,7 @@ function ConfirmEvidenceAction({ t, setShowConfirmationModal, handleAction, isEv
       headerBarMain={<Heading label={isEvidence ? t("UNMARK_SUBMISSION_HEADER") : t("MARK_SUBMISSION_HEADER")} />}
       actionCancelLabel={t("CS_COMMON_BACK")}
       actionSaveLabel={actionSaveLabel}
+      isDisabled = {isDisabled}
       actionCancelOnSubmit={() => {
         setShowConfirmationModal(null);
       }}

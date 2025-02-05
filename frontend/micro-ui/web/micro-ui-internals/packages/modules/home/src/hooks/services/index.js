@@ -8,6 +8,9 @@ export const Urls = {
   orderSearch: "/order/v1/search",
   getSearchReschedule: "/scheduler/hearing/v1/reschedule/_search",
   submitOptOutDates: "/scheduler/hearing/v1/_opt-out",
+  generateADiaryPDF: "/ab-diary/case/diary/v1/generate",
+  updateADiaryPDF: "/ab-diary/case/diary/v1/update",
+  searchADiary: "/ab-diary/case/diary/v1/search",
 };
 export const HomeService = {
   getPendingTaskService: (data, params) =>
@@ -29,6 +32,33 @@ export const HomeService = {
   searchReschedule: (data, params) => {
     return Request({
       url: Urls.getSearchReschedule,
+      useCache: false,
+      userService: false,
+      data,
+      params,
+    });
+  },
+  generateADiaryPDF: (data, params) => {
+    return Request({
+      url: Urls.generateADiaryPDF,
+      useCache: false,
+      userService: false,
+      data,
+      params,
+    });
+  },
+  updateADiaryPDF: (data, params) => {
+    return Request({
+      url: Urls.updateADiaryPDF,
+      useCache: false,
+      userService: false,
+      data,
+      params,
+    });
+  },
+  getADiarySearch: (data, params) => {
+    return Request({
+      url: Urls.searchADiary,
       useCache: false,
       userService: false,
       data,

@@ -66,6 +66,7 @@ const EvidenceModal = ({
   const { downloadPdf } = useDownloadCasePdf();
   const { documents: allCombineDocs, isLoading, fetchRecursiveData } = useGetAllOrderApplicationRelatedDocuments();
   const [isDisabled, setIsDisabled] = useState();
+  const [isSubmitDisabled, setIsSubmitDisabled] = useState(false);
   const [businessOfTheDay, setBusinessOfTheDay] = useState(null);
   const toast = useToast();
 
@@ -507,6 +508,17 @@ const EvidenceModal = ({
 
   const handleEvidenceAction = async () => {
     if (businessOfTheDay) {
+      setIsSubmitDisabled(true);
+      const response = await Digit.HearingService.searchHearings(
+        {
+          criteria: {
+            tenantId: Digit.ULBService.getCurrentTenantId(),
+            filingNumber: filingNumber,
+          },
+        },
+        {}
+      );
+      const nextHearing = response?.HearingList?.filter((hearing) => hearing.status === "SCHEDULED");
       await DRISTIService.addADiaryEntry(
         {
           diaryEntry: {
@@ -517,6 +529,7 @@ const EvidenceModal = ({
             caseNumber: caseData?.case?.cmpNumber,
             referenceId: documentSubmission?.[0]?.artifactList?.artifactNumber,
             referenceType: "Documents",
+            hearingDate: (Array.isArray(nextHearing) && nextHearing.length > 0 && nextHearing[0]?.startTime) || null,
             additionalDetails: {
               filingNumber: filingNumber,
               caseId: caseId,
@@ -530,6 +543,7 @@ const EvidenceModal = ({
       });
     }
     await handleMarkEvidence();
+    setIsSubmitDisabled(false);
   };
 
   const getOrderTypes = (applicationType, type) => {
@@ -1248,6 +1262,7 @@ const EvidenceModal = ({
           type={showConfirmationModal.type}
           setShow={setShow}
           handleAction={handleEvidenceAction}
+          isDisabled={isSubmitDisabled}
           isEvidence={documentSubmission?.[0]?.artifactList?.isEvidence}
         />
       )}

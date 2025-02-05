@@ -27,3 +27,8 @@ export const CustomisedHooks = {
   Utils,
   HomeService,
 };
+
+export const Urls = {
+  Authenticate: "/user/oauth/token",
+  FileFetchById: "/filestore/v1/files/id",
+};

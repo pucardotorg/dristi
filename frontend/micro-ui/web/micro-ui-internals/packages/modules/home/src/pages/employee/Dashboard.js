@@ -356,6 +356,7 @@ const DashboardPage = () => {
                     uuid={userInfo?.uuid}
                     userInfoType={userInfoType}
                     hideFilters={true}
+                    isDiary = {true}
                   />
                 </div>
               </div>

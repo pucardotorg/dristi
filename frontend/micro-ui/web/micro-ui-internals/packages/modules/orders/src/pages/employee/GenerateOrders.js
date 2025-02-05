@@ -2288,6 +2288,16 @@ const GenerateOrders = () => {
       }
       referenceId && (await handleApplicationAction(currentOrder));
       if (businessOfTheDay) {
+        const response = await Digit.HearingService.searchHearings(
+          {
+            criteria: {
+              tenantId: Digit.ULBService.getCurrentTenantId(),
+              filingNumber: filingNumber,
+            },
+          },
+          {}
+        );
+        const nextHearing = response?.HearingList?.filter((hearing) => hearing.status === "SCHEDULED");
         await DRISTIService.addADiaryEntry(
           {
             diaryEntry: {
@@ -2298,6 +2308,7 @@ const GenerateOrders = () => {
               caseNumber: caseDetails?.cmpNumber,
               referenceId: currentOrder?.orderNumber,
               referenceType: "Order",
+              hearingDate: (Array.isArray(nextHearing) && nextHearing.length > 0 && nextHearing[0]?.startTime)|| null,
               additionalDetails: {
                 filingNumber: currentOrder?.filingNumber,
               },
