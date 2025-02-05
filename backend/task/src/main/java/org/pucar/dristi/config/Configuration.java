@@ -86,6 +86,9 @@ public class Configuration {
     @Value("${task.kafka.update.topic}")
     private String taskUpdateTopic;
 
+    @Value("${task.kafka.join.case.update.topic}")
+    private String taskJoinCaseUpdateTopic;
+
     @Value("${task.kafka.create.topic}")
     private String taskCreateTopic;
 

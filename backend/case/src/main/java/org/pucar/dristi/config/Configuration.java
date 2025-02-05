@@ -309,4 +309,10 @@ public class Configuration {
 
 	@Value("${pucar.lock.search.endpoint}")
 	private String lockEndPoint;
+
+	@Value("${egov.task.service.host}")
+	private String taskServiceHost;
+
+	@Value("${egov.task.service.create.endpoint}")
+	private String taskServiceCreateEndpoint;
 }

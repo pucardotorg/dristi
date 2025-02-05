@@ -112,7 +112,7 @@ public class CaseApiControllerTest {
         JoinCaseResponse joinCaseResponse = new JoinCaseResponse();
         ResponseInfo responseInfo = new ResponseInfo();
         // Mocking caseService.verifyJoinCaseRequest method to return a JoinCaseResponse object
-        when(caseService.verifyJoinCaseRequest(any(JoinCaseRequest.class))).thenReturn(joinCaseResponse);
+        when(caseService.verifyJoinCaseRequest(any(JoinCaseRequest.class),any())).thenReturn(joinCaseResponse);
 
         // Mocking responseInfoFactory.createResponseInfoFromRequestInfo method to return a ResponseInfo object
         when(responseInfoFactory.createResponseInfoFromRequestInfo(any(RequestInfo.class), any(Boolean.class))).thenReturn(responseInfo);

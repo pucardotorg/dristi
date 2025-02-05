@@ -60,6 +60,9 @@ public class TaskRegistrationValidator {
             }
 
         } else {
+            if(JOIN_CASE_TASK.equalsIgnoreCase(task.getTaskType())){
+                return;
+            }
             if (isPendingTaskRole) {
                 throw new CustomException(CREATE_TASK_ERR, "you are not allowed to create task");
             }

@@ -13,6 +13,8 @@ import org.pucar.dristi.kafka.Producer;
 import org.pucar.dristi.repository.CaseRepository;
 import org.pucar.dristi.util.EncryptionDecryptionUtil;
 import org.pucar.dristi.web.models.*;
+import org.pucar.dristi.web.models.task.TaskRequest;
+import org.pucar.dristi.web.models.task.TaskResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
@@ -21,10 +23,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 
 import lombok.extern.slf4j.Slf4j;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 import static org.pucar.dristi.config.ServiceConstants.*;
 import static org.pucar.dristi.config.ServiceConstants.FSO_VALIDATED;
@@ -80,6 +79,20 @@ public class PaymentUpdateService {
             for (PaymentDetail paymentDetail : paymentDetails) {
                 updateWorkflowForCasePayment(requestInfo, tenantId, paymentDetail);
             }
+        } catch (Exception e) {
+            log.error("KAFKA_PROCESS_ERROR:", e);
+        }
+
+    }
+
+    public void updateJoinCaseDetails(Map<String, Object> record) {
+
+        try {
+            TaskRequest taskRequest = mapper.convertValue(record, TaskRequest.class);
+            Object additionalDetails = taskRequest.getTask().getAdditionalDetails();
+            ObjectMapper objectMapper = new ObjectMapper();
+            JoinCaseRequest joinCaseRequest  = objectMapper.convertValue(additionalDetails, JoinCaseRequest.class);
+            caseService.verifyJoinCaseRequest(joinCaseRequest,true);
         } catch (Exception e) {
             log.error("KAFKA_PROCESS_ERROR:", e);
         }

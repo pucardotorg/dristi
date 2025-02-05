@@ -12,11 +12,9 @@ import java.util.List;
 import java.util.Map;
 
 import org.egov.tracer.model.CustomException;
+import org.jetbrains.annotations.NotNull;
 import org.pucar.dristi.config.Configuration;
-import org.pucar.dristi.web.models.CaseRequest;
-import org.pucar.dristi.web.models.Demand;
-import org.pucar.dristi.web.models.DemandDetail;
-import org.pucar.dristi.web.models.DemandRequest;
+import org.pucar.dristi.web.models.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestTemplate;
@@ -59,7 +57,7 @@ public class BillingUtil {
 		demandDetail.setTaxAmount(TAX_AMOUNT);
 		demandDetail.setTaxHeadMasterCode(TAX_HEADMASTER_CODE);
 		demand.addDemandDetailsItem(demandDetail);
-		
+
 		List<Demand> demands = new ArrayList<>();
 		demands.add(demand);
 		demandRequest.setDemands(demands);
@@ -72,5 +70,45 @@ public class BillingUtil {
 			log.error(ERROR_WHILE_CREATING_DEMAND_FOR_CASE, e);
 			throw new CustomException(ERROR_WHILE_CREATING_DEMAND_FOR_CASE, e.getMessage());
 		}
+	}
+
+	public void createDemand(JoinCaseRequest joinCaseRequest, String consumerCode) {
+		StringBuilder uri = new StringBuilder();
+		uri.append(configs.getBillingHost()).append(configs.getDemandCreateEndPoint());
+
+		DemandRequest demandRequest = new DemandRequest();
+		demandRequest.setRequestInfo(joinCaseRequest.getRequestInfo());
+		Demand demand = getDemand(joinCaseRequest, consumerCode);
+
+		List<Demand> demands = new ArrayList<>();
+		demands.add(demand);
+		demandRequest.setDemands(demands);
+
+		Object response;
+		try {
+			response = restTemplate.postForObject(uri.toString(), demandRequest, Map.class);
+			log.info("Demand response :: {}", response);
+		} catch (Exception e) {
+			log.error(ERROR_WHILE_CREATING_DEMAND_FOR_CASE, e);
+			throw new CustomException(ERROR_WHILE_CREATING_DEMAND_FOR_CASE, e.getMessage());
+		}
+	}
+
+	private static Demand getDemand(JoinCaseRequest joinCaseRequest, String consumerCode) {
+		Demand demand = new Demand();
+		demand.setTenantId(joinCaseRequest.getRequestInfo().getUserInfo().getTenantId());
+		demand.setConsumerCode(consumerCode);
+		demand.setPayer(joinCaseRequest.getRequestInfo().getUserInfo());
+		demand.setTaxPeriodFrom(TAX_PERIOD_FROM);
+		demand.setTaxPeriodTo(TAX_PERIOD_TO);
+		demand.setBusinessService("task-default");
+		demand.setConsumerType("task-default");
+		demand.setAuditDetails(joinCaseRequest.getAuditDetails());
+
+		DemandDetail demandDetail = new DemandDetail();
+		demandDetail.setTaxAmount(TAX_AMOUNT);
+		demandDetail.setTaxHeadMasterCode("JOIN_CASE_ADVOCATE_FEES");
+		demand.addDemandDetailsItem(demandDetail);
+		return demand;
 	}
 }

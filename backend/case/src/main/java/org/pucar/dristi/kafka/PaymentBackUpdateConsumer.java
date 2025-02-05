@@ -32,4 +32,14 @@ public class PaymentBackUpdateConsumer {
             logger.error("Error while listening to value: {} on topic: {}: ", data, topic, e);
         }
     }
+
+    @KafkaListener(topics = {"${task.kafka.join.case.update.topic}"})
+    public void listenTaskUpdateForJoinCasePayment(final Map<String, Object> data, @Header(KafkaHeaders.RECEIVED_TOPIC) String topic) {
+        try {
+            logger.info("Received record: {} on topic: {}", data, topic);
+           // paymentUpdateService.updateJoinCaseDetails(data);
+        } catch (final Exception e) {
+            logger.error("Error while listening to value: {} on topic: {}: ", data, topic, e);
+        }
+    }
 }

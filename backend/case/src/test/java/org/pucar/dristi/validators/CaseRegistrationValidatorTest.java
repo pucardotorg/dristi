@@ -24,7 +24,7 @@ import java.util.UUID;
 
 import lombok.SneakyThrows;
 import org.pucar.dristi.util.LockUtil;
-import org.pucar.dristi.web.models.Document;
+import org.pucar.dristi.web.models.*;
 import org.egov.common.contract.models.Workflow;
 import org.egov.common.contract.request.RequestInfo;
 import org.egov.common.contract.request.User;
@@ -41,15 +41,6 @@ import org.pucar.dristi.service.IndividualService;
 import org.pucar.dristi.util.AdvocateUtil;
 import org.pucar.dristi.util.FileStoreUtil;
 import org.pucar.dristi.util.MdmsUtil;
-import org.pucar.dristi.web.models.AdvocateMapping;
-import org.pucar.dristi.web.models.CaseCriteria;
-import org.pucar.dristi.web.models.CaseRequest;
-import org.pucar.dristi.web.models.CaseSearchRequest;
-import org.pucar.dristi.web.models.CourtCase;
-import org.pucar.dristi.web.models.JoinCaseRequest;
-import org.pucar.dristi.web.models.LinkedCase;
-import org.pucar.dristi.web.models.Party;
-import org.pucar.dristi.web.models.StatuteSection;
 
 import net.minidev.json.JSONArray;
 
@@ -82,17 +73,17 @@ public class CaseRegistrationValidatorTest {
     private JoinCaseRequest joinCaseRequest;
     private RequestInfo requestInfo;
     private Party litigant;
-    private AdvocateMapping representative;
+    private Representative representative;
     private Document document;
     @BeforeEach
     void setUp() {
         // Setup done before each test
         requestInfo = new RequestInfo();
         litigant = new Party();
-        representative = new AdvocateMapping();
+        representative = new Representative();
         document = new Document();
         joinCaseRequest = new JoinCaseRequest();
-        joinCaseRequest.setLitigant(litigant);
+        joinCaseRequest.setLitigant(Collections.singletonList(litigant));
         joinCaseRequest.setRepresentative(representative);
         joinCaseRequest.setRequestInfo(requestInfo);
     }
