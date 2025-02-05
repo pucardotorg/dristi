@@ -1170,11 +1170,17 @@ public class CaseService {
                 for (int i = 0; i < formData1.size(); i++) {
                     ObjectNode dataNode1 = (ObjectNode) formData1.get(i).path("data");
                     ObjectNode dataNode2 = (ObjectNode) formData2.get(i).path("data");
+
+                    log.info("dataNode1 :: {}",dataNode1);
+                    log.info("dataNode2 :: {}",dataNode2);
+
                     if (dataNode1.has("respondentVerification")) {
                         JsonNode individualDetails1 = dataNode1.path("respondentVerification").path("individualDetails");
                         for (Party litigant : litigants) {
                             if (individualDetails1.has("individualId") && litigant.getIndividualId().equals(individualDetails1.get("individualId").asText())) {
                                 // Set or remove fields in dataNode2 based on dataNode1
+                                log.info("individualId :: {}",litigant.getIndividualId());
+
                                 setOrRemoveField(dataNode1, dataNode2, "respondentLastName");
                                 setOrRemoveField(dataNode1, dataNode2, "respondentFirstName");
                                 setOrRemoveField(dataNode1, dataNode2, "respondentMiddleName");
@@ -1188,7 +1194,7 @@ public class CaseService {
                 throw new CustomException(VALIDATION_ERR, "formdata is not found or is not an array in one of the respondentDetails objects.");
             }
         } else {
-            // throw new CustomException(VALIDATION_ERR, "respondentDetails not found in one of the additional details objects.");
+             throw new CustomException(VALIDATION_ERR, "respondentDetails not found in one of the additional details objects.");
         }
 
         if(isLitigantPIP){
