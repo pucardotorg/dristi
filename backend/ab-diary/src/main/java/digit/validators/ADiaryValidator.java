@@ -101,14 +101,14 @@ public class ADiaryValidator {
 
         CaseDiarySearchRequest caseDiarySearchRequest = CaseDiarySearchRequest.builder().criteria(searchCriteria).build();
 
-        List<CaseDiaryListItem> diaryResponse = diaryRepository.getCaseDiaries(caseDiarySearchRequest);
+        List<CaseDiary> diaryResponse = diaryRepository.getCaseDiariesWithDocuments(caseDiarySearchRequest);
 
         if (null == diaryResponse || diaryResponse.isEmpty()) {
             throw new CustomException(VALIDATION_EXCEPTION, "diary does not exist");
         } else if (diaryResponse.size() > 1) {
             throw new CustomException(VALIDATION_EXCEPTION, "multiple entries found with same id");
         }
-        diary.setId(diaryResponse.get(0).getDiaryId());
+        diary.setId(diaryResponse.get(0).getId());
     }
 
     public void validateGenerateRequest(CaseDiaryGenerateRequest generateRequest) {
