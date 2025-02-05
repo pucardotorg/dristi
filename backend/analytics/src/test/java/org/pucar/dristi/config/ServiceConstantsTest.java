@@ -16,7 +16,7 @@ class ServiceConstantsTest {
 
         // Testing ES index formats
         assertEquals("{\"index\":{\"_index\":\"%s\",\"_id\":\"%s\"}}\n", ServiceConstants.ES_INDEX_HEADER_FORMAT);
-        assertEquals("{\"Data\": {\"id\":\"%s\",\"name\":\"%s\",\"entityType\":\"%s\",\"referenceId\":\"%s\",\"status\":\"%s\",\"assignedTo\":%s,\"assignedRole\":%s,\"cnrNumber\":\"%s\",\"filingNumber\":\"%s\",\"isCompleted\":%b,\"stateSla\":%d,\"businessServiceSla\":%d,\"additionalDetails\":%s}}\n", ServiceConstants.ES_INDEX_DOCUMENT_FORMAT);
+        assertEquals("{\"Data\": {\"id\":\"%s\",\"name\":\"%s\",\"entityType\":\"%s\",\"referenceId\":\"%s\",\"status\":\"%s\",\"assignedTo\":%s,\"assignedRole\":%s,\"cnrNumber\":\"%s\",\"filingNumber\":\"%s\",\"isCompleted\":%b,\"stateSla\":%d,\"businessServiceSla\":%d,\"additionalDetails\":%s,\"isDiary\":%b}}\n", ServiceConstants.ES_INDEX_DOCUMENT_FORMAT);
         assertEquals("TENANTID", ServiceConstants.TENANTID_MDC_STRING);
 
         // Testing search params
