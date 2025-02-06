@@ -617,7 +617,7 @@ function MultipleAdvocatesAndPip({ t, config, onSelect, formData, errors, setErr
       <div className="dropdown-container" style={{ position: "relative", width: "100%", marginBottom: "20px" }}>
         <input
           type="text"
-          placeholder="Search Advocate"
+          placeholder={t("ADVOCATE_PLACEHOLDER")}
           value={searchTerm || value?.barRegistrationNumberOriginal || ""}
           onFocus={() => {
             setDropdownVisible(true);
