@@ -28,7 +28,13 @@ jobs:
 
       - name: Setup Docker
         uses: docker/setup-buildx-action@v2
-
+      - name: Build and analyze for treasury webpage
+        env:
+          GITHUB_TOKEN: ${{ secrets.GHUB_TOKEN }}
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+        run: |
+          npx sonar-scanner -Dsonar.projectKey=solutions_epayment -Dsonar.organization=solutions -Dsonar.host.url=https://sonarcloud.io -Dsonar.token=${{ secrets.SONAR_TOKEN }} -Dsonar.sources=./ -Dsonar.exclusions="node_modules/**,dist/**"
+        working-directory: backend/treasury-webpage
       # Login to Azure Container Registry
       - name: Login to Azure Container Registry
         if: (github.event_name == 'push' && (startsWith(github.ref, 'refs/heads/develop') || startsWith(github.ref, 'refs/heads/release/') || startsWith(github.ref, 'refs/heads/hotfix/') || startsWith(github.ref, 'refs/tags/v'))) || github.event_name == 'workflow_dispatch'
