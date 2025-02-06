@@ -216,6 +216,7 @@ const ADiaryPage = ({ path }) => {
 
   const uploadSignedPdf = async () => {
     try {
+      const localStorageID = localStorage.getItem("fileStoreId");
       const upload = await HomeService.updateADiaryPDF({
         diary: {
           tenantId: tenantId,
@@ -225,7 +226,7 @@ const ADiaryPage = ({ path }) => {
           documents: [
             {
               tenantId: tenantId,
-              fileStoreId: signedDocumentUploadID,
+              fileStoreId: signedDocumentUploadID || localStorageID,
             },
           ],
         },
@@ -233,12 +234,14 @@ const ADiaryPage = ({ path }) => {
       setStepper(0);
       setIsSelectedDataSigned(true);
       setADiarypdf(signedDocumentUploadID);
+      localStorage.removeItem("fileStoreId");
       localStorage.removeItem("adiarypdf");
       localStorage.removeItem("adiaryStepper");
     } catch (error) {
       console.log("Error :", error);
       setIsSigned(false);
       setSignedDocumentUploadID("");
+      localStorage.removeItem("fileStoreId");
       setIsSelectedDataSigned(false);
     }
   };
