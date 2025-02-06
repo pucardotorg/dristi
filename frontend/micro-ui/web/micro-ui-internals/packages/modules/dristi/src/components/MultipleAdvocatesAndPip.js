@@ -1,4 +1,4 @@
-import { Loader, UploadIcon } from "@egovernments/digit-ui-react-components";
+import { ArrowDown, Loader, UploadIcon } from "@egovernments/digit-ui-react-components";
 import React, { useEffect, useMemo, useState } from "react";
 import { ReactComponent as CrossIcon } from "../images/cross.svg";
 import { CustomAddIcon, FileUploadIcon } from "../icons/svgIndex";
@@ -416,33 +416,43 @@ function MultipleAdvocatesAndPip({ t, config, onSelect, formData, errors, setErr
 
   const handleInputChange = async (index, field, value) => {
     const updatedData = structuredClone(advocateAndPipData?.multipleAdvocateNameDetails);
-    if (field === "advocateBarRegNumberWithName") {
-      const advocateFullname = value?.advocateName || "";
-      updatedData[index].advocateBarRegNumberWithName = value;
-      const advIndividualId = value?.individualId || null;
-      const advocateIndvidualData = await fetchIndividualInfo(advIndividualId);
-      const identifierIdDetails = JSON.parse(
-        advocateIndvidualData?.Individual?.[0]?.additionalFields?.fields?.find((obj) => obj.key === "identifierIdDetails")?.value || "{}"
-      );
-      const idType = advocateIndvidualData?.Individual?.[0]?.identifiers[0]?.identifierType || "";
 
-      updatedData[index].advocateNameDetails = {
-        firstName: splitNamesPartiallyFromFullName(advocateFullname)?.firstName,
-        middleName: splitNamesPartiallyFromFullName(advocateFullname)?.middleName,
-        lastName: splitNamesPartiallyFromFullName(advocateFullname)?.lastName,
-        advocateMobileNumber: advocateIndvidualData?.Individual?.[0]?.mobileNumber || "",
-        advocateIdProof: identifierIdDetails?.fileStoreId
-          ? [
-              {
-                name: idType,
-                fileStore: identifierIdDetails?.fileStoreId,
-                documentName: identifierIdDetails?.filename,
-                fileName: "ID Proof",
-              },
-            ]
-          : null,
-      };
+    if (field === "advocateBarRegNumberWithName") {
+      if (!value) {
+        // Reset index data if value is null
+        updatedData[index] = {
+          advocateBarRegNumberWithName: {},
+          advocateNameDetails: {},
+        };
+      } else {
+        const advocateFullname = value?.advocateName || "";
+        updatedData[index].advocateBarRegNumberWithName = value;
+        const advIndividualId = value?.individualId || null;
+        const advocateIndvidualData = await fetchIndividualInfo(advIndividualId);
+        const identifierIdDetails = JSON.parse(
+          advocateIndvidualData?.Individual?.[0]?.additionalFields?.fields?.find((obj) => obj.key === "identifierIdDetails")?.value || "{}"
+        );
+        const idType = advocateIndvidualData?.Individual?.[0]?.identifiers[0]?.identifierType || "";
+
+        updatedData[index].advocateNameDetails = {
+          firstName: splitNamesPartiallyFromFullName(advocateFullname)?.firstName,
+          middleName: splitNamesPartiallyFromFullName(advocateFullname)?.middleName,
+          lastName: splitNamesPartiallyFromFullName(advocateFullname)?.lastName,
+          advocateMobileNumber: advocateIndvidualData?.Individual?.[0]?.mobileNumber || "",
+          advocateIdProof: identifierIdDetails?.fileStoreId
+            ? [
+                {
+                  name: idType,
+                  fileStore: identifierIdDetails?.fileStoreId,
+                  documentName: identifierIdDetails?.filename,
+                  fileName: "ID Proof",
+                },
+              ]
+            : null,
+        };
+      }
     }
+
     const newData = { ...advocateAndPipData, multipleAdvocateNameDetails: updatedData };
     setAdvocateAndPipData(newData);
     onSelect(config.key, newData);
@@ -595,6 +605,14 @@ function MultipleAdvocatesAndPip({ t, config, onSelect, formData, errors, setErr
       setDropdownVisible(false);
     };
 
+    // reset the onChnage value when search term is empty
+    const handleInputChange = (e) => {
+      setSearchTerm(e.target.value);
+      if (e.target.value === "") {
+        onChange(null);
+      }
+    };
+
     return (
       <div className="dropdown-container" style={{ position: "relative", width: "100%", marginBottom: "20px" }}>
         <input
@@ -607,9 +625,7 @@ function MultipleAdvocatesAndPip({ t, config, onSelect, formData, errors, setErr
               setSearchTerm("");
             }
           }}
-          onChange={(e) => {
-            setSearchTerm(e.target.value);
-          }}
+          onChange={handleInputChange}
           style={{
             width: "100%",
             padding: "10px",
@@ -621,6 +637,24 @@ function MultipleAdvocatesAndPip({ t, config, onSelect, formData, errors, setErr
           }}
           disabled={disabled}
         />
+        <div
+          onClick={(e) => {
+            e.stopPropagation();
+            setDropdownVisible((prev) => !prev);
+          }}
+          style={{
+            position: "absolute",
+            right: "10px",
+            top: "50%",
+            transform: "translateY(-50%)",
+            fontSize: "14px",
+            color: "black",
+            cursor: "pointer",
+            zIndex: 10,
+          }}
+        >
+          <ArrowDown />
+        </div>
         {isDropdownVisible && (
           <ul
             style={{
@@ -676,14 +710,15 @@ function MultipleAdvocatesAndPip({ t, config, onSelect, formData, errors, setErr
         className="box-complainant-details-div"
         style={{
           display: "flex",
-          justifyContent: "space-between",
+          justifyContent: "flex-start",
           alignItems: "center",
           marginBottom: "20px",
-          height: "20px",
+          height: "25px",
+          gap: "10px",
         }}
       >
-        <h1 style={{ fontSize: "18px", fontWeight: "bold" }}> Complainant {advocateAndPipData?.boxComplainant?.index + 1 || 1}</h1>
-        <h1 style={{ fontSize: "18px" }}> {advocateAndPipData?.boxComplainant?.firstName || ""}</h1>
+        <span style={{ fontSize: "16px", fontWeight: 700 }}>Complainant {advocateAndPipData?.boxComplainant?.index + 1 || 1}</span>
+        <span style={{ fontSize: "16px" }}>{advocateAndPipData?.boxComplainant?.firstName || ""}</span>
       </div>
 
       <div
@@ -693,6 +728,7 @@ function MultipleAdvocatesAndPip({ t, config, onSelect, formData, errors, setErr
           flexDirection: "row",
           alignItems: "flex-start",
           gap: "30px",
+          marginBottom: advocateAndPipData?.showVakalatNamaUpload ? "10px" : "0px",
         }}
         className="radio-div"
       >
@@ -700,12 +736,12 @@ function MultipleAdvocatesAndPip({ t, config, onSelect, formData, errors, setErr
         <div
           style={{
             fontSize: "16px",
-            color: "#333",
+            color: "#0A0A0A",
             marginBottom: "16px",
+            fontWeight: 700,
           }}
         >
-          {/* t({radioInput?.CS_IF_COMPLAINANT_IS_PIP}) */}
-          Is this complainant representing themselves as a Party in Person (PiP)?
+          {t(radioInput?.label)}
         </div>
 
         {/* Radio Options */}
@@ -763,6 +799,9 @@ function MultipleAdvocatesAndPip({ t, config, onSelect, formData, errors, setErr
         </div>
       </div>
 
+      {advocateAndPipData?.showVakalatNamaUpload && (
+        <div style={{ color: "#0A0A0A", fontWeight: 700, fontSize: "16px", marginBottom: "15px" }}>{t(config?.labelHeading)}</div>
+      )}
       {!advocateAndPipData?.showAffidavit && (
         <div className="advocate-details-div">
           {Array.isArray(advocateAndPipData?.multipleAdvocateNameDetails) &&
