@@ -1,0 +1,3 @@
+ALTER TABLE dristi_cases
+ALTER COLUMN caseTitle
+SET DATA TYPE VARCHAR(1000);
