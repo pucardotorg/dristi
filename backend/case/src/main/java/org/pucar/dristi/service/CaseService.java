@@ -717,6 +717,7 @@ public class CaseService {
             courtCase.setRepresentatives(Collections.singletonList(mapRepresentativeToAdvocateMapping(joinCaseRequest.getRepresentative())));
         }
 
+        Object additionalDetails = joinCaseRequest.getAdditionalDetails();
         if (joinCaseRequest.getAdditionalDetails() != null) {
             log.info("EnrichRepresentative, additional details :: {}", joinCaseRequest.getAdditionalDetails());
             caseObj.setAdditionalDetails(editAdvocateDetails(joinCaseRequest.getAdditionalDetails(), courtCase.getAdditionalDetails()));
@@ -739,6 +740,8 @@ public class CaseService {
         }
 
         publishToJoinCaseIndexer(joinCaseRequest.getRequestInfo(), courtCase);
+
+        joinCaseRequest.setAdditionalDetails(additionalDetails);
     }
 
     public JoinCaseResponse verifyJoinCaseRequest(JoinCaseRequest joinCaseRequest, Boolean isPaymentCompleted) {
@@ -1212,7 +1215,10 @@ public class CaseService {
         }
 
         if(isLitigantPIP){
-            editAdvocateDetails(additionalDetails1,additionalDetails2);
+            // Replace the specified field in additionalDetails2 with the value from additionalDetails1
+            if (details1Node.has("advocateDetails")) {
+                details2Node.set("advocateDetails", details1Node.get("advocateDetails"));
+            }
         }
         // Convert the updated ObjectNode back to its original form
         return objectMapper.convertValue(details2Node, additionalDetails2.getClass());
