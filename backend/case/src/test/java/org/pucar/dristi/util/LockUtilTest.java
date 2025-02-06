@@ -1,5 +1,6 @@
 package org.pucar.dristi.util;
 
+import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.egov.common.contract.request.RequestInfo;
 import org.junit.jupiter.api.BeforeEach;
@@ -48,15 +49,21 @@ public class LockUtilTest {
         when(configuration.getLockEndPoint()).thenReturn("/lock");
 
         // Mock the repository response
-        Boolean mockResponse = true; // Replace with appropriate mock response
-        when(repository.getResult(any(), any())).thenReturn(mockResponse);
+        Object mockResponse = new Object(); // Replace with appropriate mock response
+        when(repository.fetchResult(any(), any())).thenReturn(mockResponse);
+
+        // Mock JSON handling
+        String jsonResponse = "{ \"Lock\": { \"id\": \"lock-123\" ,\"isLocked\":true} }";
+        when(objectMapper.writeValueAsString(any())).thenReturn(jsonResponse);
+        JsonNode jsonNode = new ObjectMapper().readTree(jsonResponse);
+        when(objectMapper.readTree(jsonResponse)).thenReturn(jsonNode);
 
         // Execute method
         boolean result = lockUtil.isLockPresent(requestInfo, uniqueId, tenantId);
 
         // Verify
         assertTrue(result);
-        verify(repository, times(1)).getResult(any(), any());
+        verify(repository, times(1)).fetchResult(any(), any());
     }
 
     @Test
@@ -66,15 +73,20 @@ public class LockUtilTest {
         when(configuration.getLockEndPoint()).thenReturn("/lock");
 
         // Mock repository response
-        Boolean mockResponse = false;
-        when(repository.getResult(any(), any())).thenReturn(mockResponse);
+        Object mockResponse = new Object();
+        when(repository.fetchResult(any(), any())).thenReturn(mockResponse);
 
+        // Mock JSON handling
+        String jsonResponse = "{ \"Lock\": { \"id\": \"lock-123\" ,\"isLocked\":false} }";
+        when(objectMapper.writeValueAsString(any())).thenReturn(jsonResponse);
+        JsonNode jsonNode = new ObjectMapper().readTree(jsonResponse);
+        when(objectMapper.readTree(jsonResponse)).thenReturn(jsonNode);
 
         // Execute method
         boolean result = lockUtil.isLockPresent(requestInfo, uniqueId, tenantId);
 
         // Verify
         assertFalse(result);
-        verify(repository, times(1)).getResult(any(), any());
+        verify(repository, times(1)).fetchResult(any(), any());
     }
 }

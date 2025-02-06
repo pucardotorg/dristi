@@ -39,10 +39,17 @@ public class LockUtil {
         RequestInfoWrapper requestInfoWrapper = RequestInfoWrapper.builder()
                 .requestInfo(requestInfo).build();
 
-        Boolean result = repository.getResult(uri, requestInfoWrapper);
-        if (result == null)
-            result = false;
-        return result;
+        Object object = repository.fetchResult(uri, requestInfoWrapper);
+        String jsonString = objectMapper.writeValueAsString(object);
+        // Parse the JSON string
+        JsonNode rootNode = objectMapper.readTree(jsonString);
+
+        JsonNode lockNode = rootNode.path("Lock");
+
+        if (!lockNode.isMissingNode() && lockNode.has("isLocked")) {
+            return lockNode.get("isLocked").asBoolean();
+        }
+        return false;
 
     }
 }
