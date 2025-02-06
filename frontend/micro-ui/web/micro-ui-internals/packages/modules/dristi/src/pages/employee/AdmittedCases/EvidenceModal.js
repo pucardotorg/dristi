@@ -342,6 +342,8 @@ const EvidenceModal = ({
     }
     counterUpdate();
     handleBack();
+    setIsSubmitDisabled(false);
+
   };
 
   const onError = async (result) => {
@@ -352,6 +354,7 @@ const EvidenceModal = ({
       });
     }
     handleBack();
+    setIsSubmitDisabled(false);
   };
 
   const counterUpdate = () => {
@@ -540,10 +543,10 @@ const EvidenceModal = ({
       ).catch((error) => {
         console.error("error: ", error);
         toast.error(t("SOMETHING_WENT_WRONG"));
+        setIsSubmitDisabled(false);
       });
     }
     await handleMarkEvidence();
-    setIsSubmitDisabled(false);
   };
 
   const getOrderTypes = (applicationType, type) => {

@@ -219,22 +219,31 @@ const ADiaryPage = ({ path }) => {
   }, [entryDate, tenantId]);
 
   const uploadSignedPdf = async () => {
-    const upload = await HomeService.updateADiaryPDF({
-      diary: {
-        tenantId: tenantId,
-        diaryDate: entryDate,
-        diaryType: "ADiary",
-        judgeId: "super",
-        signedDiaryFileStoreId: signedDocumentUploadID,
-      },
-    });
-    setStepper(0);
-    setIsSelectedDataSigned(true);
-    setADiarypdf(signedDocumentUploadID);
-    localStorage.removeItem("adiarypdf");
-    localStorage.removeItem("adiaryStepper");
-    if (queryStrings) {
-      history.push(`/${window.contextPath}/employee/home/adiary`);
+    try {
+      const upload = await HomeService.updateADiaryPDF({
+        diary: {
+          tenantId: tenantId,
+          diaryDate: entryDate,
+          diaryType: "ADiary",
+          judgeId: "super",
+          documents: [
+            {
+              tenantId: tenantId,
+              fileStoreId: signedDocumentUploadID,
+            },
+          ],
+        },
+      });
+      setStepper(0);
+      setIsSelectedDataSigned(true);
+      setADiarypdf(signedDocumentUploadID);
+      localStorage.removeItem("adiarypdf");
+      localStorage.removeItem("adiaryStepper");
+      if (queryStrings) {
+        history.push(`/${window.contextPath}/employee/home/adiary`);
+      }
+    } catch (error) {
+      console.log("Error :", error);
     }
   };
 
