@@ -16,7 +16,7 @@ import { useToast } from "../../../components/Toast/useToast";
 import Modal from "../../../components/Modal";
 
 const getStyles = () => ({
-  container: { display: "flex", flexDirection: "row", height: "100vh", marginBottom: "50px" },
+  container: { display: "flex", flexDirection: "row", marginBottom: "50px" },
   leftPanel: {
     flex: 1,
     padding: "24px 16px 16px 16px",
@@ -654,8 +654,7 @@ const ComplainantSignature = ({ path }) => {
             }
           }
           if (res?.cases?.[0]?.status === "PENDING_PAYMENT") {
-
-           // Extract UUIDs of litigants and representatives if available
+            // Extract UUIDs of litigants and representatives if available
             const uuids = [
               ...(Array.isArray(caseDetails?.litigants)
                 ? caseDetails?.litigants?.map((litigant) => ({

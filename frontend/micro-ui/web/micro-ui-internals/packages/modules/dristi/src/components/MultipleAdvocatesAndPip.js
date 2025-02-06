@@ -805,7 +805,7 @@ function MultipleAdvocatesAndPip({ t, config, onSelect, formData, errors, setErr
       {!advocateAndPipData?.showAffidavit && (
         <div className="advocate-details-div">
           {Array.isArray(advocateAndPipData?.multipleAdvocateNameDetails) &&
-            Object.keys(advocateAndPipData?.multipleAdvocateNameDetails?.[0])?.length !== 0 &&
+            Object.keys(advocateAndPipData?.multipleAdvocateNameDetails?.[0] || {})?.length !== 0 &&
             advocateAndPipData?.multipleAdvocateNameDetails.map((data, index) => {
               const advocatesList = allAdvocatesBarRegAndNameList?.filter(
                 (obj) =>
