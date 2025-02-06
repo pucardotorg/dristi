@@ -142,9 +142,9 @@ public class CaseService {
                 if (!criteria.getDefaultFields() && criteria.getCaseId() != null) {
                     log.info("Searching in redis :: {}", criteria.getCaseId());
                     courtCase = searchRedisCache(caseSearchRequests.getRequestInfo(), criteria.getCaseId());
-                    log.info("Redis Response :: {}", courtCase);
                 }
                 if (courtCase != null) {
+                    log.info("CourtCase found in Redis cache for caseId: {}", criteria.getCaseId());
                     criteria.setResponseList(Collections.singletonList(courtCase));
                     caseCriteriaInRedis.add(criteria);
                 } else {
@@ -224,16 +224,15 @@ public class CaseService {
                 caseRequest.getCases().setCaseType(CMP);
             }
 
-            log.info("Encrypting: {}", caseRequest);
+            log.info("Encrypting case: {}", caseRequest.getCases().getId());
             caseRequest.setCases(encryptionDecryptionUtil.encryptObject(caseRequest.getCases(), config.getCourtCaseEncrypt(), CourtCase.class));
 
             producer.push(config.getCaseUpdateTopic(), caseRequest);
 
-            log.info("Updating cache");
-
+            log.info("Removing the disabled document, advocate and litigant from the request for case : {}", caseRequest.getCases().getId());
             // filtering document, advocate and their representing party and litigant base on isActive before saving into cache
             List<Document> isActiveTrueDocuments = Optional.ofNullable(caseRequest.getCases().getDocuments()).orElse(Collections.emptyList()).stream().filter(Document::getIsActive).toList();
-            List<AdvocateMapping>activeAdvocateMapping = Optional.ofNullable(caseRequest.getCases().getRepresentatives()).orElse(Collections.emptyList()).stream().filter(AdvocateMapping::getIsActive).toList();
+            List<AdvocateMapping> activeAdvocateMapping = Optional.ofNullable(caseRequest.getCases().getRepresentatives()).orElse(Collections.emptyList()).stream().filter(AdvocateMapping::getIsActive).toList();
             activeAdvocateMapping.forEach(advocateMapping -> {
                 if (advocateMapping.getRepresenting() != null) {
                     List<Party> activeRepresenting = advocateMapping.getRepresenting().stream()
@@ -241,10 +240,14 @@ public class CaseService {
                             .collect(Collectors.toList());
                     advocateMapping.setRepresenting(activeRepresenting);
                 }
-            });            List<Party>activeParty = Optional.ofNullable(caseRequest.getCases().getLitigants()).orElse(Collections.emptyList()).stream().filter(Party::getIsActive).toList();
+            });
+            List<Party> activeParty = Optional.ofNullable(caseRequest.getCases().getLitigants()).orElse(Collections.emptyList()).stream().filter(Party::getIsActive).toList();
             caseRequest.getCases().setDocuments(isActiveTrueDocuments);
             caseRequest.getCases().setRepresentatives(activeAdvocateMapping);
             caseRequest.getCases().setLitigants(activeParty);
+
+            log.info("Updating the case in redis cache after filtering the documents, advocates and litigants : {}", caseRequest.getCases().getId());
+
             cacheService.save(caseRequest.getCases().getTenantId() + ":" + caseRequest.getCases().getId(), caseRequest.getCases());
 
             CourtCase cases = encryptionDecryptionUtil.decryptObject(caseRequest.getCases(), null, CourtCase.class, caseRequest.getRequestInfo());
@@ -796,8 +799,8 @@ public class CaseService {
                     throw new CustomException(VALIDATION_ERR, JOIN_CASE_INVALID_REQUEST);
 
                 if (joinCaseRequest.getLitigant() != null && !joinCaseRequest.getLitigant().isEmpty()) {
-                      if (!validator.canLitigantJoinCase(joinCaseRequest))
-                     throw new CustomException(VALIDATION_ERR, JOIN_CASE_INVALID_REQUEST);
+                    if (!validator.canLitigantJoinCase(joinCaseRequest))
+                        throw new CustomException(VALIDATION_ERR, JOIN_CASE_INVALID_REQUEST);
                 }
 
                 // Stream over the representatives to create a list of advocateIds
@@ -941,8 +944,8 @@ public class CaseService {
         AdvocateMapping advocateMapping = new AdvocateMapping();
         advocateMapping.setId(representative.getId());
         advocateMapping.setAdvocateId(representative.getAdvocateId());
-        if(representative.getRepresenting()!=null && !representative.getRepresenting().isEmpty())
-         advocateMapping.setRepresenting(mapRepresentingToParty(representative.getRepresenting()));
+        if (representative.getRepresenting() != null && !representative.getRepresenting().isEmpty())
+            advocateMapping.setRepresenting(mapRepresentingToParty(representative.getRepresenting()));
         advocateMapping.setIsActive(representative.getIsActive());
         advocateMapping.setDocuments(representative.getDocuments());
         advocateMapping.setAdditionalDetails(representative.getAdditionalDetails());
@@ -955,7 +958,7 @@ public class CaseService {
 
     public static List<Party> mapRepresentingToParty(List<Representing> representingList) {
         List<Party> partyList = new ArrayList<>();
-        for (Representing representing:representingList){
+        for (Representing representing : representingList) {
             Party party = new Party();
             party.setId(representing.getId());
             party.setIndividualId(representing.getIndividualId());
@@ -1029,8 +1032,8 @@ public class CaseService {
         Representative representative = new Representative();
         representative.setId(advocateMapping.getId());
         representative.setAdvocateId(advocateMapping.getAdvocateId());
-        if(advocateMapping.getRepresenting()!=null && !advocateMapping.getRepresenting().isEmpty())
-         representative.setRepresenting(mapPartyListToRepresentingList(advocateMapping.getRepresenting()));
+        if (advocateMapping.getRepresenting() != null && !advocateMapping.getRepresenting().isEmpty())
+            representative.setRepresenting(mapPartyListToRepresentingList(advocateMapping.getRepresenting()));
         representative.setIsActive(advocateMapping.getIsActive());
         representative.setDocuments(advocateMapping.getDocuments());
         representative.setAdditionalDetails(advocateMapping.getAdditionalDetails());
@@ -1188,15 +1191,15 @@ public class CaseService {
                     ObjectNode dataNode1 = (ObjectNode) formData1.get(i).path("data");
                     ObjectNode dataNode2 = (ObjectNode) formData2.get(i).path("data");
 
-                    log.info("dataNode1 :: {}",dataNode1);
-                    log.info("dataNode2 :: {}",dataNode2);
+                    log.info("dataNode1 :: {}", dataNode1);
+                    log.info("dataNode2 :: {}", dataNode2);
 
                     if (dataNode1.has("respondentVerification")) {
                         JsonNode individualDetails1 = dataNode1.path("respondentVerification").path("individualDetails");
                         for (Party litigant : litigants) {
                             if (individualDetails1.has("individualId") && litigant.getIndividualId().equals(individualDetails1.get("individualId").asText())) {
                                 // Set or remove fields in dataNode2 based on dataNode1
-                                log.info("individualId :: {}",litigant.getIndividualId());
+                                log.info("individualId :: {}", litigant.getIndividualId());
 
                                 setOrRemoveField(dataNode1, dataNode2, "respondentLastName");
                                 setOrRemoveField(dataNode1, dataNode2, "respondentFirstName");
@@ -1211,10 +1214,10 @@ public class CaseService {
                 throw new CustomException(VALIDATION_ERR, "formdata is not found or is not an array in one of the respondentDetails objects.");
             }
         } else {
-             throw new CustomException(VALIDATION_ERR, "respondentDetails not found in one of the additional details objects.");
+            throw new CustomException(VALIDATION_ERR, "respondentDetails not found in one of the additional details objects.");
         }
 
-        if(isLitigantPIP){
+        if (isLitigantPIP) {
             // Replace the specified field in additionalDetails2 with the value from additionalDetails1
             if (details1Node.has("advocateDetails")) {
                 details2Node.set("advocateDetails", details1Node.get("advocateDetails"));
