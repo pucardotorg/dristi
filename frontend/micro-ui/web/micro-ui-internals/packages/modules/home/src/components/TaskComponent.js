@@ -74,7 +74,7 @@ const TasksComponent = ({
       },
     },
     params: { tenantId },
-    key: `${taskType?.code}-${filingNumber}`,
+    key: `${taskType?.code}-${filingNumber}-${isDiary}`,
     config: { enabled: Boolean(taskType?.code && tenantId) },
   });
 
