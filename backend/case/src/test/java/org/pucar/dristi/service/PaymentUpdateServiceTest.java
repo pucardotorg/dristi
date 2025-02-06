@@ -101,6 +101,7 @@ public class PaymentUpdateServiceTest {
 
         when(workflowService.callWorkFlow(any())).thenReturn(new State());
         when(encryptionDecryptionUtil.encryptObject(any(), any(),any())).thenReturn(new CourtCase());
+        when(encryptionDecryptionUtil.decryptObject(any(), any(),any(),any())).thenReturn(new CourtCase());
         doNothing().when(producer).push(any(), any());
 
         paymentUpdateService.process(record);
