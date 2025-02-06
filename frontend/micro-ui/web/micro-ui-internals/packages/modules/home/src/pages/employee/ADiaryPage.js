@@ -156,10 +156,6 @@ const ADiaryPage = ({ path }) => {
       localStorage.setItem("adiaryStepper", parseInt(stepper) + 1);
       setStepper(parseInt(stepper) + 1);
       localStorage.setItem("adiarypdf", ADiarypdf);
-      localStorage.setItem("selectedADiaryDate", entryDate);
-    } else {
-      localStorage.setItem("adiaryStepper", parseInt(stepper) + 1);
-      setStepper(parseInt(stepper) + 1);
     }
   };
 
@@ -239,11 +235,11 @@ const ADiaryPage = ({ path }) => {
       setADiarypdf(signedDocumentUploadID);
       localStorage.removeItem("adiarypdf");
       localStorage.removeItem("adiaryStepper");
-      if (queryStrings) {
-        history.push(`/${window.contextPath}/employee/home/adiary`);
-      }
     } catch (error) {
       console.log("Error :", error);
+      setIsSigned(false);
+      setSignedDocumentUploadID("");
+      setIsSelectedDataSigned(false);
     }
   };
 
@@ -271,7 +267,12 @@ const ADiaryPage = ({ path }) => {
   const handleGoClick = () => {
     const updatedDate = new Date(selectedDate).setHours(0, 0, 0, 0);
     setEntryDate(updatedDate);
+    localStorage.setItem("selectedADiaryDate", updatedDate);
+    if (queryStrings) {
+      history.push(`/${window.contextPath}/employee/home/adiary`);
+    }
   };
+
   const handleNext = () => {
     if (diaryEntries?.pagination?.totalCount > offSet + limit) {
       setOffset((prevOffset) => prevOffset + limit);
@@ -445,7 +446,7 @@ const ADiaryPage = ({ path }) => {
             actionCancelOnSubmit={onCancel}
             actionSaveLabel={t("submit")}
             isDisabled={!isSigned}
-            actionSaveOnSubmit={onSubmit}
+            actionSaveOnSubmit={uploadSignedPdf}
             className="add-signature-modal"
           >
             <div className="add-signature-main-div">
@@ -454,7 +455,7 @@ const ADiaryPage = ({ path }) => {
                 <div className="sign-button-wrap">
                   <Button
                     label={t("CS_ESIGN")}
-                    onButtonClick={() => handleEsign(name, pageModule, ADiarypdf)}
+                    onButtonClick={() => handleEsign(name, pageModule, ADiarypdf, "Signature")} //as sending null throwing error in esign
                     className="aadhar-sign-in"
                     labelClassName="aadhar-sign-in"
                   />
@@ -520,7 +521,7 @@ const ADiaryPage = ({ path }) => {
                 additionalElements={[
                   <p key="note">
                     {t("YOU_ARE_ADDING_YOUR_SIGNATURE_TO_THE")}
-                    <span style={{ fontWeight: "bold" }}>{`${t("ADIARY")} ${t("DOCUMENT_TEXT")}`}</span>
+                    <span style={{ fontWeight: "bold" }}>{`${t("ADIARY")} - ${formatDate(entryDate)}`}</span>
                   </p>,
                 ]}
                 inline

@@ -40,7 +40,7 @@ const EvidenceModal = ({
   currentDiaryEntry,
   artifact,
 }) => {
-  const [comments, setComments] = useState(documentSubmission[0]?.comments ? documentSubmission[0].comments : []);
+  const [comments, setComments] = useState(documentSubmission[0]?.comments ? documentSubmission[0].comments : artifact?.comments || []);
   const [showConfirmationModal, setShowConfirmationModal] = useState(null);
   const [showSuccessModal, setShowSuccessModal] = useState(null);
   const [currentComment, setCurrentComment] = useState("");
