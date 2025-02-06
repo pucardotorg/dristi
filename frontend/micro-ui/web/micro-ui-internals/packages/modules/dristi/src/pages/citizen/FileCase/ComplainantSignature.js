@@ -374,18 +374,22 @@ const ComplainantSignature = ({ path }) => {
       ).then(async (res) => {
         if ([complainantWorkflowState.CASE_REASSIGNED, complainantWorkflowState.DRAFT_IN_PROGRESS].includes(res?.cases?.[0]?.status)) {
           const promises = [
-            ...caseDetails?.litigants?.map(async (litigant) => {
-              return closePendingTask({
-                status: state,
-                assignee: litigant?.additionalDetails?.uuid,
-              });
-            }),
-            ...caseDetails?.representatives?.map(async (advocate) => {
-              return closePendingTask({
-                status: state,
-                assignee: advocate?.additionalDetails?.uuid,
-              });
-            }),
+            ...(Array.isArray(caseDetails?.litigants)
+              ? caseDetails?.litigants?.map(async (litigant) => {
+                  return closePendingTask({
+                    status: state,
+                    assignee: litigant?.additionalDetails?.uuid,
+                  });
+                })
+              : []),
+            ...(Array.isArray(caseDetails?.representatives)
+              ? caseDetails?.representatives?.map(async (advocate) => {
+                  return closePendingTask({
+                    status: state,
+                    assignee: advocate?.additionalDetails?.uuid,
+                  });
+                })
+              : []),
           ];
           await Promise.all(promises);
           history.replace(
