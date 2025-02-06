@@ -137,19 +137,20 @@ public class PaymentUpdateService {
             auditDetails.setLastModifiedBy(paymentDetail.getAuditDetails().getLastModifiedBy());
             auditDetails.setLastModifiedTime(paymentDetail.getAuditDetails().getLastModifiedTime());
             courtCase.setAuditdetails(auditDetails);
+            CourtCase decryptedCourtCase = encryptionDecryptionUtil.decryptObject(courtCase, configuration.getCaseDecryptSelf(), CourtCase.class, requestInfo);
 
             CaseRequest caseRequest = new CaseRequest();
             caseRequest.setRequestInfo(requestInfo);
-            caseRequest.setCases(courtCase);
+            caseRequest.setCases(decryptedCourtCase);
             if(UNDER_SCRUTINY.equalsIgnoreCase(courtCase.getStatus())) {
                 caseService.callNotificationService(caseRequest, CASE_PAYMENT_COMPLETED);
             }
             enrichmentUtil.enrichAccessCode(caseRequest);
-            log.info("Encrypting: {}", caseRequest);
-            caseRequest.setCases(encryptionDecryptionUtil.encryptObject(caseRequest.getCases(), "CourtCase", CourtCase.class));
+            log.info("In Payment Update, Encrypting: {}", caseRequest.getCases().getId());
+            caseRequest.setCases(encryptionDecryptionUtil.encryptObject(caseRequest.getCases(), configuration.getCourtCaseEncrypt(), CourtCase.class));
 
             producer.push(configuration.getCaseUpdateStatusTopic(),caseRequest);
-            cacheService.save(requestInfo.getUserInfo().getTenantId() + ":" + courtCase.getId().toString(), courtCase);
+            cacheService.save(requestInfo.getUserInfo().getTenantId() + ":" + courtCase.getId().toString(), caseRequest.getCases());
 
         });
     }

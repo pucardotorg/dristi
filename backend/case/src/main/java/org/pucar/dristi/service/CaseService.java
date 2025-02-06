@@ -661,14 +661,14 @@ public class CaseService {
         }
 
         if (joinCaseRequest.getAdditionalDetails() != null) {
-
+            log.info("EnrichLitigant, Additional details :: {}", joinCaseRequest.getAdditionalDetails());
             caseObj.setAdditionalDetails(editRespondantDetails(joinCaseRequest.getAdditionalDetails(), courtCase.getAdditionalDetails(), joinCaseRequest.getLitigant(), joinCaseRequest.getIsLitigantPIP()));
             courtCase.setAdditionalDetails(caseObj.getAdditionalDetails());
             caseObj = encryptionDecryptionUtil.encryptObject(caseObj, config.getCourtCaseEncrypt(), CourtCase.class);
             courtCase = encryptionDecryptionUtil.encryptObject(courtCase, config.getCourtCaseEncrypt(), CourtCase.class);
             joinCaseRequest.setAdditionalDetails(caseObj.getAdditionalDetails());
 
-            log.info("Pushing additional details for litigant:: {}", joinCaseRequest.getAdditionalDetails());
+            log.info("EnrichLitigant,Pushing additional details :: {}", joinCaseRequest.getAdditionalDetails());
             producer.push(config.getAdditionalJoinCaseTopic(), joinCaseRequest);
 
             courtCase.setAdditionalDetails(joinCaseRequest.getAdditionalDetails());
@@ -705,11 +705,12 @@ public class CaseService {
         }
 
         if (joinCaseRequest.getAdditionalDetails() != null) {
+            log.info("EnrichRepresentative, additional details :: {}", joinCaseRequest.getAdditionalDetails());
             caseObj.setAdditionalDetails(editAdvocateDetails(joinCaseRequest.getAdditionalDetails(), courtCase.getAdditionalDetails()));
             caseObj = encryptionDecryptionUtil.encryptObject(caseObj, config.getCourtCaseEncrypt(), CourtCase.class);
             courtCase = encryptionDecryptionUtil.encryptObject(courtCase, config.getCourtCaseEncrypt(), CourtCase.class);
             joinCaseRequest.setAdditionalDetails(caseObj.getAdditionalDetails());
-            log.info("Pushing additional details :: {}", joinCaseRequest.getAdditionalDetails());
+            log.info("EnrichRepresentative,Pushing additional details :: {}", joinCaseRequest.getAdditionalDetails());
             producer.push(config.getAdditionalJoinCaseTopic(), joinCaseRequest);
 
             courtCase.setAdditionalDetails(joinCaseRequest.getAdditionalDetails());
@@ -1062,7 +1063,7 @@ public class CaseService {
                 disableExistingRepresenting(joinCaseRequest.getRequestInfo(), courtCase, litigant.getIndividualId(), auditDetails);
 
             CaseRequest caseRequest = new CaseRequest();
-            caseRequest.setCases(encryptionDecryptionUtil.encryptObject(courtCase, "CourtCase", CourtCase.class));
+            caseRequest.setCases(encryptionDecryptionUtil.encryptObject(courtCase, config.getCourtCaseEncrypt(), CourtCase.class));
 
             log.info("Pushing litigant join case representative details :: {}", representatives);
             producer.push(config.getCaseUpdateTopic(), caseRequest);
