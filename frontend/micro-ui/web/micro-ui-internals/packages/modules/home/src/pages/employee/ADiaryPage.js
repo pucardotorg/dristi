@@ -153,8 +153,13 @@ const ADiaryPage = ({ path }) => {
         setGenerateAdiaryLoader(false);
       }
     } else if (parseInt(stepper) === 1) {
+      localStorage.setItem("adiaryStepper", parseInt(stepper) + 1);
+      setStepper(parseInt(stepper) + 1);
       localStorage.setItem("adiarypdf", ADiarypdf);
       localStorage.setItem("selectedADiaryDate", entryDate);
+    } else {
+      localStorage.setItem("adiaryStepper", parseInt(stepper) + 1);
+      setStepper(parseInt(stepper) + 1);
     }
   };
 
