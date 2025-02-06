@@ -67,4 +67,8 @@ public class ServiceConstants {
     public static final String SIGN_ACTION = "SIGN";
 
     public static final String GENERATE_ACTION = "GENERATE";
+
+    public static final String SIGNED_DOCUMENT_TYPE = "casediary.signed";
+
+    public static final String UNSIGNED_DOCUMENT_TYPE = "casediary.unsigned";
 }

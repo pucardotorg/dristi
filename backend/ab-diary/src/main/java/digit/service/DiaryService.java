@@ -153,6 +153,7 @@ public class DiaryService {
 
             ByteArrayResource byteArrayResource = generateCaseDiary(caseDiary, generateRequest.getRequestInfo());
             Document document = fileStoreUtil.saveDocumentToFileStore(byteArrayResource, generateRequest.getDiary().getTenantId());
+            document.setDocumentType(UNSIGNED_DOCUMENT_TYPE);
             CaseDiaryDocument caseDiaryDocument = getCaseDiaryDocument(generateRequest, document);
             generateRequest.getDiary().setDocuments(Collections.singletonList(caseDiaryDocument));
 
@@ -227,5 +228,64 @@ public class DiaryService {
             log.error("Error occurred while generating pdf: {}", e.getMessage());
         }
         return byteArrayResource;
+    }
+
+    public CaseDiary searchCaseDiaryForJudge(String tenantId,String judgeId,String diaryType,Long date,UUID caseId) {
+
+        try {
+
+            if ((diaryType.equals("ADiary") && date == null) || (diaryType.equals("BDiary") && caseId == null )) {
+                throw new CustomException(DIARY_SEARCH_EXCEPTION,"One of data or caseId is mandatory");
+            }
+
+            CaseDiarySearchRequest caseDiarySearchRequest = CaseDiarySearchRequest.builder()
+                    .criteria(CaseDiarySearchCriteria.builder()
+                            .tenantId(tenantId)
+                            .date(date)
+                            .caseId(caseId != null ? caseId.toString() : null)
+                            .diaryType(diaryType)
+                            .judgeId(judgeId)
+                            .build())
+                    .build();
+
+            List<CaseDiary> caseDiaryList = diaryRepository.getCaseDiariesWithDocuments(caseDiarySearchRequest);
+
+            if (caseDiaryList.isEmpty()) {
+                return null;
+            } else if (caseDiaryList.size() > 1) {
+                throw new CustomException(DIARY_SEARCH_EXCEPTION,"Multiple diaries found with given criteria");
+            }
+
+            CaseDiary caseDiary = caseDiaryList.get(0);
+
+            CaseDiaryDocument caseDiaryDocument = getSignedDocument(caseDiaryList.get(0));
+
+            caseDiary.setDocuments(Collections.singletonList(caseDiaryDocument));
+
+            return caseDiary;
+
+        } catch (CustomException e) {
+            log.error("Custom Exception while searching");
+            throw e;
+        } catch (Exception e) {
+            throw new CustomException(DIARY_SEARCH_EXCEPTION,"Error while searching case diary");
+        }
+
+    }
+
+    private CaseDiaryDocument getSignedDocument(CaseDiary caseDiary) {
+
+        List<CaseDiaryDocument> caseDiaryDocuments = caseDiary.getDocuments();
+
+        List<CaseDiaryDocument> signedDocuments = caseDiaryDocuments.stream().filter(caseDiaryDocument ->
+                Objects.equals(caseDiaryDocument.getDocumentType(), SIGNED_DOCUMENT_TYPE)).toList();
+        if (signedDocuments.isEmpty()) {
+            return null;
+        }
+        else if (signedDocuments.size() > 1) {
+            throw new CustomException(DIARY_SEARCH_EXCEPTION,"Multiple signed documents found");
+        }
+
+        return signedDocuments.get(0);
     }
 }

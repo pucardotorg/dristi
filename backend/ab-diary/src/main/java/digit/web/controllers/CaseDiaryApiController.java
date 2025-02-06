@@ -14,6 +14,7 @@ import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.enums.ParameterIn;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.extern.slf4j.Slf4j;
+import org.egov.common.contract.request.RequestInfo;
 import org.egov.common.contract.response.ResponseInfo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -24,8 +25,6 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestMapping;
-
-import java.io.IOException;
 
 import jakarta.validation.constraints.*;
 import jakarta.validation.Valid;
@@ -102,16 +101,16 @@ public class CaseDiaryApiController {
 
     @RequestMapping(value = "/case/diary/v1/{tenantId}/{judgeId}/{diaryType}", method = RequestMethod.GET)
     public ResponseEntity<CaseDiaryResponse> getDiaryStoreId(@Pattern(regexp = "^[a-zA-Z]{2}$") @Size(min = 2, max = 2) @Parameter(in = ParameterIn.PATH, description = "tenant Id", required = true, schema = @Schema()) @PathVariable("tenantId") String tenantId, @Parameter(in = ParameterIn.PATH, description = "the Id of the Judge, whose diary is being queried", required = true, schema = @Schema()) @PathVariable("judgeId") String judgeId, @Parameter(in = ParameterIn.PATH, description = "the type of the diary i.e. A diary or B diary", required = true, schema = @Schema(allowableValues = "")) @PathVariable("diaryType") String diaryType, @Parameter(in = ParameterIn.QUERY, description = "the date for which we want the diary in EPOCH format, but with time component set to 0. This will be used in case we are searching A diary", schema = @Schema()) @Valid @RequestParam(value = "date", required = false) Long date, @Parameter(in = ParameterIn.QUERY, description = "the caseId for which we want the diary. This will be used in case we are searching for B diary", schema = @Schema()) @Valid @RequestParam(value = "caseId", required = false) UUID caseId) {
-        String accept = request.getHeader("Accept");
-        if (accept != null && accept.contains("application/json")) {
-            try {
-                return new ResponseEntity<CaseDiaryResponse>(objectMapper.readValue("{  \"ResponseInfo\" : {    \"ver\" : \"ver\",    \"resMsgId\" : \"resMsgId\",    \"msgId\" : \"msgId\",    \"apiId\" : \"apiId\",    \"ts\" : 0,    \"status\" : \"SUCCESSFUL\"  },  \"diaryEntry\" : {    \"diaryType\" : \"ADiary, BDiary\",    \"diaryDate\" : 6,    \"documents\" : \"documentType = casediary.signed / casediary.unsigned\",    \"caseNumber\" : \"caseNumber\",    \"auditDetails\" : {      \"lastModifiedTime\" : 5,      \"createdBy\" : \"createdBy\",      \"lastModifiedBy\" : \"lastModifiedBy\",      \"createdTime\" : 1    },    \"tenantId\" : \"tenantId\",    \"id\" : \"046b6c7f-0b8a-43b9-b35d-6489e6daee91\",    \"additionalDetails\" : { },    \"judgeId\" : \"judgeId\"  }}", CaseDiaryResponse.class), HttpStatus.NOT_IMPLEMENTED);
-            } catch (IOException e) {
-                return new ResponseEntity<CaseDiaryResponse>(HttpStatus.INTERNAL_SERVER_ERROR);
-            }
-        }
+        log.info("api = /case/diary/v1/{tenantId}/{judgeId}/{diaryType} , result = IN_PROGRESS");
 
-        return new ResponseEntity<CaseDiaryResponse>(HttpStatus.NOT_IMPLEMENTED);
+        CaseDiary caseDiary = diaryService.searchCaseDiaryForJudge(tenantId,judgeId,diaryType,date,caseId);
+        ResponseInfo responseInfo = responseInfoFactory.createResponseInfoFromRequestInfo(RequestInfo.builder().build(),true);
+        CaseDiaryResponse caseDiaryResponse = CaseDiaryResponse.builder()
+                .diaryEntry(caseDiary)
+                .responseInfo(responseInfo)
+                .build();
+        log.info("api = /case/diary/v1/{tenantId}/{judgeId}/{diaryType} , result = SUCCESS");
+        return new ResponseEntity<>(caseDiaryResponse,HttpStatus.OK);
     }
 
     @RequestMapping(value = "/case/diary/v1/search", method = RequestMethod.POST)

@@ -13,6 +13,7 @@ import org.springframework.stereotype.Component;
 import java.util.*;
 
 import static digit.config.ServiceConstants.ENRICHMENT_EXCEPTION;
+import static digit.config.ServiceConstants.SIGNED_DOCUMENT_TYPE;
 
 @Component
 @Slf4j
@@ -66,6 +67,9 @@ public class ADiaryEnrichment {
 
         if (caseDiaryDocument != null) {
             caseDiaryDocument.setId(aDiaryUtil.generateUUID());
+            caseDiaryDocument.setDocumentType(SIGNED_DOCUMENT_TYPE);
+            caseDiaryDocument.setCaseDiaryId(String.valueOf(caseDiaryRequest.getDiary().getId()));
+            caseDiaryDocument.setActive(true);
 
             AuditDetails auditDetails = AuditDetails.builder().createdBy(user.getUuid()).lastModifiedBy(user.getUuid())
                     .createdTime(aDiaryUtil.getCurrentTimeInMilliSec()).lastModifiedTime(aDiaryUtil.getCurrentTimeInMilliSec())
