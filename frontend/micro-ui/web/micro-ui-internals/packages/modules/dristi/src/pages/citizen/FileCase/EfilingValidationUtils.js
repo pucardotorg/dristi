@@ -1640,12 +1640,36 @@ export const updateCaseDetails = async ({
           };
         })
     );
-    data.litigants = [...litigants].map((item, index) => ({
-      ...(caseDetails.litigants?.[index] ? caseDetails.litigants?.[index] : {}),
-      ...item,
-    }));
+    const caseLitigants = caseDetails?.litigants || [];
 
-    // Check - Do we need to update case represenatives here necessarily? on advocate details page it will get updates anyways.
+    // Logic to update the litigants with same id so that duplication does not happen in backend.
+    // We will check that if a litigant is already present in litigants array in case search api data,
+    // we will just update the new documents and representinng data to that object.
+    const updatedLitigants = litigants.map((lit) => {
+      const existingLit = caseLitigants.find((caseLit) => caseLit.individualId === lit.individualId);
+      if (existingLit) {
+        lit.id = existingLit?.id;
+        lit.auditDetails = existingLit?.auditDetails;
+        lit.hasSigned = existingLit?.hasSigned || false;
+        return lit;
+      }
+      return lit;
+    });
+
+    // If a litigant object was present previously and now that litigant is not present in form data,
+    // the same object should again be copied with isActive as false and added in the updatedLitigants.
+
+    caseLitigants.forEach((caseLit) => {
+      const isAlreadyIncluded = updatedLitigants.some((lit) => lit?.individualId === caseLit?.individualId);
+      if (!isAlreadyIncluded) {
+        updatedLitigants.push({
+          ...caseLit,
+          isActive: false,
+        });
+      }
+    });
+    data.litigants = [...updatedLitigants];
+
     data.additionalDetails = {
       ...caseDetails.additionalDetails,
       complainantDetails: {
@@ -2365,7 +2389,6 @@ export const updateCaseDetails = async ({
         if (!isMatch(existingRep.additionalDetails, rep.additionalDetails)) {
           existingRep.additionalDetails = rep.additionalDetails;
         }
-        existingRep.isActive = true;
         return existingRep;
       }
       return rep;
