@@ -1,0 +1,25 @@
+[
+  {
+    "tenantId": "kl",
+    "masterName": "case",
+    "moduleName": "CaseOverallStatusType",
+    //can be added using workbench
+    "mdmsPayload": [
+      {
+        "tenantId": "kl",
+        "schemaCode": "case.CaseOverallStatusType",
+        "uniqueIdentifier": "19",
+        "data": {
+          "id": "19",
+          "stage": "Pre-Trial",
+          "state": "UNDER_SCRUTINY",
+          "action": "E-SIGN_COMPLETE",
+          "substage": "SCRUTINY",
+          "typeIdentifier": "scrutiny",
+          "workflowModule": "case-default"
+        },
+        "isActive": true
+      }
+    ]
+  }
+]
