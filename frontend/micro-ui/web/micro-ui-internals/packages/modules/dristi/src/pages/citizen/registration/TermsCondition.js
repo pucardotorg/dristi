@@ -4,6 +4,8 @@ import { useHistory } from "react-router-dom/cjs/react-router-dom.min";
 import { getUserDetails, setCitizenDetail } from "../../../hooks/useGetAccessToken";
 
 const TermsCondition = ({ t, config, params, setParams, pathOnRefresh }) => {
+  const userInfo = JSON.parse(window.localStorage.getItem("user-info"));
+
   const history = useHistory();
   const tenantId = Digit.ULBService.getCurrentTenantId();
 
@@ -17,17 +19,57 @@ const TermsCondition = ({ t, config, params, setParams, pathOnRefresh }) => {
     return { file: fileUploadRes?.data, fileType: fileData.type };
   };
 
+  const searchIndividualUserWithUuid = async (uuid, tenantId) => {
+    const individualData = await window?.Digit.DRISTIService.searchIndividualUser(
+      {
+        Individual: {
+          userUuid: [uuid],
+        },
+      },
+      { tenantId, limit: 1000, offset: 0 },
+      "",
+      uuid
+    );
+    return individualData;
+  };
+
   const getFullName = (seperator, ...strings) => {
     return strings.filter(Boolean).join(seperator);
   };
 
-  const onSubmit = () => {
+  const onSubmit = async () => {
     setIsDisabled(true);
     const userType = params?.userType;
     const userTypeSelcted = params?.userType?.clientDetails?.selectUserType?.code;
     const Individual = params?.IndividualPayload ? params?.IndividualPayload : { Individual: params?.Individual?.[0] };
 
-    if ((userTypeSelcted === "LITIGANT" || userTypeSelcted === "ADVOCATE_CLERK") && !params?.Individual?.[0]?.individualId) {
+    const response = await searchIndividualUserWithUuid(userInfo?.uuid, tenantId);
+    if (userTypeSelcted === "LITIGANT" && response?.Individual?.length > 0) {
+      let IndividualData = {
+        Individual: {
+          ...response?.Individual?.[0],
+          ...Individual?.Individual,
+        },
+      };
+      try {
+        await window?.Digit.DRISTIService.updateIndividualUser(IndividualData, { tenantId });
+        const refreshToken = window.localStorage.getItem("citizen.refresh-token");
+        if (refreshToken) {
+          getUserDetails(refreshToken).then((res) => {
+            const { ResponseInfo, UserRequest: info, ...tokens } = res;
+            const user = { info, ...tokens };
+            localStorage.setItem("citizen.userRequestObject", user);
+            window?.Digit.UserService.setUser(user);
+            setCitizenDetail(user?.info, user?.access_token, window?.Digit.ULBService.getStateId());
+            history.push(`/${window?.contextPath}/citizen/dristi/home`);
+          });
+        }
+      } catch (error) {
+        history.push(`/digit-ui/citizen/dristi/home/response`, { response: "error" });
+      } finally {
+        setParams({});
+      }
+    } else if ((userTypeSelcted === "LITIGANT" || userTypeSelcted === "ADVOCATE_CLERK") && !params?.Individual?.[0]?.individualId) {
       Digit.DRISTIService.postIndividualService(Individual, tenantId)
         .then((result) => {
           if (userType?.clientDetails?.selectUserType?.apiDetails && userType?.clientDetails?.selectUserType?.apiDetails?.serviceName && result) {
@@ -384,10 +426,10 @@ const TermsCondition = ({ t, config, params, setParams, pathOnRefresh }) => {
         noBoxShadow
         inline
         label={t("CS_COMMON_CONTINUE")}
-        onSubmit={(props) => {
+        onSubmit={async (props) => {
           if (props?.terms_condition?.length !== config?.[0]?.body?.[0]?.populators?.inputs?.[0]?.options?.length)
             setFormError.current("terms_condition", { message: "All fields are mandatory." });
-          else onSubmit();
+          else await onSubmit();
         }}
         onFormValueChange={(setValue, formData, formState, reset, setError, clearErrors, trigger, getValues) => {
           setFormError.current = setError;

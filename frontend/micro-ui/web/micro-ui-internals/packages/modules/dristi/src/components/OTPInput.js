@@ -13,7 +13,7 @@ const SingleInput = ({ isFocus, onChange, onFocus, value, inputStyle, ...rest })
 
   return (
     <input
-      style={{ width: "70px", ...(inputStyle ? inputStyle : {}) }}
+      style={{ width: "70px", margin: "0px", ...(inputStyle ? inputStyle : {}) }}
       className="input-otp"
       maxLength={1}
       onChange={onChange}

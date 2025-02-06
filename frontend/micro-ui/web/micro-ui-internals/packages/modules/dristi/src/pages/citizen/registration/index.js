@@ -105,6 +105,26 @@ const Registration = ({ stateCode }) => {
     "",
     userInfo?.uuid && isUserLoggedIn
   );
+
+  const isLitigantPartialRegistered = useMemo(() => {
+    if (!data?.Individual || data.Individual.length === 0) return false;
+
+    const address = data.Individual[0]?.address;
+    return !address || (Array.isArray(address) && address.length === 0);
+  }, [data?.Individual]);
+
+  useEffect(() => {
+    if (isLitigantPartialRegistered && data?.Individual) {
+      setNewParams({
+        name: {
+          firstName: data?.Individual?.[0]?.name?.givenName,
+          middleName: data?.Individual?.[0]?.name?.otherNames,
+          lastName: data?.Individual?.[0]?.name?.familyName,
+        },
+      });
+    }
+  }, [data?.Individual, isLitigantPartialRegistered]);
+
   const handleAadharOtpChange = (aadharOtp) => {
     setNewParams({ ...newParams, aadharOtp });
   };
@@ -285,6 +305,7 @@ const Registration = ({ stateCode }) => {
               value={newParams?.name}
               isUserLoggedIn={isUserLoggedIn}
               pathOnRefresh={pathOnRefresh}
+              isLitigantPartialRegistered={isLitigantPartialRegistered}
             />
           </Route>
           <Route path={`${path}/user-address`}>

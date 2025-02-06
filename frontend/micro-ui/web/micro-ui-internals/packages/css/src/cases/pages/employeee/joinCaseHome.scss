@@ -1,5 +1,5 @@
-.payment-due-wrapper,
 .enter-validation-code,
+.litigant-verification,
 .view-document-vak,
 .general-details-vek,
 .select-user-join-case,
@@ -51,6 +51,28 @@
   margin: 0px;
 }
 
+.litigant-verification {
+  width: 712px;
+  margin-bottom: 0px !important;
+  .multi-litigant-composer {
+    .card {
+      margin: 0px;
+      padding: 0px;
+      padding-bottom: 24px;
+      gap: 24px;
+
+      .label-field-pair {
+        h2.card-label {
+          margin: 0px;
+        }
+        input {
+          margin-bottom: 0px;
+        }
+      }
+    }
+  }
+}
+
 .case-number-input {
   .case-label-field-pair {
     .text-input {
@@ -86,6 +108,14 @@
   width: 50%;
   .popup-module-main {
     position: relative !important;
+    .payment-due-wrapper {
+      display: flex;
+      flex-direction: column;
+      width: 536px;
+    }
+    .multi-litigant-composer-footer {
+      padding: 16px;
+    }
   }
   .skip-button {
     position: absolute;
@@ -184,6 +214,24 @@
   gap: 24px !important;
 }
 
+.select-user-join-case {
+  .party-in-person-affidavit-upload {
+    .card {
+      min-width: 100%;
+      padding: 0px;
+      margin: 0px;
+      .label-field-pair {
+        .field {
+          .uploaded-file-div-main {
+            &.upload-successful {
+              margin-bottom: 16px;
+            }
+          }
+        }
+      }
+    }
+  }
+}
 .general-details-vek {
   .primary-advocate-details {
     .contact-text {
@@ -287,4 +335,87 @@
       }
     }
   }
+}
+
+.multi-litigant-composer {
+  .card {
+    border: none;
+  }
+
+  .label-field-pair {
+    h2.card-label {
+      font-weight: 400 !important;
+      font-size: 16px;
+      margin-bottom: 8px !important;
+    }
+
+    .phone-number-verification {
+      .jk-digit-primary-btn.secondary-button-selector {
+        box-shadow: none;
+        align-items: center;
+        width: 200px;
+        height: 40px;
+        gap: 4px;
+        background-color: initial !important;
+
+        h2.secondary-label-selector {
+          color: #007e7e !important;
+          text-align: center;
+          font-weight: 700;
+          font-size: 16px;
+        }
+      }
+    }
+  }
+
+  .popup-wrap {
+    .verify-mobile-modal {
+      .popup-module-main {
+        .popup-module-action-bar {
+          .selector-button-primary-disabled {
+            .verification-button-text-modal {
+              color: white !important;
+            }
+          }
+        }
+      }
+    }
+  }
+}
+
+.multi-litigant-composer-footer {
+  display: flex;
+  justify-content: space-between;
+  width: 100%;
+  padding: 0px 16px 0px 16px;
+  align-items: center;
+}
+
+.multi-litigant-composer-footer-left {
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  gap: 7px;
+}
+
+.arrow-button {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background-color: #ffffff;
+  border: 1px solid #c5c5c5;
+  box-shadow: none !important;
+  height: 32px !important;
+  border-radius: 4px;
+}
+
+.arrow-button:hover {
+  background-color: #eeeeee;
+}
+
+.multi-litigant-composer-footer-right {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 7px;
 }

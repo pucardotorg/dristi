@@ -1,7 +1,7 @@
 import { FormComposerV2, Toast } from "@egovernments/digit-ui-react-components";
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 
-const SelectName = ({ config, t, onSubmit, isDisabled, params, history, value, isUserLoggedIn }) => {
+const SelectName = ({ config, t, onSubmit, isDisabled, params, history, value, isUserLoggedIn, isLitigantPartialRegistered }) => {
   const [showErrorToast, setShowErrorToast] = useState(false);
 
   const closeToast = () => {
@@ -45,10 +45,31 @@ const SelectName = ({ config, t, onSubmit, isDisabled, params, history, value, i
     }
   };
 
+  const modifiedFormConfig = useMemo(() => {
+    const applyUiChanges = (config) => ({
+      ...config,
+      body: config?.body?.map((body) => {
+        let tempBody = {
+          ...body,
+        };
+        if (isLitigantPartialRegistered) {
+          tempBody = {
+            ...tempBody,
+            disable: true,
+          };
+        }
+        return tempBody;
+      }),
+    });
+
+    return config?.map((config) => applyUiChanges(config));
+  }, [config, isLitigantPartialRegistered]);
+
   return (
     <React.Fragment>
       <FormComposerV2
-        config={config}
+        key={params?.name?.firstName}
+        config={modifiedFormConfig}
         t={t}
         noBoxShadow
         inline={false}

@@ -45,25 +45,27 @@ const NameListWithModal = ({ t, data, type }) => {
               <span>{fullName}</span>
             </div>
           ))}
-          <p
-            style={{
-              fontFamily: "Roboto",
-              fontSize: "12px",
-              fontWeight: 300,
-              lineHeight: "16px",
-              textAlign: "left",
-              textDecorationLine: "underline",
-              textDecorationStyle: "solid",
-              textUnderlinePosition: "from-font",
-              textDecorationSkipInk: "none",
-              color: "#006FD5",
-              margin: "0px",
-              cursor: "pointer",
-            }}
-            onClick={() => setOpen(true)}
-          >
-            {t("VIEW_ALL_LINK")}
-          </p>
+          {data?.length > 2 && (
+            <p
+              style={{
+                fontFamily: "Roboto",
+                fontSize: "12px",
+                fontWeight: 300,
+                lineHeight: "16px",
+                textAlign: "left",
+                textDecorationLine: "underline",
+                textDecorationStyle: "solid",
+                textUnderlinePosition: "from-font",
+                textDecorationSkipInk: "none",
+                color: "#006FD5",
+                margin: "0px",
+                cursor: "pointer",
+              }}
+              onClick={() => setOpen(true)}
+            >
+              {t("VIEW_ALL_LINK")}
+            </p>
+          )}
         </React.Fragment>
       ) : (
         <React.Fragment>
@@ -73,12 +75,7 @@ const NameListWithModal = ({ t, data, type }) => {
         </React.Fragment>
       )}
       {open && (
-        <Modal
-          headerBarEnd={<CloseBtn onClick={closeModal} />}
-          formId="modal-action"
-          headerBarMain={<Heading label={t(type)} />}
-          className={`join-a-case-modal`}
-        >
+        <Modal headerBarEnd={<CloseBtn onClick={closeModal} />} formId="modal-action" headerBarMain={<Heading label={t(type)} />}>
           <ul style={{ listStyle: "unset" }}>
             {data?.map((fullName) => (
               <li style={styles}>{fullName}</li>

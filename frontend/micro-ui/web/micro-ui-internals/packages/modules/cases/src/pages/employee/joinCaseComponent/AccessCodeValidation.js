@@ -2,8 +2,11 @@ import { InfoCard } from "@egovernments/digit-ui-components";
 import CustomCaseInfoDiv from "@egovernments/digit-ui-module-dristi/src/components/CustomCaseInfoDiv";
 import { CardLabel, CardLabelError, LabelFieldPair, TextInput } from "@egovernments/digit-ui-react-components";
 import React, { useMemo } from "react";
+import { useTranslation } from "react-i18next";
 
-const AccessCodeValidation = ({ t, caseDetails, validationCode, setValidationCode, setIsDisabled, errors, setErrors }) => {
+const AccessCodeValidation = ({ caseDetails, validationCode, setValidationCode, setIsDisabled, errors, setErrors }) => {
+  const { t } = useTranslation();
+
   const caseInfo = useMemo(() => {
     if (caseDetails?.caseCategory) {
       return [

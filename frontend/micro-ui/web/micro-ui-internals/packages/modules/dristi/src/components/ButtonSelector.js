@@ -13,7 +13,7 @@ const ButtonSelector = (props) => {
   }
   return (
     <button
-      className={props.isDisabled ? "selector-button-primary-disabled" : theme}
+      className={props.isDisabled ? `selector-button-primary-disabled ${props.className}` : `${theme} ${props.className}`}
       type={props.type || "submit"}
       form={props.formId}
       onClick={props.onSubmit}
@@ -21,9 +21,11 @@ const ButtonSelector = (props) => {
       style={props.style ? props.style : null}
       title={props.title ? props.title : null}
     >
-      <h2 style={{ ...props?.textStyles, ...{ width: "100%" } }} className={props?.textClassName}>
-        {props.label}
-      </h2>
+      {props?.label && (
+        <h2 style={{ ...props?.textStyles, ...{ width: "100%" } }} className={props?.textClassName}>
+          {props.label}
+        </h2>
+      )}
       {props.ButtonBody ? props.ButtonBody : ""}
     </button>
   );
@@ -46,6 +48,10 @@ ButtonSelector.propTypes = {
    * CustomBody
    */
   ButtonBody: PropTypes.any,
+  /**
+   * ButtonSelector className
+   */
+  className: PropTypes.string,
 };
 
 ButtonSelector.defaultProps = {
@@ -53,6 +59,7 @@ ButtonSelector.defaultProps = {
   theme: "",
   onSubmit: undefined,
   ButtonBody: undefined,
+  className: "",
 };
 
 export default ButtonSelector;

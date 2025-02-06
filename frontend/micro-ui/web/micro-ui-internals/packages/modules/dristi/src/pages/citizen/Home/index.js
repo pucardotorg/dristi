@@ -18,7 +18,6 @@ function CitizenHome({ tenantId, setHideBack }) {
   const userInfo = JSON.parse(window.localStorage.getItem("user-info"));
   const [isFetching, setIsFetching] = useState(true);
   const [isFetchingAdvoacte, setIsFetchingAdvocate] = useState(true);
-
   const { data, isLoading, refetch } = Digit.Hooks.dristi.useGetIndividualUser(
     {
       Individual: {
@@ -41,6 +40,13 @@ function CitizenHome({ tenantId, setHideBack }) {
   ];
 
   const individualId = useMemo(() => data?.Individual?.[0]?.individualId, [data?.Individual]);
+  const isLitigantPartialRegistered = useMemo(() => {
+    if (!data?.Individual || data.Individual.length === 0) return false;
+
+    const address = data.Individual[0]?.address;
+    return !address || (Array.isArray(address) && address.length === 0);
+  }, [data?.Individual]);
+
   const userType = useMemo(() => data?.Individual?.[0]?.additionalFields?.fields?.find((obj) => obj.key === "userType")?.value, [data?.Individual]);
   const { data: searchData, isLoading: isSearchLoading, refetch: refetchAdvocateClerk } = Digit.Hooks.dristi.useGetAdvocateClerk(
     {
@@ -88,8 +94,13 @@ function CitizenHome({ tenantId, setHideBack }) {
     );
   }, [searchResult, userType]);
 
-  const userHasIncompleteRegistration = !individualId || isRejected;
-  const registrationIsDoneApprovalIsPending = individualId && isApprovalPending && !isRejected;
+  const userHasIncompleteRegistration = useMemo(() => !individualId || isRejected || isLitigantPartialRegistered, [
+    individualId,
+    isLitigantPartialRegistered,
+    isRejected,
+  ]);
+
+  const registrationIsDoneApprovalIsPending = individualId && isApprovalPending && !isRejected && !isLitigantPartialRegistered;
   useEffect(() => {
     setHideBack(userHasIncompleteRegistration || registrationIsDoneApprovalIsPending);
     return () => {
@@ -121,7 +132,7 @@ function CitizenHome({ tenantId, setHideBack }) {
         width: "100%",
       }}
     >
-      {individualId && !isApprovalPending && !isRejected && (
+      {individualId && !isApprovalPending && !isRejected && !isLitigantPartialRegistered && (
         // cardIcons.map((card, index) => {
         //   return (
         //     <CustomCard
