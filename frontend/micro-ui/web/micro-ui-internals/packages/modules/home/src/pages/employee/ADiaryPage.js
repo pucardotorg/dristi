@@ -128,6 +128,8 @@ const ADiaryPage = ({ path }) => {
       localStorage.removeItem("adiarypdf");
       localStorage.removeItem("adiaryStepper");
       localStorage.removeItem("selectedADiaryDate");
+    } else if (parseInt(stepper) === 2) {
+      localStorage.removeItem("fileStoreId");
     }
     setStepper(parseInt(stepper) - 1);
   };
@@ -233,7 +235,7 @@ const ADiaryPage = ({ path }) => {
       });
       setStepper(0);
       setIsSelectedDataSigned(true);
-      setADiarypdf(signedDocumentUploadID);
+      setADiarypdf(signedDocumentUploadID || localStorageID);
       localStorage.removeItem("fileStoreId");
       localStorage.removeItem("adiarypdf");
       localStorage.removeItem("adiaryStepper");
