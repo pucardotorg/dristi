@@ -1416,16 +1416,25 @@ function EFilingCases({ path }) {
     setShowConfirmOptionalModal(false);
   };
 
-  const createPendingTask = async ({ name, status, assignee, isCompleted = false, stateSla = null, isAssignedRole = false, assignedRole = [] }) => {
+  const createPendingTask = async ({
+    name,
+    status,
+    assignee,
+    assignees,
+    isCompleted = false,
+    stateSla = null,
+    isAssignedRole = false,
+    assignedRole = [],
+  }) => {
     const entityType = "case-default";
     const filingNumber = caseDetails?.filingNumber;
     await DRISTIService.customApiService(Urls.dristi.pendingTask, {
       pendingTask: {
         name,
         entityType,
-        referenceId: `MANUAL_${filingNumber}_${assignee || userInfo?.uuid}`,
+        referenceId: assignees ? `MANUAL_${filingNumber}` : `MANUAL_${filingNumber}_${assignee || userInfo?.uuid}`,
         status,
-        assignedTo: [{ uuid: assignee || userInfo?.uuid }],
+        assignedTo: assignees ? assignees : [{ uuid: assignee || userInfo?.uuid }],
         assignedRole: assignedRole,
         cnrNumber: caseDetails?.cnrNumber,
         filingNumber: filingNumber,

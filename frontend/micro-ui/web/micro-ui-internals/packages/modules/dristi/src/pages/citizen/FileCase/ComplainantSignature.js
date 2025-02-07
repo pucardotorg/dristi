@@ -330,14 +330,14 @@ const ComplainantSignature = ({ path }) => {
     [state]
   );
 
-  const closePendingTask = async ({ status, assignee }) => {
+  const closePendingTask = async ({ status, assignee, closeUploadDoc }) => {
     const entityType = "case-default";
     const filingNumber = caseDetails?.filingNumber;
     await DRISTIService.customApiService(Urls.dristi.pendingTask, {
       pendingTask: {
         entityType,
         status,
-        referenceId: `MANUAL_${filingNumber}_${assignee}`,
+        referenceId: closeUploadDoc ? `MANUAL_${filingNumber}` : `MANUAL_${filingNumber}_${assignee}`,
         cnrNumber: caseDetails?.cnrNumber,
         filingNumber: filingNumber,
         isCompleted: true,
@@ -609,7 +609,6 @@ const ComplainantSignature = ({ path }) => {
     setLoader(true);
 
     let calculationResponse = {};
-    const assignees = getAllAssignees(caseDetails);
 
     const caseDocList = updateSignedDocInCaseDoc();
 
@@ -638,6 +637,7 @@ const ComplainantSignature = ({ path }) => {
             await closePendingTask({
               status: state,
               assignee: userInfo?.uuid,
+              closeUploadDoc: true,
             });
           }
           if (isSelectedEsign) {

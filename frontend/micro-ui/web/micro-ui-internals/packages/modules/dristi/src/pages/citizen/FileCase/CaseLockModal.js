@@ -78,7 +78,27 @@ function CaseLockModal({
           return;
         }
         try {
-          await createPendingTask({ name: t("PENDING_RE_E_SIGN_FOR_CASE"), status: "PENDING_RE_E-SIGN" });
+          const promises = [
+            ...(Array.isArray(caseDetails?.litigants)
+              ? caseDetails?.litigants?.map(async (litigant) => {
+                  return createPendingTask({
+                    name: t("PENDING_RE_E_SIGN_FOR_CASE"),
+                    status: "PENDING_RE_E-SIGN",
+                    assignee: litigant?.additionalDetails?.uuid,
+                  });
+                })
+              : []),
+            ...(Array.isArray(caseDetails?.representatives)
+              ? caseDetails?.representatives?.map(async (advocate) => {
+                  return createPendingTask({
+                    name: t("PENDING_RE_E_SIGN_FOR_CASE"),
+                    status: "PENDING_RE_E-SIGN",
+                    assignee: advocate?.additionalDetails?.uuid,
+                  });
+                })
+              : []),
+          ];
+          await Promise.all(promises);
           history.push(`${path}/sign-complaint?filingNumber=${filingNumber}`);
         } catch (error) {
           console.error("An error occurred:", error);
@@ -124,6 +144,11 @@ function CaseLockModal({
 
   const handleCancelOnSubmit = async () => {
     setShowCaseLockingModal(false);
+    const assignees = Array.isArray(caseDetails?.representatives)
+      ? caseDetails?.representatives?.map((advocate) => ({
+          uuid: advocate?.additionalDetails?.uuid,
+        }))
+      : [];
     if (state === CaseWorkflowState.CASE_REASSIGNED) {
       if (isAdvocateFilingCase) {
         const result = await onSubmit("EDIT_CASE_ADVOCATE", true);
@@ -131,7 +156,11 @@ function CaseLockModal({
           return;
         }
         try {
-          await createPendingTask({ name: t("PENDING_RE_UPLOAD_SIGNATURE_FOR_CASE"), status: "PENDING_RE_SIGN" }); // check status
+          await createPendingTask({
+            name: t("PENDING_RE_UPLOAD_SIGNATURE_FOR_CASE"),
+            status: "PENDING_RE_SIGN",
+            assignees: assignees,
+          });
           history.push(`${path}/sign-complaint?filingNumber=${filingNumber}`);
         } catch (error) {
           console.error("An error occurred:", error);
@@ -145,7 +174,11 @@ function CaseLockModal({
           return;
         }
         try {
-          await createPendingTask({ name: t("PENDING_UPLOAD_SIGNATURE_FOR_CASE"), status: "PENDING_SIGN" }); // check status
+          await createPendingTask({
+            name: t("PENDING_UPLOAD_SIGNATURE_FOR_CASE"),
+            status: "PENDING_SIGN",
+            assignees: assignees,
+          });
           history.push(`${path}/sign-complaint?filingNumber=${filingNumber}`);
         } catch (error) {
           console.error("An error occurred:", error);
