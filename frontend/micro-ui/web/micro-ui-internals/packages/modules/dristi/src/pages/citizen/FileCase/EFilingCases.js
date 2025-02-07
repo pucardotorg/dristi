@@ -34,7 +34,6 @@ import { sideMenuConfig } from "./Config";
 import EditFieldsModal from "./EditFieldsModal";
 import axios from "axios";
 import {
-  advocateDetailsFileValidation,
   checkDuplicateMobileEmailValidation,
   checkIfscValidation,
   checkNameValidation,
@@ -45,6 +44,7 @@ import {
   debtLiabilityValidation,
   delayApplicationValidation,
   demandNoticeFileValidation,
+  getAdvocatesAndPipRemainingFields,
   getAllAssignees,
   getComplainantName,
   getRespondentName,
@@ -70,6 +70,7 @@ import CaseLockModal from "./CaseLockModal";
 import ConfirmCaseDetailsModal from "./ConfirmCaseDetailsModal";
 import { DocumentUploadError } from "../../../Utils/errorUtil";
 import ConfirmDcaSkipModal from "./ConfirmDcaSkipModal";
+import ErrorDataModal from "./ErrorDataModal";
 
 const OutlinedInfoIcon = () => (
   <svg width="19" height="19" viewBox="0 0 19 19" fill="none" xmlns="http://www.w3.org/2000/svg" style={{ position: "absolute", right: -22, top: 0 }}>
@@ -205,6 +206,7 @@ function EFilingCases({ path }) {
   const [showConfirmDcaSkipModal, setShowConfirmDcaSkipModal] = useState(false);
   const [shouldShowConfirmDcaModal, setShouldShowConfirmDcaModal] = useState(false);
   const [prevIsDcaSkipped, setPrevIsDcaSkipped] = useState("");
+  const [showErrorDataModal, setShowErrorDataModal] = useState({ page: "", showModal: false, errorData: [] });
 
   const [showConfirmCaseDetailsModal, setShowConfirmCaseDetailsModal] = useState(false);
 
@@ -1709,12 +1711,12 @@ function EFilingCases({ path }) {
     ) {
       return;
     }
-    if (
-      formdata
-        .filter((data) => data.isenabled)
-        .some((data) => advocateDetailsFileValidation({ formData: data?.data, selected, setShowErrorToast, setFormErrors: setFormErrors.current, t }))
-    ) {
-      return;
+    if (selected === "advocateDetails") {
+      const advocatesAndPipErrors = getAdvocatesAndPipRemainingFields(formdata, t);
+      if (advocatesAndPipErrors?.length > 0) {
+        setShowErrorDataModal({ page: "advocateDetails", show: true, errorData: advocatesAndPipErrors });
+        return;
+      }
     }
     if (
       formdata
@@ -2822,6 +2824,14 @@ function EFilingCases({ path }) {
       )}
       {showConfirmCaseDetailsModal && (
         <ConfirmCaseDetailsModal t={t} setShowConfirmCaseDetailsModal={setShowConfirmCaseDetailsModal}></ConfirmCaseDetailsModal>
+      )}
+      {showErrorDataModal?.page === selected && showErrorDataModal?.show === true && (
+        <ErrorDataModal
+          t={t}
+          setIsSubmitDisabled={setIsSubmitDisabled}
+          showErrorDataModal={showErrorDataModal}
+          setShowErrorDataModal={setShowErrorDataModal}
+        ></ErrorDataModal>
       )}
       {showConfirmDcaSkipModal && selected === "delayApplications" && (
         // This modal asks to confirm if the user wants to skip submitting Delay condonation Application.

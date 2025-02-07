@@ -703,25 +703,119 @@ export const chequeDetailFileValidation = ({ formData, selected, setShowErrorToa
   }
 };
 
-export const advocateDetailsFileValidation = ({ formData, selected, setShowErrorToast, setFormErrors, t }) => {
+export const getAdvocatesAndPipRemainingFields = (formdata, t) => {
+  const allErrorData = [];
+  for (let i = 0; i < formdata?.length; i++) {
+    const formData = formdata?.[i]?.data || {};
+    const { boxComplainant, isComplainantPip, multipleAdvocateNameDetails, vakalatnamaFileUpload, pipAffidavitFileUpload } =
+      formData?.multipleAdvocatesAndPip || {};
+
+    let errorObject = {
+      ADVOCATE_INFORMATION_MISSING: false,
+      VAKALATNAMA_DOCUMENT_MISSING: false,
+      AFFIDAVIT_DOCUMENT_MISSING: false,
+    };
+    if (boxComplainant?.individualId) {
+      let isAnAdvocateMissing = false;
+      let isVakalatnamaFileMissing = false;
+      let isPipAffidavitFileMissing = false;
+      if (isComplainantPip?.code === "NO") {
+        // IF complainant is not party in person, an advocate must be present
+        if (!multipleAdvocateNameDetails || (Array.isArray(multipleAdvocateNameDetails) && multipleAdvocateNameDetails?.length === 0)) {
+          isAnAdvocateMissing = true;
+        } else if (
+          multipleAdvocateNameDetails &&
+          Array.isArray(multipleAdvocateNameDetails) &&
+          multipleAdvocateNameDetails?.length > 0 &&
+          multipleAdvocateNameDetails?.some((adv) => !adv?.advocateBarRegNumberWithName?.advocateId)
+        ) {
+          isAnAdvocateMissing = true;
+        }
+        // IF complainant is not party in person, there must be a vakalathnama document uploaded.
+        if (!vakalatnamaFileUpload || vakalatnamaFileUpload?.document?.length === 0) {
+          isVakalatnamaFileMissing = true;
+        }
+      }
+      if (isComplainantPip?.code === "YES") {
+        // IF complainant is party in person, there must be a PIP affidavit document uploaded.
+        if (!pipAffidavitFileUpload || pipAffidavitFileUpload?.document?.length === 0) {
+          isPipAffidavitFileMissing = true;
+        }
+      }
+      errorObject.ADVOCATE_INFORMATION_MISSING = isAnAdvocateMissing;
+      errorObject.VAKALATNAMA_DOCUMENT_MISSING = isVakalatnamaFileMissing;
+      errorObject.AFFIDAVIT_DOCUMENT_MISSING = isPipAffidavitFileMissing;
+    }
+    let mandatoryLeft = false;
+    for (let key in errorObject) {
+      if (errorObject[key] === true) {
+        mandatoryLeft = true;
+      }
+    }
+
+    if (mandatoryLeft) {
+      const errorData = {
+        index: boxComplainant?.index,
+        complainant: boxComplainant?.firstName,
+        errorKeys: Object.keys(errorObject)
+          .filter((key) => errorObject[key])
+          .map((key) => t(key)),
+      };
+      allErrorData.push(errorData);
+    }
+  }
+  return allErrorData;
+};
+
+export const advocateDetailsFileValidation = ({ formData, selected, setShowErrorToast, setFormErrors, t, isSubmitDisabled }) => {
   if (selected === "advocateDetails") {
-    if (formData?.numberOfAdvocate < 0) {
-      setFormErrors("numberOfAdvocate", { message: t("NUMBER_OF_ADVOCATE_ERROR") });
-      setShowErrorToast(true);
-      return true;
+    const { boxComplainant, isComplainantPip, multipleAdvocateNameDetails, vakalatnamaFileUpload, pipAffidavitFileUpload } =
+      formData?.multipleAdvocatesAndPip || {};
+    let errorObject = {
+      advocateDetailsAbsent: false,
+      vakalatnamaFileUploadAbsent: false,
+      pipAffidavitFileUploadAbsent: false,
+    };
+    if (boxComplainant?.individualId) {
+      let isAnAdvocateMissing = false;
+      let isVakalatnamaFileMissing = false;
+      let isPipAffidavitFileMissing = false;
+      if (isComplainantPip?.code === "NO") {
+        // IF complainant is not party in person, an advocate must be present
+        if (!multipleAdvocateNameDetails || (Array.isArray(multipleAdvocateNameDetails) && multipleAdvocateNameDetails?.length === 0)) {
+          isAnAdvocateMissing = true;
+        } else if (
+          multipleAdvocateNameDetails &&
+          Array.isArray(multipleAdvocateNameDetails) &&
+          multipleAdvocateNameDetails?.length > 0 &&
+          multipleAdvocateNameDetails?.some((adv) => !adv?.advocateBarRegNumberWithName?.advocateId)
+        ) {
+          isAnAdvocateMissing = true;
+        }
+        // IF complainant is not party in person, there must be a vakalathnama document uploaded.
+        if (!vakalatnamaFileUpload || vakalatnamaFileUpload?.document?.length === 0) {
+          isVakalatnamaFileMissing = true;
+        }
+      }
+      if (isComplainantPip?.code === "YES") {
+        // IF complainant is party in person, there must be a PIP affidavit document uploaded.
+        if (!pipAffidavitFileUpload || pipAffidavitFileUpload?.document?.length === 0) {
+          isPipAffidavitFileMissing = true;
+        }
+      }
+      errorObject = {
+        advocateDetailsAbsent: isAnAdvocateMissing,
+        vakalatnamaFileUploadAbsent: isVakalatnamaFileMissing,
+        pipAffidavitFileUploadAbsent: isPipAffidavitFileMissing,
+      };
     }
-    if (
-      formData?.isAdvocateRepresenting?.code === "YES" &&
-      ["vakalatnamaFileUpload"].some((data) => !Object.keys(formData?.[data]?.document || {}).length)
-    ) {
-      setFormErrors("vakalatnamaFileUpload", { type: "required" });
-      setShowErrorToast(true);
-      return true;
-    } else {
-      return false;
+    let mandatoryLeft = false;
+    for (let key in errorObject) {
+      if (errorObject[key] === true) {
+        mandatoryLeft = true;
+      }
     }
-  } else {
-    return false;
+    // setError("multipleAdvocatesAndPip", errorObject);
   }
 };
 
