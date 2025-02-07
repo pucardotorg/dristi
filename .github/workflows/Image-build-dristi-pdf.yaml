@@ -35,7 +35,7 @@ jobs:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
         run: |
           npx sonar-scanner -Dsonar.projectKey=solutions_dristi_pdf -Dsonar.organization=solutions -Dsonar.host.url=https://sonarcloud.io -Dsonar.token=${{ secrets.SONAR_TOKEN }} -Dsonar.sources=src -Dsonar.exclusions="node_modules/**,dist/**"
-        orking-directory: backend/dristi-pdf
+        working-directory: backend/dristi-pdf
       # Login to Azure Container Registry
       - name: Login to Azure Container Registry
         run: docker login -u pucarsolutionsdev -p ${{ secrets.ACR_PASSWORD }} pucarsolutionsdev.azurecr.io
