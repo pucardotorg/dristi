@@ -46,7 +46,7 @@ function PublishedOrderModal({
 
     //TODO : need to ask
     const isAuthority = order?.additionalDetails?.formdata?.partyId;
-    const submissionParty = order?.additionalDetails?.formdata?.submissionParty?.map((item) => item.uuid) || [];
+    const submissionParty = order?.additionalDetails?.formdata?.submissionParty?.map((item) => item.uuid)?.flat() || [];
     const allSubmissionParty = [...submissionParty, isAuthority].filter(Boolean);
     return (
       allSubmissionParty?.includes(userInfo?.uuid) &&
