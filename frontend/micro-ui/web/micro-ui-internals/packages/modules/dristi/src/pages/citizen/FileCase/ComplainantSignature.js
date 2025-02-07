@@ -442,6 +442,19 @@ const ComplainantSignature = ({ path }) => {
     return matchingRepresentatives;
   }
 
+  const isOtherAdvocateSigned = useMemo(() => {
+    // Find the litigant(s) that have a representative with current uuid
+    const litigantsWithCurrentAdv = litigants?.filter((litigant) =>
+      litigant?.representatives?.some((rep) => rep?.additionalDetails?.uuid === userInfo?.uuid)
+    );
+
+    // If there are no litigants with current uuid, return false
+    if (!litigantsWithCurrentAdv?.length) return false;
+
+    // Check if every such litigant has at least one signed representative
+    return litigantsWithCurrentAdv?.every((litigant) => litigant?.representatives?.some((rep) => rep?.hasSigned));
+  }, [litigants, userInfo?.uuid]);
+
   const handleCasePdf = () => {
     downloadPdf(tenantId, signatureDocumentId ? signatureDocumentId : DocumentFileStoreId);
   };
@@ -740,7 +753,7 @@ const ComplainantSignature = ({ path }) => {
 
   const isRightPannelEnable = () => {
     if (isAdvocateFilingCase) {
-      return !(isCurrentAdvocateSigned || isEsignSuccess || uploadDoc);
+      return !(isCurrentAdvocateSigned || isOtherAdvocateSigned || isEsignSuccess || uploadDoc);
     }
     return !(isCurrentLitigantSigned || isEsignSuccess);
   };
@@ -810,8 +823,8 @@ const ComplainantSignature = ({ path }) => {
                   litigant?.representatives?.length > 0 && (
                     <div style={{ ...styles.advocateDetails, marginTop: "5px", fontSize: "15px" }}>
                       {`${t("ADVOCATE_FOR")} ${litigant?.additionalDetails?.fullName}`}
-                      {litigant.representatives.some((rep) => rep?.hasSigned) ||
-                      (litigant.representatives.some((rep) => rep?.additionalDetails?.uuid === userInfo?.uuid) && (isEsignSuccess || uploadDoc)) ? (
+                      {litigant?.representatives?.some((rep) => rep?.hasSigned) ||
+                      (litigant?.representatives?.some((rep) => rep?.additionalDetails?.uuid === userInfo?.uuid) && (isEsignSuccess || uploadDoc)) ? (
                         <span style={styles.signedLabel}>{t("SIGNED")}</span>
                       ) : (
                         <span style={styles.unSignedLabel}>{t("PENDING")}</span>
