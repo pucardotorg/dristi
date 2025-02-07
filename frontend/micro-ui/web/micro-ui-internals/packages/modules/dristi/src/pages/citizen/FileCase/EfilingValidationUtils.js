@@ -2472,13 +2472,39 @@ export const updateCaseDetails = async ({
     // We will check that if a representative is already present in representatives array in case search api data,
     // we will just update the new documents and representinng data to that object.
     const updatedRepresentatives = representatives.map((rep) => {
-      const existingRep = caseRepresentatives.find((caseRep) => caseRep.advocateId === rep.advocateId);
-      if (existingRep) {
+      const existingRepresentative = caseRepresentatives.find((caseRep) => caseRep.advocateId === rep.advocateId);
+      if (existingRepresentative) {
+        const existingRep = structuredClone(existingRepresentative);
         if (!isMatch(existingRep.documents, rep.documents)) {
           existingRep.documents = rep.documents;
         }
         if (!isMatch(existingRep.representing, rep.representing)) {
-          existingRep.representing = rep.representing;
+          const existingRepresenting = structuredClone(existingRep.representing || []);
+          const newRepresenting = structuredClone(rep.representing || []);
+          const updateRepresenting = [];
+          //When the representing array in updated for a particular representative in formdata,
+          //we check for the existing representing list from case data and if a representing object already exists,
+          //then we just take that object (because it contains id for that representing) and put it in place of newer one.
+          newRepresenting.forEach((obj) => {
+            const objFound = existingRepresenting.find((o) => o.individualId === obj.individualId);
+            if (objFound) {
+              updateRepresenting.push(objFound);
+            }
+            if (!objFound) {
+              updateRepresenting.push(obj);
+            }
+          });
+
+          //Also if there was a representing array in existing representing list from case data,
+          // but it is not present now in new formdata's representing list,
+          //then we add the existing object with isActive as false.
+          existingRepresenting.forEach((representingObj) => {
+            const repObjectFound = updateRepresenting.find((o) => o.individualId === representingObj.individualId);
+            if (!repObjectFound) {
+              updateRepresenting.push({ ...representingObj, isActive: false });
+            }
+          });
+          existingRep.representing = updateRepresenting;
         }
         if (!isMatch(existingRep.additionalDetails, rep.additionalDetails)) {
           existingRep.additionalDetails = rep.additionalDetails;
@@ -2487,7 +2513,6 @@ export const updateCaseDetails = async ({
       }
       return rep;
     });
-
     // If a representative object was present previously and now that representative is not present now,
     // the same object should again be copied with isActive as false and added in the updatedRepresentatives.
     caseRepresentatives.forEach((caseRep) => {
