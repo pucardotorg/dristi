@@ -144,30 +144,40 @@ async function applyDocketToDocument(
     });
   }
 
-  const complainant =
-    courtCase?.additionalDetails?.complainantDetails?.formdata?.[0]?.data;
-  const respondent =
-    courtCase?.additionalDetails?.respondentDetails?.formdata?.[0]?.data;
-  const docketComplainantName = [
-    complainant?.firstName,
-    complainant?.middleName,
-    complainant?.lastName,
-  ]
+  // handling with multiple name and names are seperated by comma
+  const complainants =
+    courtCase?.additionalDetails?.complainantDetails?.formdata?.map(
+      (item) => item?.data
+    ) || [];
+
+  const respondents =
+    courtCase?.additionalDetails?.respondentDetails?.formdata?.map(
+      (item) => item?.data
+    ) || [];
+
+  const docketComplainantName = complainants
+    .map(({ firstName, middleName, lastName }) =>
+      [firstName, middleName, lastName].filter(Boolean).join(" ")
+    )
     .filter(Boolean)
-    .join(" ");
+    .join(", ");
+
+  const docketAccusedName = respondents
+    .map(({ respondentFirstName, respondentMiddleName, respondentLastName }) =>
+      [respondentFirstName, respondentMiddleName, respondentLastName]
+        .filter(Boolean)
+        .join(" ")
+    )
+    .filter(Boolean)
+    .join(", ");
+
   const data = {
     Data: [
       {
         docketDateOfSubmission: docketDateOfSubmission,
         docketCourtName: config.constants.mdmsCourtRoom.orderHeading,
         docketComplainantName,
-        docketAccusedName: [
-          respondent.respondentFirstName,
-          respondent.respondentMiddleName,
-          respondent.respondentLastName,
-        ]
-          .filter(Boolean)
-          .join(" "),
+        docketAccusedName,
         docketApplicationType,
         docketNameOfAdvocate,
         docketCounselFor,
