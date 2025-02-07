@@ -186,6 +186,10 @@ const SubmissionsCreate = ({ path }) => {
     Boolean(applicationNumber + filingNumber)
   );
 
+  const fullName = useMemo(() => {
+    return caseDetails?.litigants?.find((litigant) => litigant?.additionalDetails?.uuid === userInfo?.uuid)?.additionalDetails?.fullName || "";
+  }, [caseDetails, userInfo?.uuid]);
+
   const orderRefNumber = useMemo(() => applicationData?.applicationList?.[0]?.additionalDetails?.formdata?.refOrderId, [applicationData]);
   const referenceId = useMemo(() => applicationData?.applicationList?.[0]?.referenceId, [applicationData]);
 
@@ -1156,7 +1160,7 @@ const SubmissionsCreate = ({ path }) => {
           applicationType={applicationDetails?.applicationType}
           application={applicationDetails}
           submissionDate={applicationDetails?.createdDate}
-          sender={caseDetails?.additionalDetails?.payerName}
+          sender={fullName}
           setShowReviewModal={setShowReviewModal}
           setShowsignatureModal={setShowsignatureModal}
           handleBack={handleBack}
