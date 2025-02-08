@@ -44,6 +44,29 @@ function PendingTaskAccordion({
     }
   };
 
+  const formatDate = (dateInMS) => {
+    try {
+      const milliseconds = parseInt(dateInMS?.split("-")[1]);
+      const date = new Date(milliseconds);
+      const options = { month: "short", day: "numeric" };
+      return date.toLocaleDateString("en-GB", options);
+    } catch (error) {
+      return "";
+    }
+  };
+
+  const getNextFormatDate = (dateInMS) => {
+    try {
+      const milliseconds = parseInt(dateInMS?.split("-")[1]);
+      const date = new Date(milliseconds);
+      const nextDate = new Date(date.getTime() + 24 * 60 * 60 * 1000);
+      const options = { year: "numeric", month: "short", day: "numeric" };
+      return nextDate.toLocaleDateString("en-GB", options);
+    } catch (error) {
+      return "";
+    }
+  };
+
   return (
     <div key={accordionKey} className="accordion-wrapper" style={{ border: "1px solid #E8E8E8", padding: 16, borderRadius: 4 }}>
       <div
@@ -111,15 +134,26 @@ function PendingTaskAccordion({
               }}
             >
               <input type="checkbox" value={check} />
-              <div className="task-details" style={{ display: "flex", flexDirection: "column", gap: 8, marginLeft: 8 }}>
-                <span className="task-title">
-                  {t(item?.actionName)} : {item?.caseTitle}
-                </span>
-                <span className="task-info">
-                  {item?.caseType} - {item?.filingNumber} -{" "}
-                  <span style={{ ...(item?.dueDateColor && { color: item?.dueDateColor }) }}>{item?.due}</span>
-                </span>
-              </div>
+              {item?.actionName === "Sign A Diary" && item?.status === "PENDING_SIGN" ? (
+                <div className="task-details" style={{ display: "flex", flexDirection: "column", gap: 8, marginLeft: 8 }}>
+                  <span className="task-title">
+                    {t("SIGN_A_DIARY")} {formatDate(item?.params?.referenceId)}
+                  </span>
+                  <span className="task-info">
+                    {t("ADIARY_DUE_ON")} {getNextFormatDate(item?.params?.referenceId)}{" "}
+                  </span>
+                </div>
+              ) : (
+                <div className="task-details" style={{ display: "flex", flexDirection: "column", gap: 8, marginLeft: 8 }}>
+                  <span className="task-title">
+                    {t(item?.actionName)} : {item?.caseTitle}
+                  </span>
+                  <span className="task-info">
+                    {item?.caseType} - {item?.filingNumber} -{" "}
+                    <span style={{ ...(item?.dueDateColor && { color: item?.dueDateColor }) }}>{item?.due}</span>
+                  </span>
+                </div>
+              )}
             </div>
           ))}
         </div>
