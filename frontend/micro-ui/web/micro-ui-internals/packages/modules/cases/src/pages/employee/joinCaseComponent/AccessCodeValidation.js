@@ -46,7 +46,7 @@ const AccessCodeValidation = ({ caseDetails, validationCode, setValidationCode, 
         text={t("SIX_DIGIT_CODE_INFO")}
         textStyle={{}}
         className={`custom-info-card`}
-        style={{ width: "712px" }}
+        style={{ width: "100%", maxWidth: "960px" }}
       />
       <LabelFieldPair className="case-label-field-pair">
         <div className="join-case-tooltip-wrapper">

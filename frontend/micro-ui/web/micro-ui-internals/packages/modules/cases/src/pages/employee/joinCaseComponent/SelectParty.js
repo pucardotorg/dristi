@@ -15,9 +15,6 @@ const SelectParty = ({
   party,
   setParty,
   selectedParty,
-  searchLitigantInRepresentives,
-  advocateId,
-  searchAdvocateInRepresentives,
   partyInPerson,
   setPartyInPerson,
   isLitigantJoined,
@@ -125,7 +122,9 @@ const SelectParty = ({
         />
       </LabelFieldPair>
       <LabelFieldPair className="case-label-field-pair">
-        <CardLabel className="case-input-label">{`${t("WHICH_PARTY_ARE_YOU")}`}</CardLabel>
+        <CardLabel className="case-input-label">{`${t(
+          selectPartyData?.userType?.value === "Litigant" ? "ARE_YOU_COMPLAINANT_OR_ACCUSED" : "WHICH_PARTY_ARE_YOU"
+        )}`}</CardLabel>
         <RadioButtons
           selectedOption={selectPartyData?.partyInvolve}
           onSelect={(value) => {
@@ -205,9 +204,6 @@ const SelectParty = ({
                   setParty(value?.map((val) => val[1]));
                 }}
                 defaultUnit={"Others"}
-
-                // placeholder={"lkjdlfjsdlkfj + 2 Others"}
-                // selected={[]}
               />
             )
           )}
@@ -264,51 +260,19 @@ const SelectParty = ({
         />
       )}
 
-      {selectedParty?.label &&
-        (() => {
-          const { isFound } = searchLitigantInRepresentives(caseDetails);
-          const { isFound: advIsFound, partyType } = searchAdvocateInRepresentives(advocateId);
-          if (
-            (isFound && advIsFound && !selectedParty?.partyType?.includes(partyType)) ||
-            (!isFound && advIsFound && !selectedParty?.partyType?.includes(partyType))
-          )
-            return true;
-          else return false;
-        })() &&
-        selectPartyData?.userType?.value === "Advocate" && (
-          <React.Fragment>
-            <hr className="horizontal-line" />
-            <InfoCard
-              variant={"warning"}
-              label={t("WARNING")}
-              additionalElements={[
-                <p>
-                  {t("ALREADY_REPRESENTING")} {selectedParty?.isComplainant ? "respondent" : "complainant"}
-                  {t("CANT_REPRESENT_BOTH_PARTY")}
-                </p>,
-              ]}
-              inline
-              textStyle={{}}
-              className={`custom-info-card warning`}
-            />
-          </React.Fragment>
-        )}
-      {selectedParty?.label && selectPartyData?.userType?.value === "Litigant" && selectedParty?.individualId && (
-        <React.Fragment>
-          <hr className="horizontal-line" />
-          <InfoCard
-            variant={"warning"}
-            label={t("WARNING")}
-            additionalElements={[
-              <p>
-                {t("ABOVE_SELECTED_PARTY")} <span style={{ fontWeight: "bold" }}>{`${selectedParty?.label}`}</span> {t("ALREADY_JOINED_CASE")}
-              </p>,
-            ]}
-            inline
-            textStyle={{}}
-            className={`custom-info-card warning`}
-          />
-        </React.Fragment>
+      {selectPartyData?.userType?.value === "Litigant" && partyInPerson?.value === "NO" && party?.individualId && (
+        <InfoCard
+          variant={"warning"}
+          label={t("WARNING")}
+          additionalElements={[
+            <p>
+              {t("ABOVE_SELECTED_PARTY")} <span style={{ fontWeight: "bold" }}>{`${party?.label}`}</span> {t("ALREADY_JOINED_CASE")}
+            </p>,
+          ]}
+          inline
+          textStyle={{}}
+          className={`custom-info-card warning`}
+        />
       )}
     </div>
   );

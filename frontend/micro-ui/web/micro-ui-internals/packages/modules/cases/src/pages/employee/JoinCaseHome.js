@@ -118,6 +118,12 @@ const JoinCaseHome = ({ refreshInbox, setShowSubmitResponseModal, setResponsePen
     isReplaceAdvocate: { label: "", value: "" },
     affidavit: {},
   });
+  const [successScreenData, setSuccessScreenData] = useState({
+    complainantList: [],
+    complainantAdvocateList: [],
+    respondentList: [],
+    respondentAdvocateList: [],
+  });
 
   const [party, setParty] = useState({});
   const [validationCode, setValidationCode] = useState("");
@@ -253,15 +259,16 @@ const JoinCaseHome = ({ refreshInbox, setShowSubmitResponseModal, setResponsePen
   }, [individualId, nextHearing]);
 
   const searchLitigantInRepresentives = useCallback((representatives, individualId) => {
-    const representative = representatives?.find((data) =>
+    const representativesList = representatives?.filter((data) =>
       data?.representing?.find((rep) => rep?.individualId === individualId && rep?.isActive === true)
     );
     let representing;
-    if (representative) representing = representative?.representing?.find((rep) => rep?.individualId === individualId && rep?.isActive === true);
+    if (representativesList?.length > 0)
+      representing = representativesList?.[0]?.representing?.find((rep) => rep?.individualId === individualId && rep?.isActive === true);
 
-    if (representative && representing) {
-      return { isFound: true, representative: representative, representing: representing };
-    } else return { isFound: false, representative: undefined, representing: undefined };
+    if (representativesList && representing) {
+      return { isFound: true, representatives: representativesList, representing: representing };
+    } else return { isFound: false, representatives: undefined, representing: undefined };
   }, []);
 
   const allAdvocates = useMemo(() => getAdvocates(caseDetails), [caseDetails]);
@@ -324,8 +331,8 @@ const JoinCaseHome = ({ refreshInbox, setShowSubmitResponseModal, setResponsePen
         selectPartyData?.partyInvolve?.value &&
         party &&
         partyInPerson?.value &&
-        ((partyInPerson?.value === "YES" && selectPartyData?.affidavit?.affidavitData) || partyInPerson?.value === "NO") &&
-        !Boolean(party?.individualId)
+        ((partyInPerson?.value === "YES" && selectPartyData?.affidavit?.affidavitData) ||
+          (partyInPerson?.value === "NO" && !Boolean(party?.individualId)))
       ) {
         setIsDisabled(false);
       } else if (
@@ -526,8 +533,9 @@ const JoinCaseHome = ({ refreshInbox, setShowSubmitResponseModal, setResponsePen
         try {
           const response = await getUserUUID(data?.individualId);
 
-          const { representative } = searchLitigantInRepresentives(caseDetails?.representatives, data?.individualId);
-          if (Boolean(representative) && Boolean(advocateData) && representative?.advocateId === advocateData?.id) {
+          const { representatives } = searchLitigantInRepresentives(caseDetails?.representatives, data?.individualId);
+          const isAdvocateRepresenting = representatives?.find((representative) => representative?.advocateId === advocateData?.id);
+          if (isAdvocateRepresenting) {
             setIsAdvocateJoined(true);
             setSelectPartyData((selectPartyData) => ({
               ...selectPartyData,
@@ -560,13 +568,17 @@ const JoinCaseHome = ({ refreshInbox, setShowSubmitResponseModal, setResponsePen
                 userUuid: response?.Individual?.[0]?.userUuid,
               },
             },
-            isDisabled: Boolean(representative) && Boolean(advocateData) && representative?.advocateId === advocateData?.id,
+            isDisabled: isAdvocateRepresenting && representatives?.length === 1,
           };
         } catch (error) {
           console.error(error);
         }
       })
     );
+    setSuccessScreenData((successScreenData) => ({
+      ...successScreenData,
+      complainantList: complainantList?.map((complainant) => complainant?.fullName),
+    }));
     setComplainantList(complainantList);
   };
 
@@ -582,8 +594,9 @@ const JoinCaseHome = ({ refreshInbox, setShowSubmitResponseModal, setResponsePen
 
           const individualId = data?.data?.respondentVerification?.individualDetails?.individualId;
 
-          const { representative } = searchLitigantInRepresentives(caseDetails?.representatives, individualId);
-          if (Boolean(representative) && Boolean(advocateData) && representative?.advocateId === advocateData?.id) {
+          const { representatives } = searchLitigantInRepresentives(caseDetails?.representatives, individualId);
+          const isAdvocateRepresenting = representatives?.find((representative) => representative?.advocateId === advocateData?.id);
+          if (isAdvocateRepresenting) {
             setIsAdvocateJoined(true);
             setSelectPartyData((selectPartyData) => ({
               ...selectPartyData,
@@ -628,13 +641,17 @@ const JoinCaseHome = ({ refreshInbox, setShowSubmitResponseModal, setResponsePen
                 },
               },
             }),
-            isDisabled: Boolean(representative) && Boolean(advocateData) && representative?.advocateId === advocateData?.id,
+            isDisabled: isAdvocateRepresenting && representatives?.length === 1,
           };
         } catch (error) {
           console.error(error);
         }
       })
     );
+    setSuccessScreenData((successScreenData) => ({
+      ...successScreenData,
+      respondentList: respondentList?.map((respondent) => respondent?.fullName),
+    }));
     setRespondentList(respondentList?.map((data) => data));
   };
 
@@ -662,6 +679,15 @@ const JoinCaseHome = ({ refreshInbox, setShowSubmitResponseModal, setResponsePen
   useEffect(() => {
     if (caseDetails?.caseCategory && selectPartyData?.userType?.value) {
       getNextHearingFromCaseId(caseDetails?.filingNumber);
+      setSuccessScreenData((successScreenData) => ({
+        ...successScreenData,
+        complainantAdvocateList: caseDetails?.representatives
+          ?.filter((represent) => represent?.representing?.[0]?.partyType?.includes("complainant"))
+          ?.map((represent) => represent?.additionalDetails?.advocateName),
+        respondentAdvocateList: caseDetails?.representatives
+          ?.filter((represent) => represent?.representing?.[0]?.partyType?.includes("respondent"))
+          ?.map((represent) => represent?.additionalDetails?.advocateName),
+      }));
       getComplainantList(
         caseDetails?.litigants
           ?.filter((litigant) => litigant?.partyType?.includes("complainant"))
@@ -693,8 +719,8 @@ const JoinCaseHome = ({ refreshInbox, setShowSubmitResponseModal, setResponsePen
   ]);
 
   useEffect(() => {
-    if (caseDetails?.cnrNumber && individualId && selectPartyData?.userType && selectPartyData?.userType?.value === "Litigant") {
-      const litigant = caseDetails?.litigants?.find((item) => item.individualId === individualId);
+    if (caseDetails?.cnrNumber && individual && selectPartyData?.userType && selectPartyData?.userType?.value === "Litigant") {
+      const litigant = caseDetails?.litigants?.find((item) => item.individualId === individual?.individualId);
       if (litigant !== undefined) {
         setIsLitigantJoined(true);
         setSelectPartyData((selectPartyData) => ({
@@ -704,17 +730,19 @@ const JoinCaseHome = ({ refreshInbox, setShowSubmitResponseModal, setResponsePen
             value: litigant?.partyType?.includes("respondent") ? "RESPONDENTS" : "COMPLAINANTS",
           },
         }));
+        const { givenName, otherNames, familyName } = individual?.name;
+        const fullName = getFullName(" ", givenName, otherNames, familyName);
         setParty({
-          label: `${userInfo?.name} ${t(litigant?.partyType?.includes("respondent") ? "RESPONDENT_BRACK" : "COMPLAINANT_BRACK")}`,
-          fullName: userInfo?.name,
+          label: `${fullName} ${t(litigant?.partyType?.includes("respondent") ? "RESPONDENT_BRACK" : "COMPLAINANT_BRACK")}`,
+          fullName: fullName,
           partyType: litigant?.partyType,
           isComplainant: !litigant?.partyType?.includes("respondent"),
-          individualId: individualId?.individualId,
+          individualId: individual?.individualId,
           uuid: userInfo?.uuid,
         });
       }
     }
-  }, [caseDetails, individualId, t, userInfo?.name, userInfo?.uuid, selectPartyData?.userType]);
+  }, [caseDetails, t, userInfo.name, userInfo?.uuid, selectPartyData?.userType, individual]);
 
   const handleMakePayment = async () => {
     try {
@@ -1473,7 +1501,7 @@ const JoinCaseHome = ({ refreshInbox, setShowSubmitResponseModal, setResponsePen
     } else if (step === 7 && validationCode.length === 6) {
       setIsDisabled(true);
       if (selectPartyData?.userType?.value === "Advocate") {
-        const { representative } = searchLitigantInRepresentives();
+        const representative = {};
         if (representative !== undefined) {
           const nocDocument = await Promise.all(
             replaceAdvocateDocuments?.nocFileUpload?.document?.map(async (document) => {
@@ -2069,6 +2097,7 @@ const JoinCaseHome = ({ refreshInbox, setShowSubmitResponseModal, setResponsePen
           setCaseDetails={setCaseDetails}
           complainantList={complainantList}
           respondentList={respondentList}
+          successScreenData={successScreenData}
         />
       ),
     },
@@ -2144,6 +2173,7 @@ const JoinCaseHome = ({ refreshInbox, setShowSubmitResponseModal, setResponsePen
           setShow={setShow}
           setShowSubmitResponseModal={setShowSubmitResponseModal}
           setShowConfirmSummonModal={setShowConfirmSummonModal}
+          successScreenData={successScreenData}
         />
       ),
     },
