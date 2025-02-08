@@ -324,7 +324,8 @@ const JoinCaseHome = ({ refreshInbox, setShowSubmitResponseModal, setResponsePen
         selectPartyData?.partyInvolve?.value &&
         party &&
         partyInPerson?.value &&
-        ((partyInPerson?.value === "YES" && selectPartyData?.affidavit?.affidavitData) || partyInPerson?.value === "NO")
+        ((partyInPerson?.value === "YES" && selectPartyData?.affidavit?.affidavitData) || partyInPerson?.value === "NO") &&
+        !Boolean(party?.individualId)
       ) {
         setIsDisabled(false);
       } else if (
@@ -340,6 +341,10 @@ const JoinCaseHome = ({ refreshInbox, setShowSubmitResponseModal, setResponsePen
       } else {
         setIsDisabled(true);
       }
+    }
+
+    if (step !== 5) {
+      setSuccess(false);
     }
   }, [
     step,
@@ -440,13 +445,14 @@ const JoinCaseHome = ({ refreshInbox, setShowSubmitResponseModal, setResponsePen
   ];
 
   const closeModal = () => {
-    // setCaseNumber("");
-    setCaseDetails({});
     setSelectPartyData({ userType: {} });
+    setIsDisabled(false);
+    setCaseNumber("");
+    setValidationCode("");
+    setCaseDetails({});
     setSelectedParty({});
     setRoleOfNewAdvocate("");
     setBarRegNumber("");
-    // setValidationCode("");
     setErrors({});
     setStep(0);
     setShow(false);
@@ -521,7 +527,7 @@ const JoinCaseHome = ({ refreshInbox, setShowSubmitResponseModal, setResponsePen
           const response = await getUserUUID(data?.individualId);
 
           const { representative } = searchLitigantInRepresentives(caseDetails?.representatives, data?.individualId);
-          if (representative?.advocateId === advocateData?.id) {
+          if (Boolean(representative) && Boolean(advocateData) && representative?.advocateId === advocateData?.id) {
             setIsAdvocateJoined(true);
             setSelectPartyData((selectPartyData) => ({
               ...selectPartyData,
@@ -554,7 +560,7 @@ const JoinCaseHome = ({ refreshInbox, setShowSubmitResponseModal, setResponsePen
                 userUuid: response?.Individual?.[0]?.userUuid,
               },
             },
-            isDisabled: representative?.advocateId === advocateData?.id,
+            isDisabled: Boolean(representative) && Boolean(advocateData) && representative?.advocateId === advocateData?.id,
           };
         } catch (error) {
           console.error(error);
@@ -577,7 +583,7 @@ const JoinCaseHome = ({ refreshInbox, setShowSubmitResponseModal, setResponsePen
           const individualId = data?.data?.respondentVerification?.individualDetails?.individualId;
 
           const { representative } = searchLitigantInRepresentives(caseDetails?.representatives, individualId);
-          if (representative?.advocateId === advocateData?.id) {
+          if (Boolean(representative) && Boolean(advocateData) && representative?.advocateId === advocateData?.id) {
             setIsAdvocateJoined(true);
             setSelectPartyData((selectPartyData) => ({
               ...selectPartyData,
@@ -622,7 +628,7 @@ const JoinCaseHome = ({ refreshInbox, setShowSubmitResponseModal, setResponsePen
                 },
               },
             }),
-            isDisabled: representative?.advocateId === advocateData?.id,
+            isDisabled: Boolean(representative) && Boolean(advocateData) && representative?.advocateId === advocateData?.id,
           };
         } catch (error) {
           console.error(error);
@@ -1097,7 +1103,7 @@ const JoinCaseHome = ({ refreshInbox, setShowSubmitResponseModal, setResponsePen
           } catch (error) {
             console.error("error :>> ", error);
           }
-        } else if (!isLitigantJoined) {
+        } else if (!isLitigantJoined && !Boolean(party?.individualId)) {
           setMessageHeader(t("You successfully joined the case"));
           const litigantJoinPyaload = {
             additionalDetails: {
@@ -1151,7 +1157,7 @@ const JoinCaseHome = ({ refreshInbox, setShowSubmitResponseModal, setResponsePen
                 tenantId: tenantId,
                 individualId: individualId,
                 partyCategory: "INDIVIDUAL",
-                partyType: selectedParty?.partyType,
+                partyType: party?.partyType,
               },
             ],
           };
@@ -1956,41 +1962,42 @@ const JoinCaseHome = ({ refreshInbox, setShowSubmitResponseModal, setResponsePen
     caseDetails?.litigants,
     caseDetails?.filingNumber,
     caseDetails?.representatives,
-    caseDetails?.id,
     caseDetails?.additionalDetails,
+    caseDetails?.id,
     caseDetails?.status,
     selectPartyData?.userType,
+    selectPartyData?.partyInvolve?.value,
+    selectPartyData?.isReplaceAdvocate?.value,
+    selectPartyData?.affidavit?.affidavitData,
     individualId,
     caseNumber,
     isVerified,
     tenantId,
     errors,
-    selectPartyData?.partyInvolve?.value,
     party,
     partyInPerson?.value,
-    selectPartyData?.isReplaceAdvocate?.value,
     searchLitigantInRepresentives,
     isLitigantJoined,
     t,
     name,
     userInfo?.uuid,
-    selectedParty?.partyType,
-    selectedParty?.index,
-    selectedParty?.fullName,
-    selectedParty?.individualId,
-    selectedParty?.isComplainant,
-    selectedParty?.isRespondent,
-    selectedParty?.uuid,
     individualAddress,
     individualDoc,
     respondentList,
-    todayDate,
-    selectPartyData?.affidavit?.affidavitData,
+    selectedParty?.index,
+    selectedParty?.isRespondent,
+    selectedParty?.fullName,
+    selectedParty?.individualId,
+    selectedParty?.isComplainant,
+    selectedParty?.uuid,
+    selectedParty?.partyType,
+    individual?.name,
+    individual?.userUuid,
+    advocateId,
     handleMakePayment,
     roleOfNewAdvocate?.value,
     replaceAdvocateDocuments?.nocFileUpload?.document,
     replaceAdvocateDocuments?.advocateCourtOrder?.document,
-    advocateId,
     userUUID,
     advocateDetailForm?.additionalDetails?.username,
     advocateDetailForm?.id,
@@ -2199,6 +2206,7 @@ const JoinCaseHome = ({ refreshInbox, setShowSubmitResponseModal, setResponsePen
           customActionStyle={{ background: "#fff", boxShadow: "none", border: "1px solid #007e7e" }}
           customActionTextStyle={{ color: "#007e7e" }}
           hideModalActionbar={step === 3 ? true : false}
+          popupModuleMianClassName={success ? "success-main" : ""}
         >
           {step >= 0 && modalItem[step]?.modalMain}
         </Modal>

@@ -75,7 +75,12 @@ const NameListWithModal = ({ t, data, type }) => {
         </React.Fragment>
       )}
       {open && (
-        <Modal headerBarEnd={<CloseBtn onClick={closeModal} />} formId="modal-action" headerBarMain={<Heading label={t(type)} />}>
+        <Modal
+          headerBarEnd={<CloseBtn onClick={closeModal} />}
+          formId="modal-action"
+          headerBarMainStyle={{ display: "flex" }}
+          headerBarMain={<Heading label={t(type)} />}
+        >
           <ul style={{ listStyle: "unset" }}>
             {data?.map((fullName) => (
               <li style={styles}>{fullName}</li>

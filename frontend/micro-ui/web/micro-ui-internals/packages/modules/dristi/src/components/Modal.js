@@ -40,6 +40,7 @@ const Modal = ({
   cancelTextClassName,
   titleSaveButton,
   hideModalActionbar = false,
+  popupModuleMianClassName,
 }) => {
   /**
    * TODO: It needs to be done from the desgin changes
@@ -55,7 +56,10 @@ const Modal = ({
     <PopUp popUpStyleMain={popUpStyleMain}>
       <div className={`popup-module ${className}`} style={popupStyles}>
         {headerBarMain && <HeaderBar main={headerBarMain} end={headerBarEnd} style={headerBarMainStyle ? headerBarMainStyle : {}} />}
-        <div className="popup-module-main" style={popupModuleMianStyles ? popupModuleMianStyles : {}}>
+        <div
+          className={`popup-module-main ${popupModuleMianClassName ? popupModuleMianClassName : ""}`}
+          style={popupModuleMianStyles ? popupModuleMianStyles : {}}
+        >
           {children}
           {!hideModalActionbar && (
             <div
