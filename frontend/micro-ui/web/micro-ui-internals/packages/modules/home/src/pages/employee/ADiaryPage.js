@@ -351,42 +351,51 @@ const ADiaryPage = ({ path }) => {
             <h2 style={{ fontSize: "15px", fontWeight: "bold", textAlign: "center", margin: "30px 0px" }}>{`${t("A_DIARY_DATED")}: ${formatDate(
               entryDate
             )}`}</h2>
-            <table style={{ width: "100%", marginTop: "20px", borderCollapse: "collapse" }}>
-              <thead>
-                <tr style={{ background: "#007E7E", color: "#FFF" }}>
-                  <th style={{ padding: "18px", border: "1px solid #000" }}>{t("S_NO")}</th>
-                  <th style={{ padding: "18px", border: "1px solid #000" }}>{t("CASE_TYPE_CASE_NUMBER_CASE_YEAR")}</th>
-                  <th style={{ padding: "18px", border: "1px solid #000" }}>{t("PROCEEDINGS_OR_BUSINESS_OF_DAY")}</th>
-                  <th style={{ padding: "18px", border: "1px solid #000" }}>{t("NEXT_HEARING_DATE")}</th>
-                </tr>
-              </thead>
-              <tbody>
-                {diaryEntries?.entries?.map((entry, index) => (
-                  <tr key={index} style={{ cursor: "pointer" }} onClick={() => handleRowClick(entry)}>
-                    <td style={{ padding: "18px", border: "1px solid #000" }}>{index + 1}</td>
-                    <td style={{ padding: "18px", border: "1px solid #000" }}>{entry?.caseNumber}</td>
-                    <td style={{ padding: "18px", border: "1px solid #000" }}>{entry?.businessOfDay}</td>
-                    <td style={{ padding: "18px", border: "1px solid #000" }}>{entry?.hearingDate ? formatDate(entry?.hearingDate) : ""}</td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-            <div style={{ display: "flex", justifyContent: "space-between", marginTop: "30px" }}>
-              <button onClick={handlePrevious} disabled={offSet === 0} style={{ padding: "8px 12px", cursor: "pointer" }}>
-                {t("PREVIOUS")}
-              </button>
-              <span>
-                {diaryEntries?.pagination?.totalCount > 0 ? offSet + 1 : 0} - {Math.min(offSet + limit, diaryEntries?.pagination?.totalCount)} of{" "}
-                {diaryEntries?.pagination?.totalCount}
-              </span>
-              <button
-                onClick={handleNext}
-                disabled={offSet + limit >= diaryEntries?.pagination?.totalCount}
-                style={{ padding: "8px 12px", cursor: "pointer" }}
-              >
-                {t("NEXT")}
-              </button>
-            </div>
+
+            {Array.isArray(diaryEntries?.entries) && diaryEntries?.entries?.length != 0 ? (
+              <div>
+                <table style={{ width: "100%", marginTop: "20px", borderCollapse: "collapse" }}>
+                  <thead>
+                    <tr style={{ background: "#007E7E", color: "#FFF" }}>
+                      <th style={{ padding: "18px", border: "1px solid #000" }}>{t("S_NO")}</th>
+                      <th style={{ padding: "18px", border: "1px solid #000" }}>{t("CASE_TYPE_CASE_NUMBER_CASE_YEAR")}</th>
+                      <th style={{ padding: "18px", border: "1px solid #000" }}>{t("PROCEEDINGS_OR_BUSINESS_OF_DAY")}</th>
+                      <th style={{ padding: "18px", border: "1px solid #000" }}>{t("NEXT_HEARING_DATE")}</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {diaryEntries?.entries?.map((entry, index) => (
+                      <tr key={index} style={{ cursor: "pointer" }} onClick={() => handleRowClick(entry)}>
+                        <td style={{ padding: "18px", border: "1px solid #000" }}>{index + 1}</td>
+                        <td style={{ padding: "18px", border: "1px solid #000" }}>{entry?.caseNumber}</td>
+                        <td style={{ padding: "18px", border: "1px solid #000" }}>{entry?.businessOfDay}</td>
+                        <td style={{ padding: "18px", border: "1px solid #000" }}>{entry?.hearingDate ? formatDate(entry?.hearingDate) : ""}</td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+                <div style={{ display: "flex", justifyContent: "space-between", marginTop: "30px" }}>
+                  <button onClick={handlePrevious} disabled={offSet === 0} style={{ padding: "8px 12px", cursor: "pointer" }}>
+                    {t("PREVIOUS")}
+                  </button>
+                  <span>
+                    {diaryEntries?.pagination?.totalCount > 0 ? offSet + 1 : 0} - {Math.min(offSet + limit, diaryEntries?.pagination?.totalCount)} of{" "}
+                    {diaryEntries?.pagination?.totalCount}
+                  </span>
+                  <button
+                    onClick={handleNext}
+                    disabled={offSet + limit >= diaryEntries?.pagination?.totalCount}
+                    style={{ padding: "8px 12px", cursor: "pointer" }}
+                  >
+                    {t("NEXT")}
+                  </button>
+                </div>
+              </div>
+            ) : (
+              <div style={{ display: "flex", alignItems: "center", justifyContent: "center", fontWeight: "bold", fontSize: "20px" }}>
+                {t("NO_DIARYENTRY_FOUND")}
+              </div>
+            )}
           </React.Fragment>
         ) : (
           <MemoDocViewerWrapper
@@ -403,7 +412,7 @@ const ADiaryPage = ({ path }) => {
       <div style={styles.rightPanel}>
         {
           <div>
-            {!isSelectedDataSigned && entryDate !== new Date().setHours(0, 0, 0, 0) && (
+            {!isSelectedDataSigned && entryDate !== new Date().setHours(0, 0, 0, 0) && Array.isArray(diaryEntries?.entries) && diaryEntries?.entries?.length != 0  && (
               <Button onButtonClick={onSubmit} label={t("ADD_SIGNATURE")} style={{ margin: "20px", maxWidth: "300px", width: "100%" }} />
             )}
 
