@@ -1096,11 +1096,6 @@ public class CaseService {
             if (representatives != null)
                 disableExistingRepresenting(joinCaseRequest.getRequestInfo(), courtCase, litigant.getIndividualId(), auditDetails,null);
 
-            CaseRequest caseRequest = new CaseRequest();
-            caseRequest.setCases(encryptionDecryptionUtil.encryptObject(courtCase, config.getCourtCaseEncrypt(), CourtCase.class));
-
-            log.info("Pushing litigant join case representative details :: {}", representatives);
-            producer.push(config.getCaseUpdateTopic(), caseRequest);
         }
 
         caseObj.setLitigants(joinCaseRequest.getLitigant());
