@@ -195,6 +195,20 @@ public class Configuration {
 	@Value("${egov.advocate.path}")
 	private String advocatePath;
 
+	//Elasticsearch config
+
+	@Value("${elastic.pending.task.endpoint}")
+	private String pendingTaskIndexEndpoint;
+
+	@Value("${elastic.pending.task.search}")
+	private String pendingTaskSearchPath;
+
+	@Value("${elastic.user.name}")
+	private String elasticUser;
+
+	@Value("${elastic.user.password}")
+	private String elasticUserPassword;
+
 	@PostConstruct
 	public void init() {
 		hearingBusinessServiceList = Arrays.asList(hearingBusinessServices.split(","));

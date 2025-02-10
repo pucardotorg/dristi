@@ -6,6 +6,7 @@ import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.*;
 import static org.pucar.dristi.config.ServiceConstants.Pending_Task_Exception;
 
+import com.fasterxml.jackson.databind.JsonNode;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -15,9 +16,14 @@ import org.mockito.MockitoAnnotations;
 import org.pucar.dristi.config.Configuration;
 import org.pucar.dristi.service.PendingTaskService;
 import org.pucar.dristi.util.IndexerUtils;
+import org.pucar.dristi.util.PendingTaskUtil;
 import org.pucar.dristi.web.models.PendingTask;
 import org.pucar.dristi.web.models.PendingTaskRequest;
 import org.egov.tracer.model.CustomException;
+
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
 
 @Slf4j
 public class PendingTaskServiceTest {
@@ -30,6 +36,9 @@ public class PendingTaskServiceTest {
 
     @Mock
     private IndexerUtils indexerUtils;
+
+    @Mock
+    private PendingTaskUtil pendingTaskUtil;
 
     @BeforeEach
     void setUp() {

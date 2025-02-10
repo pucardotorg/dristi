@@ -75,4 +75,29 @@ public class AdvocateUtil {
 		return list.stream().map(Advocate::getIndividualId).collect(Collectors.toSet());
 	}
 
+	public boolean isAdvocateExists(RequestInfo requestInfo, List<String> individualIds){
+		StringBuilder uri = new StringBuilder();
+		uri.append(configs.getAdvocateHost()).append(configs.getAdvocatePath());
+
+		AdvocateSearchRequest advocateSearchRequest = new AdvocateSearchRequest();
+		advocateSearchRequest.setRequestInfo(requestInfo);
+		List<AdvocateSearchCriteria> criteriaList = new ArrayList<>();
+		for(String id: individualIds){
+			AdvocateSearchCriteria advocateSearchCriteria = new AdvocateSearchCriteria();
+			advocateSearchCriteria.setIndividualId(id);
+			criteriaList.add(advocateSearchCriteria);
+		}
+		advocateSearchRequest.setCriteria(criteriaList);
+		Object response;
+		AdvocateListResponse advocateResponse;
+		try {
+			response = restTemplate.postForObject(uri.toString(), advocateSearchRequest, Map.class);
+			advocateResponse = mapper.convertValue(response, AdvocateListResponse.class);
+			log.info("Advocate response :: {}", advocateResponse);
+		} catch (Exception e) {
+			log.error("ERROR_WHILE_FETCHING_FROM_ADVOCATE", e);
+			throw new CustomException("ERROR_WHILE_FETCHING_FROM_ADVOCATE", e.getMessage());
+		}
+		return !advocateResponse.getAdvocates().isEmpty();
+	}
 }
