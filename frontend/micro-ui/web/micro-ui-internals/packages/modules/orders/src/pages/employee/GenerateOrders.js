@@ -1289,7 +1289,7 @@ const GenerateOrders = () => {
     if (order?.orderType === "MANDATORY_SUBMISSIONS_RESPONSES") {
       create = true;
       name = t("MAKE_MANDATORY_SUBMISSION");
-      assignees = formdata?.submissionParty?.map((party) => party?.uuid.map((uuid) => ({ uuid }))).flat();
+      assignees = formdata?.submissionParty?.map((party) => party?.uuid.map((uuid) => ({ uuid, individualId: party?.individualId }))).flat();
       stateSla = new Date(formdata?.submissionDeadline).getTime();
       status = "CREATE_SUBMISSION";
       const promises = assignees.map(async (assignee) => {
@@ -1297,7 +1297,7 @@ const GenerateOrders = () => {
           pendingTask: {
             name,
             entityType,
-            referenceId: `MANUAL_${assignee?.uuid}_${order?.orderNumber}`,
+            referenceId: `MANUAL_${assignee?.individualId}_${assignee?.uuid}_${order?.orderNumber}`,
             status,
             assignedTo: [assignee],
             assignedRole,
@@ -2308,7 +2308,7 @@ const GenerateOrders = () => {
               caseNumber: caseDetails?.cmpNumber,
               referenceId: currentOrder?.orderNumber,
               referenceType: "Order",
-              hearingDate: (Array.isArray(nextHearing) && nextHearing.length > 0 && nextHearing[0]?.startTime)|| null,
+              hearingDate: (Array.isArray(nextHearing) && nextHearing.length > 0 && nextHearing[0]?.startTime) || null,
               additionalDetails: {
                 filingNumber: currentOrder?.filingNumber,
               },
