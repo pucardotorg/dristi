@@ -811,9 +811,8 @@ public class CaseService {
                         .toList();
                 AdvocateMapping existingRepresentative = null;
 
-                // If advocate is already representing the individual throw exception
+                // If advocate is already representing the individual and not replacing other advocate throw exception
                 if (!advocateIds.isEmpty() && joinCaseRequest.getRepresentative().getAdvocateId() != null && advocateIds.contains(joinCaseRequest.getRepresentative().getAdvocateId())) {
-                    String joinCasePartyIndividualID = Optional.of(joinCaseRequest.getRepresentative()).get().getRepresenting().get(0).getIndividualId();
 
                     Optional<AdvocateMapping> existingRepresentativeOptional = courtCase.getRepresentatives().stream()
                             .filter(advocateMapping -> joinCaseRequest.getRepresentative().getAdvocateId().equals(advocateMapping.getAdvocateId()))
@@ -827,10 +826,27 @@ public class CaseService {
                             .map(Party::getIndividualId)
                             .toList();
 
-                    if (joinCasePartyIndividualID != null && individualIdList.contains(joinCasePartyIndividualID)) {
-                        log.info("Advocate is already representing the individual");
-                        throw new CustomException(VALIDATION_ERR, "Advocate is already representing the individual");
-                    }
+                    List<Party> partyList = existingRepresentative.getRepresenting();
+
+                    joinCaseRequest.getRepresentative().getRepresenting().forEach(representing->{
+                        if (individualIdList.contains(representing.getIndividualId()) && !representing.getIsAdvocateReplacing()) {
+                            log.info("Advocate is already representing the individual");
+                            throw new CustomException(VALIDATION_ERR, "Advocate is already representing the individual");
+                        }
+                        else if (individualIdList.contains(representing.getIndividualId()) && representing.getIsAdvocateReplacing()) {
+                            log.info("Advocate is already representing the individual and isAdvocateReplacing is true");
+                            Optional<UUID> representingIdOptional = Optional.ofNullable(partyList)
+                                    .orElse(Collections.emptyList())
+                                    .stream()
+                                    .filter(r -> r.getIndividualId().equalsIgnoreCase(representing.getIndividualId()))
+                                    .map(Party::getId)
+                                    .findFirst(); // Extract first matching UUID
+
+                            // Set ID only if present
+                            representingIdOptional.ifPresent(representing::setId);
+                        }
+                    });
+
                 }
 
                 if (!isPaymentCompleted) {
@@ -930,7 +946,7 @@ public class CaseService {
             joinCaseRequest.getRepresentative().getRepresenting().forEach(representing -> {
                 representing.setAuditDetails(auditDetails);
                 if (representing.getIsAdvocateReplacing())
-                    disableExistingRepresenting(joinCaseRequest.getRequestInfo(), courtCase, representing.getIndividualId(), auditDetails);
+                    disableExistingRepresenting(joinCaseRequest.getRequestInfo(), courtCase, representing.getIndividualId(), auditDetails,joinCaseRequest.getRepresentative().getAdvocateId());
             });
         }
         AdvocateMapping advocateMapping = mapRepresentativeToAdvocateMapping(joinCaseRequest.getRepresentative());
@@ -978,15 +994,14 @@ public class CaseService {
         return partyList;
     }
 
-    private void disableExistingRepresenting(RequestInfo requestInfo, CourtCase courtCase, String joinCasePartyIndividualId, AuditDetails auditDetails) {
+    private void disableExistingRepresenting(RequestInfo requestInfo, CourtCase courtCase, String joinCasePartyIndividualId, AuditDetails auditDetails, String advocateId) {
         if (courtCase.getRepresentatives() != null) {
             courtCase.getRepresentatives().forEach(representative -> {
 
                 if (representative.getRepresenting() != null) {
                     representative.getRepresenting().forEach(party -> {
-
                         //For getting the representing of the representative by the individualID
-                        if (joinCasePartyIndividualId.equalsIgnoreCase(party.getIndividualId())) {
+                        if (joinCasePartyIndividualId.equalsIgnoreCase(party.getIndividualId()) && !representative.getAdvocateId().equalsIgnoreCase(advocateId)) {
                             log.info("Setting isActive false for the existing individual :: {}", party);
                             party.setIsActive(false);
                             party.getAuditDetails().setLastModifiedTime(auditDetails.getLastModifiedTime());
@@ -1079,7 +1094,7 @@ public class CaseService {
             List<AdvocateMapping> representatives = courtCase.getRepresentatives();
 
             if (representatives != null)
-                disableExistingRepresenting(joinCaseRequest.getRequestInfo(), courtCase, litigant.getIndividualId(), auditDetails);
+                disableExistingRepresenting(joinCaseRequest.getRequestInfo(), courtCase, litigant.getIndividualId(), auditDetails,null);
 
             CaseRequest caseRequest = new CaseRequest();
             caseRequest.setCases(encryptionDecryptionUtil.encryptObject(courtCase, config.getCourtCaseEncrypt(), CourtCase.class));
