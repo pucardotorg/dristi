@@ -2,10 +2,7 @@ package digit.repository;
 
 import digit.repository.querybuilder.DiaryEntryQueryBuilder;
 import digit.repository.rowmapper.DiaryEntryRowMapper;
-import digit.web.models.CaseDiaryEntry;
-import digit.web.models.CaseDiarySearchRequest;
-import digit.web.models.CaseDiarySearchCriteria;
-import digit.web.models.Pagination;
+import digit.web.models.*;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
@@ -16,6 +13,7 @@ import org.springframework.jdbc.core.JdbcTemplate;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.UUID;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
@@ -129,5 +127,31 @@ class DiaryEntryRepositoryTest {
         // Verify interactions
         verify(queryBuilder).getTotalCountQuery(baseQuery);
         verify(jdbcTemplate).queryForObject(countQuery, Integer.class, preparedStmtList.toArray());
+    }
+
+    @Test
+    void getExistingCaseDiaryEntries_Success_NoPagination() {
+        // Prepare mock objects
+        CaseDiaryExistCriteria searchRequest = new CaseDiaryExistCriteria();
+        searchRequest.setId(UUID.randomUUID());
+        searchRequest.setTenantId("kl");
+
+        List<Object> preparedStmtList = new ArrayList<>();
+        List<Integer> preparedStmtArgList = new ArrayList<>();
+
+        String query = "SELECT * FROM diary_entries";
+        List<CaseDiaryEntry> expectedResult = Collections.singletonList(new CaseDiaryEntry());
+
+        // Mock behavior
+        when(queryBuilder.getExistingDiaryEntry(searchRequest, preparedStmtList, preparedStmtArgList)).thenReturn(query);
+        when(queryBuilder.addOrderByQuery(query, null)).thenReturn(query);
+        when(jdbcTemplate.query(query, preparedStmtList.toArray(), new int[0], diaryEntryRowMapper)).thenReturn(expectedResult);
+
+        // Execute the method
+        List<CaseDiaryEntry> result = diaryEntryRepository.getExistingDiaryEntry(searchRequest);
+
+        // Assertions
+        assertNotNull(result);
+        assertEquals(expectedResult, result);
     }
 }

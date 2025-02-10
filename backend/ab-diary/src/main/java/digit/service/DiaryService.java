@@ -86,13 +86,8 @@ public class DiaryService {
 
             enrichment.enrichUpdateCaseDiary(caseDiaryRequest);
 
-
-            Workflow workflow = caseDiaryRequest.getDiary().getWorkflow();
-
-            if (workflow == null) {
-                Workflow workflowWithSignAction = Workflow.builder().action(SIGN_ACTION).build();
-                caseDiaryRequest.getDiary().setWorkflow(workflowWithSignAction);
-            }
+            Workflow workflowWithSignAction = Workflow.builder().action(SIGN_ACTION).build();
+            caseDiaryRequest.getDiary().setWorkflow(workflowWithSignAction);
 
             workflowService.updateWorkflowStatus(caseDiaryRequest);
 
@@ -148,6 +143,7 @@ public class DiaryService {
             CaseDiary caseDiary = generateRequest.getDiary();
 
             caseDiary.setCaseDiaryEntries(caseDiaryEntries);
+            dateFormat.setTimeZone(TimeZone.getTimeZone(IST_TIME_ZONE));
             caseDiary.setDate(dateFormat.format(new Date(caseDiary.getDiaryDate())));
             generateRequest.setDiary(caseDiary);
 

@@ -86,6 +86,9 @@ public class ADiaryValidator {
         if (ObjectUtils.isEmpty(diary)) {
             throw new CustomException(VALIDATION_EXCEPTION, "case diary is mandatory to create/update an entry");
         }
+        if (diary.getDocuments().isEmpty() || diary.getDocuments().get(0).getFileStoreId() == null) {
+            throw new CustomException(VALIDATION_EXCEPTION,"diary document with file store id is mandatory to update");
+        }
         if (requestInfo == null || requestInfo.getUserInfo() == null) {
             throw new CustomException(VALIDATION_EXCEPTION, "request Info or user info can not be null");
         }

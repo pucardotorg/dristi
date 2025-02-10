@@ -168,4 +168,27 @@ public class CaseDiaryApiControllerTest {
         assertNotNull(response.getBody());
     }
 
+    @Test
+    void testGetDiaryStoreIdSuccess() {
+
+        when(diaryService.searchCaseDiaryForJudge(any(),any(),any(),anyLong(),any())).thenReturn(mock(CaseDiary.class));
+        when(responseInfoFactory.createResponseInfoFromRequestInfo(any(), eq(true))).thenReturn(new ResponseInfo());
+
+        ResponseEntity<CaseDiaryResponse> response = caseDiaryApiController.getDiaryStoreId("tenantId","judgeId","diaryType",17000L,UUID.randomUUID());
+
+        assertNotNull(response.getBody());
+        assertEquals(HttpStatus.OK,response.getStatusCode());
+
+    }
+
+    @Test
+    void testGetDiaryStoreIdFailure() {
+
+        when(diaryService.searchCaseDiaryForJudge("kl","judgeId","diaryType",1L,UUID.randomUUID())).thenThrow(new RuntimeException("Error adding entry"));
+
+        assertThrows(RuntimeException.class, () -> {
+            caseDiaryApiController.getDiaryStoreId("tenantId","judgeId","diaryType",17000L,UUID.randomUUID());
+        });
+    }
+
 }

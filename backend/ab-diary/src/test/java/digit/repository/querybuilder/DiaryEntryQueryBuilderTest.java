@@ -1,5 +1,6 @@
 package digit.repository.querybuilder;
 
+import digit.web.models.CaseDiaryExistCriteria;
 import digit.web.models.CaseDiarySearchCriteria;
 import digit.web.models.Order;
 import digit.web.models.Pagination;
@@ -12,6 +13,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import java.sql.Types;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -191,4 +193,22 @@ class DiaryEntryQueryBuilderTest {
 
         assertEquals(baseQuery + " ORDER BY createdtime DESC ", result);
     }
+
+    @Test
+    void getExistingDiaryEntryQuery_WithAllCriteria_ReturnsFullQuery() {
+        Long now = 1L;
+        UUID uuid = UUID.randomUUID();
+        CaseDiaryExistCriteria criteria = CaseDiaryExistCriteria.builder()
+                .tenantId("default-tenant")
+                .id(uuid)
+                .build();
+
+        String query = queryBuilder.getExistingDiaryEntry(criteria, preparedStatementValues, preparedStatementTypeValues);
+
+        assertTrue(query.contains("WHERE"));
+        assertTrue(query.contains("AND"));
+        assertEquals(2, preparedStatementValues.size());
+        assertEquals(2, preparedStatementTypeValues.size());
+    }
+
 }

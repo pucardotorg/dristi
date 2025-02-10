@@ -1,34 +1,36 @@
 package digit.service;
 
-import static org.mockito.Mockito.*;
-import static org.junit.Assert.*;
-
 import digit.config.Configuration;
 import digit.enrichment.ADiaryEnrichment;
 import digit.kafka.Producer;
 import digit.repository.DiaryRepository;
-import digit.util.ADiaryUtil;
-import digit.validators.ADiaryValidator;
-import org.egov.common.contract.request.RequestInfo;
-import org.egov.tracer.model.CustomException;
-import org.junit.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.*;
-import org.egov.common.contract.models.Document;
-import digit.web.models.*;
+import digit.util.CaseUtil;
 import digit.util.FileStoreUtil;
 import digit.util.PdfServiceUtil;
+import digit.validators.ADiaryValidator;
+import digit.web.models.*;
+import org.egov.common.contract.models.Document;
+import org.egov.common.contract.models.Workflow;
+import org.egov.common.contract.request.RequestInfo;
+import org.egov.tracer.model.CustomException;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.core.io.ByteArrayResource;
 
 import java.util.*;
 
+import static digit.config.ServiceConstants.*;
+import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
 public class DiaryServiceTest {
-
-    @InjectMocks
-    private DiaryService diaryService;
 
     @Mock
     private Producer producer;
@@ -45,14 +47,11 @@ public class DiaryServiceTest {
     @Mock
     private ADiaryEnrichment enrichment;
 
-    @InjectMocks
+    @Mock
     private DiaryEntryService diaryEntryService;
 
     @Mock
     private FileStoreUtil fileStoreUtil;
-
-    @Mock
-    private ADiaryUtil aDiaryUtil;
 
     @Mock
     private PdfServiceUtil pdfServiceUtil;
@@ -60,154 +59,189 @@ public class DiaryServiceTest {
     @Mock
     private WorkflowService workflowService;
 
-    private CaseDiary caseDiary;
-    private CaseDiaryRequest caseDiaryRequest;
+    @Mock
+    private CaseUtil caseUtil;
 
-    @Test
-    public void testSearchCaseDiaries_success() {
-        CaseDiarySearchRequest searchRequest = new CaseDiarySearchRequest();
+    @InjectMocks
+    private DiaryService diaryService;
+
+    private CaseDiarySearchRequest searchRequest;
+    private CaseDiaryRequest caseDiaryRequest;
+    private CaseDiaryGenerateRequest generateRequest;
+
+    @BeforeEach
+    void setUp() {
+        searchRequest = new CaseDiarySearchRequest();
         searchRequest.setCriteria(CaseDiarySearchCriteria.builder()
-                .judgeId("judge1")
+                .tenantId("tenant1")
                 .build());
 
-        when(diaryRepository.getCaseDiaries(searchRequest)).thenReturn(Collections.singletonList(new CaseDiaryListItem()));
+        caseDiaryRequest = new CaseDiaryRequest();
+        CaseDiary diary = new CaseDiary();
+        diary.setId(UUID.randomUUID());
+        diary.setTenantId("tenant1");
+        diary.setDiaryType("ADiary");
+        diary.setDiaryDate(2L);
+        diary.setDocuments(new ArrayList<>());
+        caseDiaryRequest.setDiary(diary);
+        caseDiaryRequest.setRequestInfo(new RequestInfo());
+
+        generateRequest = new CaseDiaryGenerateRequest();
+        generateRequest.setDiary(diary);
+        generateRequest.setRequestInfo(new RequestInfo());
+    }
+
+    @Test
+    void searchCaseDiariesSuccess() {
+        List<CaseDiaryListItem> mockResults = Collections.singletonList(new CaseDiaryListItem());
+        when(diaryRepository.getCaseDiaries(searchRequest)).thenReturn(mockResults);
 
         List<CaseDiaryListItem> result = diaryService.searchCaseDiaries(searchRequest);
+
         assertNotNull(result);
         assertEquals(1, result.size());
-    }
-
-    @Test(expected = CustomException.class)
-    public void testSearchCaseDiaries_exception() {
-        CaseDiarySearchRequest searchRequest = new CaseDiarySearchRequest();
-        searchRequest.setCriteria(CaseDiarySearchCriteria.builder()
-                .judgeId("judge1")
-                .build());
-
-        when(diaryRepository.getCaseDiaries(searchRequest)).thenThrow(new RuntimeException("Service exception"));
-
-        diaryService.searchCaseDiaries(searchRequest);
+        verify(diaryRepository).getCaseDiaries(searchRequest);
     }
 
     @Test
-    public void testUpdateDiary_success() {
-        CaseDiaryRequest caseDiaryRequest = mock(CaseDiaryRequest.class);
-        when(caseDiaryRequest.getDiary()).thenReturn(mock(CaseDiary.class));
+    void searchCaseDiariesNullRequest() {
+        List<CaseDiaryListItem> result = diaryService.searchCaseDiaries(null);
+        assertNull(result);
+    }
 
-        doNothing().when(workflowService).updateWorkflowStatus(caseDiaryRequest);
+    @Test
+    void searchCaseDiariesRepositoryException() {
+        when(diaryRepository.getCaseDiaries(searchRequest)).thenThrow(new CustomException(DIARY_SEARCH_EXCEPTION, "Error"));
+
+        CustomException exception = assertThrows(CustomException.class, () -> {
+            diaryService.searchCaseDiaries(searchRequest);
+        });
+
+        assertEquals(DIARY_SEARCH_EXCEPTION, exception.getCode());
+    }
+
+    @Test
+    void updateDiarySuccess() {
+        Workflow workflow = Workflow.builder().action(SIGN_ACTION).build();
+        caseDiaryRequest.getDiary().setWorkflow(workflow);
+
+        when(configuration.getDiaryUpdateTopic()).thenReturn("diary-update-topic");
 
         CaseDiary result = diaryService.updateDiary(caseDiaryRequest);
+
         assertNotNull(result);
-    }
-
-    @Test(expected = CustomException.class)
-    public void testGenerateDiary_exception() {
-        CaseDiaryGenerateRequest generateRequest = mock(CaseDiaryGenerateRequest.class);
-        CaseDiary caseDiary = mock(CaseDiary.class);
-        when(generateRequest.getDiary()).thenReturn(caseDiary);
-        when(generateRequest.getRequestInfo()).thenReturn(mock(RequestInfo.class));
-
-        List<CaseDiaryEntry> mockCaseDiaryEntries = new ArrayList<>();
-        CaseDiaryEntry entry = new CaseDiaryEntry();
-        entry.setHearingDate(System.currentTimeMillis());
-        mockCaseDiaryEntries.add(entry);
-
-        when(diaryEntryService.searchDiaryEntries(any())).thenThrow(new RuntimeException("Service exception"));
-
-        diaryService.generateDiary(generateRequest);
+        verify(validator).validateUpdateDiary(caseDiaryRequest);
+        verify(enrichment).enrichUpdateCaseDiary(caseDiaryRequest);
+        verify(workflowService).updateWorkflowStatus(caseDiaryRequest);
+        verify(producer).push(eq("diary-update-topic"), eq(caseDiaryRequest));
     }
 
     @Test
-    public void testBuildCaseDiarySearchRequest() {
-        CaseDiaryGenerateRequest generateRequest = new CaseDiaryGenerateRequest();
-        CaseDiary caseDiary = new CaseDiary();
-        caseDiary.setTenantId("tenantId");
-        caseDiary.setDiaryDate(System.currentTimeMillis());
-        generateRequest.setDiary(caseDiary);
+    void updateDiaryNullWorkflow() {
+        CaseDiary diary = caseDiaryRequest.getDiary();
+        diary.setWorkflow(null);
 
-        CaseDiarySearchRequest result = diaryService.buildCaseDiarySearchRequest(generateRequest,"cmpNumber");
+        when(configuration.getDiaryUpdateTopic()).thenReturn("diary-update-topic");
+
+        CaseDiary result = diaryService.updateDiary(caseDiaryRequest);
+
         assertNotNull(result);
-        assertNotNull(result.getCriteria());
-        assertEquals("tenantId", result.getCriteria().getTenantId());
-        assertEquals(caseDiary.getDiaryDate(), result.getCriteria().getDate());
+        assertNotNull(result.getWorkflow());
+        assertEquals(SIGN_ACTION, result.getWorkflow().getAction());
     }
 
     @Test
-    public void testGenerateCaseDiary() {
-        CaseDiary caseDiary = new CaseDiary();
-        caseDiary.setTenantId("tenantId");
-        caseDiary.setDiaryType("aDiary");
-        caseDiary.setDiaryDate(System.currentTimeMillis());
-        RequestInfo requestInfo = new RequestInfo();
-        CaseDiaryGenerateRequest generateRequest = new CaseDiaryGenerateRequest();
-        generateRequest.setDiary(caseDiary);
-        generateRequest.setRequestInfo(requestInfo);
+    void generateDiarySuccess() {
+        // Setup mock behaviors
+        when(configuration.getCaseDiaryTopic()).thenReturn("case-diary-topic");
+        when(configuration.getADiaryPdfTemplateKey()).thenReturn("adiary-template");
+        when(configuration.getCourtName()).thenReturn("Test Court");
 
-        List<CaseDiaryEntry> mockCaseDiaryEntries = new ArrayList<>();
-        CaseDiaryEntry entry = new CaseDiaryEntry();
-        entry.setHearingDate(System.currentTimeMillis());
-        mockCaseDiaryEntries.add(entry);
+        ByteArrayResource mockByteResource = mock(ByteArrayResource.class);
+        Document mockDocument = Document.builder()
+                .fileStore("filestore-id")
+                .documentType(UNSIGNED_DOCUMENT_TYPE)
+                .build();
 
-        when(diaryEntryService.searchDiaryEntries(any())).thenReturn(mockCaseDiaryEntries);
-        when(fileStoreUtil.saveDocumentToFileStore(any(), any())).thenReturn(new Document());
+        CaseDiaryDocument caseDiaryDocument = CaseDiaryDocument.builder()
+                .id(UUID.randomUUID())
+                .build();
 
-        diaryService.generateCaseDiary(caseDiary, requestInfo);
-    }
+        generateRequest.getDiary().setDocuments(Collections.singletonList(caseDiaryDocument));
 
-    @Test
-    public void getCaseDiaryDocument() {
-        CaseDiaryGenerateRequest generateRequest = new CaseDiaryGenerateRequest();
-        CaseDiary caseDiary = new CaseDiary();
-        caseDiary.setTenantId("tenantId");
-        caseDiary.setDiaryDate(System.currentTimeMillis());
-        generateRequest.setDiary(caseDiary);
-        generateRequest.setRequestInfo(new RequestInfo());
-
-        Document document = new Document();
-        when(fileStoreUtil.saveDocumentToFileStore(any(), any())).thenReturn(document);
-
-        CaseDiaryDocument caseDiaryDocument = diaryService.getCaseDiaryDocument(generateRequest, document);
-        assertNotNull(caseDiaryDocument);
-        assertEquals(document.getFileStore(), caseDiaryDocument.getFileStoreId());
-    }
-
-    @Test
-    public void testGenerateDiary_success() throws Exception {
-        CaseDiaryGenerateRequest generateRequest = mock(CaseDiaryGenerateRequest.class);
-        RequestInfo requestInfo = mock(RequestInfo.class);
-        CaseDiary caseDiary = mock(CaseDiary.class);
-        Document document = mock(Document.class);
-        ByteArrayResource byteArrayResource = mock(ByteArrayResource.class);
-
-        when(generateRequest.getRequestInfo()).thenReturn(requestInfo);
-        when(generateRequest.getDiary()).thenReturn(caseDiary);
-        when(caseDiary.getDiaryDate()).thenReturn(System.currentTimeMillis());
-        when(caseDiary.getCaseNumber()).thenReturn("12345");
-        when(caseDiary.getTenantId()).thenReturn("tenantId");
-        when(caseDiary.getDiaryType()).thenReturn("adiary");
-        when(caseDiary.getJudgeId()).thenReturn("judgeId");
-
-        List<CaseDiaryEntry> caseDiaryEntries = new ArrayList<>();
-        CaseDiaryEntry entry = new CaseDiaryEntry();
-        entry.setHearingDate(System.currentTimeMillis());
-        caseDiaryEntries.add(entry);
+        List<CaseDiaryEntry> caseDiaryEntries = Collections.singletonList(CaseDiaryEntry.builder()
+                        .hearingDate(2L)
+                .build());
 
         when(diaryEntryService.searchDiaryEntries(any())).thenReturn(caseDiaryEntries);
-        when(fileStoreUtil.saveDocumentToFileStore(byteArrayResource, "tenantId")).thenReturn(document);
-        when(document.getFileStore()).thenReturn("fileStoreId");
-
-        when(pdfServiceUtil.generatePdfFromPdfService(any(), eq("tenantId"), any())).thenReturn(byteArrayResource);
-
-        CaseDiaryRequest caseDiaryRequest1 = CaseDiaryRequest.builder().requestInfo(generateRequest.getRequestInfo()).diary(generateRequest.getDiary()).build();
-        doNothing().when(workflowService).updateWorkflowStatus(caseDiaryRequest);
+        when(pdfServiceUtil.generatePdfFromPdfService(any(), any(), any())).thenReturn(mockByteResource);
+        when(fileStoreUtil.saveDocumentToFileStore(any(), any())).thenReturn(mockDocument);
 
         String result = diaryService.generateDiary(generateRequest);
 
         assertNotNull(result);
-        assertEquals("fileStoreId", result);
+        verify(validator).validateGenerateRequest(generateRequest);
+        verify(enrichment).enrichGenerateRequestForDiary(generateRequest);
+        verify(workflowService).updateWorkflowStatus(any());
+        verify(producer).push(eq("case-diary-topic"), any());
+    }
 
-        verify(diaryEntryService, times(1)).searchDiaryEntries(any());
-        verify(fileStoreUtil, times(1)).saveDocumentToFileStore(byteArrayResource, "tenantId");
-        verify(producer, times(1)).push(eq(configuration.getCaseDiaryTopic()), any(CaseDiaryRequest.class));
+    @Test
+    void generateDiaryValidationException() {
+        doThrow(new CustomException(DIARY_GENERATE_EXCEPTION, "Validation Error"))
+                .when(validator).validateGenerateRequest(generateRequest);
+
+        CustomException exception = assertThrows(CustomException.class, () -> {
+            diaryService.generateDiary(generateRequest);
+        });
+
+        assertEquals(DIARY_GENERATE_EXCEPTION, exception.getCode());
+    }
+
+    @Test
+    void searchCaseDiaryForJudgeSuccess() {
+        List<CaseDiary> mockDiaries = new ArrayList<>();
+        CaseDiary mockDiary = new CaseDiary();
+        mockDiary.setDocuments(Collections.singletonList(
+                CaseDiaryDocument.builder()
+                        .documentType(SIGNED_DOCUMENT_TYPE)
+                        .build()
+        ));
+        mockDiaries.add(mockDiary);
+
+        when(diaryRepository.getCaseDiariesWithDocuments(any())).thenReturn(mockDiaries);
+
+        CaseDiary result = diaryService.searchCaseDiaryForJudge(
+                "tenant1", "judge1", "ADiary", System.currentTimeMillis(), UUID.randomUUID()
+        );
+
+        assertNotNull(result);
+        assertNotNull(result.getDocuments());
+        assertEquals(1, result.getDocuments().size());
+    }
+
+    @Test
+    void searchCaseDiaryForJudgeNoDataOrCaseIdException() {
+        CustomException exception = assertThrows(CustomException.class, () -> {
+            diaryService.searchCaseDiaryForJudge(
+                    "tenant1", "judge1", "ADiary", null, null
+            );
+        });
+
+        assertEquals(DIARY_SEARCH_EXCEPTION, exception.getCode());
+    }
+
+    @Test
+    void searchCaseDiaryForJudgeMultipleDiariesException() {
+        List<CaseDiary> mockDiaries = Arrays.asList(new CaseDiary(), new CaseDiary());
+        when(diaryRepository.getCaseDiariesWithDocuments(any())).thenReturn(mockDiaries);
+
+        CustomException exception = assertThrows(CustomException.class, () -> {
+            diaryService.searchCaseDiaryForJudge(
+                    "tenant1", "judge1", "ADiary", System.currentTimeMillis(), UUID.randomUUID()
+            );
+        });
+
+        assertEquals(DIARY_SEARCH_EXCEPTION, exception.getCode());
     }
 }

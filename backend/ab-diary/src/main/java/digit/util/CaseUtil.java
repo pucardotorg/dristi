@@ -59,7 +59,7 @@ public class CaseUtil {
             throw new CustomException(ERROR_FROM_CASE,e.getMessage());
         }
 
-        if (caseListResponse != null && caseListResponse.getCriteria() != null) {
+        if (caseListResponse != null && caseListResponse.getCriteria() != null && !caseListResponse.getCriteria().isEmpty()) {
             return caseListResponse.getCriteria().get(0).getResponseList();
         }
         return null;

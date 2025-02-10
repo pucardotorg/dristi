@@ -30,9 +30,10 @@ public class UserUtil {
 
 
     @Autowired
-    public UserUtil(ObjectMapper mapper, ServiceRequestRepository serviceRequestRepository) {
+    public UserUtil(ObjectMapper mapper, ServiceRequestRepository serviceRequestRepository, Configuration configs) {
         this.mapper = mapper;
         this.serviceRequestRepository = serviceRequestRepository;
+        this.configs = configs;
     }
 
     /**
