@@ -343,7 +343,6 @@ const EvidenceModal = ({
     counterUpdate();
     handleBack();
     setIsSubmitDisabled(false);
-
   };
 
   const onError = async (result) => {
@@ -395,6 +394,7 @@ const EvidenceModal = ({
           body: {
             artifact: {
               ...documentSubmission?.[0].artifactList,
+              comments: comments,
               isEvidence: !documentSubmission?.[0]?.artifactList?.isEvidence,
               isVoid: false,
               filingNumber: filingNumber,
