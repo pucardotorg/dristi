@@ -301,6 +301,7 @@ const PaymentForSummonModal = ({ path }) => {
                 stateSla: 3 * dayInMillisecond + todayDate,
                 additionalDetails: {
                   hearingId: hearingsData?.list?.[0]?.hearingId,
+                  partyIndex: orderType === "NOTICE" && orderData?.list?.[0]?.additionalDetails?.formdata?.noticeOrder?.party?.data?.partyIndex,
                 },
                 tenantId,
               },

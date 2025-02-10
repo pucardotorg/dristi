@@ -7,6 +7,7 @@ import useSearchOrdersService from "../../../../orders/src/hooks/orders/useSearc
 import { formatDate } from "../../utils";
 import { hearingService } from "../../hooks/services";
 import { Urls } from "../../hooks/services/Urls";
+import { useLocation } from "react-router-dom/cjs/react-router-dom.min";
 
 const modalPopup = {
   height: "70%",
@@ -56,7 +57,10 @@ const ModalHeading = ({ label, orderList }) => {
 const SummonsAndWarrantsModal = ({ handleClose }) => {
   const history = useHistory();
   const { t } = useTranslation();
-  const { filingNumber, hearingId, taskOrderType, taskCnrNumber, partyIndex } = Digit.Hooks.useQueryParams();
+  const { filingNumber, hearingId, taskOrderType } = Digit.Hooks.useQueryParams();
+  const { state } = useLocation();
+  const partyIndex = state?.state?.params?.partyIndex;
+  const taskCnrNumber = state?.state?.params?.taskCnrNumber;
   const tenantId = Digit.ULBService.getCurrentTenantId();
   const [orderNumber, setOrderNumber] = useState(null);
   const [orderId, setOrderId] = useState(null);
@@ -193,7 +197,7 @@ const SummonsAndWarrantsModal = ({ handleClose }) => {
         (taskOrderType === "NOTICE" ? item.orderType === "NOTICE" : item.orderType === "SUMMONS" || item.orderType === "WARRANT") &&
         item?.status === "PUBLISHED" &&
         item?.hearingNumber === hearingId &&
-        item?.additionalDetails?.formdata?.noticeOrder?.party?.data?.partyIndex === partyIndex
+        item?.additionalDetails?.formdata?.noticeOrder?.party?.data?.partyIndex === partyIndex 
     );
 
     const sortedOrders = filteredOrders?.sort((a, b) => {

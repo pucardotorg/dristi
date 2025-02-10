@@ -1694,6 +1694,7 @@ const GenerateOrders = () => {
       constructFullName(respondentNameData?.firstName, respondentNameData?.middleName, respondentNameData?.lastName) || respondentNameData;
 
     const respondentPhoneNo = orderFormData?.party?.data?.phone_numbers || [];
+    const partyIndex = orderFormData?.party?.data?.partyIndex || "";
     const respondentEmail = orderFormData?.party?.data?.email || [];
     const complainantDetails = individualDetail?.Individual?.[0];
     const addressLine1 = complainantDetails?.address[0]?.addressLine1 || "";
@@ -1780,6 +1781,7 @@ const GenerateOrders = () => {
             caseFilingDate: caseDetails?.filingDate,
             noticeType,
             docSubType: orderFormData?.party?.data?.partyType === "Witness" ? "WITNESS" : "ACCUSED",
+            partyIndex: partyIndex
           },
           respondentDetails: orderFormData?.party?.data?.partyType === "Witness" ? caseRespondent : respondentDetails,
           ...(orderFormData?.party?.data?.partyType === "Witness" && { witnessDetails: respondentDetails }),

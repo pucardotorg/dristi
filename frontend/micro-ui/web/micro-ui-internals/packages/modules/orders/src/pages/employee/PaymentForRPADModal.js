@@ -382,6 +382,7 @@ const PaymentForRPADModal = ({ path }) => {
                 stateSla: 3 * dayInMillisecond + todayDate,
                 additionalDetails: {
                   hearingId: hearingsData?.list?.[0]?.hearingId,
+                  partyIndex: orderType === "NOTICE" && orderDetails?.additionalDetails?.formdata?.noticeOrder?.party?.data?.partyIndex,
                 },
                 tenantId,
               },

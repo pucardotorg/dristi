@@ -67,6 +67,7 @@ const SBIPaymentStatus = ({ path }) => {
                 stateSla: 3 * dayInMillisecond + todayDate,
                 additionalDetails: {
                   hearingId: receiptData?.hearingId,
+                  partyIndex: receiptData?.partyIndex
                 },
                 tenantId,
               },

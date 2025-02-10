@@ -2078,7 +2078,15 @@ const AdmittedCases = () => {
   const handleOpenSummonNoticeModal = async (partyIndex) => {
     if (currentHearingId) {
       history.push(
-        `${path}?filingNumber=${filingNumber}&caseId=${caseId}&taskCnrNumber=${cnrNumber}&taskOrderType=NOTICE&partyIndex=${partyIndex}&hearingId=${currentHearingId}&tab=${config?.label}`
+        `${path}?filingNumber=${filingNumber}&caseId=${caseId}&taskOrderType=NOTICE&hearingId=${currentHearingId}&tab=${config?.label}`,
+        {
+          state: {
+            params: {
+              partyIndex:partyIndex,
+              taskCnrNumber:cnrNumber
+            },
+          },
+        }
       );
     }
   };

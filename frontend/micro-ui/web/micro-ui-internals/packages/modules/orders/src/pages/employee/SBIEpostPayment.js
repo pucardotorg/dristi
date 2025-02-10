@@ -94,6 +94,7 @@ const SBIEpostPayment = () => {
           isCourtBillPaid: isCourtBillPaid,
           hearingId: hearingId,
           orderType: orderType,
+          partyIndex: orderType === "NOTICE" && orderData?.list?.[0]?.additionalDetails?.formdata?.noticeOrder?.party?.data?.partyIndex,
         };
 
         localStorage.setItem("paymentReceiptData", JSON.stringify({ receiptData }));
