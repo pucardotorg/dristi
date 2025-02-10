@@ -57,7 +57,7 @@ public class PaymentApiController {
     }
 
     @PostMapping(value = "/v1/case/fees/_calculate")
-    public ResponseEntity<CalculationRes> caseFeesCalculation(@Parameter(in = ParameterIn.DEFAULT, description = "", required = true, schema = @Schema()) @Valid @RequestBody EFillingCalculationReq body) {
+    public ResponseEntity<CalculationRes> caseFeesCalculation(@Parameter(in = ParameterIn.DEFAULT, description = "", required = true, schema = @Schema()) @Valid @RequestBody EFillingCalculationRequest body) {
         log.info("api = /v1/case/fees/_calculate, result=IN_PROGRESS ");
         List<Calculation> calculations = caseFeesService.calculateCaseFees(body);
         CalculationRes response = CalculationRes.builder().responseInfo(ResponseInfoFactory.createResponseInfoFromRequestInfo(body.getRequestInfo(), true)).calculation(calculations).build();

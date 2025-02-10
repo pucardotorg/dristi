@@ -96,10 +96,20 @@ public class EFilingParamTestBuilder {
     public EFilingParamTestBuilder withAdvocateFee() {
         LinkedHashMap<String, HashMap<String, Integer>> advocateFees = new LinkedHashMap<>();
         HashMap<String, Integer> advocateFee = new HashMap<>();
-        advocateFee.put("min", 0);
+        advocateFee.put("min", 1);
         advocateFee.put("max", 1);
-        advocateFee.put("advocateFee", 100);
-        advocateFees.put("0-1", advocateFee);
+        advocateFee.put("advocateFee", 25);
+        advocateFees.put("1", new HashMap<>(advocateFee));
+
+        advocateFee.put("min", 2);
+        advocateFee.put("max", 2);
+        advocateFee.put("advocateFee", 50);
+        advocateFees.put("2", new HashMap<>(advocateFee));
+
+        advocateFee.put("min", 3);
+        advocateFee.put("max", 500000000);
+        advocateFee.put("advocateFee", 75);
+        advocateFees.put("3-500000000", new HashMap<>(advocateFee));
         this.builder.noOfAdvocateFees(advocateFees).build();
         return this;
     }

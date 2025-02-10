@@ -7,16 +7,18 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.egov.common.contract.request.RequestInfo;
+import org.springframework.validation.annotation.Validated;
 
 import java.util.ArrayList;
 import java.util.List;
 
 
+@Validated
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-public class EFillingCalculationReq {
+public class EFillingCalculationRequest {
 
 
     @JsonProperty("RequestInfo")
@@ -28,7 +30,7 @@ public class EFillingCalculationReq {
     private List<EFillingCalculationCriteria> calculationCriteria = null;
 
 
-    public EFillingCalculationReq addCalculationCriteriaItem(EFillingCalculationCriteria calculationCriteriaItem) {
+    public EFillingCalculationRequest addCalculationCriteriaItem(EFillingCalculationCriteria calculationCriteriaItem) {
         if (this.calculationCriteria == null) {
             this.calculationCriteria = new ArrayList<>();
         }

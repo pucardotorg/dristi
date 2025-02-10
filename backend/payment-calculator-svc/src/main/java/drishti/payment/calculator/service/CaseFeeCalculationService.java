@@ -29,7 +29,7 @@ public class CaseFeeCalculationService {
     }
 
 
-    public List<Calculation> calculateCaseFees(EFillingCalculationReq request) {
+    public List<Calculation> calculateCaseFees(EFillingCalculationRequest request) {
         log.info("operation=calculateCaseFees, result=IN_PROGRESS");
 
         RequestInfo requestInfo = request.getRequestInfo();
@@ -51,13 +51,15 @@ public class CaseFeeCalculationService {
 
             Double totalApplicationFee = criteria.getNumberOfApplication() * applicationFee;
             Double petitionFee = getPetitionFee(criteria.getCheckAmount(), petitionFeeRange);
-//            Double delayFee = isDelayCondonationFeeApplicable(criteria.getDelayCondonation(), delayCondonationPeriod) ? delayCondonationFee : 0.0;
             Double delayFee = criteria.getIsDelayCondonation() ? delayCondonationFee : 0.0;
 
-            int noOfAdvocates = getAdvocateCountForCase(request.getRequestInfo(), criteria);
-            vakalathnamaFee = noOfAdvocates == 0 ? 0.0 : vakalathnamaFee;
-            advocateClerkWelfareFund = noOfAdvocates == 0 ? 0.0 : advocateClerkWelfareFund;
-            double advocateFee = noOfAdvocates == 0 ? 0.0 : getAdvocateFee(noOfAdvocateFees, noOfAdvocates);
+            Map<String, List<JsonNode>> litigantAdvocateMap = caseUtil.getAdvocateForLitigant(request.getRequestInfo(), criteria.getFilingNumber(), criteria.getTenantId());
+            Double advocateFee = 0.0;
+            for (Map.Entry<String, List<JsonNode>> entry : litigantAdvocateMap.entrySet()) {
+                int advocateCount = entry.getValue().size();
+                advocateFee += getAdvocateFee(noOfAdvocateFees, advocateCount);
+
+            }
 
             List<BreakDown> feeBreakdown = getFeeBreakdown(vakalathnamaFee, advocateClerkWelfareFund, totalApplicationFee, petitionFee, delayFee, advocateFee);
             Double totalCourtFee = Math.ceil(vakalathnamaFee + advocateClerkWelfareFund + totalApplicationFee + petitionFee + delayFee + advocateFee);
@@ -75,20 +77,6 @@ public class CaseFeeCalculationService {
 
     }
 
-    private int getAdvocateCountForCase(RequestInfo requestInfo, EFillingCalculationCriteria calculationCriteria) {
-        CaseCriteria criteria = CaseCriteria.builder()
-                .filingNumber(calculationCriteria.getFilingNumber())
-                .defaultFields(false)
-                .build();
-        CaseSearchRequest searchRequest = CaseSearchRequest.builder()
-                .requestInfo(requestInfo)
-                .tenantId(calculationCriteria.getTenantId())
-                .flow(FLOW_JAC)
-                .criteria(Collections.singletonList(criteria)).build();
-
-        JsonNode caseNode = caseUtil.searchCaseDetails(searchRequest);
-        return caseNode.get("advocateCount")!= null ? caseNode.get("advocateCount").asInt() : 0;
-    }
 
     public List<BreakDown> getFeeBreakdown(double vakalathnamaFee, double advocateClerkWelfareFund, double totalApplicationFee, double petitionFee, double condonationFee, double advocateFee) {
         List<BreakDown> feeBreakdowns = new ArrayList<>();
@@ -119,11 +107,6 @@ public class CaseFeeCalculationService {
         return null; // Invalid check amount
     }
 
-    private Boolean isDelayCondonationFeeApplicable(Long delayDuration, Long stdDuration) {
-
-        return delayDuration > stdDuration;
-
-    }
 
     private Double getAdvocateFee(LinkedHashMap<String, HashMap<String, Integer>> noOfAdvocateFees, int noOfAdvocates) {
         Double advocateFee = 0.0;

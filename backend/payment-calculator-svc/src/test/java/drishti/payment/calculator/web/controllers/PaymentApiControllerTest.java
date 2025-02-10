@@ -4,7 +4,7 @@ import drishti.payment.calculator.service.CaseFeeCalculationService;
 import drishti.payment.calculator.service.PaymentCalculationService;
 import drishti.payment.calculator.web.models.Calculation;
 import drishti.payment.calculator.web.models.CalculationRes;
-import drishti.payment.calculator.web.models.EFillingCalculationReq;
+import drishti.payment.calculator.web.models.EFillingCalculationRequest;
 import drishti.payment.calculator.web.models.SummonCalculationReq;
 import org.egov.common.contract.request.RequestInfo;
 import org.egov.common.contract.response.ResponseInfo;
@@ -40,12 +40,12 @@ public class PaymentApiControllerTest {
     private SummonCalculationReq request;
     private List<Calculation> calculations;
     private CalculationRes calculationRes;
-    private EFillingCalculationReq calculationReq;
+    private EFillingCalculationRequest calculationReq;
 
     @BeforeEach
     void setUp() {
         // Initialize the test data
-        calculationReq = new EFillingCalculationReq();
+        calculationReq = new EFillingCalculationRequest();
         calculationReq.setRequestInfo(new RequestInfo());
 
         request = new SummonCalculationReq();
