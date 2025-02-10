@@ -126,7 +126,7 @@ const styles = {
   container: {
     display: "flex",
     gap: "8px",
-    padding: "8px",
+    padding: "4px",
     borderRadius: "4px",
     backgroundColor: "#FCE8E8",
   },
@@ -1588,14 +1588,37 @@ const AdmittedCases = () => {
       (item) => item.orderType === "NOTICE" && item?.status === "PUBLISHED" && item?.hearingNumber === currentHearingId
     );
 
-    const sortedOrders = filteredOrders?.sort((a, b) => {
-      return new Date(b.auditDetails.createdTime) - new Date(a.auditDetails.createdTime);
-    });
+    const sortedOrders = filteredOrders?.sort((a, b) => new Date(b.auditDetails.createdTime) - new Date(a.auditDetails.createdTime));
 
-    return sortedOrders;
+    // Group by partyIndex
+    const groupedOrders = sortedOrders?.reduce((acc, item) => {
+      const partyIndex = item?.additionalDetails?.formdata?.noticeOrder?.party?.data?.partyIndex;
+
+      if (partyIndex !== undefined) {
+        acc[partyIndex] = acc[partyIndex] || [];
+        acc[partyIndex].push(item);
+      }
+
+      return acc;
+    }, {});
+
+    return groupedOrders;
   }, [currentHearingId, ordersData]);
 
-  const noticeFailureCount = useMemo(() => (isCaseAdmitted ? 0 : orderListFiltered?.length - 1), [isCaseAdmitted, orderListFiltered?.length]);
+  const noticeFailureCount = useMemo(() => {
+    if (isCaseAdmitted) return [];
+
+    return Object.entries(orderListFiltered)
+      ?.map(([partyIndex, orders]) => {
+        const partyName = orders[0]?.orderDetails?.parties?.[0]?.partyName || "";
+        return {
+          partyIndex,
+          partyName,
+          failureCount: orders.length - 1,
+        };
+      })
+      ?.filter(({ failureCount }) => failureCount > 0);
+  }, [isCaseAdmitted, orderListFiltered]);
 
   const getHearingData = async () => {
     try {
@@ -2052,9 +2075,11 @@ const AdmittedCases = () => {
     [caseDetails, primaryAction.action, secondaryAction.action, tertiaryAction.action, isCitizen]
   );
 
-  const handleOpenSummonNoticeModal = async () => {
+  const handleOpenSummonNoticeModal = async (partyIndex) => {
     if (currentHearingId) {
-      history.push(`${path}?filingNumber=${filingNumber}&caseId=${caseId}&taskOrderType=NOTICE&hearingId=${currentHearingId}&tab=${config?.label}`);
+      history.push(
+        `${path}?filingNumber=${filingNumber}&caseId=${caseId}&taskCnrNumber=${cnrNumber}&taskOrderType=NOTICE&partyIndex=${partyIndex}&hearingId=${currentHearingId}&tab=${config?.label}`
+      );
     }
   };
 
@@ -2224,19 +2249,26 @@ const AdmittedCases = () => {
             </div>
           )}
         </div>
-        {noticeFailureCount > 0 && !isCaseAdmitted && isJudge && (
-          <div className="notice-failed-notification" style={styles.container}>
-            <div className="notice-failed-icon" style={styles.icon}>
-              <InfoIconRed style={styles.icon} />
-            </div>
-            <p className="notice-failed-text" style={styles.text}>
-              {`${t("NOTICE_FAILED")} ${noticeFailureCount} ${t("TIMES_VIEW_STATUS")} `}
-              <span onClick={() => handleOpenSummonNoticeModal()} className="click-here" style={styles.link}>
-                {t("NOTICE_CLICK_HERE")}
-              </span>
-            </p>
-          </div>
-        )}
+        <div style={{ display: "flex", flexDirection: "column", gap: "8px" }}>
+          {noticeFailureCount?.map(
+            ({ partyIndex, partyName, failureCount }, index) =>
+              failureCount > 0 &&
+              !isCaseAdmitted &&
+              isJudge && (
+                <div key={partyIndex} className="notice-failed-notification" style={styles.container}>
+                  <div className="notice-failed-icon" style={styles.icon}>
+                    <InfoIconRed style={styles.icon} />
+                  </div>
+                  <p className="notice-failed-text" style={styles.text}>
+                    {`${t("NOTICE_FAILED")} ${failureCount} ${t("TIMES_VIEW_STATUS")} ${partyName}. ${t("VIEW_STATUS")}, `}
+                    <span onClick={() => handleOpenSummonNoticeModal(partyIndex)} className="click-here" style={styles.link}>
+                      {t("NOTICE_CLICK_HERE")}
+                    </span>
+                  </p>
+                </div>
+              )
+          )}
+        </div>
 
         <CustomCaseInfoDiv t={t} data={caseBasicDetails} column={6} />
         <div className="search-tabs-container">

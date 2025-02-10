@@ -124,7 +124,7 @@ const SummonsOrderComponent = ({ t, config, formData, onSelect, clearErrors }) =
         const respondentData = caseDetails?.additionalDetails?.respondentDetails?.formdata || [];
         const witnessData = caseDetails?.additionalDetails?.witnessDetails?.formdata || [];
         const updatedRespondentData = await Promise.all(
-          respondentData.map(async (item) => {
+          respondentData.map(async (item, index) => {
             const individualId = item?.data?.respondentVerification?.individualDetails?.individualId;
             let individualData = undefined;
             if (individualId) {
@@ -159,11 +159,13 @@ const SummonsOrderComponent = ({ t, config, formData, onSelect, clearErrors }) =
                   .concat(item?.data?.phonenumbers?.mobileNumber || [])
                   .filter(Boolean),
                 email: (individualData ? [individualData?.email] : []).concat(item?.data?.emails?.emailId || []).filter(Boolean),
+                uuid: individualData && individualData?.userUuid,
+                partyIndex: `Respondent_${index}`
               },
             };
           })
         );
-        const updatedWitnessData = witnessData.map((item) => ({
+        const updatedWitnessData = witnessData.map((item, index) => ({
           ...item,
           data: {
             ...item?.data,
@@ -173,6 +175,8 @@ const SummonsOrderComponent = ({ t, config, formData, onSelect, clearErrors }) =
             partyType: "Witness",
             phone_numbers: item?.data?.phonenumbers?.mobileNumber || [],
             email: item?.data?.emails?.emailId || [],
+            uuid : item?.data?.uuid,
+            partyIndex: `Witness_${index}`
           },
         }));
         users = [...updatedRespondentData, ...updatedWitnessData];

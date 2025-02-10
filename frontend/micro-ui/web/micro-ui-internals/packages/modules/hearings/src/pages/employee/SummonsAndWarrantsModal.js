@@ -56,7 +56,7 @@ const ModalHeading = ({ label, orderList }) => {
 const SummonsAndWarrantsModal = ({ handleClose }) => {
   const history = useHistory();
   const { t } = useTranslation();
-  const { filingNumber, hearingId, taskOrderType } = Digit.Hooks.useQueryParams();
+  const { filingNumber, hearingId, taskOrderType, taskCnrNumber, partyIndex } = Digit.Hooks.useQueryParams();
   const tenantId = Digit.ULBService.getCurrentTenantId();
   const [orderNumber, setOrderNumber] = useState(null);
   const [orderId, setOrderId] = useState(null);
@@ -192,7 +192,8 @@ const SummonsAndWarrantsModal = ({ handleClose }) => {
       (item) =>
         (taskOrderType === "NOTICE" ? item.orderType === "NOTICE" : item.orderType === "SUMMONS" || item.orderType === "WARRANT") &&
         item?.status === "PUBLISHED" &&
-        item?.hearingNumber === hearingId
+        item?.hearingNumber === hearingId &&
+        item?.additionalDetails?.formdata?.noticeOrder?.party?.data?.partyIndex === partyIndex
     );
 
     const sortedOrders = filteredOrders?.sort((a, b) => {
@@ -200,7 +201,7 @@ const SummonsAndWarrantsModal = ({ handleClose }) => {
     });
 
     return sortedOrders;
-  }, [hearingId, ordersData, taskOrderType]);
+  }, [hearingId, ordersData?.list, partyIndex, taskOrderType]);
 
   const [activeIndex, setActiveIndex] = useState(0);
   useEffect(() => {
@@ -210,7 +211,13 @@ const SummonsAndWarrantsModal = ({ handleClose }) => {
     setOrderId(orderListFiltered?.[0]?.id);
   }, [orderListFiltered]);
 
-  const config = useMemo(() => summonsConfig({ filingNumber, orderNumber, orderId, orderType }), [filingNumber, orderId, orderNumber, orderType]);
+  const config = useMemo(() => summonsConfig({ filingNumber, orderNumber, orderId, orderType, taskCnrNumber }), [
+    taskCnrNumber,
+    filingNumber,
+    orderId,
+    orderNumber,
+    orderType,
+  ]);
 
   const getOrderPartyData = (orderType, orderList) => {
     return orderList?.find((item) => orderType === item?.orderType)?.orderDetails?.parties;
