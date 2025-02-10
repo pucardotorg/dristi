@@ -47,6 +47,48 @@
       {
         "tenantId": "kl",
         "schemaCode": "ACCESSCONTROL-ACTIONS-TEST.actions-test",
+        "uniqueIdentifier": 2713,
+        "data": {
+          "id": 2713,
+          "name": "update diary",
+          "url": "/ab-diary/case/diary/v1/update",
+          "displayName": "update diary",
+          "serviceCode": "ab-diary",
+          "code": 2713
+        },
+        "isActive": true
+      },
+      {
+        "tenantId": "kl",
+        "schemaCode": "ACCESSCONTROL-ACTIONS-TEST.actions-test",
+        "uniqueIdentifier": 2712,
+        "data": {
+          "id": 2712,
+          "name": "generate diary",
+          "url": "/ab-diary/case/diary/v1/generate",
+          "displayName": "generate diary",
+          "serviceCode": "ab-diary",
+          "code": 2712
+        },
+        "isActive": true
+      },
+      {
+        "tenantId": "kl",
+        "schemaCode": "ACCESSCONTROL-ACTIONS-TEST.actions-test",
+        "uniqueIdentifier": 2711,
+        "data": {
+          "id": 2711,
+          "name": "search case diary",
+          "url": "/ab-diary/case/diary/v1/search",
+          "displayName": "search case diary",
+          "serviceCode": "ab-diary",
+          "code": 2711
+        },
+        "isActive": true
+      },
+      {
+        "tenantId": "kl",
+        "schemaCode": "ACCESSCONTROL-ACTIONS-TEST.actions-test",
         "uniqueIdentifier": 2709,
         "data": {
           "id": 2709,
@@ -93,6 +135,42 @@
     "mastername": "roleactions",
     "moduleName": "ACCESSCONTROL-ROLEACTIONS",
     "mdmsPayload": [
+      {
+        "tenantId": "kl",
+        "schemaCode": "ACCESSCONTROL-ROLEACTIONS.roleactions",
+        "uniqueIdentifier": null,
+        "data": {
+          "rolecode": "DIARY_APPROVER",
+          "actionid": 2713,
+          "actioncode": "2713",
+          "tenantId": "kl"
+        },
+        "isActive": true
+      },
+      {
+        "tenantId": "kl",
+        "schemaCode": "ACCESSCONTROL-ROLEACTIONS.roleactions",
+        "uniqueIdentifier": null,
+        "data": {
+          "rolecode": "DIARY_APPROVER",
+          "actionid": 2712,
+          "actioncode": "2712",
+          "tenantId": "kl"
+        },
+        "isActive": true
+      },
+      {
+        "tenantId": "kl",
+        "schemaCode": "ACCESSCONTROL-ROLEACTIONS.roleactions",
+        "uniqueIdentifier": null,
+        "data": {
+          "rolecode": "DIARY_VIEWER",
+          "actionid": 2711,
+          "actioncode": "2711",
+          "tenantId": "kl"
+        },
+        "isActive": true
+      },
       {
         "tenantId": "kl",
         "schemaCode": "ACCESSCONTROL-ROLEACTIONS.roleactions",

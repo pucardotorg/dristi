@@ -1,0 +1,70 @@
+{
+  "BusinessServices": [
+    {
+      "tenantId": "kl",
+      "business": "case",
+      "businessService": "case-a-diary",
+      "businessServiceSla": 86400000,
+      "states": [
+        {
+          "sla": null,
+          "state": null,
+          "applicationStatus": null,
+          "docUploadRequired": false,
+          "isStartState": true,
+          "isTerminateState": false,
+          "isStateUpdatable": true,
+          "actions": [
+            {
+              "action": "GENERATE",
+              "nextState": "PENDING_SIGN",
+              "roles": [
+                "DIARY_EDITOR",
+                "SYSTEM",
+                "SYSTEM_ADMIN"
+              ]
+            }
+          ]
+        },
+        {
+          "sla": null,
+          "state": "PENDING_SIGN",
+          "applicationStatus": "INWORKFLOW",
+          "docUploadRequired": false,
+          "isStartState": false,
+          "isTerminateState": false,
+          "isStateUpdatable": true,
+          "actions": [
+            {
+              "action": "SIGN",
+              "nextState": "COMPLETED",
+              "roles": [
+                "DIARY_APPROVER",
+                "SYSTEM",
+                "SYSTEM_ADMIN"
+              ]
+            },
+            {
+              "action": "GENERATE",
+              "nextState": "PENDING_SIGN",
+              "roles": [
+                "DIARY_EDITOR",
+                "SYSTEM",
+                "SYSTEM_ADMIN"
+              ]
+            }
+          ]
+        },
+        {
+          "sla": null,
+          "state": "COMPLETED",
+          "applicationStatus": "INACTIVE",
+          "docUploadRequired": false,
+          "isStartState": false,
+          "isTerminateState": true,
+          "isStateUpdatable": false
+        }
+      ]
+    }
+  ]
+}
