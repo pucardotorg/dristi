@@ -187,7 +187,11 @@ const SubmissionsCreate = ({ path }) => {
   );
 
   const fullName = useMemo(() => {
-    return caseDetails?.litigants?.find((litigant) => litigant?.additionalDetails?.uuid === userInfo?.uuid)?.additionalDetails?.fullName || "";
+    return (
+      caseDetails?.litigants?.find((litigant) => litigant?.additionalDetails?.uuid === userInfo?.uuid)?.additionalDetails?.fullName ||
+      caseDetails?.representatives?.find((rep) => rep?.additionalDetails?.uuid === userInfo?.uuid)?.additionalDetails?.advocateName ||
+      ""
+    );
   }, [caseDetails, userInfo?.uuid]);
 
   const orderRefNumber = useMemo(() => applicationData?.applicationList?.[0]?.additionalDetails?.formdata?.refOrderId, [applicationData]);
