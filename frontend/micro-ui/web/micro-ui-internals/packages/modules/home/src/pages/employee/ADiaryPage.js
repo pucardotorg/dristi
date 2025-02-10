@@ -90,6 +90,7 @@ const ADiaryPage = ({ path }) => {
   const [formData, setFormData] = useState({});
   const [signedDocumentUploadID, setSignedDocumentUploadID] = useState("");
   const [generateAdiaryLoader, setGenerateAdiaryLoader] = useState(false);
+  const [noAdiaryModal, setNoAdiaryModal] = useState(false);
 
   const DocViewerWrapper = Digit?.ComponentRegistryService?.getComponent("DocViewerWrapper");
   const MemoDocViewerWrapper = React.memo(DocViewerWrapper);
@@ -277,6 +278,10 @@ const ADiaryPage = ({ path }) => {
       history.push(`/${window.contextPath}/employee/home/adiary`);
     }
   };
+
+  useEffect(() => {
+    if (Array.isArray(diaryEntries?.entries) && diaryEntries?.entries?.length == 0) setNoAdiaryModal(true);
+  }, [diaryEntries]);
 
   const handleNext = () => {
     if (diaryEntries?.pagination?.totalCount > offSet + limit) {
@@ -576,6 +581,22 @@ const ADiaryPage = ({ path }) => {
                   {t("SIGNED")}
                 </h2>
               </div>
+            </div>
+          </Modal>
+        )}
+
+        {noAdiaryModal && (
+          <Modal
+            headerBarEnd={<CloseBtn onClick={() => setNoAdiaryModal(false)} />}
+            popupStyles={{ width: "600px" }}
+            actionSaveLabel={t("BACK")}
+            actionSaveOnSubmit={() => setNoAdiaryModal(false)}
+            formId="modal-action"
+            headerBarMainStyle={{ height: "60px" }}
+            headerBarMain={<Heading label={t("NO_ADIARY")} />}
+          >
+            <div style={{ padding: "20px" }}>
+              <span>{t("NO_ADIARY_TEXT")}</span>
             </div>
           </Modal>
         )}
