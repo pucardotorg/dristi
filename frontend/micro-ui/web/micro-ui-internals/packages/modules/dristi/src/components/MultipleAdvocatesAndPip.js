@@ -352,10 +352,16 @@ function MultipleAdvocatesAndPip({ t, config, onSelect, formData, errors, setErr
 
   useEffect(() => {
     if (
-      userType === "ADVOCATE" &&
-      advocateAndPipData?.multipleAdvocateNameDetails?.[0]?.advocateBarRegNumberWithName?.individualId !== individualId &&
-      advocateAndPipData?.boxComplainant?.index === 0 &&
-      advocateAndPipData?.boxComplainant?.individualId
+      (userType === "ADVOCATE" &&
+        advocateAndPipData?.multipleAdvocateNameDetails?.[0]?.advocateBarRegNumberWithName?.individualId !== individualId &&
+        advocateAndPipData?.boxComplainant?.index === 0 &&
+        advocateAndPipData?.boxComplainant?.individualId) ||
+      (advocateAndPipData?.multipleAdvocateNameDetails?.[0]?.advocateBarRegNumberWithName?.individualId === individualId &&
+        advocateAndPipData?.boxComplainant?.index === 0 &&
+        advocateAndPipData?.boxComplainant?.individualId &&
+        selectedIndividual &&
+        advocateAndPipData?.multipleAdvocateNameDetails?.[0]?.advocateNameDetails?.advocateMobileNumber !==
+          selectedIndividual?.Individual?.[0]?.mobileNumber)
     ) {
       const advData = advocateAndPipData?.multipleAdvocateNameDetails;
       if (isApproved && searchResult) {
@@ -397,6 +403,14 @@ function MultipleAdvocatesAndPip({ t, config, onSelect, formData, errors, setErr
         };
         let newData = structuredClone(advocateAndPipData);
         if (advData?.length === 0 || Object.keys(advData?.[0] || {})?.length === 0) {
+          const updatedData = [{ advocateBarRegNumberWithName, advocateNameDetails }];
+          newData = { ...advocateAndPipData, multipleAdvocateNameDetails: updatedData, showVakalatNamaUpload: true, showAffidavit: false };
+        } else if (
+          advData?.length === 1 &&
+          advData?.[0]?.advocateBarRegNumberWithName?.individualId &&
+          advData?.[0]?.advocateBarRegNumberWithName?.individualId === individualId &&
+          advData?.[0]?.advocateNameDetails?.advocateMobileNumber !== selectedIndividual?.Individual?.[0]?.mobileNumber
+        ) {
           const updatedData = [{ advocateBarRegNumberWithName, advocateNameDetails }];
           newData = { ...advocateAndPipData, multipleAdvocateNameDetails: updatedData, showVakalatNamaUpload: true, showAffidavit: false };
         } else if (
@@ -642,6 +656,7 @@ function MultipleAdvocatesAndPip({ t, config, onSelect, formData, errors, setErr
             e.stopPropagation();
             setDropdownVisible((prev) => !prev);
           }}
+          disabled={disabled}
           style={{
             position: "absolute",
             right: "10px",
@@ -651,6 +666,7 @@ function MultipleAdvocatesAndPip({ t, config, onSelect, formData, errors, setErr
             color: "black",
             cursor: "pointer",
             zIndex: 10,
+            pointerEvents: disabled ? "none" : "auto",
           }}
         >
           <ArrowDown />
