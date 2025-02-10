@@ -1,4 +1,4 @@
-import React, { useMemo, useState } from "react";
+import React, { useCallback, useMemo, useState } from "react";
 import { Button, Loader } from "@egovernments/digit-ui-react-components";
 import { useTranslation } from "react-i18next";
 import { useHistory } from "react-router-dom/cjs/react-router-dom.min";
@@ -14,6 +14,7 @@ import { paymentType } from "../../utils/paymentType";
 import { extractFeeMedium, getTaskType } from "@egovernments/digit-ui-module-dristi/src/Utils";
 import { getSuffixByDeliveryChannel } from "../../utils";
 import { getAdvocates } from "../../utils/caseUtils";
+import ButtonSelector from "@egovernments/digit-ui-module-dristi/src/components/ButtonSelector";
 
 const submitModalInfo = {
   header: "CS_HEADER_FOR_SUMMON_POST",
@@ -34,7 +35,19 @@ const orderTypeEnum = {
   WARRANT: "Warrant",
 };
 
-const PaymentForSummonComponent = ({ infos, links, feeOptions, orderDate, paymentLoader, channelId, formattedChannelId, orderType, isUserAdv }) => {
+const PaymentForSummonComponent = ({
+  infos,
+  links,
+  feeOptions,
+  orderDate,
+  paymentLoader,
+  channelId,
+  formattedChannelId,
+  orderType,
+  isUserAdv,
+  isCaseLocked = false,
+  payOnlineButtonTitle = null,
+}) => {
   const { t } = useTranslation();
   const CustomErrorTooltip = window?.Digit?.ComponentRegistryService?.getComponent("CustomErrorTooltip");
   const [selectedOption, setSelectedOption] = useState({});
@@ -74,7 +87,14 @@ const PaymentForSummonComponent = ({ infos, links, feeOptions, orderDate, paymen
                     (index === 0 ? (
                       t(action?.action)
                     ) : action?.action !== "offline-process" ? (
-                      <Button label={t(action.action)} onButtonClick={action.onClick} isDisabled={paymentLoader} />
+                      <ButtonSelector
+                        style={{ border: "1px solid" }}
+                        label={t(action.action)}
+                        onSubmit={action.onClick}
+                        isDisabled={paymentLoader || isCaseLocked}
+                        title={isCaseLocked ? t(payOnlineButtonTitle) : ""}
+                        textStyles={{ margin: "0px" }}
+                      />
                     ) : (
                       <p className="offline-process-text">
                         This is an offline process. <span className="learn-more-text">Learn More</span>
@@ -98,6 +118,9 @@ const PaymentForSummonModalSMSAndEmail = ({ path }) => {
   const tenantId = Digit.ULBService.getCurrentTenantId();
   const [caseId, setCaseId] = useState();
   const { t } = useTranslation();
+  const [isCaseLocked, setIsCaseLocked] = useState(false);
+  const [payOnlineButtonTitle, setPayOnlineButtonTitle] = useState("CS_BUTTON_PAY_ONLINE_SOMEONE_PAYING");
+
   const { data: caseData } = Digit.Hooks.dristi.useSearchCaseService(
     {
       criteria: [
@@ -128,6 +151,25 @@ const PaymentForSummonModalSMSAndEmail = ({ path }) => {
   const caseDetails = useMemo(() => {
     return caseData?.criteria?.[0]?.responseList?.[0];
   }, [caseData]);
+  const fetchCaseLockStatus = useCallback(async () => {
+    try {
+      const status = await DRISTIService.getCaseLockStatus(
+        {},
+        {
+          uniqueId: caseDetails?.filingNumber,
+          tenantId: tenantId,
+        }
+      );
+      setIsCaseLocked(status?.Lock?.isLocked);
+    } catch (error) {
+      console.error("Error fetching case lock status", error);
+    }
+  });
+  useEffect(() => {
+    if (caseDetails?.filingNumber) {
+      fetchCaseLockStatus();
+    }
+  }, [caseDetails?.filingNumber]);
 
   const allAdvocates = useMemo(() => getAdvocates(caseDetails), [caseDetails]);
   const advocatesUuids = useMemo(() => {
@@ -261,7 +303,7 @@ const PaymentForSummonModalSMSAndEmail = ({ path }) => {
     }
   }, [channelId]);
 
-  const { data: billResponse, isLoading: isBillLoading } = Digit.Hooks.dristi.useBillSearch(
+  const { data: billResponse, isLoading: isBillLoading, refetch: refetchBill } = Digit.Hooks.dristi.useBillSearch(
     {},
     {
       tenantId,
@@ -275,11 +317,32 @@ const PaymentForSummonModalSMSAndEmail = ({ path }) => {
   const feeOptions = useMemo(() => {
     const onPayOnline = async () => {
       try {
+        const { data: freshBillResponse } = await refetchBill();
         if (!billResponse?.Bill?.length) {
           console.log("Bill not found");
           return null;
         }
+        if (freshBillResponse?.Bill?.[0]?.status === "PAID") {
+          setIsCaseLocked(true);
+          setPayOnlineButtonTitle("CS_BUTTON_PAY_ONLINE_NO_PENDING_PAYMENT");
+          return;
+        }
+        const caseLockStatus = await DRISTIService.getCaseLockStatus(
+          {},
+          {
+            uniqueId: caseDetails?.filingNumber,
+            tenantId: tenantId,
+          }
+        );
+        if (caseLockStatus?.Lock?.isLocked) {
+          setIsCaseLocked(true);
+          setPayOnlineButtonTitle("CS_BUTTON_PAY_ONLINE_SOMEONE_PAYING");
+          return;
+        }
+        await DRISTIService.setCaseLock({ Lock: { uniqueId: caseDetails?.filingNumber, tenantId: tenantId, lockType: "PAYMENT" } }, {});
         const billPaymentStatus = await openPaymentPortal(billResponse);
+        await DRISTIService.setCaseUnlock({}, { uniqueId: caseDetails?.filingNumber, tenantId: tenantId });
+
         if (!billPaymentStatus) {
           console.log("Payment canceled or failed", taskNumber);
           return;
@@ -459,6 +522,8 @@ const PaymentForSummonModalSMSAndEmail = ({ path }) => {
         label: `Payment for ${orderTypeEnum?.[orderType]} via ${formattedChannelId}`,
       },
       isStepperModal: false,
+      isCaseLocked: isCaseLocked,
+      payOnlineButtonTitle: payOnlineButtonTitle,
       modalBody: (
         <PaymentForSummonComponent
           infos={infos}
@@ -471,6 +536,8 @@ const PaymentForSummonModalSMSAndEmail = ({ path }) => {
           isCaseAdmitted={isCaseAdmitted}
           orderType={orderType}
           isUserAdv={isUserAdv}
+          isCaseLocked={isCaseLocked}
+          payOnlineButtonTitle={payOnlineButtonTitle}
         />
       ),
     };
