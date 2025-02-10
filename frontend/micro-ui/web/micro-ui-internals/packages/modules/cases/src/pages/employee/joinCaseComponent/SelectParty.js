@@ -112,16 +112,16 @@ const SelectParty = ({
   return (
     <div ref={targetRef} className="select-user-join-case" style={{ width: "712px" }}>
       <CustomCaseInfoDiv t={t} data={caseInfo?.slice(0, 4)} column={4} />
-      {selectPartyData?.userType?.value === "Litigant" && (
-        <InfoCard
-          variant={"default"}
-          label={t("PLEASE_NOTE")}
-          additionalElements={[<p>{t("ACKNOWLEDGE_RECEIPT_OF_SUMMONS")}</p>]}
-          inline
-          textStyle={{}}
-          className={`custom-info-card`}
-        />
-      )}
+
+      <InfoCard
+        variant={"default"}
+        label={t("PLEASE_NOTE")}
+        additionalElements={[<p>{t("ACKNOWLEDGE_RECEIPT_OF_SUMMONS")}</p>]}
+        inline
+        textStyle={{}}
+        className={`custom-info-card`}
+      />
+
       <LabelFieldPair className="case-label-field-pair">
         <CardLabel className="case-input-label">{`${t("JOINING_THIS_CASE_AS")}`}</CardLabel>
         <RadioButtons
