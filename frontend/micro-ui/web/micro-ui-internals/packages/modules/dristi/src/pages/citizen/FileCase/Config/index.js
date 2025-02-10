@@ -1,6 +1,3 @@
-import { advocateDetailsConfig } from "./advocateDetailsConfig";
-import { delayApplicationConfig } from "./delayApplicationConfig";
-
 export const sideMenuConfig = [
   {
     isOpen: false,
@@ -317,7 +314,6 @@ export const sideMenuConfig = [
         checked: false,
         isCompleted: false,
         isDisabled: false,
-        // pageConfig: advocateDetailsConfig,
         pageConfig: [
           {
             moduleName: "commonUiConfig",
@@ -328,23 +324,14 @@ export const sideMenuConfig = [
             ],
           },
         ],
-        mandatoryFields: 0,
-        initialMandatoryFieldCount: 0,
-
+        mandatoryFields: [],
+        // We are not specifying mandatory fields here because whole form
+        // is a custom component and it is not possible to show fields in that manner.
+        // the counting logic is written directly for Advocate Details page.
+        initialMandatoryFieldCount: 2,
         optionalFields: [],
         dependentOptionalFields: [],
         dependentMandatoryFields: [],
-
-        // dependentMandatoryFields: [
-        //   { field: "barRegistrationNumber", dependentOn: "isAdvocateRepresenting", dependentOnKey: "showForm" },
-        //   { field: "advocateName", dependentOn: "isAdvocateRepresenting", dependentOnKey: "showForm" },
-        //   { field: "numberOfAdvocate", dependentOn: "isAdvocateRepresenting", dependentOnKey: "showForm" },
-        //   {
-        //     field: "vakalatnamaFileUpload.document",
-        //     dependentOn: "isAdvocateRepresenting",
-        //     dependentOnKey: "showForm",
-        //   },
-        // ],
         optionalFields: [],
         dependentOptionalFields: [],
         initialOptionalFieldCount: 0,

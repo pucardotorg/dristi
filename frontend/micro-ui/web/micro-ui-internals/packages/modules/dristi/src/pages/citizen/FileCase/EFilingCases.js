@@ -1557,7 +1557,7 @@ function EFilingCases({ path }) {
       // so there might not be any witness at all.
       totalMandatoryLeft = 0;
       totalOptionalLeft = 1;
-    } else {
+    } else if (currentSelected !== "advocateDetails") {
       for (let i = 0; i < currentPageData?.length; i++) {
         const currentIndexData = currentPageData[i];
         const currentPageMandatoryFields = [];
@@ -1644,6 +1644,44 @@ function EFilingCases({ path }) {
             }
           }
           totalOptionalLeft += optionalLeft;
+        }
+      }
+    } else {
+      // Calculation of Mandatory fields for Advocate Details page
+      for (let i = 0; i < currentPageData?.length; i++) {
+        const formData = currentPageData?.[i]?.data || {};
+        const { boxComplainant, isComplainantPip, multipleAdvocateNameDetails, vakalatnamaFileUpload, pipAffidavitFileUpload } =
+          formData?.multipleAdvocatesAndPip || {};
+
+        if (boxComplainant?.individualId) {
+          let isAnAdvocateMissing = false;
+          let isVakalatnamaFileMissing = false;
+          let isPipAffidavitFileMissing = false;
+          if (isComplainantPip?.code === "NO") {
+            // IF complainant is not party in person, an advocate must be present
+            if (!multipleAdvocateNameDetails || (Array.isArray(multipleAdvocateNameDetails) && multipleAdvocateNameDetails?.length === 0)) {
+              isAnAdvocateMissing = true;
+            } else if (
+              multipleAdvocateNameDetails &&
+              Array.isArray(multipleAdvocateNameDetails) &&
+              multipleAdvocateNameDetails?.length > 0 &&
+              multipleAdvocateNameDetails?.some((adv) => !adv?.advocateBarRegNumberWithName?.advocateId)
+            ) {
+              isAnAdvocateMissing = true;
+            }
+            // IF complainant is not party in person, there must be a vakalathnama document uploaded.
+            if (!vakalatnamaFileUpload || vakalatnamaFileUpload?.document?.length === 0) {
+              isVakalatnamaFileMissing = true;
+            }
+          }
+          if (isComplainantPip?.code === "YES") {
+            // IF complainant is party in person, there must be a PIP affidavit document uploaded.
+            if (!pipAffidavitFileUpload || pipAffidavitFileUpload?.document?.length === 0) {
+              isPipAffidavitFileMissing = true;
+            }
+          }
+          const missingFields = [isAnAdvocateMissing, isVakalatnamaFileMissing, isPipAffidavitFileMissing];
+          totalMandatoryLeft += missingFields.filter(Boolean).length;
         }
       }
     }
