@@ -1,4 +1,5 @@
 import React from "react";
+import { COLOR_FILL } from "../contants";
 
 const RegisterIcon = () => (
   <svg width="24" height="25" viewBox="0 0 24 25" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -1607,6 +1608,29 @@ const ForwardArrow = () => {
   );
 };
 
+const CheckSvg = ({ className, style = {} }) => (
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill={COLOR_FILL} className={className} style={style}>
+    <path d="M0 0h24v24H0z" fill="none" />
+    <path d="M9 16.2L4.8 12l-1.4 1.4L9 19 21 7l-1.4-1.4L9 16.2z" />
+  </svg>
+);
+
+const ArrowDown = ({ className, onClick, styles, disable }) => (
+  <svg
+    style={{ ...styles }}
+    xmlns="http://www.w3.org/2000/svg"
+    viewBox="0 0 24 24"
+    fill={disable ? "#9E9E9E" : "black"}
+    className={className}
+    onClick={onClick}
+    width="18px"
+    height="18px"
+  >
+    <path d="M0 0h24v24H0V0z" fill="none" />
+    <path d="M7 10l5 5 5-5H7z" />
+  </svg>
+);
+
 export {
   AdvocateIcon,
   CalendarLeftArrow,
@@ -1668,4 +1692,6 @@ export {
   WarningInfoIconYellow,
   BackwardArrow,
   ForwardArrow,
+  CheckSvg,
+  ArrowDown,
 };

@@ -1,6 +1,6 @@
 import { InfoCard } from "@egovernments/digit-ui-components";
 import CustomCaseInfoDiv from "@egovernments/digit-ui-module-dristi/src/components/CustomCaseInfoDiv";
-import { CardLabel, Dropdown, FormComposerV2, LabelFieldPair, MultiSelectDropdown, RadioButtons } from "@egovernments/digit-ui-react-components";
+import { CardLabel, Dropdown, FormComposerV2, LabelFieldPair, RadioButtons } from "@egovernments/digit-ui-react-components";
 import React, { useEffect, useMemo, useRef } from "react";
 import isEqual from "lodash/isEqual";
 import { useTranslation } from "react-i18next";
@@ -21,6 +21,8 @@ const SelectParty = ({
   isAdvocateJoined,
 }) => {
   const { t } = useTranslation();
+
+  const MultiSelectDropdown = window?.Digit?.ComponentRegistryService?.getComponent("MultiSelectDropdown");
 
   const targetRef = useRef(null);
 
@@ -85,6 +87,17 @@ const SelectParty = ({
     }
     return [];
   }, [caseDetails]);
+
+  const customLabel = useMemo(() => {
+    if (selectPartyData?.userType?.value !== "Advocate") return "";
+
+    const partyCount = party?.length || 0;
+
+    if (partyCount === 1) return party[0]?.fullName;
+    if (partyCount > 1) return `${party[0]?.fullName} + ${partyCount - 1} ${t("CS_OTHERS")}`;
+
+    return "";
+  }, [t, party, selectPartyData?.userType]);
 
   const scrollToDiv = () => {
     if (targetRef.current) {
@@ -203,7 +216,7 @@ const SelectParty = ({
                 onSelect={(value) => {
                   setParty(value?.map((val) => val[1]));
                 }}
-                defaultUnit={"Others"}
+                customLabel={customLabel}
               />
             )
           )}
