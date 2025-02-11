@@ -72,10 +72,10 @@ async function search_order(
   tenantId,
   orderId,
   requestinfo,
+  isOrderNumber = false,
   filingNumber,
   status,
-  orderType,
-  isOrderNumber = false
+  orderType
 ) {
   return await axios({
     method: "post",

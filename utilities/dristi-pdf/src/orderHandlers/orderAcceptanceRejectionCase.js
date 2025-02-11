@@ -71,6 +71,7 @@ async function orderAcceptanceRejectionCase(req, res, qrCode) {
           tenantId,
           null,
           requestInfo,
+          false,
           courtCase.filingNumber,
           "PUBLISHED",
           "NOTICE"
