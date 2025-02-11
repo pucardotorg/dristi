@@ -31,4 +31,7 @@ public class CaseDiaryRequest {
 
     @JsonProperty("courtName")
     private String courtName;
+
+    @JsonProperty("judgeName")
+    private String judgeName;
 }

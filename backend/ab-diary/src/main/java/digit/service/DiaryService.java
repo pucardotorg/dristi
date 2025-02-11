@@ -209,6 +209,7 @@ public class DiaryService {
             CaseDiaryRequest caseDiaryRequest = CaseDiaryRequest.builder()
                     .requestInfo(requestInfo)
                     .courtName(configuration.getCourtName())
+                    .judgeName(configuration.getJudgeName())
                     .diary(caseDiary).build();
 
             String pdfTemplateKey = "";
