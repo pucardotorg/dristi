@@ -5,8 +5,8 @@ import { CloseSvg } from "@egovernments/digit-ui-react-components";
 import DocViewerWrapper from "../pages/employee/docViewerWrapper";
 
 function ImageModal({ imageInfo, handleCloseModal, handleOpenPopup, t, anchorRef, showFlag, isPrevScrutiny, selectedDocs }) {
+  const { configKey = "", fieldName = "", index = 0 } = imageInfo || {};
   let showFlagNew = (!imageInfo?.disableScrutiny || imageInfo?.enableScrutinyField) && showFlag;
-
   if (isPrevScrutiny && !imageInfo?.disableScrutiny) {
     showFlagNew = imageInfo?.inputlist?.some((key) => {
       return Boolean(imageInfo?.dataError?.[key]?.FSOError);
@@ -29,7 +29,7 @@ function ImageModal({ imageInfo, handleCloseModal, handleOpenPopup, t, anchorRef
   const HeaderBarEnd = () => {
     return (
       <React.Fragment>
-        {showFlagNew && (
+        {showFlagNew && !(configKey === "litigentDetails" && fieldName === "complainantVerification.individualDetails.document") && (
           <div
             ref={anchorRef}
             className="flag-icon"
