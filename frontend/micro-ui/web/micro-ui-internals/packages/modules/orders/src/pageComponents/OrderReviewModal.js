@@ -100,6 +100,7 @@ function OrderReviewModal({
   currentDiaryEntry,
   handleUpdateBusinessOfDayEntry,
   handleReviewGoBack,
+  defaultBOTD,
 }) {
   const [fileStoreId, setFileStoreID] = useState(null);
   const [fileName, setFileName] = useState();
@@ -272,7 +273,7 @@ function OrderReviewModal({
                   setBusinessOfTheDay(e.target.value);
                 }}
                 disable={isDisabled}
-                defaultValue={currentDiaryEntry?.businessOfDay}
+                defaultValue={currentDiaryEntry?.businessOfDay || defaultBOTD}
                 style={{ minWidth: "500px" }}
                 textInputStyle={{ maxWidth: "100%" }}
               />

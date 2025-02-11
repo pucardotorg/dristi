@@ -1177,6 +1177,121 @@ const GenerateOrders = () => {
     return parties;
   };
 
+  const getPartyNamesString = (parties) => {
+    if (!Array.isArray(parties) || parties.length === 0) {
+      return "";
+    }
+    return parties.map((party) => party.partyName).join(", ");
+  };
+
+  const defaultBOTD = useMemo(() => {
+    if (!currentOrder?.orderType) return "";
+
+    switch (currentOrder.orderType) {
+      case "SECTION_202_CRPC":
+        return "Order Under Section 202 CrPC";
+      case "MANDATORY_SUBMISSIONS_RESPONSES":
+        return (
+          `${currentOrder?.orderDetails?.partyDetails?.partyToMakeSubmission?.[0]} to produce ${
+            currentOrder?.orderDetails?.documentType?.value
+          } before court by ${formatDate(new Date(currentOrder?.orderDetails?.dates?.submissionDeadlineDate), "DD-MM-YYYY")}.` +
+          (currentOrder?.orderDetails?.isResponseRequired?.code
+            ? ` Objections to be received by ${formatDate(new Date(currentOrder?.orderDetails?.dates?.responseDeadlineDate), "DD-MM-YYYY")}.`
+            : "")
+        );
+      case "EXTENSION_OF_DOCUMENT_SUBMISSION_DATE":
+        return currentOrder?.orderDetails?.applicationStatus === "APPROVED"
+          ? `Extension of the deadline granted to ${getPartyNamesString(currentOrder?.orderDetails?.parties)} for ${
+              currentOrder?.orderDetails?.documentName
+            } to the court. Submission to be made by ${formatDate(new Date(currentOrder?.orderDetails?.newSubmissionDate), "DD-MM-YYYY")}`
+          : `The application to extend the submission deadline against ${currentOrder?.orderDetails?.documentName} ${caseDetails?.cmpNumber} has been rejected`;
+      case "REFERRAL_CASE_TO_ADR":
+        return "Case referred to Alternative Dispute Resolution to seek settlement";
+      case "SCHEDULE_OF_HEARING_DATE":
+        return `For ${currentOrder?.orderDetails?.purposeOfHearing} on ${formatDate(
+          new Date(currentOrder?.additionalDetails?.formdata?.hearingDate),
+          "DD-MM-YYYY"
+        )}`;
+      case "SCHEDULING_NEXT_HEARING":
+        return `For ${currentOrder?.orderDetails?.purposeOfHearing} on ${formatDate(
+          new Date(currentOrder?.additionalDetails?.formdata?.hearingDate),
+          "DD-MM-YYYY"
+        )}`;
+      case "RESCHEDULE_OF_HEARING_DATE":
+        return `Hearing for ${formatDate(
+          new Date(currentOrder?.orderDetails?.newHearingDate),
+          "DD-MM-YYYY"
+        )} rescheduled on petition. Hearing Date to be announced on ${formatDate(
+          new Date(currentOrder?.orderDetails?.newHearingDate),
+          "DD-MM-YYYY"
+        )}`;
+      case "CHECKOUT_ACCEPTANCE":
+        return "Order for Approval of Check out (Emergency Reschedule) request";
+      case "CHECKOUT_REJECT":
+        return "Order for Rejection of Check out (Emergency Reschedule) request";
+      case "REJECTION_RESCHEDULE_REQUEST":
+        return `Request for rescheduling of hearing on ${formatDate(
+          new Date(currentOrder?.orderDetails?.originalHearingDate),
+          "DD-MM-YYYY"
+        )} raised by ${getPartyNamesString(currentOrder?.orderDetails?.parties)} dismissed`;
+      case "INITIATING_RESCHEDULING_OF_HEARING_DATE":
+        return "Initiated the process for rescheduling the hearing";
+      case "ASSIGNING_DATE_RESCHEDULED_HEARING":
+        return `Hearing for ${formatDate(
+          new Date(currentOrder?.orderDetails?.newHearingDate),
+          "DD-MM-YYYY"
+        )} rescheduled on petition. Hearing Date to be announced on ${formatDate(
+          new Date(currentOrder?.orderDetails?.newHearingDate),
+          "DD-MM-YYYY"
+        )}`;
+      case "ASSIGNING_NEW_HEARING_DATE":
+        return `For ${currentOrder?.orderDetails?.purposeOfHearing} on ${formatDate(
+          new Date(currentOrder?.additionalDetails?.formdata?.hearingDate),
+          "DD-MM-YYYY"
+        )}`;
+      case "CASE_TRANSFER":
+        return "The case is transferred to another court for further proceedings";
+      case "SETTLEMENT":
+        return currentOrder?.orderDetails?.applicationStatus === "APPROVED"
+          ? "The settlement records have been accepted by the court. Case closed."
+          : "The settlement records have been dismissed by the court";
+      case "SUMMONS":
+        return `Issue Summons to ${currentOrder?.orderDetails?.respondentName} - ${currentOrder?.orderDetails?.parties?.[0]?.partyType}`;
+      case "NOTICE":
+        return `Issue Notice to ${currentOrder?.orderDetails?.respondentName} - ${currentOrder?.orderDetails?.parties?.[0]?.partyType}`;
+      case "BAIL":
+        return "Bail";
+      case "WARRANT":
+        return `Issue ${currentOrder?.orderDetails?.warrantType} to ${currentOrder?.orderDetails?.parties?.[0]?.partyCode} - ${currentOrder?.orderDetails?.parties?.[0]?.partyType}`;
+      case "WITHDRAWAL":
+        return currentOrder?.orderDetails?.applicationStatus === "APPROVED"
+          ? "The application to withdraw the case has been accepted. Case closed"
+          : `The application to withdraw the case raised by ${applicationDetails?.additionalDetails?.owner} has been rejected`;
+      case "OTHERS":
+        return "Others";
+      case "APPROVE_VOLUNTARY_SUBMISSIONS":
+        return `CMP: ${t(applicationDetails?.applicationType)} ${applicationDetails?.applicationNumber} stands allowed`;
+      case "REJECT_VOLUNTARY_SUBMISSIONS":
+        return `CMP: ${t(applicationDetails?.applicationType)} ${applicationDetails?.applicationNumber} stands dismissed`;
+      case "JUDGEMENT":
+        return currentOrder?.additionalDetails?.formdata?.plea?.code === "GUILTY"
+          ? `The accused is convicted u/s 278(2) BNSS`
+          : `The accused is acquitted u/s 278(1) BNSS`;
+      case "REJECT_BAIL":
+        return "Bail Rejected";
+      case "ACCEPT_BAIL":
+        return "Bail Granted";
+      case "SET_BAIL_TERMS":
+        return "Condition of Bail";
+      case "ACCEPTANCE_REJECTION_DCA":
+        return "Order for Acceptance/Rejection of Delay Condonation";
+      case "ADMIT_DISMISS_CASE":
+        return `Cognizance of the offence taken on file as ${caseDetails?.cmpNumber} under Section 138 of the Negotiable Instruments Act`;
+      default:
+        return "";
+    }
+  }, [t, applicationDetails, caseDetails, currentOrder]);
+
   const updateOrder = async (order, action) => {
     try {
       const localStorageID = localStorage.getItem("fileStoreId");
@@ -1781,7 +1896,7 @@ const GenerateOrders = () => {
             caseFilingDate: caseDetails?.filingDate,
             noticeType,
             docSubType: orderFormData?.party?.data?.partyType === "Witness" ? "WITNESS" : "ACCUSED",
-            partyIndex: partyIndex
+            partyIndex: partyIndex,
           },
           respondentDetails: orderFormData?.party?.data?.partyType === "Witness" ? caseRespondent : respondentDetails,
           ...(orderFormData?.party?.data?.partyType === "Witness" && { witnessDetails: respondentDetails }),
@@ -2712,6 +2827,7 @@ const GenerateOrders = () => {
           currentDiaryEntry={currentDiaryEntry}
           handleUpdateBusinessOfDayEntry={handleUpdateBusinessOfDayEntry}
           handleReviewGoBack={handleReviewGoBack}
+          defaultBOTD={defaultBOTD}
         />
       )}
       {showsignatureModal && (
