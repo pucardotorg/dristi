@@ -20,7 +20,7 @@ const useESign = () => {
             fileStoreId: fileStoreId,
             tenantId: tenantId,
             pageModule: pageModule,
-            signPlaceHolder: signPlaceHolder || null,
+            signPlaceHolder: signPlaceHolder || "EsIIIgNNN_PlAcEholDeR_keYY",
           },
         });
         if (eSignResponse) {
