@@ -263,7 +263,7 @@ function OrderReviewModal({
               <h1> {t(order?.orderType)}</h1>
             </div>
           </div>
-          <div className="review-order-modal-document-div" style={{ padding: 0 }}>
+          <div className="review-order-modal-document-div" style={{ padding: 0, overflow: "auto" }}>
             {showDocument}
             <h3 style={{ marginTop: 0, marginBottom: "2px" }}>{t("BUSINESS_OF_THE_DAY")} </h3>
             <div style={{ display: "flex", gap: "10px" }}>

@@ -53,11 +53,11 @@ export const UICustomizations = {
             const select = mdmsConfig?.select
               ? Digit.Utils.createFunction(mdmsConfig?.select)
               : (data) => {
-                const optionsData = get(data, `${mdmsConfig?.moduleName}.${mdmsConfig?.masterName}`, []);
-                return optionsData
-                  .filter((opt) => (opt?.hasOwnProperty("active") ? opt.active : true))
-                  .map((opt) => ({ ...opt, name: `${mdmsConfig?.localePrefix}_${Digit.Utils.locale.getTransformedLocale(opt.code)}` }));
-              };
+                  const optionsData = get(data, `${mdmsConfig?.moduleName}.${mdmsConfig?.masterName}`, []);
+                  return optionsData
+                    .filter((opt) => (opt?.hasOwnProperty("active") ? opt.active : true))
+                    .map((opt) => ({ ...opt, name: `${mdmsConfig?.localePrefix}_${Digit.Utils.locale.getTransformedLocale(opt.code)}` }));
+                };
 
             return select(mdmsData).find((option) => option.code === value);
           }
@@ -90,7 +90,7 @@ export const UICustomizations = {
       summonsOrderPartyName: {
         formToSchema: (value) => {
           try {
-            return [value?.party?.data?.firstName, value?.party?.data?.lastName].filter(Boolean).join(" ");
+            return [value?.party?.data?.firstName, value?.party?.data?.middleName, value?.party?.data?.lastName].filter(Boolean).join(" ");
           } catch (error) {
             console.error("Error in parsing party name", error);
             return;
@@ -201,11 +201,11 @@ export const UICustomizations = {
             const select = mdmsConfig?.select
               ? Digit.Utils.createFunction(mdmsConfig?.select)
               : (data) => {
-                const optionsData = get(data, `${mdmsConfig?.moduleName}.${mdmsConfig?.masterName}`, []);
-                return optionsData
-                  .filter((opt) => (opt?.hasOwnProperty("active") ? opt.active : true))
-                  .map((opt) => ({ ...opt, name: `${mdmsConfig?.localePrefix}_${Digit.Utils.locale.getTransformedLocale(opt.code)}` }));
-              };
+                  const optionsData = get(data, `${mdmsConfig?.moduleName}.${mdmsConfig?.masterName}`, []);
+                  return optionsData
+                    .filter((opt) => (opt?.hasOwnProperty("active") ? opt.active : true))
+                    .map((opt) => ({ ...opt, name: `${mdmsConfig?.localePrefix}_${Digit.Utils.locale.getTransformedLocale(opt.code)}` }));
+                };
 
             return select(mdmsData).find((option) => option.code === value);
           }

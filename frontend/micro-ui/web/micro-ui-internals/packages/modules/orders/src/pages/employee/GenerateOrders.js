@@ -1161,7 +1161,7 @@ const GenerateOrders = () => {
       return parties;
     }
     parties = parties?.map((party) => {
-      const matchingParty = allParties.find((p) => p.name === party);
+      const matchingParty = allParties.find((p) => p.code === party);
       if (matchingParty) {
         return {
           partyName: matchingParty.name,
@@ -1192,7 +1192,7 @@ const GenerateOrders = () => {
         return "Order Under Section 202 CrPC";
       case "MANDATORY_SUBMISSIONS_RESPONSES":
         return (
-          `${currentOrder?.orderDetails?.partyDetails?.partyToMakeSubmission?.[0]} to produce ${
+          `${currentOrder?.orderDetails?.partyDetails?.partyToMakeSubmission?.join(", ")} to produce ${
             currentOrder?.orderDetails?.documentType?.value
           } before court by ${formatDate(new Date(currentOrder?.orderDetails?.dates?.submissionDeadlineDate), "DD-MM-YYYY")}.` +
           (currentOrder?.orderDetails?.isResponseRequired?.code
@@ -1292,6 +1292,10 @@ const GenerateOrders = () => {
     }
   }, [t, applicationDetails, caseDetails, currentOrder]);
 
+  useEffect(() => {
+    setBusinessOfTheDay(defaultBOTD);
+  }, [defaultBOTD]);
+
   const updateOrder = async (order, action) => {
     try {
       const localStorageID = localStorage.getItem("fileStoreId");
@@ -1317,7 +1321,7 @@ const GenerateOrders = () => {
 
       const parties = getParties(order?.orderType, {
         ...orderSchema,
-        orderDetails: { ...orderSchema?.orderDetails, ...(order?.orderDetails || {}) },
+        orderDetails: { ...(order?.orderDetails || {}), ...orderSchema?.orderDetails },
       });
       orderSchema = { ...orderSchema, orderDetails: { ...orderSchema?.orderDetails, parties: parties } };
       return await ordersService.updateOrder(
