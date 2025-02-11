@@ -26,6 +26,7 @@ const Login = ({ config: propsConfig, t, isDisabled, tenantsData, isTenantsDataL
   const [user, setUser] = useState(null);
   const [showToast, setShowToast] = useState(null);
   const [disable, setDisable] = useState(false);
+  const [prevDistrict, setPrevDistrict] = useState(null);
 
   const history = useHistory();
   // const getUserType = () => "EMPLOYEE" || Digit.UserService.getType();
@@ -74,8 +75,11 @@ const Login = ({ config: propsConfig, t, isDisabled, tenantsData, isTenantsDataL
 
     const requestData = {
       ...data,
+      courtroom: data?.courtroom?.code,
+      district: data?.district?.code,
       userType: "EMPLOYEE",
     };
+
     requestData.tenantId = data?.city?.code || Digit.ULBService.getStateId();
     delete requestData.city;
     try {
@@ -103,36 +107,46 @@ const Login = ({ config: propsConfig, t, isDisabled, tenantsData, isTenantsDataL
 
   const { mode } = Digit.Hooks.useQueryParams();
 
-  const defaultValue = useMemo(() => {
-    if (tenantsData && tenantsData.length > 0) {
-      return {
-        code: Digit.ULBService.getStateId(),
-        name: Digit.Utils.locale.getTransformedLocale(tenantsData?.[0]?.city),
-      };
+  const [config, setConfig] = useState([{ body: propsConfig?.inputs }]);
+
+  const { data: commonMasterData, isLoading: isCommonMasterDataLoading } = Digit.Hooks.useCustomMDMS(
+    Digit.ULBService.getStateId(),
+    "common-masters",
+    [{ name: "CourtEstablishment" }, { name: "Court_Rooms" }],
+    {
+      select: (data) => data,
     }
-    return null;
-  }, [tenantsData]);
+  );
 
-  const config = useMemo(() => {
-    const baseConfig = [{ body: propsConfig?.inputs }];
+  const getFilteredCourtRoom = (district) => {
+    const courtEstablishmnets = commonMasterData?.["common-masters"]?.CourtEstablishment;
+    const courtRoom = commonMasterData?.["common-masters"]?.Court_Rooms;
+    if (!district) return courtRoom;
+    const filteredCourtEstablishmnets = courtEstablishmnets.filter((ce) => ce.district === district);
+    const filteredCourtRoom = courtRoom.filter((court) => filteredCourtEstablishmnets.some((ce) => ce.code === court.establishment));
+    return filteredCourtRoom;
+  };
+  const getModifiedConfig = (district) => {
+    const newPopulators = {
+      name: "courtroom",
+      optionsKey: "name",
+      error: "ERR_HRMS_INVALID_COURT_ROOM",
+      options: getFilteredCourtRoom(district?.code),
+    };
+    let modifiedConfig = config;
+    modifiedConfig[0].body[3].populators = newPopulators;
+    return modifiedConfig;
+  };
 
-    if (baseConfig[0]?.body && defaultValue) {
-      const updatedConfig = [...baseConfig];
-      if (mode === "admin" && updatedConfig[0].body[2]?.disable === false && updatedConfig[0].body[2]?.populators?.defaultValue == undefined) {
-        updatedConfig[0].body[2].disable = true;
-        updatedConfig[0].body[2].isMandatory = false;
-        updatedConfig[0].body[2].populators.defaultValue = defaultValue;
-      } else if (updatedConfig[0].body[2]?.populators?.defaultValue == undefined) {
-        updatedConfig[0].body[2].isMandatory = false;
-        updatedConfig[0].body[2].populators.defaultValue = defaultValue;
-      }
-      return updatedConfig;
+  const onFormValueChange = (setValue, formData, formState) => {
+    if (formData?.district !== prevDistrict) {
+      setConfig(getModifiedConfig(formData?.district));
+      setValue("courtroom", "");
     }
+    setPrevDistrict((prev) => formData?.district);
+  };
 
-    return baseConfig;
-  }, [propsConfig?.inputs, defaultValue, mode]);
-
-  return isLoading || isStoreLoading || isTenantsDataLoading ? (
+  return isLoading || isStoreLoading || isCommonMasterDataLoading ? (
     <Loader />
   ) : (
     <Background>
@@ -143,6 +157,7 @@ const Login = ({ config: propsConfig, t, isDisabled, tenantsData, isTenantsDataL
       <FormComposerV2
         onSubmit={onLogin}
         isDisabled={isDisabled || disable}
+        onFormValueChange={onFormValueChange}
         noBoxShadow
         inline
         submitInForm
