@@ -304,12 +304,12 @@ const PaymentForRPADModal = ({ path }) => {
 
     const onPayOnline = async () => {
       try {
-        await refetchBill();
+        const { data: freshBillResponse } = await refetchBill();
         if (!courtBillResponse?.Bill?.length) {
           console.error("Bill not found");
           return;
         }
-        if (courtBillResponse?.Bill?.status === "PAID") {
+        if (freshBillResponse?.Bill?.[0]?.status === "PAID") {
           setIsCaseLocked(true);
           setPayOnlineButtonTitle("CS_BUTTON_PAY_ONLINE_NO_PENDING_PAYMENT");
           return;

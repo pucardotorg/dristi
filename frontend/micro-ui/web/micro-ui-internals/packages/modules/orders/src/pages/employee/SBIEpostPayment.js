@@ -1,10 +1,12 @@
-import React, { useState } from "react";
+import React, { useState, useCallback } from "react";
 import { Loader } from "@egovernments/digit-ui-components";
 import { useMemo } from "react";
 import { useHistory, useLocation } from "react-router-dom/cjs/react-router-dom.min";
 import { SBIPaymentService } from "../../hooks/services";
 import { Modal, Button, CardText, RadioButtons, CardLabel, LabelFieldPair } from "@egovernments/digit-ui-react-components";
 import { useTranslation } from "react-i18next";
+import ButtonSelector from "@egovernments/digit-ui-module-dristi/src/components/ButtonSelector";
+import { DRISTIService } from "@egovernments/digit-ui-module-dristi/src/services";
 
 const modeOptions = [
   { label: "Net Banking", value: "NB" },
@@ -35,12 +37,64 @@ const SBIEpostPayment = () => {
   const isCourtBillPaid = location?.state?.state?.isCourtBillPaid;
   const hearingId = location?.state?.state?.hearingId;
   const orderType = location?.state?.state?.orderType;
+  const [isCaseLocked, setIsCaseLocked] = useState(false);
+  const [payOnlineButtonTitle, setPayOnlineButtonTitle] = useState("CS_BUTTON_PAY_ONLINE_SOMEONE_PAYING");
+
   let history = useHistory();
+  const { data: ePostBillResponse, isLoading: isEPOSTBillLoading, refetch: refetchBill } = Digit.Hooks.dristi.useBillSearch(
+    {},
+    {
+      tenantId,
+      consumerCode: consumerCode,
+      service: bill?.Bill?.[0]?.businessService,
+    },
+    `${consumerCode}_POST_PROCESS_${bill?.Bill?.[0]?.businessService}`,
+    Boolean(orderType)
+  );
+  const fetchCaseLockStatus = useCallback(async () => {
+    try {
+      const status = await DRISTIService.getCaseLockStatus(
+        {},
+        {
+          uniqueId: caseDetails?.filingNumber,
+          tenantId: tenantId,
+        }
+      );
+      setIsCaseLocked(status?.Lock?.isLocked);
+    } catch (error) {
+      console.error("Error fetching case lock status", error);
+    }
+  });
+  useEffect(() => {
+    if (caseDetails?.filingNumber) {
+      fetchCaseLockStatus();
+    }
+  }, [caseDetails?.filingNumber]);
 
   const onSBIPayment = async () => {
     setPaymentLoader(true);
     let status;
     try {
+      const { data: freshBillResponse } = await refetchBill();
+      if (freshBillResponse?.Bill?.[0]?.status === "PAID") {
+        setIsCaseLocked(true);
+        setPayOnlineButtonTitle("CS_BUTTON_PAY_ONLINE_NO_PENDING_PAYMENT");
+        return;
+      }
+      const caseLockStatus = await DRISTIService.getCaseLockStatus(
+        {},
+        {
+          uniqueId: caseDetails?.filingNumber,
+          tenantId: tenantId,
+        }
+      );
+      if (caseLockStatus?.Lock?.isLocked) {
+        setIsCaseLocked(true);
+        setPayOnlineButtonTitle("CS_BUTTON_PAY_ONLINE_SOMEONE_PAYING");
+        return;
+      }
+      await DRISTIService.setCaseLock({ Lock: { uniqueId: caseDetails?.filingNumber, tenantId: tenantId, lockType: "PAYMENT" } }, {});
+
       const gateway = await SBIPaymentService.SBIPayment(
         {
           TransactionDetails: {
@@ -69,6 +123,8 @@ const SBIEpostPayment = () => {
         },
         {}
       );
+      await DRISTIService.setCaseUnlock({}, { uniqueId: caseDetails?.filingNumber, tenantId: tenantId });
+
       if (gateway) {
         const receiptData = {
           caseInfo: [
@@ -162,7 +218,14 @@ const SBIEpostPayment = () => {
               disabled={false}
             />
           </LabelFieldPair>
-          <Button label={t("SBI_PAYMENT")} onButtonClick={onSBIPayment} />
+          <ButtonSelector
+            style={{ border: "1px solid" }}
+            label={t("SBI_PAYMENT")}
+            onSubmit={onSBIPayment}
+            isDisabled={paymentLoader || isCaseLocked}
+            title={isCaseLocked ? t(payOnlineButtonTitle) : ""}
+            textStyles={{ margin: "0px" }}
+          />
         </div>
       )}
     </div>

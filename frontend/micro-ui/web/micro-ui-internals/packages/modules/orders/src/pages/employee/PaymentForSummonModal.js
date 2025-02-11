@@ -1,4 +1,4 @@
-import React, { useMemo, useState } from "react";
+import React, { useMemo, useState, useCallback } from "react";
 import { Button, RadioButtons, CardLabel, LabelFieldPair } from "@egovernments/digit-ui-react-components";
 import { useTranslation } from "react-i18next";
 import { useHistory } from "react-router-dom/cjs/react-router-dom.min";
@@ -14,6 +14,7 @@ import { useEffect } from "react";
 import { paymentType } from "../../utils/paymentType";
 import { extractFeeMedium, getTaskType } from "@egovernments/digit-ui-module-dristi/src/Utils";
 import { getAdvocates } from "../../utils/caseUtils";
+import ButtonSelector from "@egovernments/digit-ui-module-dristi/src/components/ButtonSelector";
 
 const modeOptions = [{ label: "E-Post (3-5 days)", value: "e-post" }];
 
@@ -30,7 +31,17 @@ const submitModalInfo = {
   showTable: true,
 };
 
-const PaymentForSummonComponent = ({ infos, links, feeOptions, orderDate, paymentLoader, orderType, isUserAdv }) => {
+const PaymentForSummonComponent = ({
+  infos,
+  links,
+  feeOptions,
+  orderDate,
+  paymentLoader,
+  orderType,
+  isUserAdv,
+  isCaseLocked = false,
+  payOnlineButtonTitle = null,
+}) => {
   const { t } = useTranslation();
   const CustomErrorTooltip = window?.Digit?.ComponentRegistryService?.getComponent("CustomErrorTooltip");
 
@@ -91,7 +102,14 @@ const PaymentForSummonComponent = ({ infos, links, feeOptions, orderDate, paymen
                   ) : action?.isCompleted ? (
                     <p style={{ color: "green" }}>{t("PAYMENT_COMPLETED")}</p>
                   ) : action?.action !== "offline-process" ? (
-                    <Button label={t(action.action)} onButtonClick={action.onClick} isDisabled={paymentLoader} />
+                    <ButtonSelector
+                      style={{ border: "1px solid" }}
+                      label={t(action.action)}
+                      onSubmit={action.onClick}
+                      isDisabled={paymentLoader || isCaseLocked}
+                      title={isCaseLocked ? t(payOnlineButtonTitle) : ""}
+                      textStyles={{ margin: "0px" }}
+                    />
                   ) : (
                     <p className="offline-process-text">
                       {t("THIS_OFFLINE_TEXT")} <span className="learn-more-text">{t("LEARN_MORE")}</span>
@@ -113,6 +131,8 @@ const PaymentForSummonModal = ({ path }) => {
   const { filingNumber, taskNumber } = Digit.Hooks.useQueryParams();
   const tenantId = Digit.ULBService.getCurrentTenantId();
   const [caseId, setCaseId] = useState();
+  const [isCaseLocked, setIsCaseLocked] = useState(false);
+  const [payOnlineButtonTitle, setPayOnlineButtonTitle] = useState("CS_BUTTON_PAY_ONLINE_SOMEONE_PAYING");
 
   const { data: caseData } = Digit.Hooks.dristi.useSearchCaseService(
     {
@@ -145,6 +165,25 @@ const PaymentForSummonModal = ({ path }) => {
   const caseDetails = useMemo(() => {
     return caseData?.criteria?.[0]?.responseList?.[0];
   }, [caseData]);
+  const fetchCaseLockStatus = useCallback(async () => {
+    try {
+      const status = await DRISTIService.getCaseLockStatus(
+        {},
+        {
+          uniqueId: caseDetails?.filingNumber,
+          tenantId: tenantId,
+        }
+      );
+      setIsCaseLocked(status?.Lock?.isLocked);
+    } catch (error) {
+      console.error("Error fetching case lock status", error);
+    }
+  });
+  useEffect(() => {
+    if (caseDetails?.filingNumber) {
+      fetchCaseLockStatus();
+    }
+  }, [caseDetails?.filingNumber]);
 
   const allAdvocates = useMemo(() => getAdvocates(caseDetails), [caseDetails]);
   const advocatesUuids = useMemo(() => {
@@ -200,7 +239,7 @@ const PaymentForSummonModal = ({ path }) => {
   }, [taskNumber]);
   const service = useMemo(() => (orderType === "SUMMONS" ? paymentType.TASK_SUMMON : paymentType.TASK_NOTICE), [orderType]);
   const taskType = useMemo(() => getTaskType(service), [service]);
-  const { data: courtBillResponse, isLoading: isCourtBillLoading } = Digit.Hooks.dristi.useBillSearch(
+  const { data: courtBillResponse, isLoading: isCourtBillLoading, refetch: refetchBill } = Digit.Hooks.dristi.useBillSearch(
     {},
     {
       tenantId,
@@ -274,11 +313,31 @@ const PaymentForSummonModal = ({ path }) => {
 
     const onPayOnline = async () => {
       try {
+        const { data: freshBillResponse } = await refetchBill();
         if (!courtBillResponse?.Bill?.length) {
           console.log("Bill not found");
           return null;
         }
+        if (freshBillResponse?.Bill?.[0]?.status === "PAID") {
+          setIsCaseLocked(ePostBillResponse?.Bill?.[0]?.status === "PAID" ? true : false);
+          setPayOnlineButtonTitle(ePostBillResponse?.Bill?.[0]?.status === "PAID" ? "CS_BUTTON_PAY_ONLINE_NO_PENDING_PAYMENT" : "");
+          return;
+        }
+        const caseLockStatus = await DRISTIService.getCaseLockStatus(
+          {},
+          {
+            uniqueId: caseDetails?.filingNumber,
+            tenantId: tenantId,
+          }
+        );
+        if (caseLockStatus?.Lock?.isLocked) {
+          setIsCaseLocked(true);
+          setPayOnlineButtonTitle("CS_BUTTON_PAY_ONLINE_SOMEONE_PAYING");
+          return;
+        }
+        await DRISTIService.setCaseLock({ Lock: { uniqueId: caseDetails?.filingNumber, tenantId: tenantId, lockType: "PAYMENT" } }, {});
         const billPaymentStatus = await openPaymentPortal(courtBillResponse);
+        await DRISTIService.setCaseUnlock({}, { uniqueId: caseDetails?.filingNumber, tenantId: tenantId });
         if (!billPaymentStatus) {
           console.log("Payment canceled or failed", taskNumber);
           return null;
@@ -493,6 +552,8 @@ const PaymentForSummonModal = ({ path }) => {
       handleClose: handleClose,
       heading: { label: `Payment for ${orderType === "SUMMONS" ? "Summons" : "Notice"} via post` },
       isStepperModal: false,
+      isCaseLocked: isCaseLocked,
+      payOnlineButtonTitle: payOnlineButtonTitle,
       modalBody: (
         <PaymentForSummonComponent
           infos={infos}
@@ -503,6 +564,8 @@ const PaymentForSummonModal = ({ path }) => {
           isCaseAdmitted={isCaseAdmitted}
           orderType={orderType}
           isUserAdv={isUserAdv}
+          isCaseLocked={isCaseLocked}
+          payOnlineButtonTitle={payOnlineButtonTitle}
         />
       ),
     };
