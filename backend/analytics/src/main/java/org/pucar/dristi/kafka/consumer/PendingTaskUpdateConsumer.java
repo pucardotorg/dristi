@@ -4,13 +4,14 @@ package org.pucar.dristi.kafka.consumer;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.kafka.clients.consumer.ConsumerRecord;
-import org.egov.tracer.model.CustomException;
 import org.pucar.dristi.service.PendingTaskService;
 import org.springframework.kafka.annotation.KafkaListener;
+import org.springframework.stereotype.Component;
 
 import java.util.Map;
 
 @Slf4j
+@Component
 public class PendingTaskUpdateConsumer {
 
     private final PendingTaskService pendingTaskService;
