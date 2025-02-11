@@ -41,7 +41,7 @@ class PendingTaskUtilTest {
         when(config.getPendingTaskIndexEndpoint()).thenReturn("/tasks");
         lenient().when(config.getPendingTaskSearchPath()).thenReturn("/search");
         when(config.getEsUsername()).thenReturn("elastic");
-        when(config.getElasticUserPassword()).thenReturn("password");
+        when(config.getEsPassword()).thenReturn("password");
     }
 
     @Test
