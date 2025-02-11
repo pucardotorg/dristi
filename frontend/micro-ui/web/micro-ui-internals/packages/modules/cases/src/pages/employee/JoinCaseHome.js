@@ -452,7 +452,14 @@ const JoinCaseHome = ({ refreshInbox, setShowSubmitResponseModal, setResponsePen
   ];
 
   const closeModal = () => {
-    setSelectPartyData({ userType: {} });
+    setSelectPartyData({
+      userType: { label: "", value: "" },
+      partyInvolve: { label: "", value: "" },
+      isReplaceAdvocate: { label: "", value: "" },
+      affidavit: {},
+    });
+    setPartyInPerson(false);
+    setParty({});
     setIsDisabled(false);
     setCaseNumber("");
     setValidationCode("");
@@ -924,7 +931,7 @@ const JoinCaseHome = ({ refreshInbox, setShowSubmitResponseModal, setResponsePen
     }
   };
 
-  const getAdvocatesDetails = (advocateDetails, updatedParty) => {
+  const getAdvocatesDetails = (advocateDetails, updatedParty, isReplaceAdvocate) => {
     const { givenName, otherNames, familyName } = individual?.name;
 
     const identifierIdDetails = JSON.parse(individual?.additionalFields?.fields?.find((obj) => obj.key === "identifierIdDetails")?.value || "{}");
@@ -976,6 +983,28 @@ const JoinCaseHome = ({ refreshInbox, setShowSubmitResponseModal, setResponsePen
                   name: "NO",
                 },
                 pipAffidavitFileUpload: null,
+                ...(isReplaceAdvocate?.value === "YES"
+                  ? {
+                      vakalatnamaFileUpload: [
+                        {
+                          documentType: party?.uploadedVakalatnama?.documentType,
+                          fileStore: party?.uploadedVakalatnama?.fileStore,
+                          documentName: party?.uploadedVakalatnama?.documentName,
+                          fileName: party?.uploadedVakalatnama?.fileName,
+                        },
+                      ],
+                    }
+                  : {
+                      vakalatnamaFileUpload: [
+                        ...(formdataItem?.data?.multipleAdvocatesAndPip?.vakalatnamaFileUpload || []),
+                        {
+                          documentType: party?.uploadedVakalatnama?.documentType,
+                          fileStore: party?.uploadedVakalatnama?.fileStore,
+                          documentName: party?.uploadedVakalatnama?.documentName,
+                          fileName: party?.uploadedVakalatnama?.fileName,
+                        },
+                      ],
+                    }),
               },
             },
           }
@@ -1085,30 +1114,32 @@ const JoinCaseHome = ({ refreshInbox, setShowSubmitResponseModal, setResponsePen
             const litigantPipPayload = {
               additionalDetails: {
                 ...caseDetails?.additionalDetails,
-                advocateDetails: {
-                  ...caseDetails?.additionalDetails?.advocateDetails,
-                  formdata: caseDetails?.additionalDetails?.advocateDetails?.formdata?.map((litigant) => {
-                    if (litigant?.data?.multipleAdvocatesAndPip?.boxComplainant?.individualId === representing?.individualId) {
-                      return {
-                        ...litigant,
-                        data: {
-                          ...litigant?.data,
-                          multipleAdvocatesAndPip: {
-                            ...litigant?.data?.multipleAdvocatesAndPip,
-                            isComplainantPip: {
-                              code: "YES",
-                              isEnabled: true,
-                              name: "Yes",
+                ...(party?.isComplainant && {
+                  advocateDetails: {
+                    ...caseDetails?.additionalDetails?.advocateDetails,
+                    formdata: caseDetails?.additionalDetails?.advocateDetails?.formdata?.map((litigant) => {
+                      if (litigant?.data?.multipleAdvocatesAndPip?.boxComplainant?.individualId === representing?.individualId) {
+                        return {
+                          ...litigant,
+                          data: {
+                            ...litigant?.data,
+                            multipleAdvocatesAndPip: {
+                              ...litigant?.data?.multipleAdvocatesAndPip,
+                              isComplainantPip: {
+                                code: "YES",
+                                isEnabled: true,
+                                name: "Yes",
+                              },
+                              multipleAdvocateNameDetails: [],
+                              pipAffidavitFileUpload: affidavitUpload,
+                              vakalatnamaFileUpload: [],
                             },
-                            multipleAdvocateNameDetails: [],
-                            pipAffidavitFileUpload: affidavitUpload,
-                            vakalatnamaFileUpload: null,
                           },
-                        },
-                      };
-                    } else return litigant;
-                  }),
-                },
+                        };
+                      } else return litigant;
+                    }),
+                  },
+                }),
               },
               caseFilingNumber: caseDetails?.filingNumber,
               tenantId: tenantId,
@@ -1118,12 +1149,69 @@ const JoinCaseHome = ({ refreshInbox, setShowSubmitResponseModal, setResponsePen
               litigant: [
                 {
                   ...caseDetails?.litigants?.find((litigant) => litigant?.individualId === representing?.individualId),
-                  documents: [{ documentType: affidavitUpload?.document?.[0]?.documentType, fileStore: affidavitUpload?.document?.[0]?.fileStore }],
+                  documents: [
+                    {
+                      documentType: affidavitUpload?.document?.[0]?.documentType,
+                      fileStore: affidavitUpload?.document?.[0]?.fileStore,
+                      additionalDetails: { documentName: "UPLOAD_PIP_AFFIDAVIT" },
+                    },
+                  ],
                 },
               ],
             };
             const [res, err] = await submitJoinCase(litigantPipPayload, {});
             if (res) {
+              let advocateList = caseDetails?.representatives
+                ?.filter((represent) => represent?.representing?.[0]?.partyType?.includes(party?.isComplainant ? "complainant" : "respondent"))
+                ?.filter((representative) => {
+                  const filterData = representative?.representing?.filter((represent) => party?.individualId === represent?.individualId);
+
+                  if (filterData?.length === 1 && representative?.representing?.length === 1) return false;
+                  return true;
+                });
+
+              if (party.isComplainant) {
+                setSuccessScreenData((successScreenData) => ({
+                  ...successScreenData,
+                  complainantAdvocateList: [...advocateList?.map((adv) => adv?.additionalDetails?.fullName)],
+                }));
+              } else {
+                setSuccessScreenData((successScreenData) => ({
+                  ...successScreenData,
+                  respondentAdvocateList: [...advocateList?.map((adv) => adv?.additionalDetails?.fullName)],
+                }));
+              }
+
+              // updating hearing attendees silently
+              if (nextHearing) {
+                const updatedHearing = structuredClone(nextHearing);
+                updatedHearing.attendees = updatedHearing.attendees || [];
+
+                const { isFound, representatives } = searchLitigantInRepresentives(caseDetails?.representatives, party?.individualId);
+
+                const updatedRepresentatives = representatives?.map(async (representative) => {
+                  const individualData = await searchIndividualUserWithUuid(representative?.additionalDetails?.uuid, tenantId);
+                  return {
+                    ...representative,
+                    individualId: individualData?.Individual?.[0]?.individualId,
+                  };
+                });
+
+                if (isFound && representatives?.length) {
+                  updatedHearing.attendees = updatedHearing.attendees?.filter((attendee) => {
+                    const temp = updatedRepresentatives?.find((representative) => representative?.individualId === attendee?.individualId);
+                    if (temp && temp?.representing?.length === 1) return false;
+                    return true;
+                  });
+                }
+
+                try {
+                  await updateAttendees({ body: { hearing: updatedHearing } });
+                } catch (error) {
+                  console.error("Error updating attendees:", error);
+                }
+              }
+
               setMessageHeader(t("You are now party in person"));
               setSuccess(true);
               setStep(step + 3);
@@ -1133,43 +1221,64 @@ const JoinCaseHome = ({ refreshInbox, setShowSubmitResponseModal, setResponsePen
           }
         } else if (!isLitigantJoined && !Boolean(party?.individualId)) {
           setMessageHeader(t("JOIN_CASE_SUCCESS"));
+          const { givenName, otherNames, familyName } = individual?.name;
+          const respondentDetails = {
+            ...caseDetails?.additionalDetails?.respondentDetails,
+            formdata: [
+              ...caseDetails?.additionalDetails?.respondentDetails?.formdata?.map((data, index) => {
+                if (index === party?.index) {
+                  return {
+                    ...data,
+                    data: {
+                      ...data?.data,
+                      respondentFirstName: name?.givenName,
+                      respondentMiddleName: name?.otherNames,
+                      respondentLastName: name?.familyName,
+                      addressDetails: [
+                        {
+                          ...data?.data?.addressDetails?.[0],
+                          addressDetails: {
+                            ...data?.data?.addressDetails?.[0]?.addressDetails,
+                            ...individualAddress,
+                          },
+                        },
+                      ],
+                      respondentVerification: {
+                        individualDetails: {
+                          individualId: individualId,
+                          document: individualDoc,
+                        },
+                      },
+                    },
+                  };
+                }
+                return data;
+              }),
+            ],
+          };
+
+          let affidavitUpload;
+          if (partyInPerson?.value === "YES") {
+            affidavitUpload = await onDocumentUpload(
+              selectPartyData?.affidavit?.affidavitData?.document?.[0],
+              selectPartyData?.affidavit?.affidavitData?.document?.name,
+              tenantId
+            ).then((uploadedData) => ({
+              document: [
+                {
+                  documentType: uploadedData.fileType || document?.documentType,
+                  fileStore: uploadedData.file?.files?.[0]?.fileStoreId || document?.fileStore,
+                  documentName: `UPLOAD_PIP_AFFIDAVIT`,
+                  fileName: `UPLOAD_PIP_AFFIDAVIT`,
+                },
+              ],
+            }));
+          }
+
           const litigantJoinPyaload = {
             additionalDetails: {
               ...caseDetails?.additionalDetails,
-              respondentDetails: {
-                ...caseDetails?.additionalDetails?.respondentDetails,
-                formdata: [
-                  ...caseDetails?.additionalDetails?.respondentDetails?.formdata?.map((data, index) => {
-                    if (index === party?.index) {
-                      return {
-                        ...data,
-                        data: {
-                          ...data?.data,
-                          respondentFirstName: name?.givenName,
-                          respondentMiddleName: name?.otherNames,
-                          respondentLastName: name?.familyName,
-                          addressDetails: [
-                            {
-                              ...data?.data?.addressDetails?.[0],
-                              addressDetails: {
-                                ...data?.data?.addressDetails?.[0]?.addressDetails,
-                                ...individualAddress,
-                              },
-                            },
-                          ],
-                          respondentVerification: {
-                            individualDetails: {
-                              individualId: individualId,
-                              document: individualDoc,
-                            },
-                          },
-                        },
-                      };
-                    }
-                    return data;
-                  }),
-                ],
-              },
+              respondentDetails,
             },
             caseFilingNumber: caseDetails?.filingNumber,
             tenantId: tenantId,
@@ -1178,41 +1287,55 @@ const JoinCaseHome = ({ refreshInbox, setShowSubmitResponseModal, setResponsePen
             litigant: [
               {
                 additionalDetails: {
-                  fullName: getFullName(" ", name?.givenName, name?.otherNames, name?.familyName),
+                  fullName: getFullName(" ", givenName, otherNames, familyName),
                   uuid: userInfo?.uuid,
                 },
                 caseId: caseDetails?.id,
                 tenantId: tenantId,
-                individualId: individualId,
+                individualId: individual?.individualId,
                 partyCategory: "INDIVIDUAL",
                 partyType: party?.partyType,
+                ...(partyInPerson?.value === "YES" && {
+                  documents: [
+                    {
+                      documentType: affidavitUpload?.document?.[0]?.documentType,
+                      fileStore: affidavitUpload?.document?.[0]?.fileStore,
+                      additionalDetails: { documentName: "UPLOAD_PIP_AFFIDAVIT" },
+                    },
+                  ],
+                }),
               },
             ],
           };
           const [res, err] = await submitJoinCase(litigantJoinPyaload, {});
           if (res) {
-            if (caseDetails?.status === "PENDING_RESPONSE") {
-              try {
-                await DRISTIService.customApiService(Urls.dristi.pendingTask, {
-                  pendingTask: {
-                    name: "Pending Response",
-                    entityType: "case-default",
-                    referenceId: `MANUAL_${caseDetails?.filingNumber}`,
-                    status: "PENDING_RESPONSE",
-                    assignedTo: [{ uuid: userInfo?.uuid }],
-                    assignedRole: ["CASE_RESPONDER"],
-                    cnrNumber: caseDetails?.cnrNumber,
-                    filingNumber: caseDetails?.filingNumber,
-                    isCompleted: false,
-                    stateSla: todayDate + 20 * 24 * 60 * 60 * 1000,
-                    additionalDetails: { individualId, caseId: caseDetails?.id },
-                    tenantId,
-                  },
+            setSuccessScreenData((successScreenData) => ({
+              ...successScreenData,
+              respondentList: respondentDetails?.formdata?.map((respondent) => {
+                const { respondentFirstName, respondentMiddleName, respondentLastName } = respondent?.data;
+                return getFullName(" ", respondentFirstName, respondentMiddleName, respondentLastName);
+              }),
+            }));
+
+            if (nextHearing) {
+              const updatedHearing = structuredClone(nextHearing);
+              updatedHearing.attendees = updatedHearing.attendees || [];
+
+              if (individual?.individualId) {
+                updatedHearing.attendees.push({
+                  name: formatFullName(name) || "",
+                  individualId: individual.individualId,
+                  type: "Advocate",
                 });
-              } catch (err) {
-                console.error("err :>> ", err);
+              }
+
+              try {
+                await updateAttendees({ body: { hearing: updatedHearing } });
+              } catch (error) {
+                console.error("Error updating attendees:", error);
               }
             }
+
             setRespondentList(
               respondentList?.map((respondent) => {
                 if (respondent?.index === selectedParty?.index) {
@@ -1294,7 +1417,13 @@ const JoinCaseHome = ({ refreshInbox, setShowSubmitResponseModal, setResponsePen
             tenantId: tenantId,
             individualId: party?.individualId,
             partyType: party?.isComplainant ? "complainant.primary" : "respondent.primary",
-            documents: [{ documentType: party?.uploadedVakalatnama?.documentType, fileStore: party?.uploadedVakalatnama?.fileStore }],
+            documents: [
+              {
+                documentType: party?.uploadedVakalatnama?.documentType,
+                fileStore: party?.uploadedVakalatnama?.fileStore,
+                additionalDetails: { documentName: "VAKALATNAMA" },
+              },
+            ],
           })),
         ];
         const respondentDetails = getRespondentDetails(caseDetails?.additionalDetails?.respondentDetails, updatedParty);
@@ -1302,7 +1431,11 @@ const JoinCaseHome = ({ refreshInbox, setShowSubmitResponseModal, setResponsePen
           additionalDetails: {
             ...caseDetails?.additionalDetails,
             ...(selectPartyData?.partyInvolve?.value !== "RESPONDENTS" && {
-              advocateDetails: getAdvocatesDetails(caseDetails?.additionalDetails?.advocateDetails, updatedParty),
+              advocateDetails: getAdvocatesDetails(
+                caseDetails?.additionalDetails?.advocateDetails,
+                documentUploadResult,
+                selectPartyData?.isReplaceAdvocate
+              ),
             }),
             ...(selectPartyData?.partyInvolve?.value === "RESPONDENTS" && {
               respondentDetails,
@@ -1325,7 +1458,6 @@ const JoinCaseHome = ({ refreshInbox, setShowSubmitResponseModal, setResponsePen
             },
           },
         };
-
         const [res, err] = await submitJoinCase(joinAdvocatePayload);
 
         if (res) {
@@ -1345,37 +1477,39 @@ const JoinCaseHome = ({ refreshInbox, setShowSubmitResponseModal, setResponsePen
             }));
           }
           // updating hearing attendees silently
-          const updatedHearing = structuredClone(nextHearing);
-          updatedHearing.attendees = updatedHearing.attendees || [];
+          if (nextHearing) {
+            const updatedHearing = structuredClone(nextHearing);
+            updatedHearing.attendees = updatedHearing.attendees || [];
 
-          const isAdvocateJoinedHearing = updatedHearing.attendees.some((attendee) => attendee.individualId === individual?.individualId);
+            const isAdvocateJoinedHearing = updatedHearing.attendees.some((attendee) => attendee.individualId === individual?.individualId);
 
-          if (!isAdvocateJoinedHearing && individual?.individualId) {
-            updatedHearing.attendees.push({
-              name: formatFullName(name) || "",
-              individualId: individual.individualId,
-              type: "Advocate",
-            });
-          }
+            if (!isAdvocateJoinedHearing && individual?.individualId) {
+              updatedHearing.attendees.push({
+                name: formatFullName(name) || "",
+                individualId: individual.individualId,
+                type: "Advocate",
+              });
+            }
 
-          if (litigantData?.length) {
-            litigantData.forEach((litigant) => {
-              const isLitigantPresent = updatedHearing.attendees.some((attendee) => attendee.individualId === litigant?.individualId);
+            if (litigantData?.length) {
+              litigantData.forEach((litigant) => {
+                const isLitigantPresent = updatedHearing.attendees.some((attendee) => attendee.individualId === litigant?.individualId);
 
-              if (!isLitigantPresent && litigant?.individualId) {
-                updatedHearing.attendees.push({
-                  name: litigant?.additionalDetails?.fullName || "",
-                  individualId: litigant.individualId,
-                  type: documentUploadResult?.[0]?.isComplainant ? "complainant" : "respondent",
-                });
-              }
-            });
-          }
+                if (!isLitigantPresent && litigant?.individualId) {
+                  updatedHearing.attendees.push({
+                    name: litigant?.additionalDetails?.fullName || "",
+                    individualId: litigant.individualId,
+                    type: documentUploadResult?.[0]?.isComplainant ? "complainant" : "respondent",
+                  });
+                }
+              });
+            }
 
-          try {
-            await updateAttendees({ body: { hearing: updatedHearing } });
-          } catch (error) {
-            console.error("Error updating attendees:", error);
+            try {
+              await updateAttendees({ body: { hearing: updatedHearing } });
+            } catch (error) {
+              console.error("Error updating attendees:", error);
+            }
           }
 
           // creating new pending task for submit response
@@ -1393,7 +1527,7 @@ const JoinCaseHome = ({ refreshInbox, setShowSubmitResponseModal, setResponsePen
                   filingNumber: caseDetails?.filingNumber,
                   isCompleted: false,
                   stateSla: todayDate + 20 * 24 * 60 * 60 * 1000,
-                  additionalDetails: { individualId, caseId: caseDetails?.id },
+                  additionalDetails: { individualId: user?.individualId, caseId: caseDetails?.id },
                   tenantId,
                 },
               })
@@ -1404,7 +1538,6 @@ const JoinCaseHome = ({ refreshInbox, setShowSubmitResponseModal, setResponsePen
               console.error("err :>> ", err);
             }
           }
-
           setStep(step + 2);
           setSuccess(true);
         } else {
@@ -1474,7 +1607,13 @@ const JoinCaseHome = ({ refreshInbox, setShowSubmitResponseModal, setResponsePen
               individualId: party?.individualId,
               partyType: party?.isComplainant ? "complainant.primary" : "respondent.primary",
               isAdvocateReplacing: isFound,
-              documents: [{ documentType: party?.uploadedVakalatnama?.documentType, fileStore: party?.uploadedVakalatnama?.fileStore }],
+              documents: [
+                {
+                  documentType: party?.uploadedVakalatnama?.documentType,
+                  fileStore: party?.uploadedVakalatnama?.fileStore,
+                  additionalDetails: { documentName: "VAKALATNAMA" },
+                },
+              ],
             };
           }),
         ];
@@ -1483,7 +1622,7 @@ const JoinCaseHome = ({ refreshInbox, setShowSubmitResponseModal, setResponsePen
           additionalDetails: {
             ...caseDetails?.additionalDetails,
             ...(selectPartyData?.partyInvolve?.value !== "RESPONDENTS" && {
-              advocateDetails: getAdvocatesDetails(caseDetails?.additionalDetails?.advocateDetails, updatedParty),
+              advocateDetails: getAdvocatesDetails(caseDetails?.additionalDetails?.advocateDetails, documentUploadResult),
             }),
             ...(selectPartyData?.partyInvolve?.value === "RESPONDENTS" && {
               respondentDetails,
@@ -1504,10 +1643,15 @@ const JoinCaseHome = ({ refreshInbox, setShowSubmitResponseModal, setResponsePen
               advocateName: getFullName(" ", givenName, otherNames, familyName),
               uuid: individual?.userUuid,
             },
-            documents: [{ documentType: affidavitUpload?.document?.[0]?.documentType, fileStore: affidavitUpload?.document?.[0]?.fileStore }],
+            documents: [
+              {
+                documentType: affidavitUpload?.document?.[0]?.documentType,
+                fileStore: affidavitUpload?.document?.[0]?.fileStore,
+                additionalDetails: { documentName: "NOC/JUDGE_ORDER" },
+              },
+            ],
           },
         };
-
         const [res, err] = await submitJoinCase(joinAdvocatePayloadWithReplace);
 
         if (res) {
@@ -1545,37 +1689,39 @@ const JoinCaseHome = ({ refreshInbox, setShowSubmitResponseModal, setResponsePen
             }));
           }
           // updating hearing attendees silently
-          const updatedHearing = structuredClone(nextHearing);
-          updatedHearing.attendees = updatedHearing.attendees || [];
+          if (nextHearing) {
+            const updatedHearing = structuredClone(nextHearing);
+            updatedHearing.attendees = updatedHearing.attendees || [];
 
-          const isAdvocateJoinedHearing = updatedHearing.attendees.some((attendee) => attendee.individualId === individual?.individualId);
+            const isAdvocateJoinedHearing = updatedHearing.attendees.some((attendee) => attendee.individualId === individual?.individualId);
 
-          if (!isAdvocateJoinedHearing && individual?.individualId) {
-            updatedHearing.attendees.push({
-              name: formatFullName(name) || "",
-              individualId: individual.individualId,
-              type: "Advocate",
-            });
-          }
+            if (!isAdvocateJoinedHearing && individual?.individualId) {
+              updatedHearing.attendees.push({
+                name: formatFullName(name) || "",
+                individualId: individual.individualId,
+                type: "Advocate",
+              });
+            }
 
-          if (litigantData?.length) {
-            litigantData.forEach((litigant) => {
-              const isLitigantPresent = updatedHearing.attendees.some((attendee) => attendee.individualId === litigant?.individualId);
+            if (litigantData?.length) {
+              litigantData.forEach((litigant) => {
+                const isLitigantPresent = updatedHearing.attendees.some((attendee) => attendee.individualId === litigant?.individualId);
 
-              if (!isLitigantPresent && litigant?.individualId) {
-                updatedHearing.attendees.push({
-                  name: litigant?.additionalDetails?.fullName || "",
-                  individualId: litigant.individualId,
-                  type: documentUploadResult?.[0]?.isComplainant ? "complainant" : "respondent",
-                });
-              }
-            });
-          }
+                if (!isLitigantPresent && litigant?.individualId) {
+                  updatedHearing.attendees.push({
+                    name: litigant?.additionalDetails?.fullName || "",
+                    individualId: litigant.individualId,
+                    type: documentUploadResult?.[0]?.isComplainant ? "complainant" : "respondent",
+                  });
+                }
+              });
+            }
 
-          try {
-            await updateAttendees({ body: { hearing: updatedHearing } });
-          } catch (error) {
-            console.error("Error updating attendees:", error);
+            try {
+              await updateAttendees({ body: { hearing: updatedHearing } });
+            } catch (error) {
+              console.error("Error updating attendees:", error);
+            }
           }
 
           // remove all pending task of replaced adovcate
@@ -1627,7 +1773,7 @@ const JoinCaseHome = ({ refreshInbox, setShowSubmitResponseModal, setResponsePen
                   filingNumber: caseDetails?.filingNumber,
                   isCompleted: false,
                   stateSla: todayDate + 20 * 24 * 60 * 60 * 1000,
-                  additionalDetails: { individualId, caseId: caseDetails?.id },
+                  additionalDetails: { individualId: user?.individualId, caseId: caseDetails?.id },
                   tenantId,
                 },
               })
@@ -1780,16 +1926,8 @@ const JoinCaseHome = ({ refreshInbox, setShowSubmitResponseModal, setResponsePen
           party={party}
           setParty={setParty}
           parties={parties}
-          setSelectedParty={setSelectedParty}
-          selectedParty={selectedParty}
-          roleOfNewAdvocate={roleOfNewAdvocate}
-          setRoleOfNewAdvocate={setRoleOfNewAdvocate}
-          searchAdvocateInRepresentives={searchAdvocateInRepresentives}
-          searchLitigantInRepresentives={searchLitigantInRepresentives}
-          advocateId={advocateId}
           partyInPerson={partyInPerson}
           setPartyInPerson={setPartyInPerson}
-          setIsDisabled={setIsDisabled}
           isLitigantJoined={isLitigantJoined}
           isAdvocateJoined={isAdvocateJoined}
         />

@@ -333,6 +333,7 @@ const TasksComponent = ({
             redirectUrl,
             params: { ...additionalDetails, cnrNumber, filingNumber, caseId: caseDetail?.id, referenceId: updateReferenceId },
             isCustomFunction,
+            referenceId,
           };
         })
       );

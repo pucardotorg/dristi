@@ -9,18 +9,16 @@ const SelectParty = ({
   selectPartyData,
   setSelectPartyData,
   caseDetails,
-  setSelectedParty,
-  setRoleOfNewAdvocate,
   parties,
   party,
   setParty,
-  selectedParty,
   partyInPerson,
   setPartyInPerson,
   isLitigantJoined,
   isAdvocateJoined,
 }) => {
   const { t } = useTranslation();
+  const userInfo = JSON.parse(window.localStorage.getItem("user-info"));
 
   const MultiSelectDropdown = window?.Digit?.ComponentRegistryService?.getComponent("MultiSelectDropdown");
 
@@ -147,8 +145,7 @@ const SelectParty = ({
               isReplaceAdvocate: {},
               affidavit: {},
             }));
-            setSelectedParty({});
-            setRoleOfNewAdvocate("");
+            setPartyInPerson({});
             setParty(selectPartyData?.userType?.value === "Litigant" ? {} : []);
           }}
           optionsKey={"label"}
@@ -156,7 +153,7 @@ const SelectParty = ({
             { label: t("COMPLAINANTS_TEXT"), value: "COMPLAINANTS" },
             { label: t("RESPONDENTS_TEXT"), value: "RESPONDENTS" },
           ]}
-          disabled={isAdvocateJoined}
+          disabled={isAdvocateJoined || isLitigantJoined}
         />
       </LabelFieldPair>
       {selectPartyData?.userType?.value === "Advocate" && selectPartyData?.partyInvolve?.value && (
@@ -239,7 +236,7 @@ const SelectParty = ({
           />
         </LabelFieldPair>
       )}
-      {partyInPerson?.value === "YES" && (
+      {partyInPerson?.value === "YES" && party?.uuid === userInfo?.uuid && (
         <React.Fragment>
           <InfoCard
             variant={"default"}
@@ -255,7 +252,9 @@ const SelectParty = ({
           />
         </React.Fragment>
       )}
-      {(partyInPerson?.value === "YES" || selectPartyData?.isReplaceAdvocate?.value === "YES") && (
+      {((partyInPerson?.value === "YES" && party?.uuid === userInfo?.uuid) ||
+        (partyInPerson?.value === "YES" && !party?.uuid) ||
+        selectPartyData?.isReplaceAdvocate?.value === "YES") && (
         <FormComposerV2
           key={2}
           config={advocateVakalatnamaConfig}
@@ -273,20 +272,22 @@ const SelectParty = ({
         />
       )}
 
-      {selectPartyData?.userType?.value === "Litigant" && partyInPerson?.value === "NO" && party?.individualId && (
-        <InfoCard
-          variant={"warning"}
-          label={t("WARNING")}
-          additionalElements={[
-            <p>
-              {t("ABOVE_SELECTED_PARTY")} <span style={{ fontWeight: "bold" }}>{`${party?.label}`}</span> {t("ALREADY_JOINED_CASE")}
-            </p>,
-          ]}
-          inline
-          textStyle={{}}
-          className={`custom-info-card warning`}
-        />
-      )}
+      {selectPartyData?.userType?.value === "Litigant" &&
+        party?.individualId &&
+        ((partyInPerson?.value === "NO" && party?.individualId) || (partyInPerson?.value === "YES" && party?.uuid !== userInfo?.uuid)) && (
+          <InfoCard
+            variant={"warning"}
+            label={t("WARNING")}
+            additionalElements={[
+              <p>
+                {t("ABOVE_SELECTED_PARTY")} <span style={{ fontWeight: "bold" }}>{`${party?.label}`}</span> {t("ALREADY_JOINED_CASE")}
+              </p>,
+            ]}
+            inline
+            textStyle={{}}
+            className={`custom-info-card warning`}
+          />
+        )}
     </div>
   );
 };
