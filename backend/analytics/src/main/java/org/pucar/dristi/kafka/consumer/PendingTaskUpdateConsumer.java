@@ -22,7 +22,7 @@ public class PendingTaskUpdateConsumer {
     }
 
 
-    @KafkaListener(topics = {"${kafka.topics.representative.join.case}", "${kafka.topics.litigant.join.case}"})
+    @KafkaListener(topics = "#{'${kafka.topics.join.case}'.split(',')}")
     public void listener(ConsumerRecord<String, String> consumerRecord) {
         try {
             Map<String, Object> jsonMap = objectMapper.readValue(consumerRecord.value(), Map.class);
