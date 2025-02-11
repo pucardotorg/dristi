@@ -350,6 +350,7 @@ const PaymentForSummonModal = ({ path }) => {
               isArrow: false,
               showTable: true,
               showCopytext: true,
+              orderType: orderType,
             },
             fileStoreId: fileStoreId || "",
           },
