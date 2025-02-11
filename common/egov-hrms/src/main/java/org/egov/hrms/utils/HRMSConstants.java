@@ -62,4 +62,7 @@ public class HRMSConstants {
 
 	public static final String INTERNALMICROSERVICEUSER_TYPE = "SYSTEM";
 	public static final String HRMS_EMPLOYEE_JUDGE = "Judge";
+
+	public static final String HRMS_PASSWORD_SUBJECT = "Password for 24X7 OnCourt Login.";
+	public static final String HRMS_LOGIN_TEMPLATE = "HRMS_LOGIN_TEMPLATE";
 }

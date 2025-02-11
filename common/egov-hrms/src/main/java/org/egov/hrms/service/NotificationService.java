@@ -1,5 +1,6 @@
 package org.egov.hrms.service;
 
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -7,6 +8,8 @@ import java.util.Map;
 import org.apache.commons.lang3.StringUtils;
 import org.egov.common.contract.request.RequestInfo;
 import org.egov.common.utils.MultiStateInstanceUtil;
+import org.egov.hrms.model.Email;
+import org.egov.hrms.model.EmailRequest;
 import org.egov.hrms.model.Employee;
 import org.egov.hrms.model.SMSRequest;
 import org.egov.hrms.producer.HRMSProducer;
@@ -22,6 +25,9 @@ import org.springframework.web.client.RestTemplate;
 import com.jayway.jsonpath.JsonPath;
 
 import lombok.extern.slf4j.Slf4j;
+
+import static org.egov.hrms.utils.HRMSConstants.HRMS_LOGIN_TEMPLATE;
+import static org.egov.hrms.utils.HRMSConstants.HRMS_PASSWORD_SUBJECT;
 
 @Service
 @Slf4j
@@ -41,6 +47,9 @@ public class NotificationService {
 
 	@Value("${kafka.topics.notification.sms}")
     private String smsTopic;
+
+	@Value("${kafka.topics.notification.email}")
+	private String emailTopic;
     
     @Value("${egov.hrms.employee.app.link}")
     private String appLink;
@@ -70,7 +79,7 @@ public class NotificationService {
 	 */
 	public void sendNotification(EmployeeRequest request, Map<String, String> pwdMap) {
 		
-		String message = getMessage(request,HRMSConstants.HRMS_EMP_CREATE_LOCLZN_CODE);
+		String message =getMessage(request,HRMSConstants.HRMS_EMP_CREATE_LOCLZN_CODE);
 		String tenantId = request.getEmployees().get(0).getTenantId(); 
 				
 		if(StringUtils.isEmpty(message)) {
@@ -78,11 +87,33 @@ public class NotificationService {
 			return;
 		}
 		for(Employee employee: request.getEmployees()) {
-			
-			message = buildMessage(employee, message, pwdMap);
-			SMSRequest smsRequest = SMSRequest.builder().mobileNumber(employee.getUser().getMobileNumber()).message(message).build();
-			producer.push(tenantId, smsTopic, smsRequest);
+			sendSms(pwdMap, employee, message, tenantId);
+			if(!employee.getUser().getEmailId().isEmpty()) {
+				pwdMap.put("email", employee.getUser().getEmailId());
+				sendEmail(pwdMap, employee, tenantId, request.getRequestInfo());
+			}
 		}
+	}
+
+	private void sendEmail(Map<String, String> pwdMap, Employee employee, String tenantId, RequestInfo requestInfo) {
+		Map<String, String> bodyMap = new HashMap<>();
+		bodyMap.put("username", employee.getCode());
+		bodyMap.put("password", pwdMap.get(employee.getUuid()));
+		Email email = Email.builder()
+				.emailTo(Collections.singleton(pwdMap.get("email")))
+				.body(bodyMap.toString())
+				.subject(HRMS_PASSWORD_SUBJECT)
+				.tenantId(tenantId)
+				.isHTML(true)
+				.templateCode(HRMS_LOGIN_TEMPLATE).build();
+		EmailRequest emailRequest = EmailRequest.builder().requestInfo(requestInfo).email(email).build();
+		producer.push(tenantId, emailTopic, emailRequest);
+	}
+
+	private void sendSms(Map<String, String> pwdMap, Employee employee, String message, String tenantId) {
+		message = buildMessage(employee, message, pwdMap);
+		SMSRequest smsRequest = SMSRequest.builder().mobileNumber(employee.getUser().getMobileNumber()).message(message).build();
+		producer.push(tenantId, smsTopic, smsRequest);
 	}
 
 	public void sendReactivationNotification(EmployeeRequest request){
