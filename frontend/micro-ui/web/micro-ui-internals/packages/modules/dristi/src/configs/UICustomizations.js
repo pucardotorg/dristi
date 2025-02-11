@@ -1140,6 +1140,7 @@ export const UICustomizations = {
   },
   PartiesConfig: {
     preProcess: (requestCriteria, additionalDetails) => {
+      const { limit, offset } = requestCriteria.state?.tableForm || {};
       return {
         ...requestCriteria,
         config: {
@@ -1162,15 +1163,18 @@ export const UICustomizations = {
                   ?.join(", ")})`,
               };
             });
+            const allParties = [...finalLitigantsData, ...finalRepresentativesData];
+            const paginatedParties = allParties.slice(offset, offset + limit);
             return {
               ...data,
               criteria: {
                 ...data.criteria[0],
                 responseList: {
                   ...data.criteria[0].responseList[0],
-                  parties: [...finalLitigantsData, ...finalRepresentativesData],
+                  parties: paginatedParties,
                 },
               },
+              totalCount: allParties?.length,
             };
           },
         },
