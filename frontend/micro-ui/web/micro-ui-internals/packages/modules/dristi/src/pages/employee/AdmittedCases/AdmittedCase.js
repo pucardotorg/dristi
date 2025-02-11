@@ -581,7 +581,32 @@ const AdmittedCases = () => {
         },
       ];
       if ("mark_as_evidence" === item.id || "unmark_as_evidence" === item.id) {
-        await handleMarkEvidence(docObj, row?.isEvidence);
+        try {
+          const nextHearing = hearingDetails?.HearingList?.filter((hearing) => hearing.status === "SCHEDULED");
+          await DRISTIService.addADiaryEntry(
+            {
+              diaryEntry: {
+                judgeId: "super",
+                businessOfDay: `${row?.artifactNumber} ${row?.isEvidence ? "unmarked" : "marked"} as evidence`,
+                tenantId: tenantId,
+                entryDate: new Date().setHours(0, 0, 0, 0),
+                caseNumber: caseDetails?.cmpNumber,
+                referenceId: row?.artifactNumber,
+                referenceType: "Documents",
+                hearingDate: (Array.isArray(nextHearing) && nextHearing.length > 0 && nextHearing[0]?.startTime) || null,
+                additionalDetails: {
+                  filingNumber: filingNumber,
+                  caseId: caseId,
+                },
+              },
+            },
+            {}
+          );
+          await handleMarkEvidence(docObj, row?.isEvidence);
+        } catch (error) {
+          console.error("error: ", error);
+          toast.error(t("SOMETHING_WENT_WRONG"));
+        }
       } else if ("mark_as_void" === item.id || "view_reason_for_voiding" === item.id) {
         setDocumentSubmission(docObj);
         setVoidReason(row?.reason);
@@ -2077,17 +2102,14 @@ const AdmittedCases = () => {
 
   const handleOpenSummonNoticeModal = async (partyIndex) => {
     if (currentHearingId) {
-      history.push(
-        `${path}?filingNumber=${filingNumber}&caseId=${caseId}&taskOrderType=NOTICE&hearingId=${currentHearingId}&tab=${config?.label}`,
-        {
-          state: {
-            params: {
-              partyIndex:partyIndex,
-              taskCnrNumber:cnrNumber
-            },
+      history.push(`${path}?filingNumber=${filingNumber}&caseId=${caseId}&taskOrderType=NOTICE&hearingId=${currentHearingId}&tab=${config?.label}`, {
+        state: {
+          params: {
+            partyIndex: partyIndex,
+            taskCnrNumber: cnrNumber,
           },
-        }
-      );
+        },
+      });
     }
   };
 

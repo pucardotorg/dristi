@@ -90,13 +90,15 @@ const EvidenceModal = ({
     );
   };
 
-  const getDefaultBOTD = useMemo(() => {
-    const businessOfDay = `${documentSubmission?.[0]?.artifactList?.artifactNumber} ${
+  const computeDefaultBOTD = useMemo(() => {
+    return `${documentSubmission?.[0]?.artifactList?.artifactNumber} ${
       documentSubmission?.[0]?.artifactList?.isEvidence ? "unmarked" : "marked"
     } as evidence`;
-    setBusinessOfTheDay(businessOfDay);
-    return businessOfDay;
   }, [documentSubmission]);
+
+  useEffect(() => {
+    setBusinessOfTheDay(computeDefaultBOTD);
+  }, [computeDefaultBOTD, setBusinessOfTheDay]);
 
   const respondingUuids = useMemo(() => {
     return documentSubmission?.[0]?.details?.additionalDetails?.respondingParty?.map((party) => party?.uuid?.map((uuid) => uuid))?.flat() || [];
@@ -1099,7 +1101,7 @@ const EvidenceModal = ({
                         setBusinessOfTheDay(e.target.value);
                       }}
                       disable={isDisabled}
-                      defaultValue={currentDiaryEntry?.businessOfDay || getDefaultBOTD}
+                      defaultValue={currentDiaryEntry?.businessOfDay || computeDefaultBOTD}
                       style={{ minWidth: "500px" }}
                       textInputStyle={{ maxWidth: "100%" }}
                     />
