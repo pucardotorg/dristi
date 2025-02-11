@@ -479,7 +479,7 @@ function SelectReviewAccordion({ t, config, onSelect, formData = {}, errors, for
                     const dataErrors = sectionValue?.form?.[index];
                     const prevDataErrors = input?.prevErrors?.form?.[index] || {};
                     const titleHeading = input.name === "chequeDetails" ? true : false;
-                    const updatedConfig = input?.config?.filter((inputConfig) => {
+                    let updatedConfig = input?.config?.filter((inputConfig) => {
                       if (!inputConfig?.dependentOn || !inputConfig?.dependentValue) {
                         return true;
                       } else {
@@ -489,6 +489,37 @@ function SelectReviewAccordion({ t, config, onSelect, formData = {}, errors, for
                         return false;
                       }
                     });
+                    if (input?.key === "advocateDetails") {
+                      updatedConfig = [
+                        ...updatedConfig,
+                        ...input.data[index].data.multipleAdvocatesAndPip.multipleAdvocateNameDetails
+                          .map((litigant, index) => [
+                            {
+                              type: "text",
+                              style: { fontWeight: "bold" },
+                              label: "Advocate Name",
+                              value: `multipleAdvocatesAndPip.multipleAdvocateNameDetails[${index}].advocateBarRegNumberWithName.advocateName`,
+                            },
+                            {
+                              type: "text",
+                              label: "CS_BAR_REGISTRATION",
+                              value: `multipleAdvocatesAndPip.multipleAdvocateNameDetails[${index}].advocateBarRegNumberWithName.barRegistrationNumberOriginal`,
+                            },
+                            {
+                              type: "image",
+                              label: "CS_ID_PROOF",
+                              value: [`multipleAdvocatesAndPip.multipleAdvocateNameDetails[${index}].advocateNameDetails.advocateIdProof`],
+                            },
+                          ])
+                          .flatMap((list) => list),
+                        {
+                          type: "image",
+                          label: "VAKALATNAMA",
+                          value: [`multipleAdvocatesAndPip.vakalatnamaFileUpload`],
+                          enableScrutinyField: true,
+                        },
+                      ];
+                    }
                     return (
                       <CustomReviewCard
                         isScrutiny={isScrutiny}

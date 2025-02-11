@@ -532,28 +532,12 @@ export const reviewCaseFileFormConfig = [
               config: [
                 {
                   type: "title",
-                  value: ["advocateName"],
-                },
-                {
-                  type: "text",
-                  label: "CS_BAR_REGISTRATION",
-                  value: "barRegistrationNumber",
-                },
-                {
-                  type: "text",
-                  label: "NUMBER_OF_ADVOCATES",
-                  value: "numberOfAdvocate",
-                },
-                {
-                  type: "image",
-                  label: "VAKALATNAMA",
-                  value: ["vakalatnamaFileUpload.document"],
-                  enableScrutinyField: true,
-                },
-                {
-                  type: "image",
-                  label: "CS_ID_PROOF",
-                  value: ["AdvocateNameDetails.advocateIdProof"],
+                  prefix: "Complainant:",
+                  value: [
+                    "multipleAdvocatesAndPip.boxComplainant.firstName",
+                    "multipleAdvocatesAndPip.boxComplainant.middleName",
+                    "multipleAdvocatesAndPip.boxComplainant.lastName",
+                  ],
                 },
               ],
               data: {},
