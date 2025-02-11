@@ -9,6 +9,8 @@ import org.springframework.http.*;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestTemplate;
 
+import java.nio.charset.StandardCharsets;
+import java.util.Base64;
 import java.util.List;
 
 import static org.pucar.dristi.config.ServiceConstants.*;
@@ -34,7 +36,7 @@ public class PendingTaskUtil {
 
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_JSON);
-        headers.setBasicAuth(config.getEsUsername(), config.getElasticUserPassword());
+        headers.add("Authorization", getESEncodedCredentials());
 
         String query = getEsQuery(filingNumber);
 
@@ -47,6 +49,11 @@ public class PendingTaskUtil {
             log.error(ERROR_WHILE_FETCHING_PENDING_TASK, e);
             throw new CustomException(ERROR_WHILE_FETCHING_PENDING_TASK, e.getMessage());
         }
+    }
+
+    public String getESEncodedCredentials() {
+        String credentials = config.getEsUsername() + ":" + config.getEsPassword();
+        return "Basic " + Base64.getEncoder().encodeToString(credentials.getBytes(StandardCharsets.UTF_8));
     }
     private String getEsQuery(String filingNumber) {
         return "{\n" +
@@ -72,7 +79,7 @@ public class PendingTaskUtil {
     public void updatePendingTask(List<JsonNode> pendingTasks) {
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_JSON);
-        headers.setBasicAuth(config.getEsUsername(), config.getElasticUserPassword());
+        headers.add("Authorization", getESEncodedCredentials());
 
         String url = config.getEsHostUrl() + config.getPendingTaskIndexEndpoint() + config.getBulkPath();
         for(JsonNode task: pendingTasks) {

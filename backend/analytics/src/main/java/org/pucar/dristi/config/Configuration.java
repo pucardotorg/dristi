@@ -203,11 +203,6 @@ public class Configuration {
 	@Value("${elastic.pending.task.search}")
 	private String pendingTaskSearchPath;
 
-	@Value("${elastic.user.name}")
-	private String elasticUser;
-
-	@Value("${elastic.user.password}")
-	private String elasticUserPassword;
 
 	@PostConstruct
 	public void init() {

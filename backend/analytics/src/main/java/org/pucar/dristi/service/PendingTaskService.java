@@ -69,16 +69,20 @@ public class PendingTaskService {
 
     public void updatePendingTask(String topic, Map<String, Object> joinCaseJson) {
         try {
+            log.info("operation=updatePendingTask, result=IN_PROGRESS, topic={}", topic);
             String filingNumber = joinCaseJson.get("caseFilingNumber").toString();
             JsonNode pendingTaskNode = pendingTaskUtil.callPendingTask(filingNumber);
             if(Objects.equals(topic, LITIGANT_JOIN_CASE_TOPIC) && joinCaseJson.get("litigant") != null) {
+                log.debug("operation=updatePendingTask, topic=LITIGANT_JOIN_CASE_TOPIC");
                 updatePendingTaskForLitigant(joinCaseJson, pendingTaskNode);
             } else if (Objects.equals(topic, REPRESENTATIVE_JOIN_CASE_TOPIC) && joinCaseJson.get("representative") != null) {
+                log.debug("operation=updatePendingTask, topic=REPRESENTATIVE_JOIN_CASE");
                 updatePendingTaskForAdvocate(joinCaseJson, pendingTaskNode, false);
             } else if(Objects.equals(topic, REPRESENTATIVE_REPLACE_JOIN_CASE)) {
+                log.debug("operation=updatePendingTask, topic=REPRESENTATIVE_REPLACE_JOIN_CASE");
                 updatePendingTaskForAdvocate(joinCaseJson, pendingTaskNode, true);
             }
-
+            log.info("operation=updatePendingTask, result=SUCCESS, topic={}, filingNumber={}", topic, filingNumber);
         } catch (Exception e) {
             log.error(ERROR_UPDATING_PENDING_TASK, e);
             throw new CustomException(ERROR_UPDATING_PENDING_TASK, e.getMessage());
