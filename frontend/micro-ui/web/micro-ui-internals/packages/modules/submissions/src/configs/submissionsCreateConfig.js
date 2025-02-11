@@ -66,6 +66,22 @@ export const configsRescheduleRequest = [
     body: [
       {
         inline: true,
+        label: "CHOOSE_COMPLAINANT",
+        isMandatory: true,
+        type: "dropdown",
+        key: "selectComplainant",
+        populators: {
+          optionsKey: "name",
+          options: [
+            {
+              code: "complainantOne",
+              name: "ComplainantOne",
+            },
+          ],
+        },
+      },
+      {
+        inline: true,
         label: "REF_ORDER_ID",
         disable: true,
         isMandatory: false,
@@ -240,6 +256,22 @@ export const configsCheckoutRequest = [
     body: [
       {
         inline: true,
+        label: "CHOOSE_COMPLAINANT",
+        isMandatory: true,
+        type: "dropdown",
+        key: "selectComplainant",
+        populators: {
+          optionsKey: "name",
+          options: [
+            {
+              code: "complainantOne",
+              name: "ComplainantOne",
+            },
+          ],
+        },
+      },
+      {
+        inline: true,
         label: "REF_ORDER_ID",
         disable: true,
         isMandatory: false,
@@ -411,6 +443,22 @@ export const configsCheckoutRequest = [
 export const configsExtensionSubmissionDeadline = [
   {
     body: [
+      {
+        inline: true,
+        label: "CHOOSE_COMPLAINANT",
+        isMandatory: true,
+        type: "dropdown",
+        key: "selectComplainant",
+        populators: {
+          optionsKey: "name",
+          options: [
+            {
+              code: "complainantOne",
+              name: "ComplainantOne",
+            },
+          ],
+        },
+      },
       {
         inline: true,
         label: "REF_ORDER_ID",
@@ -626,6 +674,22 @@ export const configsDocumentSubmission = [
     body: [
       {
         inline: true,
+        label: "CHOOSE_COMPLAINANT",
+        isMandatory: true,
+        type: "dropdown",
+        key: "selectComplainant",
+        populators: {
+          optionsKey: "name",
+          options: [
+            {
+              code: "complainantOne",
+              name: "ComplainantOne",
+            },
+          ],
+        },
+      },
+      {
+        inline: true,
         label: "DOCUMENT_TYPE",
         isMandatory: true,
         type: "dropdown",
@@ -719,6 +783,22 @@ export const configsDocumentSubmission = [
 export const configsProductionOfDocuments = [
   {
     body: [
+      {
+        inline: true,
+        label: "CHOOSE_COMPLAINANT",
+        isMandatory: true,
+        type: "dropdown",
+        key: "selectComplainant",
+        populators: {
+          optionsKey: "name",
+          options: [
+            {
+              code: "complainantOne",
+              name: "ComplainantOne",
+            },
+          ],
+        },
+      },
       {
         inline: true,
         label: "REF_ORDER_ID",
@@ -916,6 +996,22 @@ export const configsCaseWithdrawal = [
     body: [
       {
         inline: true,
+        label: "CHOOSE_COMPLAINANT",
+        isMandatory: true,
+        type: "dropdown",
+        key: "selectComplainant",
+        populators: {
+          optionsKey: "name",
+          options: [
+            {
+              code: "complainantOne",
+              name: "ComplainantOne",
+            },
+          ],
+        },
+      },
+      {
+        inline: true,
         label: "REF_ORDER_ID",
         isMandatory: false,
         disable: true,
@@ -1057,6 +1153,22 @@ export const configsCaseWithdrawal = [
 export const configsCaseTransfer = [
   {
     body: [
+      {
+        inline: true,
+        label: "CHOOSE_COMPLAINANT",
+        isMandatory: true,
+        type: "dropdown",
+        key: "selectComplainant",
+        populators: {
+          optionsKey: "name",
+          options: [
+            {
+              code: "complainantOne",
+              name: "ComplainantOne",
+            },
+          ],
+        },
+      },
       {
         inline: true,
         label: "REF_ORDER_ID",
@@ -1208,6 +1320,22 @@ export const configsSettlement = [
     body: [
       {
         inline: true,
+        label: "CHOOSE_COMPLAINANT",
+        isMandatory: true,
+        type: "dropdown",
+        key: "selectComplainant",
+        populators: {
+          optionsKey: "name",
+          options: [
+            {
+              code: "complainantOne",
+              name: "ComplainantOne",
+            },
+          ],
+        },
+      },
+      {
+        inline: true,
         label: "REF_ORDER_ID",
         isMandatory: false,
         disable: true,
@@ -1329,6 +1457,22 @@ export const configsSurety = [
     body: [
       {
         inline: true,
+        label: "CHOOSE_COMPLAINANT",
+        isMandatory: true,
+        type: "dropdown",
+        key: "selectComplainant",
+        populators: {
+          optionsKey: "name",
+          options: [
+            {
+              code: "complainantOne",
+              name: "ComplainantOne",
+            },
+          ],
+        },
+      },
+      {
+        inline: true,
         label: "DATE_OF_APPLICATION",
         disable: true,
         isMandatory: true,
@@ -1438,6 +1582,22 @@ export const configsBailBond = [
     body: [
       {
         inline: true,
+        label: "CHOOSE_COMPLAINANT",
+        isMandatory: true,
+        type: "dropdown",
+        key: "selectComplainant",
+        populators: {
+          optionsKey: "name",
+          options: [
+            {
+              code: "complainantOne",
+              name: "ComplainantOne",
+            },
+          ],
+        },
+      },
+      {
+        inline: true,
         label: "DATE_OF_APPLICATION",
         disable: true,
         isMandatory: true,
@@ -1543,6 +1703,22 @@ export const configsOthers = [
   {
     body: [
       {
+        inline: true,
+        label: "CHOOSE_COMPLAINANT",
+        isMandatory: true,
+        type: "dropdown",
+        key: "selectComplainant",
+        populators: {
+          optionsKey: "name",
+          options: [
+            {
+              code: "complainantOne",
+              name: "ComplainantOne",
+            },
+          ],
+        },
+      },
+      {
         label: "APPLICATION_TITLE",
         isMandatory: true,
         key: "applicationTitle",
@@ -1611,6 +1787,22 @@ export const configsOthers = [
 export const requestForBail = [
   {
     body: [
+      {
+        inline: true,
+        label: "CHOOSE_COMPLAINANT",
+        isMandatory: true,
+        type: "dropdown",
+        key: "selectComplainant",
+        populators: {
+          optionsKey: "name",
+          options: [
+            {
+              code: "complainantOne",
+              name: "ComplainantOne",
+            },
+          ],
+        },
+      },
       {
         key: "refOrderId",
         type: "component",
@@ -1812,6 +2004,22 @@ export const submitDocsForBail = [
   {
     body: [
       {
+        inline: true,
+        label: "CHOOSE_COMPLAINANT",
+        isMandatory: true,
+        type: "dropdown",
+        key: "selectComplainant",
+        populators: {
+          optionsKey: "name",
+          options: [
+            {
+              code: "complainantOne",
+              name: "ComplainantOne",
+            },
+          ],
+        },
+      },
+      {
         key: "refOrderId",
         type: "component",
         withoutLabel: true,
@@ -1949,6 +2157,22 @@ export const submitDocsForBail = [
 export const submitDelayCondonation = [
   {
     body: [
+      {
+        inline: true,
+        label: "CHOOSE_COMPLAINANT",
+        isMandatory: true,
+        type: "dropdown",
+        key: "selectComplainant",
+        populators: {
+          optionsKey: "name",
+          options: [
+            {
+              code: "complainantOne",
+              name: "ComplainantOne",
+            },
+          ],
+        },
+      },
       {
         key: "refOrderId",
         type: "component",
