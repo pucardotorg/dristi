@@ -49,6 +49,7 @@ export const VerifyMultipartyLitigantConfig = [
         confirmModal: true,
         disableConfigKey: "individualDetails",
         isMandatory: true,
+        isVerifiedOtpDisabledKey: "isDuplicateNumber",
         validation: {
           required: true,
           minLength: 10,

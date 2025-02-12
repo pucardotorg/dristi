@@ -1,6 +1,6 @@
 import { CardLabelError, CardText } from "@egovernments/digit-ui-components";
 import { CardLabel, CloseSvg, LabelFieldPair, TextInput } from "@egovernments/digit-ui-react-components";
-import React, { useEffect, useMemo, useRef, useState } from "react";
+import React, { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { verifyMobileNoConfig } from "../configs/component";
 import useInterval from "../hooks/useInterval";
 import { InfoIconRed } from "../icons/svgIndex";
@@ -62,6 +62,15 @@ function VerifyPhoneNumber({ t, config, onSelect, formData = {}, errors, setErro
 
   const otp = useMemo(() => formData[config.key]?.[input?.name], [formData[config.key]?.[input?.name]]);
 
+  const sendOtp = async (data) => {
+    try {
+      const res = await window?.Digit.UserService.sendOtp(data, stateCode);
+      return [res, null];
+    } catch (err) {
+      return [null, err];
+    }
+  };
+
   const modalOnSubmit = () => {
     if (!otp)
       setState((prev) => ({
@@ -73,28 +82,41 @@ function VerifyPhoneNumber({ t, config, onSelect, formData = {}, errors, setErro
     else selectOtp(input);
   };
 
-  const handleKeyDown = (e) => {
-    e.stopPropagation();
-    if (e.key === "Enter" && otp?.length === 6 && showModal) {
-      modalOnSubmit();
-    }
+  const onConfirmClick = async () => {
+    const data = {
+      mobileNumber: formData?.[config.key]?.[config.name],
+      tenantId: stateCode,
+      userType: getUserType(),
+    };
+    const [res, err] = await sendOtp({ otp: { ...data, name: DEFAULT_USER, ...TYPE_REGISTER } });
+
+    setShowConfirmModal(false);
+    setState((prev) => ({
+      ...prev,
+      showModal: true,
+      mobileNumber: null,
+    }));
+    setTimeLeft(10);
   };
+
+  const handleKeyDown = useCallback(
+    (e) => {
+      e.stopPropagation();
+      if (e.key === "Enter" && otp?.length === 6 && showModal) {
+        modalOnSubmit();
+      } else if (e.key === "Enter" && showConfirmModal) {
+        onConfirmClick();
+      }
+    },
+    [otp?.length, showConfirmModal, showModal]
+  );
 
   useEffect(() => {
     window.addEventListener("keydown", handleKeyDown);
     return () => {
       window.removeEventListener("keydown", handleKeyDown);
     };
-  }, [otp]);
-
-  const sendOtp = async (data) => {
-    try {
-      const res = await window?.Digit.UserService.sendOtp(data, stateCode);
-      return [res, null];
-    } catch (err) {
-      return [null, err];
-    }
-  };
+  }, [handleKeyDown, otp]);
 
   const selectMobileNumber = async () => {
     const data = {
@@ -469,36 +491,28 @@ function VerifyPhoneNumber({ t, config, onSelect, formData = {}, errors, setErro
       )}
       {showConfirmModal && (
         <Modal
-          headerBarEnd={<CloseBtn onClick={() => setShowConfirmModal(false)} isMobileView={true} />}
+          headerBarEnd={
+            <CloseBtn
+              onClick={() => {
+                setIsUserRegistered(true);
+                setShowConfirmModal(false);
+              }}
+              isMobileView={true}
+            />
+          }
           actionCancelOnSubmit={() => {
+            setIsUserRegistered(true);
             setShowConfirmModal(false);
           }}
           actionSaveLabel={t("CS_COMMON_CONFIRM")}
           actionCancelLabel={t("BACK")}
-          actionSaveOnSubmit={async () => {
-            const data = {
-              mobileNumber: formData?.[config.key]?.[config.name],
-              tenantId: stateCode,
-              userType: getUserType(),
-            };
-            const [res, err] = await sendOtp({ otp: { ...data, name: DEFAULT_USER, ...TYPE_REGISTER } });
-
-            setShowConfirmModal(false);
-            setState((prev) => ({
-              ...prev,
-              showModal: true,
-              mobileNumber: null,
-            }));
-            setTimeLeft(10);
-          }}
+          actionSaveOnSubmit={async () => await onConfirmClick()}
           formId="modal-action"
-          headerBarMain={<Heading label={t("Are you sure?")} />}
+          headerBarMain={<Heading label={t("ARE_YOU_SURE")} />}
           submitTextClassName={"verification-button-text-modal"}
           className={"verify-mobile-modal"}
         >
-          <div className="verify-mobile-modal-main">
-            {t("Please ensure all details are correct. An account for this litigant will be created with the entered details")}
-          </div>
+          <div className="verify-mobile-modal-main">{t("PLEASE_ENSURE_DETAILS_CORRECT_ACCOUNT_CREATE")}</div>
         </Modal>
       )}
     </div>

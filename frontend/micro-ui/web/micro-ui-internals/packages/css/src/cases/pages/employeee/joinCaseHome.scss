@@ -69,6 +69,22 @@
           margin-bottom: 0px;
         }
       }
+      .card-label-error {
+        width: 100%;
+        margin-left: 0px !important;
+        margin: -21px 0px 0px;
+        font-size: 14px !important;
+        color: #b91900 !important;
+        text-align: left;
+      }
+      .phone-number-verification {
+        .digit-card-label-error.error-text {
+          color: #b91900 !important;
+        }
+        .verification-button-text-modal {
+          color: #ffffff !important;
+        }
+      }
     }
   }
 }
