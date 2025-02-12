@@ -37,6 +37,10 @@ const PaymentStatus = ({ path }) => {
         message: t("CS_PAYMENT_FAILED"),
       };
 
+  const statusMessage = `${orderType === "SUMMONS" ? t("THE_SUMMON") : orderType === "NOTICE" ? t("THE_NOTICE") : t("THE_WARRANT")} ${t(
+    "WOULD_BE_SENT_TO_PARTY"
+  )}`;
+
   return (
     <div className=" user-registration">
       <div className="e-filing-payment" style={{ minHeight: "100%", height: "100%" }}>
@@ -49,9 +53,7 @@ const PaymentStatus = ({ path }) => {
         />
         {isResponseSuccess ? (
           <div>
-            <div className="payment-status-message">{`${orderType === "SUMMONS" ? t("THE_SUMMON") : t("THE_NOTICE")} ${t(
-              "WOULD_BE_SENT_TO_PARTY"
-            )}`}</div>
+            <div className="payment-status-message">{statusMessage}</div>
             <CustomCopyTextDiv
               t={t}
               keyStyle={{ margin: "8px 0px" }}
