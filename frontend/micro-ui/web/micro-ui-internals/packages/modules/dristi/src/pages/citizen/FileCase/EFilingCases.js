@@ -814,26 +814,7 @@ function EFilingCases({ path }) {
                   ...body,
                   populators: {
                     inputs: body?.populators?.inputs?.map((input) => {
-                      let dataobj =
-                        input?.key === "advocateDetails"
-                          ? caseDetails?.additionalDetails?.[input?.key]?.formdata?.[0]?.data?.advocateName
-                            ? caseDetails?.additionalDetails?.[input?.key]?.formdata
-                            : [
-                                {
-                                  data: {
-                                    advocateName: "",
-                                    barRegistrationNumber: "",
-                                    vakalatnamaFileUpload: {},
-                                    isAdvocateRepresenting: {
-                                      code: "NO",
-                                      name: "No",
-                                      showForm: true,
-                                      isEnabled: true,
-                                    },
-                                  },
-                                },
-                              ]
-                          : caseDetails?.additionalDetails?.[input?.key]?.formdata || caseDetails?.caseDetails?.[input?.key]?.formdata || {};
+                      let dataobj = caseDetails?.additionalDetails?.[input?.key]?.formdata || caseDetails?.caseDetails?.[input?.key]?.formdata || {};
                       if (isCaseReAssigned) {
                         dataobj =
                           input?.key === "advocateDetails"

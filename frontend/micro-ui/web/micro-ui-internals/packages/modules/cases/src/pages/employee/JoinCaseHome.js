@@ -982,28 +982,32 @@ const JoinCaseHome = ({ refreshInbox, setShowSubmitResponseModal, setResponsePen
                   isEnabled: true,
                   name: "NO",
                 },
-                pipAffidavitFileUpload: null,
+                pipAffidavitFileUpload: { document: [] },
                 ...(isReplaceAdvocate?.value === "YES"
                   ? {
-                      vakalatnamaFileUpload: [
-                        {
-                          documentType: party?.uploadedVakalatnama?.documentType,
-                          fileStore: party?.uploadedVakalatnama?.fileStore,
-                          documentName: party?.uploadedVakalatnama?.documentName,
-                          fileName: party?.uploadedVakalatnama?.fileName,
-                        },
-                      ],
+                      vakalatnamaFileUpload: {
+                        document: [
+                          {
+                            documentType: party?.uploadedVakalatnama?.documentType,
+                            fileStore: party?.uploadedVakalatnama?.fileStore,
+                            documentName: party?.uploadedVakalatnama?.documentName,
+                            fileName: party?.uploadedVakalatnama?.fileName,
+                          },
+                        ],
+                      },
                     }
                   : {
-                      vakalatnamaFileUpload: [
-                        ...(formdataItem?.data?.multipleAdvocatesAndPip?.vakalatnamaFileUpload || []),
-                        {
-                          documentType: party?.uploadedVakalatnama?.documentType,
-                          fileStore: party?.uploadedVakalatnama?.fileStore,
-                          documentName: party?.uploadedVakalatnama?.documentName,
-                          fileName: party?.uploadedVakalatnama?.fileName,
-                        },
-                      ],
+                      vakalatnamaFileUpload: {
+                        document: [
+                          ...(formdataItem?.data?.multipleAdvocatesAndPip?.vakalatnamaFileUpload?.document || []),
+                          {
+                            documentType: party?.uploadedVakalatnama?.documentType,
+                            fileStore: party?.uploadedVakalatnama?.fileStore,
+                            documentName: party?.uploadedVakalatnama?.documentName,
+                            fileName: party?.uploadedVakalatnama?.fileName,
+                          },
+                        ],
+                      },
                     }),
               },
             },
@@ -1132,7 +1136,7 @@ const JoinCaseHome = ({ refreshInbox, setShowSubmitResponseModal, setResponsePen
                               },
                               multipleAdvocateNameDetails: [],
                               pipAffidavitFileUpload: affidavitUpload,
-                              vakalatnamaFileUpload: [],
+                              vakalatnamaFileUpload: { document: [] },
                             },
                           },
                         };

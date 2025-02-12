@@ -490,35 +490,47 @@ function SelectReviewAccordion({ t, config, onSelect, formData = {}, errors, for
                       }
                     });
                     if (input?.key === "advocateDetails") {
-                      // updatedConfig = [
-                      //   ...updatedConfig,
-                      //   ...input.data[index].data.multipleAdvocatesAndPip?.multipleAdvocateNameDetails
-                      //     ?.map((litigant, index) => [
-                      //       {
-                      //         type: "text",
-                      //         style: { fontWeight: "bold" },
-                      //         label: "Advocate Name",
-                      //         value: `multipleAdvocatesAndPip.multipleAdvocateNameDetails[${index}].advocateBarRegNumberWithName.advocateName`,
-                      //       },
-                      //       {
-                      //         type: "text",
-                      //         label: "CS_BAR_REGISTRATION",
-                      //         value: `multipleAdvocatesAndPip.multipleAdvocateNameDetails[${index}].advocateBarRegNumberWithName.barRegistrationNumberOriginal`,
-                      //       },
-                      //       {
-                      //         type: "image",
-                      //         label: "CS_ID_PROOF",
-                      //         value: [`multipleAdvocatesAndPip.multipleAdvocateNameDetails[${index}].advocateNameDetails.advocateIdProof`],
-                      //       },
-                      //     ])
-                      //     .flatMap((list) => list),
-                      //   {
-                      //     type: "image",
-                      //     label: "VAKALATNAMA",
-                      //     value: [`multipleAdvocatesAndPip.vakalatnamaFileUpload`],
-                      //     enableScrutinyField: true,
-                      //   },
-                      // ];
+                      if (input?.data?.[index]?.data?.multipleAdvocatesAndPip?.isComplainantPip?.code === "NO") {
+                        updatedConfig = [
+                          ...updatedConfig,
+                          ...input.data[index].data.multipleAdvocatesAndPip?.multipleAdvocateNameDetails
+                            ?.map((litigant, index) => [
+                              {
+                                type: "text",
+                                style: { fontWeight: "bold" },
+                                label: `${index + 1}. Advocate Name`,
+                                value: `multipleAdvocatesAndPip.multipleAdvocateNameDetails[${index}].advocateBarRegNumberWithName.advocateName`,
+                              },
+                              {
+                                type: "text",
+                                label: "CS_BAR_REGISTRATION",
+                                value: `multipleAdvocatesAndPip.multipleAdvocateNameDetails[${index}].advocateBarRegNumberWithName.barRegistrationNumberOriginal`,
+                              },
+                              {
+                                type: "image",
+                                label: "CS_ID_PROOF",
+                                value: [`multipleAdvocatesAndPip.multipleAdvocateNameDetails[${index}].advocateNameDetails.advocateIdProof`],
+                              },
+                            ])
+                            .flatMap((list) => list),
+                          {
+                            type: "image",
+                            label: "VAKALATNAMA",
+                            value: [`multipleAdvocatesAndPip.vakalatnamaFileUpload.document`],
+                            enableScrutinyField: true,
+                          },
+                        ];
+                      } else if (input?.data?.[index]?.data?.multipleAdvocatesAndPip?.isComplainantPip?.code === "YES") {
+                        updatedConfig = [
+                          ...updatedConfig,
+                          {
+                            type: "image",
+                            label: "UPLOAD_PIP_AFFIDAVIT",
+                            value: [`multipleAdvocatesAndPip.pipAffidavitFileUpload.document`],
+                            enableScrutinyField: true,
+                          },
+                        ];
+                      }
                     }
                     return (
                       <CustomReviewCard
