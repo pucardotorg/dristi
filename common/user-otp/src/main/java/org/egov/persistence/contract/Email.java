@@ -1,5 +1,6 @@
 package org.egov.persistence.contract;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.EqualsAndHashCode;
@@ -17,4 +18,6 @@ public class Email {
 	private String subject;
 	private String body;
 
+	private String templateCode;
+	private Boolean isHTML;
 }

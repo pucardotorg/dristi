@@ -1,0 +1,31 @@
+[
+  {
+    tenantId: "kl",
+    moduleName: "mail-template",
+    masterName: "email-template",
+    mdmsPayload: [
+      {
+        tenantId: "kl",
+        schemaCode: "mail-template.email-template", //add localization also
+        uniqueIdentifier: "HRMS_LOGIN_TEMPLATE",
+        data: {
+          code: "HRMS_LOGIN_TEMPLATE",
+          name: "Login credentials for employee",
+          value: "<!DOCTYPE html>\\n<html>\\n<head>\\n    </head>\\n<body>\\n <p>{{header}}</p>\\n   <p>{{message}}</p>\\n    <p>{{footer}}</p>\\n</body>\\n</html>",
+        },
+        isActive: true
+      },
+      {
+        tenantId: "kl",
+        schemaCode: "mail-template.email-template", //add localization also
+        uniqueIdentifier: "USER_LOGIN_OTP",
+        data: {
+          code: "USER_LOGIN_OTP",
+          name: "Login Otp for User.",
+          value: "<!DOCTYPE html>\n<html>\n<head>\n    </head>\n<body>\n <p>{{header}}</p>\n   <p>{{message}}</p>\n    <p>{{footer}}</p>\n</body>\n</html>",
+        },
+        isActive: true
+      }
+    ]
+  }
+]

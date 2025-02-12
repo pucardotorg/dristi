@@ -15,6 +15,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.util.ObjectUtils;
 
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.Map;
 
 import static java.lang.String.format;
@@ -29,7 +30,8 @@ public class OtpEmailRepository {
 	private static final String LOCALIZATION_KEY_PWD_RESET_BODY_EMAIL = "email.pwd.reset.otp.body";
 	private static final String PWD_RESET_SUBJECT_EMAIL = 	"Password Reset";
 	private static final String PWD_RESET_BODY_EMAIL = "Your OTP for recovering password is %s.";
-	private static final String LOGIN_SUBJECT_EMAIL = "Login OTP";
+	private static final String LOGIN_SUBJECT_EMAIL = "OTP for 24X7 OnCourt Login";
+	private static final String LOGIN_OTP_TEMPLATE = "USER_LOGIN_OTP";
 	private static final String LOGIN_BODY_EMAIL = "Dear Citizen, Your Login OTP is %s.";
     private CustomKafkaTemplate<String, EmailRequest> kafkaTemplate;
     private String emailTopic;
@@ -60,6 +62,8 @@ public class OtpEmailRepository {
 		Email email = Email.builder()
 			.body(getBody(otpNumber,otpRequest))
 			.subject(getSubject(otpRequest))
+			.isHTML(true)
+			.templateCode(LOGIN_OTP_TEMPLATE)
 			.emailTo(Collections.singleton(emailId))
 			.build();
 		EmailRequest emailRequest = EmailRequest.builder().requestInfo(RequestInfo.builder().build()).email(email).build();
@@ -117,10 +121,9 @@ public class OtpEmailRepository {
 			body = format(body, otpNumber);
 		}
 		else {
-			body = getMessages(otpRequest, LOCALIZATION_KEY_LOGIN_BODY_EMAIL);
-			if(ObjectUtils.isEmpty(body))
-				body = LOGIN_BODY_EMAIL;
-			body = format(body, otpNumber);
+			Map<String, Object> otpBody = new HashMap<>();
+			otpBody.put("otpNumber", otpNumber);
+			return otpBody.toString();
 		}
 		return body;
 	}
