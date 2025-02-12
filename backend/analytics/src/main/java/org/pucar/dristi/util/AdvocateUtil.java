@@ -98,6 +98,6 @@ public class AdvocateUtil {
 			log.error("ERROR_WHILE_FETCHING_FROM_ADVOCATE", e);
 			throw new CustomException("ERROR_WHILE_FETCHING_FROM_ADVOCATE", e.getMessage());
 		}
-		return !advocateResponse.getAdvocates().isEmpty();
+		return !advocateResponse.getAdvocates().get(0).getResponseList().isEmpty();
 	}
 }

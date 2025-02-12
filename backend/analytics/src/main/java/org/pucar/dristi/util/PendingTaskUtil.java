@@ -5,6 +5,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.extern.slf4j.Slf4j;
 import org.egov.tracer.model.CustomException;
 import org.pucar.dristi.config.Configuration;
+import org.pucar.dristi.web.models.PendingTask;
 import org.springframework.http.*;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestTemplate;
@@ -25,10 +26,13 @@ public class PendingTaskUtil {
     private final RestTemplate restTemplate;
 
     private final ObjectMapper objectMapper;
-    public PendingTaskUtil(Configuration config, RestTemplate restTemplate, ObjectMapper objectMapper) {
+
+    private final IndexerUtils indexerUtils;
+    public PendingTaskUtil(Configuration config, RestTemplate restTemplate, ObjectMapper objectMapper, IndexerUtils indexerUtils) {
         this.config = config;
         this.restTemplate = restTemplate;
         this.objectMapper = objectMapper;
+        this.indexerUtils = indexerUtils;
     }
 
     public JsonNode callPendingTask(String filingNumber) {
@@ -43,7 +47,7 @@ public class PendingTaskUtil {
         HttpEntity<String> entity = new HttpEntity<>(query, headers);
 
         try {
-            ResponseEntity<String> response = restTemplate.exchange(url, HttpMethod.GET, entity, String.class);
+            ResponseEntity<String> response = restTemplate.postForEntity(url, entity, String.class);
             return objectMapper.readTree(response.getBody());
         } catch (Exception e) {
             log.error(ERROR_WHILE_FETCHING_PENDING_TASK, e);
@@ -62,7 +66,7 @@ public class PendingTaskUtil {
                 "      \"must\": [\n" +
                 "        {\n" +
                 "          \"match\": {\n" +
-                "            \"Data.filingNumber\": \"" + filingNumber + "\"\n" +
+                "            \"Data.filingNumber.keyword\":" + "\"" + filingNumber + "\"" +
                 "          }\n" +
                 "        },\n" +
                 "        {\n" +
@@ -76,29 +80,13 @@ public class PendingTaskUtil {
                 "}";
     }
 
-    public void updatePendingTask(List<JsonNode> pendingTasks) {
-        HttpHeaders headers = new HttpHeaders();
-        headers.setContentType(MediaType.APPLICATION_JSON);
-        headers.add("Authorization", getESEncodedCredentials());
+    public void updatePendingTask(List<JsonNode> pendingTasks) throws Exception {
 
-        String url = config.getEsHostUrl() + config.getPendingTaskIndexEndpoint() + config.getBulkPath();
+        String url = config.getEsHostUrl() + config.getBulkPath();
         for(JsonNode task: pendingTasks) {
-            String requestBody = buildRequestBody(task);
-            HttpEntity<String> entity = new HttpEntity<>(requestBody, headers);
-            try {
-                restTemplate.exchange(url, HttpMethod.POST, entity, String.class);
-            } catch (Exception e) {
-                log.error(ERROR_WHILE_FETCHING_PENDING_TASK, e);
-                throw new CustomException(ERROR_WHILE_FETCHING_PENDING_TASK, e.getMessage());
-            }
+            PendingTask pendingTask = objectMapper.convertValue( task.get("_source").get("Data"), PendingTask.class);
+            String requestBody = indexerUtils.buildPayload(pendingTask);
+            indexerUtils.esPostManual(url, requestBody);
         }
-    }
-
-    private String buildRequestBody(JsonNode task){
-        String taskId = task.get("referenceId").asText();
-        StringBuilder bulkRequestBody = new StringBuilder();
-        bulkRequestBody.append("{ \"create\": { \"_index\": \"pending-tasks-index\", \"_id\": \"").append(taskId).append("\" } }\n");
-        bulkRequestBody.append("{ \"doc\": ").append(task).append(" }\n");
-        return bulkRequestBody.toString();
     }
 }

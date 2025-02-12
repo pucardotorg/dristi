@@ -10,12 +10,15 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.pucar.dristi.config.Configuration;
+import org.pucar.dristi.web.models.PendingTask;
 import org.springframework.http.*;
 import org.springframework.web.client.RestTemplate;
 import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.Mockito.*;
 
 import java.util.Arrays;
+import java.util.Base64;
+import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -34,25 +37,33 @@ class PendingTaskUtilTest {
     @InjectMocks
     private PendingTaskUtil pendingTaskUtil;
 
+    @Mock
+    private IndexerUtils indexerUtils;
+
     @BeforeEach
     void setUp() {
         // Set up mocks for dependencies
         when(config.getEsHostUrl()).thenReturn("http://localhost:9200");
-        when(config.getPendingTaskIndexEndpoint()).thenReturn("/tasks");
+        lenient().when(config.getPendingTaskIndexEndpoint()).thenReturn("/tasks");;
         lenient().when(config.getPendingTaskSearchPath()).thenReturn("/search");
-        when(config.getEsUsername()).thenReturn("elastic");
-        when(config.getEsPassword()).thenReturn("password");
+        lenient().when(config.getEsUsername()).thenReturn("elastic");
+        lenient().when(config.getEsPassword()).thenReturn("password");
     }
 
     @Test
     void testCallPendingTask_success() throws Exception {
+        String esQuery = "{ \"query\": { \"bool\": { \"must\": [ { \"match\": { \"Data.filingNumber.keyword\": \"12345\" } }, { \"term\": { \"Data.isCompleted\": false } } ] } } } }";
         String filingNumber = "12345";
-        String esQuery = "{ \"query\": { \"bool\": { \"must\": [ { \"match\": { \"Data.filingNumber\": \"12345\" } }, { \"term\": { \"Data.isCompleted\": false } } ] } } } }";
+        String url = "http://localhost:9200/tasks/search";
         String responseJson = "{\"hits\": { \"total\": 1, \"hits\": [] }}";
 
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(MediaType.APPLICATION_JSON);
+        headers.add("Authorization", "Basic " + Base64.getEncoder().encodeToString("elastic:password".getBytes()));
+        HttpEntity<String> entity = new HttpEntity<>(esQuery, headers);
+
         ResponseEntity<String> responseEntity = new ResponseEntity<>(responseJson, HttpStatus.OK);
-        when(restTemplate.exchange(anyString(), eq(HttpMethod.GET), any(HttpEntity.class), eq(String.class)))
-                .thenReturn(responseEntity);
+        when(restTemplate.postForEntity(eq(url), any(HttpEntity.class), eq(String.class))).thenReturn(responseEntity);
 
         JsonNode mockJsonNode = mock(JsonNode.class);
         when(objectMapper.readTree(responseJson)).thenReturn(mockJsonNode);
@@ -60,13 +71,13 @@ class PendingTaskUtilTest {
         JsonNode result = pendingTaskUtil.callPendingTask(filingNumber);
 
         assertNotNull(result);
-        verify(restTemplate).exchange(anyString(), eq(HttpMethod.GET), any(HttpEntity.class), eq(String.class));
+        verify(restTemplate).postForEntity(eq(url), any(HttpEntity.class), eq(String.class));
     }
 
     @Test
-    void testCallPendingTask_failure() throws Exception {
+    void testCallPendingTask_failure() {
         String filingNumber = "12345";
-        when(restTemplate.exchange(anyString(), eq(HttpMethod.GET), any(HttpEntity.class), eq(String.class)))
+        when(restTemplate.postForEntity(anyString(), any(HttpEntity.class), eq(String.class)))
                 .thenThrow(new RuntimeException("RestTemplate exception"));
 
         CustomException exception = assertThrows(CustomException.class, () -> pendingTaskUtil.callPendingTask(filingNumber));
@@ -74,34 +85,39 @@ class PendingTaskUtilTest {
     }
 
     @Test
-    void testUpdatePendingTask_success() {
-        JsonNode task1 = mock(JsonNode.class);
-        JsonNode task2 = mock(JsonNode.class);
-        when(task1.get("referenceId")).thenReturn(new TextNode("1"));
-        when(task2.get("referenceId")).thenReturn(new TextNode("2"));
+    void testUpdatePendingTask_success() throws Exception {
+        JsonNode task = mock(JsonNode.class);
+        JsonNode sourceNode = mock(JsonNode.class);
+        JsonNode dataNode = mock(JsonNode.class);
+        when(task.get("_source")).thenReturn(sourceNode);
+        when(sourceNode.get("Data")).thenReturn(dataNode);
+        PendingTask pendingTask = new PendingTask();
+        when(objectMapper.convertValue(dataNode, PendingTask.class)).thenReturn(pendingTask);
 
-        HttpHeaders headers = new HttpHeaders();
-        String url = "http://localhost:9200/tasks/bulk";
-        HttpEntity<String> entity1 = new HttpEntity<>("{ \"update\": { \"_index\": \"pending-tasks-index\", \"_id\": \"1\" } }\n{ \"doc\": { ... }}", headers);
+        when(indexerUtils.buildPayload(any(PendingTask.class))).thenReturn("payload");
+        doNothing().when(indexerUtils).esPostManual(anyString(), anyString());
 
-        pendingTaskUtil.updatePendingTask(Arrays.asList(task1, task2));
-        verify(restTemplate, times(2)).exchange(anyString(), eq(HttpMethod.POST), any(HttpEntity.class), eq(String.class));
+        pendingTaskUtil.updatePendingTask(List.of(task));
+
+        verify(indexerUtils, times(1)).esPostManual(anyString(), anyString());
     }
 
     @Test
-    void testUpdatePendingTask_failure() {
+    void testUpdatePendingTask_failure() throws Exception {
         JsonNode task = mock(JsonNode.class);
-        when(task.get("referenceId")).thenReturn(new TextNode("1"));
+        JsonNode sourceNode = mock(JsonNode.class);
+        JsonNode dataNode = mock(JsonNode.class);
+        when(task.get("_source")).thenReturn(sourceNode);
+        when(sourceNode.get("Data")).thenReturn(dataNode);
+        PendingTask pendingTask = new PendingTask();
+        when(objectMapper.convertValue(dataNode, PendingTask.class)).thenReturn(pendingTask);
 
-        HttpHeaders headers = new HttpHeaders();
-        String url = "http://localhost:9200/tasks/bulk";
-        HttpEntity<String> entity = new HttpEntity<>("{ \"update\": { \"_index\": \"pending-tasks-index\", \"_id\": \"1\" } }\n{ \"doc\": { ... }}", headers);
+        when(indexerUtils.buildPayload(any(PendingTask.class))).thenReturn("payload");
+        doThrow(new RuntimeException("IndexerUtils exception"))
+                .when(indexerUtils).esPostManual(anyString(), anyString());
 
-        when(restTemplate.exchange(anyString(), eq(HttpMethod.POST), any(HttpEntity.class), eq(String.class)))
-                .thenThrow(new RuntimeException("RestTemplate exception"));
-
-        CustomException exception = assertThrows(CustomException.class, () -> pendingTaskUtil.updatePendingTask(Arrays.asList(task)));
-        assertEquals("RestTemplate exception", exception.getMessage());
+        RuntimeException exception = assertThrows(RuntimeException.class, () -> pendingTaskUtil.updatePendingTask(List.of(task)));
+        assertEquals("IndexerUtils exception", exception.getMessage());
     }
 }
 
