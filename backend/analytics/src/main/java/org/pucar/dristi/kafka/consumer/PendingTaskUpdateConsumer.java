@@ -24,9 +24,9 @@ public class PendingTaskUpdateConsumer {
 
 
     @KafkaListener(topics = "#{'${kafka.topics.join.case}'.split(',')}")
-    public void listener(ConsumerRecord<String, String> consumerRecord) {
+    public void listener(ConsumerRecord<String, Map<String, Object>> consumerRecord) {
         try {
-            Map<String, Object> jsonMap = objectMapper.readValue(consumerRecord.value(), Map.class);
+            Map<String, Object> jsonMap = consumerRecord.value();
             pendingTaskService.updatePendingTask(consumerRecord.topic(), jsonMap);
         } catch (Exception e){
             log.error("Error in updating PendingTask for join case.");

@@ -116,7 +116,7 @@ public class PendingTaskService {
             Map<String, Object> representative = (Map<String, Object>) joinCaseJson.get("representative");
             List<Map<String, Object>> parties = (List<Map<String, Object>>) representative.get("representing");
 
-            RequestInfo requestInfo = (RequestInfo) joinCaseJson.get("requestInfo");
+            RequestInfo requestInfo = objectMapper.convertValue(joinCaseJson.get("RequestInfo"), RequestInfo.class);
 
             String advocateUuid = getAdvocateUuid(requestInfo, representative);
             List<String> litigantUuids = getLitigantUuids(parties, requestInfo);
@@ -227,7 +227,7 @@ public class PendingTaskService {
     }
 
     private List<JsonNode> checkComplainantJoinCase(List<JsonNode> tasks, Map<String, Object> joinCase) {
-        Object caseObject = caseUtil.getCase((JSONObject) joinCase.get("requestInfo"), "kl", null, joinCase.get("caseFilingNumber").toString(), null);
+        Object caseObject = caseUtil.getCase((JSONObject) joinCase.get("RequestInfo"), "kl", null, joinCase.get("caseFilingNumber").toString(), null);
         List<Map<String, Object>> litigantList = JsonPath.read(caseObject, "litigants");
 
         litigantList = litigantList.stream()
