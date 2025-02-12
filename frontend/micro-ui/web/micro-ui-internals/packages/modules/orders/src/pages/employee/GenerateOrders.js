@@ -1471,11 +1471,14 @@ const GenerateOrders = () => {
       return await Promise.all(promises);
     }
     if ((order?.orderType === "SUMMONS" || orderType === "SUMMONS") && refId) {
-      const assignee = [...complainants?.map((data) => data?.uuid[0])];
-      const advocateUuid = Object.keys(allAdvocates)
-        .filter((data) => assignee?.includes(allAdvocates?.[data]?.[0]))
-        ?.flat();
-      assignees = [...assignee, ...advocateUuid]?.map((uuid) => ({ uuid }));
+      const assignee = [...complainants?.map((data) => data?.uuid)]?.flat();
+      // const advocateUuid = Object.keys(allAdvocates)
+      //   .filter((data) => assignee?.includes(allAdvocates?.[data]?.[0]))
+      //   ?.flat();
+      const complainantUuids = caseDetails?.litigants
+        ?.filter((com) => com?.partyType?.startsWith("complainant"))
+        .map((com) => com?.additionalDetails?.uuid);
+      assignees = [...assignee, ...complainantUuids]?.map((uuid) => ({ uuid }));
       entityType = "order-default";
       return ordersService.customApiService(Urls.orders.pendingTask, {
         pendingTask: {
@@ -1495,11 +1498,14 @@ const GenerateOrders = () => {
       });
     }
     if ((order?.orderType === "NOTICE" || orderType === "NOTICE") && refId) {
-      const assignee = [...complainants?.map((data) => data?.uuid[0])];
-      const advocateUuid = Object.keys(allAdvocates)
-        .filter((data) => assignee?.includes(allAdvocates?.[data]?.[0]))
-        ?.flat();
-      assignees = [...assignee, ...advocateUuid]?.map((uuid) => ({ uuid }));
+      const assignee = [...complainants?.map((data) => data?.uuid)]?.flat();
+      // const advocateUuid = Object.keys(allAdvocates)
+      //   .filter((data) => assignee?.includes(allAdvocates?.[data]?.[0]))
+      //   ?.flat();
+      const complainantUuids = caseDetails?.litigants
+        ?.filter((com) => com?.partyType?.startsWith("complainant"))
+        .map((com) => com?.additionalDetails?.uuid);
+      assignees = [...assignee, ...complainantUuids]?.map((uuid) => ({ uuid }));
       entityType = "order-default";
       return ordersService.customApiService(Urls.orders.pendingTask, {
         pendingTask: {
@@ -1519,11 +1525,14 @@ const GenerateOrders = () => {
       });
     }
     if ((order?.orderType === "WARRANT" || orderType === "WARRANT") && refId) {
-      const assignee = [...complainants?.map((data) => data?.uuid[0])];
-      const advocateUuid = Object.keys(allAdvocates)
-        .filter((data) => assignee?.includes(allAdvocates?.[data]?.[0]))
-        ?.flat();
-      assignees = [...assignee, ...advocateUuid]?.map((uuid) => ({ uuid }));
+      const assignee = [...complainants?.map((data) => data?.uuid)]?.flat();
+      // const advocateUuid = Object.keys(allAdvocates)
+      //   .filter((data) => assignee?.includes(allAdvocates?.[data]?.[0]))
+      //   ?.flat();
+      const complainantUuids = caseDetails?.litigants
+        ?.filter((com) => com?.partyType?.startsWith("complainant"))
+        .map((com) => com?.additionalDetails?.uuid);
+      assignees = [...assignee, ...complainantUuids]?.map((uuid) => ({ uuid }));
       entityType = "order-default";
       return ordersService.customApiService(Urls.orders.pendingTask, {
         pendingTask: {
