@@ -1233,7 +1233,7 @@ const GenerateOrders = () => {
         return `Request for rescheduling of hearing on ${formatDate(
           new Date(currentOrder?.orderDetails?.originalHearingDate),
           "DD-MM-YYYY"
-        )} raised by ${getPartyNamesString(currentOrder?.orderDetails?.parties)} dismissed`;
+        )} raised by ${applicationDetails?.additionalDetails?.owner} dismissed`;
       case "INITIATING_RESCHEDULING_OF_HEARING_DATE":
         return "Initiated the process for rescheduling the hearing";
       case "ASSIGNING_DATE_RESCHEDULED_HEARING":
