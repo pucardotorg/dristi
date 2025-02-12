@@ -1208,12 +1208,12 @@ const GenerateOrders = () => {
       case "REFERRAL_CASE_TO_ADR":
         return "Case referred to Alternative Dispute Resolution to seek settlement";
       case "SCHEDULE_OF_HEARING_DATE":
-        return `For ${currentOrder?.orderDetails?.purposeOfHearing} on ${formatDate(
+        return `For ${t(currentOrder?.orderDetails?.purposeOfHearing)} on ${formatDate(
           new Date(currentOrder?.additionalDetails?.formdata?.hearingDate),
           "DD-MM-YYYY"
         )}`;
       case "SCHEDULING_NEXT_HEARING":
-        return `For ${currentOrder?.orderDetails?.purposeOfHearing} on ${formatDate(
+        return `For ${t(currentOrder?.orderDetails?.purposeOfHearing)} on ${formatDate(
           new Date(currentOrder?.additionalDetails?.formdata?.hearingDate),
           "DD-MM-YYYY"
         )}`;
@@ -1245,7 +1245,7 @@ const GenerateOrders = () => {
           "DD-MM-YYYY"
         )}`;
       case "ASSIGNING_NEW_HEARING_DATE":
-        return `For ${currentOrder?.orderDetails?.purposeOfHearing} on ${formatDate(
+        return `For ${t(currentOrder?.orderDetails?.purposeOfHearing)} on ${formatDate(
           new Date(currentOrder?.additionalDetails?.formdata?.hearingDate),
           "DD-MM-YYYY"
         )}`;
@@ -1256,13 +1256,13 @@ const GenerateOrders = () => {
           ? "The settlement records have been accepted by the court. Case closed."
           : "The settlement records have been dismissed by the court";
       case "SUMMONS":
-        return `Issue Summons to ${currentOrder?.orderDetails?.respondentName} - ${currentOrder?.orderDetails?.parties?.[0]?.partyType}`;
+        return `Issue Summons to ${currentOrder?.orderDetails?.parties?.[0]?.partyName}`;
       case "NOTICE":
-        return `Issue Notice to ${currentOrder?.orderDetails?.respondentName} - ${currentOrder?.orderDetails?.parties?.[0]?.partyType}`;
+        return `Issue Notice to ${currentOrder?.orderDetails?.parties?.[0]?.partyName}`;
       case "BAIL":
         return "Bail";
       case "WARRANT":
-        return `Issue ${currentOrder?.orderDetails?.warrantType} to ${currentOrder?.orderDetails?.parties?.[0]?.partyCode} - ${currentOrder?.orderDetails?.parties?.[0]?.partyType}`;
+        return `Issue ${t(currentOrder?.orderDetails?.warrantType)} to ${currentOrder?.orderDetails?.parties?.[0]?.partyName}`;
       case "WITHDRAWAL":
         return currentOrder?.orderDetails?.applicationStatus === "APPROVED"
           ? "The application to withdraw the case has been accepted. Case closed"
@@ -1284,7 +1284,9 @@ const GenerateOrders = () => {
       case "SET_BAIL_TERMS":
         return "Condition of Bail";
       case "ACCEPTANCE_REJECTION_DCA":
-        return "Order for Acceptance/Rejection of Delay Condonation";
+        return `CMP: ${t(applicationDetails?.applicationType)} ${applicationDetails?.applicationNumber} stands ${
+          currentOrder?.orderDetails?.isDcaAcceptedOrRejected === "ACCEPTED" ? "allowed" : "dismissed"
+        }`;
       case "ADMIT_DISMISS_CASE":
         return `Cognizance of the offence taken on file as ${caseDetails?.cmpNumber} under Section 138 of the Negotiable Instruments Act`;
       default:
