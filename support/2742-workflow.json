@@ -17,7 +17,7 @@
           "actions": [
             {
               "action": "CREATE",
-              "nextState": "PENDING_E-SIGN",
+              "nextState": "PENDINGESIGN",
               "roles": [
                 "SUBMISSION_CREATOR"
               ]
@@ -26,7 +26,7 @@
         },
         {
           "sla": 86400000,
-          "state": "PENDING_E-SIGN",
+          "state": "PENDINGESIGN",
           "applicationStatus": "INWORKFLOW",
           "docUploadRequired": false,
           "isStartState": false,
@@ -34,8 +34,8 @@
           "isStateUpdatable": true,
           "actions": [
             {
-              "action": "E-SIGN",
-              "nextState": "PENDING_APPROVAL",
+              "action": "ESIGN",
+              "nextState": "PENDINGAPPROVAL",
               "roles": [
                 "SUBMISSION_CREATOR",
                 "SYSTEM",
@@ -53,7 +53,7 @@
         },
         {
           "sla": 259200000,
-          "state": "PENDING_APPROVAL",
+          "state": "PENDINGAPPROVAL",
           "applicationStatus": "INWORKFLOW",
           "docUploadRequired": false,
           "isStartState": false,
@@ -146,7 +146,7 @@
           "actions": [
             {
               "action": "CREATE",
-              "nextState": "PENDING_E-SIGN",
+              "nextState": "PENDINGESIGN",
               "roles": [
                 "SUBMISSION_CREATOR"
               ]
@@ -155,7 +155,7 @@
         },
         {
           "sla": 86400000,
-          "state": "PENDING_E-SIGN",
+          "state": "PENDINGESIGN",
           "applicationStatus": "INWORKFLOW",
           "docUploadRequired": false,
           "isStartState": false,
@@ -163,8 +163,8 @@
           "isStateUpdatable": true,
           "actions": [
             {
-              "action": "E-SIGN",
-              "nextState": "PENDING_PAYMENT",
+              "action": "ESIGN",
+              "nextState": "PENDINGPAYMENT",
               "roles": [
                 "SUBMISSION_CREATOR",
                 "SYSTEM",
@@ -182,7 +182,7 @@
         },
         {
           "sla": 172800000,
-          "state": "PENDING_PAYMENT",
+          "state": "PENDINGPAYMENT",
           "applicationStatus": "INWORKFLOW",
           "docUploadRequired": false,
           "isStartState": false,
@@ -190,8 +190,8 @@
           "isStateUpdatable": true,
           "actions": [
             {
-              "action": "MAKE_PAYMENT",
-              "nextState": "PENDING_APPROVAL",
+              "action": "PAY",
+              "nextState": "PENDINGAPPROVAL",
               "roles": [
                 "SUBMISSION_CREATOR",
                 "SYSTEM",
@@ -209,7 +209,7 @@
         },
         {
           "sla": 259200000,
-          "state": "PENDING_APPROVAL",
+          "state": "PENDINGAPPROVAL",
           "applicationStatus": "INWORKFLOW",
           "docUploadRequired": false,
           "isStartState": false,
@@ -258,7 +258,7 @@
           "sla": 172800000,
           "state": "DOCUMENT_UPLOAD",
           "applicationStatus": "INWORKFLOW",
-          "docUploadRequired": true,
+          "docUploadRequired": false,
           "isStartState": false,
           "isTerminateState": false,
           "isStateUpdatable": true,
@@ -336,4 +336,3 @@
     }
   ]
 }
-

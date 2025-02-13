@@ -127,7 +127,7 @@ function Home() {
             additionalConfig={{
               resultsTable: {
                 onClickRow: (props) => {
-                  const statusArray = ["CASE_ADMITTED", "ADMISSION_HEARING_SCHEDULED", "PENDING_PAYMENT", "UNDER_SCRUTINY", "PENDING_ADMISSION"];
+                  const statusArray = ["CASE_ADMITTED", "PENDING_PAYMENT", "UNDER_SCRUTINY", "PENDING_ADMISSION"];
                   statusArray.includes(props?.original?.status)
                     ? history.push(`${path}/view-case?caseId=${props.original.id}&filingNumber=${props.original.filingNumber}&tab=Overview`)
                     : history.push(`${path}/file-case/case?caseId=${props?.original?.id}`);

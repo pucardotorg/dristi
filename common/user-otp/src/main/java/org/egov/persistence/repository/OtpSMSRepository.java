@@ -34,6 +34,9 @@ public class OtpSMSRepository {
     @Value("${egov.localisation.tenantid.strip.suffix.count}")
     private int tenantIdStripSuffixCount;
 
+    @Value("${egov.register.sms.template.id}")
+    private String registerTemplateId;
+
     private CustomKafkaTemplate<String, SMSRequest> kafkaTemplate;
     private String smsTopic;
 
@@ -57,7 +60,7 @@ public class OtpSMSRepository {
         SMSRequest smsRequest = SMSRequest.builder()
                 .mobileNumber(otpRequest.getMobileNumber())
                 .tenantId(otpRequest.getTenantId())
-                .templateId(templateId)
+                .templateId(otpRequest.isLoginRequestType() ? templateId : registerTemplateId)
                 .contentType("TEXT")
                 .category(Category.OTP)
                 .locale("en_IN")

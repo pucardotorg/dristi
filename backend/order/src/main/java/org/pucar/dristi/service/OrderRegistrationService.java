@@ -136,15 +136,31 @@ public class OrderRegistrationService {
         caseSearchRequest.addCriteriaItem(caseCriteria);
         return caseSearchRequest;
     }
-    private String getMessageCode(String orderType, String updatedStatus, String caseStatus, Boolean hearingCompleted, String submissionType) {
+    private String getMessageCode(String orderType, String updatedStatus, Boolean hearingCompleted, String submissionType, String purpose) {
 
-        if(caseStatus.equalsIgnoreCase(CASE_ADMITTED) && orderType.equalsIgnoreCase(SCHEDULE_OF_HEARING_DATE) && updatedStatus.equalsIgnoreCase(PUBLISHED)){
+        log.info("Operation: getMessageCode for OrderType: {}, UpdatedStatus: {}, HearingCompleted: {}, SubmissionType: {}, Purpose: {}", orderType, updatedStatus, hearingCompleted, submissionType, purpose);
+        if(!StringUtils.isEmpty(purpose) && purpose.equalsIgnoreCase(EXAMINATION_UNDER_S351_BNSS) && updatedStatus.equalsIgnoreCase(PUBLISHED)){
+            return EXAMINATION_UNDER_S351_BNSS_SCHEDULED;
+        }
+        if(!StringUtils.isEmpty(purpose) && purpose.equalsIgnoreCase(EVIDENCE_ACCUSED) && updatedStatus.equalsIgnoreCase(PUBLISHED)){
+            return EVIDENCE_ACCUSED_PUBLISHED;
+        }
+        if(!StringUtils.isEmpty(purpose) && purpose.equalsIgnoreCase(EVIDENCE_COMPLAINANT) && updatedStatus.equalsIgnoreCase(PUBLISHED)){
+            return EVIDENCE_COMPLAINANT_PUBLISHED;
+        }
+        if(!StringUtils.isEmpty(purpose) && purpose.equalsIgnoreCase(APPEARANCE) && updatedStatus.equalsIgnoreCase(PUBLISHED)){
+            return APPEARANCE_PUBLISHED;
+        }
+        if(orderType.equalsIgnoreCase(SCHEDULING_NEXT_HEARING) && updatedStatus.equalsIgnoreCase(PUBLISHED)){
             return NEXT_HEARING_SCHEDULED;
         }
         if(orderType.equalsIgnoreCase(SCHEDULE_OF_HEARING_DATE) && updatedStatus.equalsIgnoreCase(PUBLISHED)){
             return ADMISSION_HEARING_SCHEDULED;
         }
-        if(orderType.equalsIgnoreCase(INITIATING_RESCHEDULING_OF_HEARING_DATE) && updatedStatus.equalsIgnoreCase(PUBLISHED)){
+        if(orderType.equalsIgnoreCase(JUDGEMENT) && updatedStatus.equalsIgnoreCase(PUBLISHED)){
+            return CASE_DECISION_AVAILABLE;
+        }
+        if(orderType.equalsIgnoreCase(ASSIGNING_DATE_RESCHEDULED_HEARING) && updatedStatus.equalsIgnoreCase(PUBLISHED)){
             return HEARING_RESCHEDULED;
         }
         if(orderType.equalsIgnoreCase(WARRANT) && updatedStatus.equalsIgnoreCase(PUBLISHED)){
@@ -173,7 +189,6 @@ public class OrderRegistrationService {
         try {
             CaseSearchRequest caseSearchRequest = createCaseSearchRequest(orderRequest.getRequestInfo(), orderRequest.getOrder());
             JsonNode caseDetails = caseUtil.searchCaseDetails(caseSearchRequest);
-            String caseStatus = caseDetails.has("status") ? caseDetails.get("status").asText() : "";
 
             Object additionalDetailsObject = orderRequest.getOrder().getAdditionalDetails();
             String jsonData = objectMapper.writeValueAsString(additionalDetailsObject);
@@ -182,24 +197,28 @@ public class OrderRegistrationService {
             String submissionType = formData.has("documentType") ? formData.path("documentType").path("value").asText() : "";
             boolean hearingCompleted = formData.has("lastHearingTranscript");
 
-
-            String messageCode = updatedState != null ? getMessageCode(orderType, updatedState, caseStatus, hearingCompleted, submissionType) : null;
-            assert messageCode != null;
-
             Object orderDetailsObject = orderRequest.getOrder().getOrderDetails();
             JsonNode orderDetails = objectMapper.readTree(objectMapper.writeValueAsString(orderDetailsObject));
+            String purposeOfHearing = orderDetails.has("purposeOfHearing") ? orderDetails.get("purposeOfHearing").asText() : "";
+
+            String messageCode = updatedState != null ? getMessageCode(orderType, updatedState, hearingCompleted, submissionType, purposeOfHearing) : null;
+            log.info("Message Code: {}", messageCode);
+            assert messageCode != null;
 
             String receiver = getReceiverParty(messageCode);
 
             Set<String> individualIds = extractIndividualIds(caseDetails, receiver);
 
             Set<String> phonenumbers = callIndividualService(orderRequest.getRequestInfo(), individualIds);
+            String hearingDate = formData.has("hearingDate") ? formData.get("hearingDate").asText()
+                    : formData.has("newHearingDate") ? formData.get("newHearingDate").asText()
+                    : "";
 
             SmsTemplateData smsTemplateData = SmsTemplateData.builder()
                     .courtCaseNumber(caseDetails.has("courtCaseNumber") ? caseDetails.get("courtCaseNumber").asText() : "")
                     .cmpNumber(caseDetails.has("cmpNumber") ? caseDetails.get("cmpNumber").asText() : "")
-                    .hearingDate(formData.has("hearingDate") ? formData.get("hearingDate").asText() : "")
-                    .submissionDate(orderDetails.has("dates") ? formData.get("dates").get("submissionDeadlineDate").asText() : "")
+                    .hearingDate(hearingDate)
+                    .submissionDate(formData.has("submissionDeadline") ? formData.get("submissionDeadline").asText() : "")
                     .tenantId(orderRequest.getOrder().getTenantId()).build();
 
             for (String number : phonenumbers) {

@@ -143,6 +143,7 @@ const App = ({ stateCode, tenantId, result, fileStoreId }) => {
     localStorage.setItem("isSignSuccess", result);
   }
   if (fileStoreId) {
+    console.log(fileStoreId, "fileStoreId");
     localStorage.setItem("fileStoreId", fileStoreId);
   }
   if (isUserLoggedIn && retrievedObject) {

@@ -150,6 +150,7 @@ const selectCompMultiConfig = {
         label: "ADDRESS",
         type: "text",
         name: "locality",
+        isFormatRequired : true,
         validation: {
           minlength: 2,
           maxlength: 256,
@@ -177,7 +178,7 @@ const SelectComponentsMulti = ({ t, config, onSelect, formData, errors, setError
     } else {
       setLocationData(locationData);
     }
-  }, [formData]);
+  }, [config?.key, formData, locationData]);
 
   const { isLoading: isTypeOfAddressData, data: typeOfAddressData } = Digit.Hooks.useCustomMDMS(
     Digit.ULBService.getStateId(),

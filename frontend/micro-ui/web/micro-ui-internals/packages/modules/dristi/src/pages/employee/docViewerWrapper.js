@@ -38,6 +38,7 @@ const DocViewerWrapper = ({
   docWidth = "262px",
   docHeight = "206px",
   preview,
+  pdfZoom= 1.1
 }) => {
   const Digit = window?.Digit || {};
   const { t } = useTranslation();
@@ -84,7 +85,7 @@ const DocViewerWrapper = ({
                 },
                 csvDelimiter: ",", // "," as default,
                 pdfZoom: {
-                  defaultZoom: 1.1, // 1 as default,
+                  defaultZoom: pdfZoom, // 1 as default,
                   zoomJump: 0.2, // 0.1 as default,
                 },
                 pdfVerticalScrollByDefault: !preview, // false as default

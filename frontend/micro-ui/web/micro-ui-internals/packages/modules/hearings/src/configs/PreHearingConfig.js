@@ -82,10 +82,11 @@ export const preHearingConfig = {
               styles: { width: "150px" },
               name: "stage",
               error: "Required",
+              optionsKey: "code",
               mdmsConfig: {
                 masterName: "SubStage",
                 moduleName: "case",
-                select: "(data) => {return data['case'].SubStage?.map((item) => {return item.subStage;});}",
+                select: "(data) => {return data['case'].SubStage?.map((item) => {return item});}",
               },
             },
           },
@@ -117,6 +118,10 @@ export const preHearingConfig = {
           {
             label: "Case Type",
             jsonPath: "caseType",
+          },
+          {
+            label: "Case Id",
+            jsonPath: "caseNumber",
           },
           {
             label: "Pending Tasks",

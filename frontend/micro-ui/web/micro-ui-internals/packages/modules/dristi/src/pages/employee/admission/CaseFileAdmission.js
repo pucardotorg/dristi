@@ -33,7 +33,7 @@ const stateSla = {
 const casePrimaryActions = [
   { action: "REGISTER", label: "CS_REGISTER" },
   { action: "ADMIT", label: "CS_ADMIT_CASE" },
-  { action: "SCHEDULE_ADMISSION_HEARING", label: "CS_SCHEDULE_ADMISSION_HEARING" },
+  { action: "SCHEDULE_ADMISSION_HEARING", label: "CS_SCHEDULE_HEARING" },
 ];
 const caseSecondaryActions = [
   { action: "SEND_BACK", label: "SEND_BACK_FOR_CORRECTION" },
@@ -306,6 +306,15 @@ function CaseFileAdmission({ t, path }) {
       ...caseDetails,
       additionalDetails: { ...caseDetails.additionalDetails, respondentDetails, witnessDetails, judge: data },
     };
+    const complainantUuid = caseDetails?.litigants?.[0]?.additionalDetails?.uuid;
+    const advocateUuid = caseDetails?.representatives?.[0]?.additionalDetails?.uuid;
+    let assignees = [];
+    if (complainantUuid) {
+      assignees.push(complainantUuid);
+    }
+    if (advocateUuid) {
+      assignees.push(advocateUuid);
+    }
 
     return DRISTIService.caseUpdateService(
       {
@@ -316,7 +325,7 @@ function CaseFileAdmission({ t, path }) {
           workflow: {
             ...caseDetails?.workflow,
             action,
-            ...(action === "SEND_BACK" && { assignes: [caseDetails.auditDetails.createdBy] || [] }),
+            ...(action === "SEND_BACK" && { assignes: assignees || [] }),
           },
         },
         tenantId,
@@ -436,47 +445,10 @@ function CaseFileAdmission({ t, path }) {
         }
         break;
       case "ADMIT":
-        if (caseDetails?.status === "ADMISSION_HEARING_SCHEDULED") {
-          const { HearingList = [] } = await Digit.HearingService.searchHearings({
-            hearing: { tenantId },
-            criteria: {
-              tenantID: tenantId,
-              filingNumber: caseDetails?.filingNumber,
-            },
-          });
-          const { startTime: hearingDate, hearingId: hearingNumber } = HearingList?.find(
-            (list) => list?.hearingType === "ADMISSION" && !(list?.status === "COMPLETED" || list?.status === "ABATED")
-          );
-          const {
-            list: [orderData],
-          } = await Digit.ordersService.searchOrder({
-            tenantId,
-            criteria: {
-              filingNumber: caseDetails?.filingNumber,
-              applicationNumber: "",
-              cnrNumber: caseDetails?.cnrNumber,
-              status: "DRAFT_IN_PROGRESS",
-              hearingNumber: hearingNumber,
-            },
-            pagination: { limit: 1, offset: 0 },
-          });
-          if (orderData?.orderType === "NOTICE") {
-            history.push(`/digit-ui/employee/orders/generate-orders?filingNumber=${caseDetails?.filingNumber}&orderNumber=${orderData.orderNumber}`, {
-              caseId: caseId,
-              tab: "Orders",
-            });
-            updateCaseDetails("ADMIT");
-          } else {
-            handleIssueNotice(hearingDate, hearingNumber);
-            await updateCaseDetails("ADMIT");
-          }
-        } else {
-          setSubmitModalInfo({ ...admitCaseSubmitConfig, caseInfo: caseInfo });
-          setModalInfo({ type: "admitCase", page: 0 });
-          setShowModal(true);
-        }
+        setSubmitModalInfo({ ...admitCaseSubmitConfig, caseInfo: caseInfo });
+        setModalInfo({ type: "admitCase", page: 0 });
+        setShowModal(true);
         break;
-
       case "SCHEDULE_ADMISSION_HEARING":
         setShowModal(true);
         setSubmitModalInfo({
@@ -1091,9 +1063,7 @@ function CaseFileAdmission({ t, path }) {
                 isDisabled={isButtonDisabled}
                 cardClassName={`e-filing-card-form-style review-case-file`}
                 secondaryLabel={
-                  [CaseWorkflowState.ADMISSION_HEARING_SCHEDULED, CaseWorkflowState.PENDING_RESPONSE, CaseWorkflowState.PENDING_NOTICE].includes(
-                    caseDetails?.status
-                  )
+                  [CaseWorkflowState.PENDING_RESPONSE, CaseWorkflowState.PENDING_NOTICE].includes(caseDetails?.status)
                     ? t("HEARING_IS_SCHEDULED")
                     : t(tertiaryAction.label || "")
                 }
@@ -1131,13 +1101,7 @@ function CaseFileAdmission({ t, path }) {
                   modalInfo={modalInfo}
                   setModalInfo={setModalInfo}
                   handleSendCaseBack={handleSendCaseBack}
-                  handleAdmitCase={handleAdmitCase}
-                  path={path}
-                  handleScheduleCase={handleScheduleCase}
-                  updatedConfig={updatedConfig}
-                  tenantId={tenantId}
                   handleScheduleNextHearing={handleScheduleNextHearing}
-                  caseAdmitLoader={caseAdmitLoader}
                   caseDetails={caseDetails}
                   caseAdmittedSubmit={caseAdmittedSubmit}
                   createAdmissionOrder={createAdmissionOrder}

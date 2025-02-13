@@ -63,6 +63,7 @@ public class ServiceConstants {
     public static final String TENANTID = "?tenantId=";
     public static final String BUSINESS_SERVICES = "&businessServices=";
     public static final String JUDGEMENT = "JUDGEMENT";
+    public static final String CASE_DECISION_AVAILABLE = "CASE_DECISION_AVAILABLE";
     public static final String INVALID_FILESTORE_ID = "INVALID_FILESTORE_ID";
     public static final String INVALID_DOCUMENT_DETAILS = "Invalid document details";
 
@@ -80,8 +81,17 @@ public class ServiceConstants {
     public static final String ORDER_ISSUED = "ORDER_ISSUED";
 
     public static final String SCHEDULE_OF_HEARING_DATE = "SCHEDULE_OF_HEARING_DATE";
-    public static final String INITIATING_RESCHEDULING_OF_HEARING_DATE = "INITIATING_RESCHEDULING_OF_HEARING_DATE";
+    public static final String SCHEDULING_NEXT_HEARING = "SCHEDULING_NEXT_HEARING";
+    public static final String ASSIGNING_DATE_RESCHEDULED_HEARING = "ASSIGNING_DATE_RESCHEDULED_HEARING";
     public static final String HEARING_RESCHEDULED = "HEARING_RESCHEDULED";
+    public static final String EXAMINATION_UNDER_S351_BNSS = "EXAMINATION_UNDER_S351_BNSS";
+    public static final String EXAMINATION_UNDER_S351_BNSS_SCHEDULED = "EXAMINATION_UNDER_S351_BNSS_SCHEDULED";
+    public static final String EVIDENCE_ACCUSED = "EVIDENCE_ACCUSED";
+    public static final String EVIDENCE_ACCUSED_PUBLISHED = "EVIDENCE_ACCUSED_PUBLISHED";
+    public static final String EVIDENCE_COMPLAINANT = "EVIDENCE_COMPLAINANT";
+    public static final String EVIDENCE_COMPLAINANT_PUBLISHED = "EVIDENCE_COMPLAINANT_PUBLISHED";
+    public static final String APPEARANCE = "APPEARANCE";
+    public static final String APPEARANCE_PUBLISHED = "APPEARANCE_PUBLISHED";
 
     public static final String INDIVIDUAL_UTILITY_EXCEPTION = "INDIVIDUAL_UTILITY_EXCEPTION";
 

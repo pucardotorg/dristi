@@ -132,7 +132,6 @@ export const TabCourtRoomSearchConfig = {
               status: [
                 "PENDING_REGISTRATION",
                 "PENDING_ADMISSION",
-                "ADMISSION_HEARING_SCHEDULED",
                 "CASE_ADMITTED",
                 "PENDING_ADMISSION_HEARING",
                 "PENDING_NOTICE",
@@ -267,7 +266,6 @@ export const TabCourtRoomSearchConfig = {
               status: [
                 "PENDING_REGISTRATION",
                 "PENDING_ADMISSION",
-                "ADMISSION_HEARING_SCHEDULED",
                 "CASE_ADMITTED",
                 "PENDING_ADMISSION_HEARING",
                 "PENDING_NOTICE",
@@ -399,14 +397,7 @@ export const TabCourtRoomSearchConfig = {
           criteria: [
             {
               stage: ["Pre-Trial"],
-              status: [
-                "PENDING_REGISTRATION",
-                "PENDING_ADMISSION",
-                "ADMISSION_HEARING_SCHEDULED",
-                "PENDING_ADMISSION_HEARING",
-                "PENDING_NOTICE",
-                "PENDING_RESPONSE",
-              ],
+              status: ["PENDING_REGISTRATION", "PENDING_ADMISSION", "PENDING_ADMISSION_HEARING", "PENDING_NOTICE", "PENDING_RESPONSE"],
             },
           ],
         },

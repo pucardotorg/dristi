@@ -1,0 +1,30 @@
+{
+  "tenantId": "kl",
+  "masterName": "Court_Rooms",
+  "moduleName": "common-masters",
+  // can be added through workbench ui
+  "mdmsPayload": [
+    {
+      "id": "3b2a0d61-d68b-42c1-9903-cd5660b11e03",
+      "tenantId": "kl",
+      "schemaCode": "common-masters.Court_Rooms",
+      "uniqueIdentifier": "KLKM52",
+      "data": {
+        "code": "KLKM52",
+        // need to update name if trying to update through workbench ui for KLKM52 code
+        "name": "Special Court Of Judicial Magistrate of the First Class , for the trial of cases under section 138 of NI Act , 1881 at Kollam ( \"24X7 ON Court\" )",
+        "email": "court@gmail.com",
+        "active": true,
+        "address": "dummy address",
+        "establishment": "1"
+      },
+      "isActive": true,
+      "auditDetails": {
+        "createdBy": "58f7c717-9e8e-4c35-8866-e0fe29350b66",
+        "lastModifiedBy": "1c9fd0e8-871b-4942-a0c6-cdc5717c48fb",
+        "createdTime": 1731486850411,
+        "lastModifiedTime": 1738212247916
+      }
+    }
+  ]
+}

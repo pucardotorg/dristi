@@ -400,8 +400,6 @@ export const reviewCaseFileFormConfig = [
                   type: "text",
                   label: "DELAY_ADDITIONAL_INFO",
                   value: "additionalDelayCondonationDetails.text",
-                  dependentOn: "delayCondonationType.name",
-                  dependentValue: "NO",
                 },
                 {
                   type: "image",
@@ -504,6 +502,11 @@ export const reviewCaseFileFormConfig = [
                   textDependentOn: "swornStatement.document",
                   textDependentValue: "DOCUMENT_UPLOADED",
                   value: "swornStatement.text",
+                },
+                {
+                  type: "text",
+                  label: "CS_PRAYER",
+                  value: "prayer.text",
                 },
                 {
                   type: "text",

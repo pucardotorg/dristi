@@ -267,7 +267,7 @@ class ApplicationQueryBuilderTest {
         List<Object> preparedStmtList = new java.util.ArrayList<>();
 
         String expectedQuery = "SELECT doc.id as id, doc.documenttype as documenttype, doc.filestore as filestore," +
-                "doc.documentuid as documentuid, doc.additionaldetails as additionaldetails, doc.application_id as application_id FROM dristi_application_document doc";
+                "doc.documentuid as documentuid, doc.additionaldetails as additionaldetails, doc.application_id as application_id, doc.documentorder as documentorder FROM dristi_application_document doc";
         List<Integer> preparedStmtArgList = new ArrayList<>();
 
         String actualQuery = applicationQueryBuilder.getDocumentSearchQuery(ids, preparedStmtList,preparedStmtArgList);

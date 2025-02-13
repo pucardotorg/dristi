@@ -18,6 +18,7 @@ const AddSignatureComponent = ({ t, isSigned, setIsSigned, handleSigned, rowData
   const tenantId = window?.Digit.ULBService.getCurrentTenantId();
   const uri = `${window.location.origin}${Urls.FileFetchById}?tenantId=${tenantId}&fileStoreId=${fileStoreId}`;
   const name = "Signature";
+  const signPlaceHolder = "Signature";
   const uploadModalConfig = useMemo(() => {
     return {
       key: "uploadSignature",
@@ -113,7 +114,7 @@ const AddSignatureComponent = ({ t, isSigned, setIsSigned, handleSigned, rowData
                   onButtonClick={() => {
                     localStorage.setItem("ESignSummons", JSON.stringify(rowData));
                     localStorage.setItem("delieveryChannel", deliveryChannel);
-                    handleEsign(name, pageModule, rowData?.documents?.[0]?.fileStore);
+                    handleEsign(name, pageModule, rowData?.documents?.[0]?.fileStore, signPlaceHolder);
                   }}
                   style={{
                     width: "96px",

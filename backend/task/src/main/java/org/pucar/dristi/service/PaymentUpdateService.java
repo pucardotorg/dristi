@@ -73,28 +73,6 @@ public class PaymentUpdateService {
                 if (paymentDetail.getBusinessService().equalsIgnoreCase(config.getTaskSummonBusinessServiceName()) || paymentDetail.getBusinessService().equalsIgnoreCase(config.getTaskNoticeBusinessServiceName()) || paymentDetail.getBusinessService().equalsIgnoreCase(config.getTaskWarrantBusinessServiceName())) {
                     updateWorkflowForCasePayment(requestInfo, tenantId, paymentDetail);
                 }
-//                else if(paymentDetail.getBusinessService().equalsIgnoreCase(config.getTaskBusinessServiceName())){
-//                    Bill bill = paymentDetail.getBill();
-//                    String consumerCode = bill.getConsumerCode();
-//                    String[] consumerCodeSplitArray = consumerCode.split("_", 2);
-//                    String taskNumber = consumerCodeSplitArray[0];
-//                    String businessService = bill.getBusinessService();
-//                    Set<String> consumerCodeSet = new HashSet<>();
-//                    consumerCodeSet.add(consumerCode);
-//
-//                    BillResponse billResponse = getBill(requestInfo, bill.getTenantId(), consumerCodeSet, businessService);
-//                    List<Bill> partsBill = billResponse.getBill();
-//                    boolean canUpdateWorkflow = !partsBill.isEmpty();
-//                    for (Bill element : partsBill) {
-//                        if (!element.getStatus().equals(Bill.StatusEnum.PAID)) {
-//                            canUpdateWorkflow = false;
-//                            break;
-//                        }
-//                    }
-//                    if (canUpdateWorkflow) {
-//                        updatePaymentSuccessWorkflow(requestInfo, tenantId, taskNumber);
-//                    }
-//                }
             }
         } catch (Exception e) {
             log.error("KAFKA_PROCESS_ERROR:", e);

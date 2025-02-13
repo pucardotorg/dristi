@@ -19,6 +19,7 @@ const ScheduleHearing = ({
   hearingDetails,
   isDelayApplicationPending = false,
   isDelayApplicationCompleted = false,
+  isDelayApplicationRejected = false,
 }) => {
   const { t } = useTranslation();
   const [modalInfo, setModalInfo] = useState({ type: "schedule", page: 0 });
@@ -176,6 +177,7 @@ const ScheduleHearing = ({
           hearingDetails={hearingDetails}
           isDelayApplicationPending={isDelayApplicationPending}
           isDelayApplicationCompleted={isDelayApplicationCompleted}
+          isDelayApplicationRejected={isDelayApplicationRejected}
         />
       </Modal>
     </React.Fragment>

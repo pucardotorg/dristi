@@ -20,6 +20,13 @@ const CloseBtn = (props) => {
   );
 };
 
+// sort the Documents Based on DocumentOrder
+const _getSortedByOrder = (documents) => {
+  return documents?.sort((a, b) => {
+    return (a?.documentOrder || 0) - (b?.documentOrder || 0);
+  });
+};
+
 const SubmissionPreviewSubmissionTypeMap = {
   RE_SCHEDULE: "application-reschedule-request",
   EXTENSION_SUBMISSION_DEADLINE: "application-submission-extension",
@@ -204,7 +211,7 @@ function ReviewSubmissionModal({
           </div>
           <div className="application-view">
             {showDocument}
-            {documents?.map((docs) => (
+            {_getSortedByOrder(documents)?.map((docs) => (
               <DocViewerWrapper
                 key={docs.fileStore}
                 fileStoreId={docs.fileStore}

@@ -53,7 +53,6 @@ function PublishedOrderModal({
       userRoles.includes("SUBMISSION_CREATOR") &&
       [
         CaseWorkflowState.PENDING_ADMISSION_HEARING,
-        CaseWorkflowState.ADMISSION_HEARING_SCHEDULED,
         CaseWorkflowState.PENDING_NOTICE,
         CaseWorkflowState.PENDING_RESPONSE,
         CaseWorkflowState.PENDING_ADMISSION,
@@ -167,8 +166,9 @@ function PublishedOrderModal({
               docHeight={"unset"}
               fileStoreId={docs?.fileStore}
               tenantId={tenantId}
-              displayFilename={fileName}
+              displayFilename={docs?.additionalDetails?.name}
               showDownloadOption={false}
+              documentName={docs?.additionalDetails?.name}
             />
           ))
         ) : (
@@ -176,7 +176,7 @@ function PublishedOrderModal({
         )}
       </div>
     );
-  }, [documents, fileName, isLoading, t, tenantId]);
+  }, [documents, isLoading, t, tenantId]);
 
   useEffect(() => {
     fetchRecursiveData(order);

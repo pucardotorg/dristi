@@ -53,6 +53,7 @@ public class SmsNotificationUtil {
 
             String messageCode = updatedState != null ? getMessageCode(applicationType, updatedState, isVoluntarySubmission) : null;
             assert messageCode != null;
+            log.info("Message code: {}", messageCode);
             String[] smsTopics = messageCode.split(",");
 
             for(String smsTopic: smsTopics) {
@@ -105,6 +106,7 @@ public class SmsNotificationUtil {
 
     private String getMessageCode(String applicationType, String updatedStatus, boolean isVoluntarySubmission) {
 
+        log.info("operation: getMessageCode, Application Type: {}, Updated Status: {}, Is Voluntary Submission: {}", applicationType, updatedStatus, isVoluntarySubmission);
         if(applicationType.equalsIgnoreCase(RE_SCHEDULE) && updatedStatus.equalsIgnoreCase(PENDINGREVIEW)){
             return RESCHEDULE_REQUEST_SUBMITTED;
         }
@@ -129,13 +131,13 @@ public class SmsNotificationUtil {
         if(applicationType.equalsIgnoreCase(CHECKOUT_REQUEST) && updatedStatus.equalsIgnoreCase(COMPLETED)){
             return CHECKOUT_REQUEST_ACCEPTED;
         }
-        if(!isVoluntarySubmission && applicationType.equalsIgnoreCase(PRODUCTION_DOCUMENTS) && updatedStatus.equalsIgnoreCase(PENDINGREVIEW)){
+        if(!isVoluntarySubmission && applicationType.equalsIgnoreCase(PRODUCTION_DOCUMENTS) && updatedStatus.equalsIgnoreCase(COMPLETED)){
             return EVIDENCE_SUBMITTED;
         }
         if(!isVoluntarySubmission && applicationType.equalsIgnoreCase(PRODUCTION_DOCUMENTS) && updatedStatus.equalsIgnoreCase(PENDINGRESPONSE)){
             return RESPONSE_REQUIRED;
         }
-        if(isVoluntarySubmission && !DEFINED_VOLUNTARY_SUBMISSIONS.contains(applicationType) && updatedStatus.equalsIgnoreCase(PENDINGREVIEW)){
+        if(isVoluntarySubmission && !DEFINED_VOLUNTARY_SUBMISSIONS.contains(applicationType) && (updatedStatus.equalsIgnoreCase(PENDINGREVIEW) || updatedStatus.equalsIgnoreCase(PENDINGAPPROVAL))){
             if(applicationType.equalsIgnoreCase(OTHERS)) {
                 return VOLUNTARY_SUBMISSION_SUBMITTED;
             } else {

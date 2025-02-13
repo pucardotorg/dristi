@@ -9,7 +9,7 @@
         "uniqueIdentifier": "2",
         "data": {
           "id": 2,
-          "type": "SECTION_223_NOTICE",
+          "type": "Section 223 Notice",
           "isactive": true
         },
         "isActive": true
@@ -20,7 +20,7 @@
         "uniqueIdentifier": "1",
         "data": {
           "id": 1,
-          "type": "DCA_NOTICE",
+          "type": "DCA Notice",
           "isactive": true
         },
         "isActive": true

@@ -65,8 +65,8 @@ const delayCondonationTextStyle = {
 const casePrimaryActions = [
   { action: "REGISTER", label: "CS_REGISTER" },
   { action: "ADMIT", label: "CS_ADMIT_CASE" },
-  { action: "SCHEDULE_ADMISSION_HEARING", label: "CS_SCHEDULE_ADMISSION_HEARING" },
-  { action: "ISSUE_ORDER", label: "ISSUE_NOTICE" },
+  { action: "SCHEDULE_ADMISSION_HEARING", label: "CS_SCHEDULE_HEARING" },
+  { action: "ISSUE_ORDER", label: "ISSUE_BNSS_NOTICE" },
 ];
 const caseSecondaryActions = [
   { action: "SEND_BACK", label: "SEND_BACK_FOR_CORRECTION" },
@@ -104,23 +104,8 @@ const CloseBtn = (props) => {
   );
 };
 
-const relevantStatuses = [
-  "CASE_ADMITTED",
-  "ADMISSION_HEARING_SCHEDULED",
-  "PENDING_ADMISSION_HEARING",
-  "PENDING_NOTICE",
-  "PENDING_RESPONSE",
-  "PENDING_ADMISSION",
-];
-const judgeReviewStages = [
-  "CASE_ADMITTED",
-  "ADMISSION_HEARING_SCHEDULED",
-  "PENDING_ADMISSION_HEARING",
-  "PENDING_NOTICE",
-  "PENDING_RESPONSE",
-  "PENDING_ADMISSION",
-  "CASE_DISMISSED",
-];
+const relevantStatuses = ["CASE_ADMITTED", "PENDING_ADMISSION_HEARING", "PENDING_NOTICE", "PENDING_RESPONSE", "PENDING_ADMISSION"];
+const judgeReviewStages = ["CASE_ADMITTED", "PENDING_ADMISSION_HEARING", "PENDING_NOTICE", "PENDING_RESPONSE", "PENDING_ADMISSION", "CASE_DISMISSED"];
 
 const styles = {
   container: {
@@ -171,6 +156,8 @@ const AdmittedCases = () => {
   const isCourtRoomManager = roles.some((role) => role.code === "COURT_ROOM_MANAGER");
   const activeTab = isFSO ? "Complaints" : urlParams.get("tab") || "Overview";
   const filingNumber = urlParams.get("filingNumber");
+  const applicationNumber = urlParams.get("applicationNumber");
+  const triggerAdmitCase = urlParams.get("triggerAdmitCase");
   const userRoles = Digit.UserService.getUser()?.info?.roles.map((role) => role.code);
   const tenantId = window?.Digit.ULBService.getCurrentTenantId();
 
@@ -282,6 +269,10 @@ const AdmittedCases = () => {
     [nextActions]
   );
 
+  const isPendingNoticeStatus = useMemo(() => {
+    return [CaseWorkflowState.PENDING_NOTICE].includes(caseDetails?.status) && primaryAction?.action === "ISSUE_ORDER";
+  }, [caseDetails?.status, primaryAction?.action]);
+
   const isDelayCondonationApplicable = useMemo(
     () => caseDetails?.caseDetails?.delayApplications?.formdata[0]?.data?.delayCondonationType?.code === "NO" || undefined,
     [caseDetails]
@@ -388,6 +379,16 @@ const AdmittedCases = () => {
     [applicationData]
   );
 
+  const isDelayApplicationRejected = useMemo(
+    () =>
+      Boolean(
+        applicationData?.applicationList?.some(
+          (item) => item?.applicationType === "DELAY_CONDONATION" && [SubmissionWorkflowState.REJECTED].includes(item?.status)
+        )
+      ),
+    [applicationData]
+  );
+
   const caseRelatedData = useMemo(
     () => ({
       caseId,
@@ -409,7 +410,6 @@ const AdmittedCases = () => {
       userRoles?.includes("SUBMISSION_CREATOR") &&
       [
         CaseWorkflowState.PENDING_ADMISSION_HEARING,
-        CaseWorkflowState.ADMISSION_HEARING_SCHEDULED,
         CaseWorkflowState.PENDING_NOTICE,
         CaseWorkflowState.PENDING_RESPONSE,
         CaseWorkflowState.PENDING_ADMISSION,
@@ -1161,6 +1161,38 @@ const AdmittedCases = () => {
     }
   }, [artifactNumber, currentDiaryEntry]);
 
+  useEffect(()=> {
+    if (applicationData && applicationNumber) {
+      const applicationDetails = applicationData?.applicationList?.filter((application) => application?.applicationNumber === applicationNumber)?.[0];
+      setDocumentSubmission(
+        applicationDetails?.documents?.map((doc) => {
+          return {
+            status: applicationDetails?.status,
+            details: {
+              applicationType: applicationDetails?.applicationType,
+              applicationSentOn: getDate(parseInt(applicationDetails?.auditDetails?.createdTime)),
+              sender: applicationDetails?.additionalDetails?.owner,
+              additionalDetails: applicationDetails?.additionalDetails,
+              applicationId: applicationDetails?.id,
+              auditDetails: applicationDetails?.auditDetails,
+            },
+            applicationContent: {
+              tenantId: applicationDetails?.tenantId,
+              fileStoreId: doc.fileStore,
+              id: doc.id,
+              documentType: doc.documentType,
+              documentUid: doc.documentUid,
+              additionalDetails: doc.additionalDetails,
+            },
+            comments: applicationDetails?.comment ? applicationDetails?.comment : [],
+            applicationList: applicationDetails,
+          };
+        })
+      );
+      setShow(true);
+    }
+  },[applicationData, applicationNumber]);
+
   useEffect(() => {
     // Set default values when component mounts
     setDefaultValues(defaultSearchValues);
@@ -1284,6 +1316,15 @@ const AdmittedCases = () => {
       ...caseDetails,
       additionalDetails: { ...caseDetails.additionalDetails, respondentDetails, witnessDetails, judge: data },
     };
+    const complainantUuid = caseDetails?.litigants?.[0]?.additionalDetails?.uuid;
+    const advocateUuid = caseDetails?.representatives?.[0]?.additionalDetails?.uuid;
+    let assignees = [];
+    if (complainantUuid) {
+      assignees.push(complainantUuid);
+    }
+    if (advocateUuid) {
+      assignees.push(advocateUuid);
+    }
 
     return DRISTIService.caseUpdateService(
       {
@@ -1293,7 +1334,7 @@ const AdmittedCases = () => {
           workflow: {
             ...caseDetails?.workflow,
             action,
-            ...(action === "SEND_BACK" && { assignes: [caseDetails.auditDetails.createdBy] || [] }),
+            ...(action === "SEND_BACK" && { assignes: assignees || [] }),
           },
         },
         tenantId,
@@ -1582,6 +1623,18 @@ const AdmittedCases = () => {
     return isDcaHearingScheduled;
   }, [hearingDetails]);
 
+  const isAdmissionHearingCompletedOnce = useMemo(() => {
+    if (!hearingDetails?.HearingList?.length) {
+      return false;
+    } else {
+      return Boolean(
+        hearingDetails?.HearingList?.find(
+          (hearing) => hearing?.hearingType === "ADMISSION" && [HearingWorkflowState?.COMPLETED].includes(hearing?.status)
+        )
+      );
+    }
+  }, [hearingDetails]);
+
   const currentHearingId = useMemo(
     () =>
       hearingDetails?.HearingList?.find((list) => list?.hearingType === "ADMISSION" && !(list?.status === "COMPLETED" || list?.status === "ABATED"))
@@ -1591,10 +1644,8 @@ const AdmittedCases = () => {
 
   const currentHearingStatus = useMemo(
     () =>
-      hearingDetails?.HearingList?.find(
-        (list) =>
-          list?.hearingType === "ADMISSION" && !(list?.status === HearingWorkflowState.COMPLETED || list?.status === HearingWorkflowState.ABATED)
-      )?.status,
+      hearingDetails?.HearingList?.length === 1 &&
+      hearingDetails?.HearingList?.find((list) => list?.status === HearingWorkflowState.SCHEDULED)?.status,
     [hearingDetails?.HearingList]
   );
 
@@ -1654,11 +1705,20 @@ const AdmittedCases = () => {
           filingNumber: filingNumber,
         },
       });
-      const { startTime: hearingDate, hearingId: hearingNumber } = HearingList?.find(
-        (list) => list?.hearingType === "ADMISSION" && !(list?.status === "COMPLETED" || list?.status === "ABATED")
-      ) || { startTime: null, hearingId: null };
-
-      if (!(hearingDate || hearingNumber)) {
+      if (HearingList?.length >= 1) {
+        const { startTime: hearingDate, hearingId: hearingNumber } = HearingList?.find(
+          (list) => !(list?.status === HearingWorkflowState.COMPLETED || list?.status === HearingWorkflowState.ABATED)
+        );
+        if (!(hearingDate || hearingNumber)) {
+          showToast(
+            {
+              isError: true,
+              message: "NO_ADMISSION_HEARING_SCHEDULED",
+            },
+            3000
+          );
+        } else return { hearingDate, hearingNumber };
+      } else {
         showToast(
           {
             isError: true,
@@ -1666,8 +1726,8 @@ const AdmittedCases = () => {
           },
           3000
         );
+        return { hearingDate: null, hearingNumber: null };
       }
-      return { hearingDate, hearingNumber };
     } catch (error) {
       console.error("Error while fetching Hearing Data", error);
       showToast({ isError: true, message: "ERROR_WHILE_FETCH_HEARING_DETAILS" }, 3000);
@@ -1680,44 +1740,12 @@ const AdmittedCases = () => {
       case "REGISTER":
         break;
       case "ADMIT":
-        if (caseDetails?.status === "ADMISSION_HEARING_SCHEDULED") {
-          const { hearingDate, hearingNumber } = await getHearingData();
-          if (hearingNumber) {
-            const {
-              list: [orderData],
-            } = await Digit.ordersService.searchOrder({
-              tenantId,
-              criteria: {
-                filingNumber,
-                applicationNumber: "",
-                cnrNumber,
-                status: OrderWorkflowState.DRAFT_IN_PROGRESS,
-                hearingNumber: hearingNumber,
-              },
-              pagination: { limit: 1, offset: 0 },
-            });
-            if (orderData?.orderType === "NOTICE") {
-              history.push(
-                `/digit-ui/employee/orders/generate-orders?filingNumber=${caseDetails?.filingNumber}&orderNumber=${orderData.orderNumber}`,
-                {
-                  caseId: caseId,
-                  tab: "Orders",
-                }
-              );
-              await updateCaseDetails("ADMIT");
-            } else {
-              await handleIssueNotice(hearingDate, hearingNumber);
-              await updateCaseDetails("ADMIT");
-            }
-          }
+        if ((isDelayApplicationPending || isDelayCondonationApplicable) && !isDelayApplicationCompleted) {
+          setIsOpenDCA(true);
         } else {
-          if ((isDelayApplicationPending || isDelayCondonationApplicable) && !isDelayApplicationCompleted) {
-            setIsOpenDCA(true);
-          } else {
-            setSubmitModalInfo({ ...admitCaseSubmitConfig, caseInfo: caseInfo });
-            setModalInfo({ type: "admitCase", page: 0 });
-            setShowModal(true);
-          }
+          setSubmitModalInfo({ ...admitCaseSubmitConfig, caseInfo: caseInfo });
+          setModalInfo({ type: "admitCase", page: 0 });
+          setShowModal(true);
         }
         break;
       case "ISSUE_ORDER":
@@ -1751,11 +1779,7 @@ const AdmittedCases = () => {
   };
 
   const onSaveDraft = async () => {
-    if (
-      [CaseWorkflowState.ADMISSION_HEARING_SCHEDULED, CaseWorkflowState.PENDING_NOTICE, CaseWorkflowState.PENDING_RESPONSE].includes(
-        caseDetails?.status
-      )
-    ) {
+    if ([CaseWorkflowState.PENDING_NOTICE, CaseWorkflowState.PENDING_RESPONSE].includes(caseDetails?.status)) {
       const { hearingDate, hearingNumber } = await getHearingData();
       if (hearingNumber) {
         const date = new Date(hearingDate);
@@ -2092,10 +2116,7 @@ const AdmittedCases = () => {
       (primaryAction.action ||
         secondaryAction.action ||
         tertiaryAction.action ||
-        ([CaseWorkflowState.ADMISSION_HEARING_SCHEDULED, CaseWorkflowState.PENDING_NOTICE, CaseWorkflowState.PENDING_RESPONSE].includes(
-          caseDetails?.status
-        ) &&
-          !isCitizen)) &&
+        ([CaseWorkflowState.PENDING_NOTICE, CaseWorkflowState.PENDING_RESPONSE].includes(caseDetails?.status) && !isCitizen)) &&
       !isCourtRoomManager,
     [caseDetails, primaryAction.action, secondaryAction.action, tertiaryAction.action, isCitizen]
   );
@@ -2459,6 +2480,7 @@ const AdmittedCases = () => {
           hearingDetails={hearingDetails}
           isDelayApplicationPending={isDelayApplicationPending}
           isDelayApplicationCompleted={isDelayApplicationCompleted}
+          isDelayApplicationRejected={isDelayApplicationRejected}
         />
       )}
       {orderDraftModal && <ViewAllOrderDrafts t={t} setShow={setOrderDraftModal} draftOrderList={draftOrderList} filingNumber={filingNumber} />}
@@ -2477,31 +2499,12 @@ const AdmittedCases = () => {
       {showActionBar && !isWorkFlowFetching && (
         <ActionBar className={"e-filing-action-bar"} style={{ justifyContent: "space-between" }}>
           <div style={{ width: "fit-content", display: "flex", gap: 20 }}>
-            {currentHearingStatus === HearingWorkflowState.SCHEDULED &&
-              (tertiaryAction.action ||
-                [CaseWorkflowState.ADMISSION_HEARING_SCHEDULED, CaseWorkflowState.PENDING_NOTICE, CaseWorkflowState.PENDING_RESPONSE].includes(
-                  caseDetails?.status
-                )) && (
-                <Button
-                  className="previous-button"
-                  variation="secondary"
-                  label={
-                    [CaseWorkflowState.ADMISSION_HEARING_SCHEDULED, CaseWorkflowState.PENDING_NOTICE, CaseWorkflowState.PENDING_RESPONSE].includes(
-                      caseDetails?.status
-                    ) && !isCitizen
-                      ? t("RESCHEDULE_ADMISSION_HEARING")
-                      : t(tertiaryAction.label)
-                  }
-                  onButtonClick={onSaveDraft}
-                />
-              )}
-            {primaryAction.action && !isDcaHearingScheduled && (
+            {currentHearingStatus === HearingWorkflowState.SCHEDULED && tertiaryAction.action && (
+              <Button className="previous-button" variation="secondary" label={t(tertiaryAction.label)} onButtonClick={onSaveDraft} />
+            )}
+            {primaryAction && (
               <SubmitBar
-                label={t(
-                  [CaseWorkflowState.ADMISSION_HEARING_SCHEDULED].includes(caseDetails?.status) && primaryAction?.action === "ADMIT"
-                    ? "ISSUE_NOTICE"
-                    : primaryAction?.label
-                )}
+                label={t(isPendingNoticeStatus ? "ISSUE_BNSS_NOTICE" : primaryAction?.label)}
                 submit="submit"
                 disabled={""}
                 onSubmit={onSubmit}
@@ -2550,6 +2553,7 @@ const AdmittedCases = () => {
           hearingDetails={hearingDetails}
           isDelayApplicationPending={isDelayApplicationPending}
           isDelayApplicationCompleted={isDelayApplicationCompleted}
+          isDelayApplicationRejected={isDelayApplicationRejected}
         ></AdmissionActionModal>
       )}
       {showDismissCaseConfirmation && (

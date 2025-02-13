@@ -30,6 +30,7 @@ import org.springframework.util.CollectionUtils;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
+import java.time.format.DateTimeFormatter;
 import java.util.*;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -493,7 +494,7 @@ public class CauseListService {
                     .courtId(config.getCourtId())
                     .judgeName(config.getJudgeName())
                     .judgeDesignation(config.getJudgeDesignation())
-                    .hearingDate(dateUtil.getLocalDateFromEpoch(hearing.getStartTime()).toString())
+                    .hearingDate(dateUtil.getLocalDateFromEpoch(hearing.getStartTime()).format(DateTimeFormatter.ofPattern(DATE_FORMAT)))
                     .build();
 
             causeLists.add(causeList);

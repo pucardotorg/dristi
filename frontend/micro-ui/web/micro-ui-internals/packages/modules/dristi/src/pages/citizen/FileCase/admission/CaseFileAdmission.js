@@ -123,7 +123,7 @@ function CaseFileAdmission({ t }) {
             cardStyle={{ minWidth: "100%" }}
             isDisabled={isDisabled}
             cardClassName={`e-filing-card-form-style`}
-            secondaryLabel={t("CS_SCHEDULE_ADMISSION_HEARING")}
+            secondaryLabel={t("CS_SCHEDULE_HEARING")}
             showSecondaryLabel={true}
             actionClassName="admission-action-buttons"
             showSkip={"FDSJKLDFSJL"}

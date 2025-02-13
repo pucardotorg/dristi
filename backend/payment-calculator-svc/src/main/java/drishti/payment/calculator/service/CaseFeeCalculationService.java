@@ -107,6 +107,11 @@ public class CaseFeeCalculationService {
         return null; // Invalid check amount
     }
 
+    private Boolean isDelayCondonationFeeApplicable(Long delayDuration, Long stdDuration) {
+
+        return delayDuration > stdDuration;
+
+    }
 
     private Double getAdvocateFee(LinkedHashMap<String, HashMap<String, Integer>> noOfAdvocateFees, int noOfAdvocates) {
         Double advocateFee = 0.0;

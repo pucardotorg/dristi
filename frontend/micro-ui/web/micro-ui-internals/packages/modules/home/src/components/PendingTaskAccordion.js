@@ -19,6 +19,7 @@ function PendingTaskAccordion({
   setShowSubmitResponseModal,
   setResponsePendingTask,
   allPendingTasks,
+  isOpenInNewTab,
 }) {
   const history = useHistory();
   const [isOpen, setIsOpen] = useState(isAccordionOpen);
@@ -31,9 +32,9 @@ function PendingTaskAccordion({
     setIsOpen(!isOpen);
   };
 
-  const redirectPendingTaskUrl = async (url, isCustomFunction = () => {}, params = {}) => {
+  const redirectPendingTaskUrl = async (url, isCustomFunction = () => {}, params = {}, isOpenInNewTab) => {
     if (isCustomFunction) {
-      await url(params);
+      await url({ ...params, isOpenInNewTab });
     } else {
       history.push(url, {
         state: {

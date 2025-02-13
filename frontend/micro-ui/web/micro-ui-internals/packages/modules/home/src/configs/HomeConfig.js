@@ -304,17 +304,6 @@ export const pendingTaskCaseActions = {
       ],
     },
   },
-  ADMISSION_HEARING_SCHEDULED: {
-    actorName: ["JUDGE"],
-    actionName: "Admission hearing scheduled - Admit Case",
-    redirectDetails: {
-      url: "/dristi/home/view-case",
-      params: [
-        { key: "filingNumber", value: "filingNumber" },
-        { key: "caseId", value: "id" },
-      ],
-    },
-  },
   CASE_ADMITTED: {
     actorName: ["JUDGE"],
     actionName: "Schedule admission hearing",
@@ -745,6 +734,17 @@ export const pendingTaskVoluntarySubmissionBailDocumentsActions = {
       ],
     },
   },
+  ESIGN_THE_SUBMISSION: {
+    actorName: ["LITIGANT/ADVOCATE"],
+    actionName: "Esign the Submission",
+    redirectDetails: {
+      url: "/submissions/submissions-create",
+      params: [
+        { key: "filingNumber", value: "filingNumber" },
+        { key: "applicationNumber", value: "referenceId" },
+      ],
+    },
+  },
 };
 
 export const pendingTaskVoluntarySubmissionBailActions = {
@@ -752,6 +752,28 @@ export const pendingTaskVoluntarySubmissionBailActions = {
     actorName: ["JUDGE"],
     actionName: "Review the submission",
     customFunction: "handleReviewSubmission",
+    redirectDetails: {
+      url: "/submissions/submissions-create",
+      params: [
+        { key: "filingNumber", value: "filingNumber" },
+        { key: "applicationNumber", value: "referenceId" },
+      ],
+    },
+  },
+  MAKE_PAYMENT_SUBMISSION: {
+    actorName: ["LITIGANT/ADVOCATE"],
+    actionName: "Payment for Submission",
+    redirectDetails: {
+      url: "/submissions/submissions-create",
+      params: [
+        { key: "filingNumber", value: "filingNumber" },
+        { key: "applicationNumber", value: "referenceId" },
+      ],
+    },
+  },
+  ESIGN_THE_SUBMISSION: {
+    actorName: ["LITIGANT/ADVOCATE"],
+    actionName: "Esign the Submission",
     redirectDetails: {
       url: "/submissions/submissions-create",
       params: [

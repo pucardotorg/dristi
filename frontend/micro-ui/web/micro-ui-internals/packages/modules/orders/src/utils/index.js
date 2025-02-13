@@ -114,3 +114,22 @@ export const removeInvalidNameParts = (name) => {
 export const constructFullName = (firstName, middleName, lastName) => {
   return [firstName, middleName, lastName].filter(Boolean).join(" ").trim();
 };
+
+// name format for entity type
+export const getRespondantName = (respondentNameData) => {
+  const partyName = constructFullName(respondentNameData?.firstName, respondentNameData?.middleName, respondentNameData?.lastName);
+
+  if (respondentNameData?.respondentCompanyName) {
+    return `${respondentNameData?.respondentCompanyName} (Represented By ${partyName})`;
+  }
+
+  return partyName || respondentNameData;
+};
+
+export const getComplainantName = (complainantDetails) => {
+  const partyName = complainantDetails?.firstName && `${complainantDetails?.firstName || ""} ${complainantDetails?.lastName || ""}`.trim();
+  if (complainantDetails?.complainantType?.code === "INDIVIDUAL") {
+    return partyName;
+  }
+  return `${complainantDetails?.complainantCompanyName} (Represented By ${partyName})` || "";
+};

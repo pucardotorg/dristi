@@ -237,3 +237,15 @@ export const getDate = (value) => {
   const formattedDate = `${day}-${month}-${year}`;
   return formattedDate;
 };
+
+// make first letter capital as well as allow someone type capital
+export const formatAddress = (value) => {
+  return value
+    .split(" ")
+    .map((word) =>
+      word === word.toUpperCase() || /[A-Z]/.test(word.slice(1)) 
+        ? word
+        : word.charAt(0).toUpperCase() + word.slice(1).toLowerCase()
+    )
+    .join(" ");
+};

@@ -240,7 +240,7 @@ export const TabFSOSearchConfig = {
               },
               {
                 label: "CS_DAYS_FILING",
-                jsonPath: "auditDetails.createdTime",
+                jsonPath: "filingDate",
                 additionalCustomization: true,
               },
             ],
@@ -390,7 +390,7 @@ export const TabFSOSearchConfig = {
               },
               {
                 label: "CS_DAYS_FILING",
-                jsonPath: "auditDetails.createdTime",
+                jsonPath: "filingDate",
                 additionalCustomization: true,
               },
             ],

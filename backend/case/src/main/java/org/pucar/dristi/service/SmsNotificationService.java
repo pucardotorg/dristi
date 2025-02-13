@@ -85,6 +85,12 @@ public class SmsNotificationService {
         else if(messageCode.equalsIgnoreCase(CASE_ADMITTED)){
             pushNotification(smsTemplateData, message, mobileNumber, config.getSmsNotificationCaseAdmittedTemplateId());
         }
+        else if(messageCode.equalsIgnoreCase(CASE_DISMISSED)){
+            pushNotification(smsTemplateData, message, mobileNumber, config.getSmsNotificationCaseDismissedTemplateId());
+        }
+        else if(messageCode.equalsIgnoreCase(NEW_USER_JOIN)){
+            pushNotification(smsTemplateData, message, mobileNumber, config.getSmsNotificationNewUserJoinTemplateId());
+        }
     }
 
     private void pushNotification(SmsTemplateData smsTemplateData, String message, String mobileNumber, String templateId) {

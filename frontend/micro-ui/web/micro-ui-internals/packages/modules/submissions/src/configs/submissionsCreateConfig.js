@@ -909,9 +909,9 @@ export const configsProductionOfDocuments = [
                 optionsKey: "name",
                 required: true,
                 mdmsConfig: {
-                  moduleName: "Application",
-                  masterName: "DocumentType",
-                  select: "(data) => {return data['Application'].DocumentType?.map((item) => {return item;});}",
+                  moduleName: "Submission",
+                  masterName: "SubmissionDocumentType",
+                  select: "(data) => {return data['Submission'].SubmissionDocumentType?.map((item) => {return item;});}",
                 },
               },
             },
@@ -1949,15 +1949,15 @@ export const requestForBail = [
                 isMandatory: true,
                 // need to chnage
                 mdmsConfig: {
-                  moduleName: "Application",
-                  masterName: "DocumentType",
-                  select: "(data) => {return data['Application'].DocumentType?.map((item) => {return item;});}",
+                  moduleName: "Submission",
+                  masterName: "SubmissionDocumentType",
+                  select: "(data) => {return data['Submission'].SubmissionDocumentType?.map((item) => {return item;});}",
                 },
                 customStyle: { display: "flex", flexDirection: "column", alignItems: "flex-start" },
               },
             },
             {
-              label: "DOCUMENT_TITLE_OPTIONAL",
+              label: "DOCUMENT_TITLE",
               isOptional: true,
               isMandatory: false,
               key: "documentTitle",
@@ -2103,15 +2103,15 @@ export const submitDocsForBail = [
                 isMandatory: true,
                 // need to change
                 mdmsConfig: {
-                  moduleName: "Application",
-                  masterName: "DocumentType",
-                  select: "(data) => {return data['Application'].DocumentType?.map((item) => {return item;});}",
+                  moduleName: "Submission",
+                  masterName: "SubmissionDocumentType",
+                  select: "(data) => {return data['Submission'].SubmissionDocumentType?.map((item) => {return item;});}",
                 },
                 customStyle: { display: "flex", flexDirection: "column", alignItems: "flex-start" },
               },
             },
             {
-              label: "DOCUMENT_TITLE_OPTIONAL",
+              label: "DOCUMENT_TITLE",
               labelChildren: "optional",
               isMandatory: false,
               key: "documentTitle",

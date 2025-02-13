@@ -26,18 +26,18 @@ function ESignSignatureModal({
   doctype,
   documentSubmission,
   formUploadData,
-  isSigned,
-  setIsSigned,
+  setSignedDocumentUploadID,
 }) {
   const { handleEsign, checkSignStatus } = Digit.Hooks.orders.useESign();
   const [formData, setFormData] = useState({}); // storing the file upload data
   const [openUploadSignatureModal, setOpenUploadSignatureModal] = useState(false);
   const UploadSignatureModal = window?.Digit?.ComponentRegistryService?.getComponent("UploadSignatureModal");
-  const [fileStoreId, setFileStoreId] = useState("c162c182-103f-463e-99b6-18654ed7a5b1"); // have to set the uploaded fileStoreID
+  const [fileStoreId, setFileStoreId] = useState(formUploadData?.SelectUserTypeComponent?.doc?.[0]?.[1]?.fileStoreId?.fileStoreId);
   const [pageModule, setPageModule] = useState("ci");
   const tenantId = window?.Digit.ULBService.getCurrentTenantId();
   const uri = `${window.location.origin}${Urls.FileFetchById}?tenantId=${tenantId}&fileStoreId=${fileStoreId}`;
   const { uploadDocuments } = Digit.Hooks.orders.useDocumentUpload();
+  const [isSigned, setIsSigned] = useState(false);
   const name = "Signature";
   const uploadModalConfig = useMemo(() => {
     return {
@@ -75,8 +75,8 @@ function ESignSignatureModal({
   useEffect(() => {
     const upload = async () => {
       if (formData?.uploadSignature?.Signature?.length > 0) {
-        // const uploadedFileId = await uploadDocuments(formData?.uploadSignature?.Signature, tenantId);
-        // setSignedDocumentUploadID(uploadedFileId?.[0]?.fileStoreId);
+        const uploadedFileId = await uploadDocuments(formData?.uploadSignature?.Signature, tenantId);
+        setSignedDocumentUploadID(uploadedFileId?.[0]?.fileStoreId);
         setIsSigned(true);
       }
     };
@@ -166,8 +166,7 @@ function ESignSignatureModal({
                 icon={<FileUploadIcon />}
                 label={t("UPLOAD_DIGITAL_SIGN_CERTI")}
                 onButtonClick={() => {
-                  // setOpenUploadSignatureModal(true);
-                  setIsSigned(true);
+                  setOpenUploadSignatureModal(true);
                   // setOpenUploadSignatureModal(true);
                 }}
                 className={"upload-signature"}

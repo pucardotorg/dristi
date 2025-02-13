@@ -86,6 +86,9 @@ public class ServiceConstants {
     public static final String SUBMIT_CASE_WORKFLOW_ACTION = "SUBMIT_CASE";
     public static final String SUBMIT_CASE_ADVOCATE_WORKFLOW_ACTION = "SUBMIT_CASE_ADVOCATE";
     public static final String DELETE_DRAFT_WORKFLOW_ACTION = "DELETE_DRAFT";
+    public static final String E_SIGN_PARTY_IN_PERSON = "E-SIGN_PARTY_IN_PERSON";
+    public static final String UPLOAD = "UPLOAD";
+    public static final String E_SIGN = "E-SIGN";
     public static final Long TAX_PERIOD_FROM = 1680287400000l;
     public static final Long TAX_PERIOD_TO = 1711909799000l;
     public static final BigDecimal TAX_AMOUNT = BigDecimal.valueOf(2000.00);
@@ -151,7 +154,9 @@ public class ServiceConstants {
     public static final String ERRORS_IDENTIFIED_CASE_FILE = "ERRORS_IDENTIFIED_CASE_FILE";
     public static final String ADMISSION_HEARING_SCHEDULED = "ADMISSION_HEARING_SCHEDULED";
     public static final String CASE_ADMITTED = "CASE_ADMITTED";
+    public static final String CASE_DISMISSED = "CASE_DISMISSED";
     public static final String PENDING_RESPONSE = "PENDING_RESPONSE";
+    public static final String PENDING_NOTICE = "PENDING_NOTICE";
     public static final String HEARING_REJECTED = "HEARING_REJECTED";
     public static final String HIGH_COURT_LOCALIZATION_CODE = "HIGH_COURT_KERALA";
     public static final String NOTIFICATION_ENG_LOCALE_CODE = "en_IN";
@@ -164,6 +169,7 @@ public class ServiceConstants {
     public static final String FLOW_JAC = "flow_jac";
 
     public static final String ADVOCATE_CASE_JOIN = "ADVOCATE_CASE_JOIN";
+    public static final String NEW_USER_JOIN = "NEW_USER_JOIN";
 
     public static final String ADVOCATE_NAME = "advocateName";
 

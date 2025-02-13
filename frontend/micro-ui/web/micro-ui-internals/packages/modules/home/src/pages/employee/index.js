@@ -7,7 +7,7 @@ import InsideHearingMainPage from "./InsideHearingMainPage";
 import HomeView from "./HomeView";
 import ViewHearing from "./ViewHearing";
 import HomePopUp from "./HomePopUp";
-import EfilingPaymentBreakdown from "../../components/EfilingPaymentDropdown";
+import EfilingPaymentBreakdown from "../../components/EfilingPaymentBreakdown";
 import EFilingPaymentRes from "../../components/EfilingPaymentRes";
 import ScheduleHearing from "./ScheduleHearing";
 import PaymentStatus from "../../../../orders/src/components/PaymentStatus";

@@ -25,6 +25,7 @@ exports.generateCasePdf = async (req, res, next) => {
       caseService.getComplainantsDetailsForComplaint(caseData);
     const accuseds = caseService.getRespondentsDetailsForComplaint(caseData);
     const advocates = caseService.getAdvocateDetailsForComplainant(caseData);
+    const prayer = await caseService.getPrayerSwornStatementDetails(caseData)?.[0]?.prayer;
     const complaint =
       caseService.getPrayerSwornStatementDetails(caseData)?.[0]
         ?.memorandumOfComplaintText;
@@ -53,6 +54,7 @@ exports.generateCasePdf = async (req, res, next) => {
           filingNumber: filingNumber,
           complainantList: complainants,
           accusedList: accuseds,
+          prayer:prayer,
           complaint: complaint,
           dateOfFiling: dateOfFiling,
           documentList: documentList,
@@ -63,7 +65,6 @@ exports.generateCasePdf = async (req, res, next) => {
 
     console.log("Pdf Request: {}", pdfRequest);
     await fileService.validateDocuments(caseData?.documents || []);
-
     const pdf = await pdfService.generateComplaintPDF(pdfRequest);
 
     let finalPdf = await fileService.appendComplainantFilesToPDF(
@@ -115,7 +116,6 @@ exports.caseComplaintPdf = async (req, res, next) => {
     const requestInfo = req?.body?.RequestInfo;
 
     const caseData = req?.body?.cases;
-
     const courtName = config?.courtName;
     const place = config?.courtPlace;
     const filingNumber = caseData.filingNumber;
@@ -128,6 +128,7 @@ exports.caseComplaintPdf = async (req, res, next) => {
     const complainants =
       caseService.getComplainantsDetailsForComplaint(caseData);
     const accuseds = caseService.getRespondentsDetailsForComplaint(caseData);
+    const prayer = await caseService.getPrayerSwornStatementDetails(caseData)?.[0]?.prayer;
     const complaint =
       caseService.getPrayerSwornStatementDetails(caseData)?.[0]
         ?.memorandumOfComplaintText;
@@ -147,6 +148,7 @@ exports.caseComplaintPdf = async (req, res, next) => {
           filingNumber: filingNumber,
           complainantList: complainants,
           accusedList: accuseds,
+          prayer: prayer,
           complaint: complaint,
           dateOfFiling: dateOfFiling,
           documentList: documentList,

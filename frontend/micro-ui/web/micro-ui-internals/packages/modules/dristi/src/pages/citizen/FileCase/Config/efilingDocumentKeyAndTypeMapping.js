@@ -2,14 +2,14 @@ export const efilingDocumentKeyAndTypeMapping = {
   returnMemoFileUpload: "CHEQUE_RETURN_MEMO",
   legalDemandNoticeFileUpload: "LEGAL_NOTICE",
   vakalatnamaFileUpload: "VAKALATNAMA",
-  inquiryAffidavitFileUpload: "AFFIDAVIT",
+  inquiryAffidavitFileUpload: "AFFIDAVIT_UNDER_225",
 };
 
 export const efilingDocumentTypeAndKeyMapping = {
   CHEQUE_RETURN_MEMO: "returnMemoFileUpload",
   LEGAL_NOTICE: "legalDemandNoticeFileUpload",
   VAKALATNAMA: "vakalatnamaFileUpload",
-  AFFIDAVIT: "inquiryAffidavitFileUpload",
+  AFFIDAVIT_UNDER_225: "inquiryAffidavitFileUpload",
 };
 
 export const ocrErrorLocations = {

@@ -19,13 +19,14 @@ const DragDropJSX = ({ t, currentValue, error }) => {
 function SelectCustomDocUpload({ t, config, formUploadData = {}, setData, documentSubmission, showDocument, setShowDocument }) {
   const [upload, setUpload] = useState(false);
   const [eSignModal, setEsignModal] = useState(false);
-  const [isSigned, setIsSigned] = useState(false);
+  const [signedDocumentUploadId, setSignedDocumentUploadID] = useState("");
 
   const handleOpenUploadModal = () => {
     setUpload(true);
   };
 
   const handleCancelUpload = () => {
+    setData({});
     setUpload(false);
     setEsignModal(false);
   };
@@ -44,7 +45,7 @@ function SelectCustomDocUpload({ t, config, formUploadData = {}, setData, docume
     localStorage.removeItem("docSubmission");
     localStorage.removeItem("formUploadData");
     localStorage.removeItem("EvidenceFile");
-    const localStorageID = localStorage.getItem("fileStoreId");
+    const localStorageID = localStorage.getItem("fileStoreId") || signedDocumentUploadId;
     setData((prevData) => ({
       ...prevData,
       SelectUserTypeComponent: {
@@ -54,7 +55,7 @@ function SelectCustomDocUpload({ t, config, formUploadData = {}, setData, docume
             prevData.SelectUserTypeComponent.doc[0][0],
             {
               ...prevData.SelectUserTypeComponent.doc[0][1],
-              fileStoreId: localStorageID ? localStorageID : prevData.SelectUserTypeComponent.doc[0][1].fileStoreId,
+              fileStoreId: { fileStoreId: localStorageID ? localStorageID : prevData.SelectUserTypeComponent.doc[0][1].fileStoreId },
             },
           ],
         ],
@@ -168,8 +169,7 @@ function SelectCustomDocUpload({ t, config, formUploadData = {}, setData, docume
           handleIssueOrder={handleEsign}
           documentSubmission={documentSubmission}
           formUploadData={formUploadData}
-          isSigned={isSigned}
-          setIsSigned={setIsSigned}
+          setSignedDocumentUploadID={setSignedDocumentUploadID}
         />
       )}
       {showDocument && (

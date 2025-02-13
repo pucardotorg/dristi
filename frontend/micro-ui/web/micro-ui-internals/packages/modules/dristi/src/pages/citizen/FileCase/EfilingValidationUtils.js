@@ -8,6 +8,20 @@ import { userTypeOptions } from "../registration/config";
 import { efilingDocumentKeyAndTypeMapping } from "./Config/efilingDocumentKeyAndTypeMapping";
 import isMatch from "lodash/isMatch";
 
+const formatName = (value, capitalize = true) => {
+  let cleanedValue = value
+    .replace(/[^a-zA-Z\s]/g, "")
+    .trimStart()
+    .replace(/ +/g, " ");
+
+  if (!capitalize) return cleanedValue;
+
+  return cleanedValue
+    .split(" ")
+    .map((word) => (word.length > 1 && word === word.toUpperCase() ? word : word.charAt(0).toUpperCase() + word.slice(1)))
+    .join(" ");
+};
+
 export const showDemandNoticeModal = ({ selected, setValue, formData, setError, clearErrors, index, setServiceOfDemandNoticeModal, caseDetails }) => {
   if (selected === "demandNoticeDetails") {
     const totalCheques = caseDetails?.caseDetails?.["chequeDetails"]?.formdata && caseDetails?.caseDetails?.["chequeDetails"]?.formdata.length;
@@ -87,6 +101,8 @@ export const validateDateForDelayApplication = ({
   setShouldShowConfirmDcaModal,
   prevIsDcaSkipped,
   setPrevIsDcaSkipped,
+  isDcaPageRefreshed,
+  setIsDcaPageRefreshed,
 }) => {
   if (selected === "delayApplications") {
     if (
@@ -103,6 +119,11 @@ export const validateDateForDelayApplication = ({
       setShowConfirmDcaSkipModal(true);
       setShouldShowConfirmDcaModal(false);
       setPrevIsDcaSkipped("YES");
+    } else if (prevIsDcaSkipped === "NO" && !shouldShowConfirmDcaModal && formData?.isDcaSkippedInEFiling?.code === "YES" && isDcaPageRefreshed) {
+      setShowConfirmDcaSkipModal(true);
+      setShouldShowConfirmDcaModal(false);
+      setPrevIsDcaSkipped("YES");
+      setIsDcaPageRefreshed(false);
     }
     if (formData?.isDcaSkippedInEFiling?.code === "NO") {
       setShowConfirmDcaSkipModal(false);
@@ -233,10 +254,7 @@ export const checkNameValidation = ({ formData, setValue, selected, reset, index
               value = value.slice(0, 100);
             }
 
-            let updatedValue = value
-              .replace(/[^a-zA-Z\s]/g, "")
-              .trimStart()
-              .replace(/ +/g, " ");
+            let updatedValue = formatName(value);
             if (updatedValue !== oldValue) {
               const element = document.querySelector(`[name="${key}"]`);
               const start = element?.selectionStart;
@@ -289,10 +307,7 @@ export const checkNameValidation = ({ formData, setValue, selected, reset, index
               value = value.slice(0, 100);
             }
 
-            let updatedValue = value
-              .replace(/[^a-zA-Z\s]/g, "")
-              .trimStart()
-              .replace(/ +/g, " ");
+            let updatedValue = formatName(value);
             if (updatedValue !== oldValue) {
               const element = document.querySelector(`[name="${key}"]`);
               const start = element?.selectionStart;
@@ -350,6 +365,35 @@ export const checkNameValidation = ({ formData, setValue, selected, reset, index
             setTimeout(() => {
               element?.setSelectionRange(start, end);
             }, 0);
+          }
+        }
+      }
+    }
+  }
+
+  // added for Nature of Debt/liablity
+  if (selected === "debtLiabilityDetails") {
+    if(formData?.liabilityNature){
+      const formDataCopy = structuredClone(formData);
+      for (const key in formDataCopy) {
+        if (["liabilityNature"].includes(key) && Object.hasOwnProperty.call(formDataCopy, key)){
+          const oldValue = formDataCopy[key];
+          let value = oldValue;
+          if (typeof value === "string") {
+            if (value.length > 100) {
+              value = value.slice(0, 100);
+            }
+
+            let updatedValue = formatName(value);
+            if (updatedValue !== oldValue) {
+              const element = document.querySelector(`[name="${key}"]`);
+              const start = element?.selectionStart;
+              const end = element?.selectionEnd;
+              setValue(key, updatedValue);
+              setTimeout(() => {
+                element?.setSelectionRange(start, end);
+              }, 0);
+            }
           }
         }
       }
@@ -539,10 +583,7 @@ export const checkOnlyCharInCheque = ({ formData, setValue, selected }) => {
                 value = value.slice(0, 100);
               }
 
-              let updatedValue = value
-                .replace(/[^a-zA-Z\s]/g, "")
-                .trimStart()
-                .replace(/ +/g, " ");
+              let updatedValue = formatName(value);
               if (updatedValue !== oldValue) {
                 const element = document.querySelector(`[name="${key}"]`);
                 const start = element?.selectionStart;
@@ -559,10 +600,7 @@ export const checkOnlyCharInCheque = ({ formData, setValue, selected }) => {
                 value = value.slice(0, 200);
               }
 
-              let updatedValue = value
-                .replace(/[^a-zA-Z0-9 ]/g, "")
-                .trimStart()
-                .replace(/ +/g, " ");
+              let updatedValue = formatName(value);
               if (updatedValue !== oldValue) {
                 const element = document.querySelector(`[name="${key}"]`);
                 const start = element?.selectionStart;
@@ -671,11 +709,6 @@ export const demandNoticeFileValidation = ({ formData, selected, setShowErrorToa
 
     if (formData?.proofOfService?.code === "YES" && formData?.["proofOfAcknowledgmentFileUpload"]?.document.length === 0) {
       setFormErrors("proofOfAcknowledgmentFileUpload", { type: "required" });
-      setShowErrorToast(true);
-      return true;
-    }
-    if (formData?.proofOfReply?.code === "YES" && formData?.["proofOfReplyFileUpload"]?.document.length === 0) {
-      setFormErrors("proofOfReplyFileUpload", { type: "required" });
       setShowErrorToast(true);
       return true;
     }
@@ -1806,7 +1839,7 @@ export const updateCaseDetails = async ({
                     documentType,
                     fileStore: uploadedData.file?.files?.[0]?.fileStoreId || document?.fileStore,
                     documentName: uploadedData.filename || document?.documentName,
-                    fileName: "Affidavit documents",
+                    fileName: t("AFFIDAVIT_UNDER_225"),
                   };
                   docList.push(doc);
                   return doc;

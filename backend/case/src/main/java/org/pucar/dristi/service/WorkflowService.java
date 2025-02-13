@@ -1,5 +1,6 @@
 package org.pucar.dristi.service;
 
+import static org.pucar.dristi.config.ServiceConstants.MAKE_PAYMENT;
 import static org.pucar.dristi.config.ServiceConstants.WORKFLOW_SERVICE_EXCEPTION;
 
 import java.util.ArrayList;
@@ -158,7 +159,7 @@ public class WorkflowService {
                 .comment("Payment for Case processed")
                 .moduleName(config.getCaseBusinessName())
                 .tenantId(tenantId)
-                .action("MAKE_PAYMENT")
+                .action(MAKE_PAYMENT)
                 .build();
 
         return ProcessInstanceRequest.builder()

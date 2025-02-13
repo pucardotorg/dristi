@@ -90,6 +90,7 @@ export const DRISTIModule = ({ stateCode, userType, tenants }) => {
   const urlParams = new URLSearchParams(window.location.search);
   const result = urlParams.get("result");
   const fileStoreId = urlParams.get("filestoreId");
+  console.log(result, fileStoreId, "result");
   if (userType === "citizen" && userInfo?.type !== "EMPLOYEE") {
     return (
       <ToastProvider>

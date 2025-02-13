@@ -1,0 +1,245 @@
+{
+    "tenantId": "kl",
+    "masterName": "commonUiConfig",
+    "moduleName": "advocateDetailsConfig",
+    "mdmsPayload": [
+        {
+            "id": "2da7be57-7170-4dbe-8ad8-b73dd1d11832",
+            "tenantId": "kl",
+            "schemaCode": "commonUiConfig.advocateDetailsConfig",
+            "uniqueIdentifier": "1",
+            "data": {
+                "id": 1,
+                "header": "CS_ADVOCATE_DETAILS_HEADING",
+                "subtext": "CS_COMPLAINT_DATA_ENTRY_INFO",
+                "className": "advocate-detail",
+                "formconfig": [
+                    {
+                        "body": [
+                            {
+                                "key": "isAdvocateRepresenting",
+                                "type": "radio",
+                                "label": "CS_IF_ADVOCATE_IS_COMPLAINANT",
+                                "populators": {
+                                    "type": "radioButton",
+                                    "error": "CORE_REQUIRED_FIELD_ERROR",
+                                    "options": [
+                                        {
+                                            "code": "YES",
+                                            "name": "Yes",
+                                            "showForm": true,
+                                            "isEnabled": true
+                                        },
+                                        {
+                                            "code": "NO",
+                                            "name": "No",
+                                            "showForm": false,
+                                            "isEnabled": true,
+                                            "isVerified": true,
+                                            "hasBarRegistrationNo": true
+                                        }
+                                    ],
+                                    "required": false,
+                                    "optionsKey": "code",
+                                    "clearFields": {
+                                        "barCouncilId": [],
+                                        "stateRegnNumber": "",
+                                        "stateOfRegistration": "",
+                                        "barRegistrationNumber": ""
+                                    },
+                                    "isDependent": true,
+                                    "isMandatory": true
+                                },
+                                "isMandatory": true
+                            }
+                        ]
+                    },
+                    {
+                        "body": [
+                            {
+                                "key": "advocateBarRegistrationNumber",
+                                "type": "apidropdown",
+                                "label": "CS_BAR_REGISTRATION",
+                                "populators": {
+                                    "name": "advocateBarRegNumberWithName",
+                                    "customfn": "getNames",
+                                    "masterName": "commonUiConfig",
+                                    "moduleName": "getAdvocateNameUsingBarRegistrationNumber",
+                                    "optionsKey": "barRegistrationNumber",
+                                    "validation": {},
+                                    "isMandatory": true,
+                                    "allowMultiSelect": false,
+                                    "optionsCustomStyle": {
+                                        "marginTop": "40px",
+                                        "maxHeight": "200px",
+                                        "overflowY": "scroll",
+                                        "flexDirection": "row-reverse",
+                                        "justifyContent": "space-between"
+                                    }
+                                },
+                                "isMandatory": true
+                            }
+                        ],
+                        "head": "CS_ADVOCATE_BASIC_DETAILS",
+                        "dependentKey": {
+                            "isAdvocateRepresenting": [
+                                "showForm"
+                            ]
+                        }
+                    },
+                    {
+                        "body": [
+                            {
+                                "key": "AdvocateNameDetails",
+                                "type": "component",
+                                "component": "AdvocateNameDetails",
+                                "populators": {
+                                    "inputs": [
+                                        {
+                                            "name": "firstName",
+                                            "type": "text",
+                                            "label": "FIRST_NAME",
+                                            "isDisabled": true,
+                                            "validation": {
+                                                "isRequired": true
+                                            },
+                                            "isMandatory": true,
+                                            "inputFieldClassName": "user-details-form-style"
+                                        },
+                                        {
+                                            "name": "middleName",
+                                            "type": "text",
+                                            "label": "MIDDLE_NAME",
+                                            "isDisabled": true,
+                                            "validation": {},
+                                            "inputFieldClassName": "user-details-form-style"
+                                        },
+                                        {
+                                            "name": "lastName",
+                                            "type": "text",
+                                            "label": "LAST_NAME",
+                                            "isDisabled": true,
+                                            "validation": {
+                                                "isRequired": true
+                                            },
+                                            "isMandatory": true,
+                                            "inputFieldClassName": "user-details-form-style"
+                                        }
+                                    ],
+                                    "validation": {}
+                                },
+                                "withoutLabel": true,
+                                "componentStyle": {
+                                    "padding": "16px 0px 16px 0px"
+                                }
+                            }
+                        ],
+                        "dependentKey": {
+                            "isAdvocateRepresenting": [
+                                "showForm"
+                            ]
+                        }
+                    },
+                    {
+                        "body": [
+                            {
+                                "type": "number",
+                                "label": "NUMBER_OF_ADVOCATES",
+                                "populators": {
+                                    "name": "numberOfAdvocate",
+                                    "error": "FIRST_LAST_NAME_MANDATORY_MESSAGE",
+                                    "validation": {
+                                        "min": 1,
+                                        "minLength": 1
+                                    },
+                                    "defaultValue": "1"
+                                },
+                                "isMandatory": true,
+                                "tooltipValue": "NUMBER_OF_ADVOCATES_INFO",
+                                "labelChildren": "OutlinedInfoIcon"
+                            }
+                        ],
+                        "dependentKey": {
+                            "isAdvocateRepresenting": [
+                                "showForm"
+                            ]
+                        }
+                    },
+                    {
+                        "body": [
+                            {
+                                "key": "vakalatnamaFileUpload",
+                                "type": "component",
+                                "label": "UPLOAD_VAKALATNAMA",
+                                "component": "SelectCustomDragDrop",
+                                "populators": {
+                                    "inputs": [
+                                        {
+                                            "name": "document",
+                                            "type": "DragDropComponent",
+                                            "fileTypes": [
+                                                "JPG",
+                                                "JPEG",
+                                                "PNG",
+                                                "PDF"
+                                            ],
+                                            "maxFileSize": 50,
+                                            "documentHeader": "UPLOAD_VAKALATNAMA",
+                                            "isMultipleUpload": true,
+                                            "uploadGuidelines": "UPLOAD_DOC_50",
+                                            "infoTooltipMessage": "UPLOAD_VAKALATNAMA",
+                                            "maxFileErrorMessage": "CS_FILE_LIMIT_50_MB",
+                                            "downloadTemplateLink": "https://pucarfilestore.blob.core.windows.net/pucar-filestore/kl/Vakalat.Template.docx",
+                                            "downloadTemplateText": "VAKALATNAMA_TEMPLATE_TEXT"
+                                        }
+                                    ]
+                                },
+                                "isMandatory": true,
+                                "withoutLabel": true
+                            }
+                        ],
+                        "dependentKey": {
+                            "isAdvocateRepresenting": [
+                                "showForm"
+                            ]
+                        }
+                    },
+                    {
+                        "body": [
+                            {
+                                "key": "addressDetailsNote",
+                                "type": "component",
+                                "component": "SelectCustomNote",
+                                "populators": {
+                                    "inputs": [
+                                        {
+                                            "type": "InfoComponent",
+                                            "infoText": "ADVOCATE_DETAIL_NOTE",
+                                            "infoHeader": "CS_COMMON_NOTE",
+                                            "infoTooltipMessage": "ADVOCATE_DETAIL_NOTE"
+                                        }
+                                    ]
+                                }
+                            }
+                        ],
+                        "dependentKey": {
+                            "isAdvocateRepresenting": [
+                                "showForm"
+                            ]
+                        }
+                    }
+                ],
+                "selectDocumentName": {
+                    "vakalatnamaFileUpload": "VAKALATNAMA"
+                }
+            },
+            "isActive": true,
+            "auditDetails": {
+                "createdBy": "40dceade-992d-4a8f-8243-19dda76a4171",
+                "lastModifiedBy": "58f7c717-9e8e-4c35-8866-e0fe29350b66",
+                "createdTime": 1728654609319,
+                "lastModifiedTime": 1732540001347
+            }
+        }
+    ]
+  }

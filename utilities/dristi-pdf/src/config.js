@@ -299,7 +299,7 @@ module.exports = {
 
   constants: {
     mdmsCourtRoom: {
-      name: "Court Centre, Kollam",
+      name: process.env.ORDER_HEADING || "Court Centre, Kollam",
       place: "Kollam",
       state: "Kerala",
       orderHeading: process.env.ORDER_HEADING || "Order Heading",

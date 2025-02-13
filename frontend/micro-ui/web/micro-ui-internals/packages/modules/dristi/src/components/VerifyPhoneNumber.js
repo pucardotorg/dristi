@@ -168,7 +168,6 @@ function VerifyPhoneNumber({ t, config, onSelect, formData = {}, errors, setErro
       showModal: false,
       errorMsg: "",
     }));
-
     onSelect(config?.key, { ...formData?.[config.key], otpNumber: "" });
   };
 

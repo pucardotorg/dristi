@@ -1,7 +1,5 @@
 package org.pucar.dristi.validators;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import net.minidev.json.JSONArray;
 import org.egov.common.contract.request.RequestInfo;
 import org.egov.tracer.model.CustomException;
 import org.pucar.dristi.config.Configuration;
@@ -87,8 +85,9 @@ public class CaseRegistrationValidator {
 
 		if (!(SUBMIT_CASE_WORKFLOW_ACTION.equalsIgnoreCase(courtCase.getWorkflow().getAction())
 				|| SAVE_DRAFT_CASE_WORKFLOW_ACTION.equalsIgnoreCase(courtCase.getWorkflow().getAction()) || SUBMIT_CASE_ADVOCATE_WORKFLOW_ACTION.equalsIgnoreCase(courtCase.getWorkflow().getAction())
-				|| DELETE_DRAFT_WORKFLOW_ACTION.equalsIgnoreCase(courtCase.getWorkflow().getAction())) && ObjectUtils.isEmpty(courtCase.getFilingDate())) {
-			throw new CustomException(VALIDATION_ERR, "filingDate is mandatory for updating case");
+				|| DELETE_DRAFT_WORKFLOW_ACTION.equalsIgnoreCase(courtCase.getWorkflow().getAction()) || E_SIGN_PARTY_IN_PERSON.equalsIgnoreCase(courtCase.getWorkflow().getAction())
+				|| UPLOAD.equalsIgnoreCase(courtCase.getWorkflow().getAction()) || E_SIGN.equalsIgnoreCase(courtCase.getWorkflow().getAction())) && ObjectUtils.isEmpty(courtCase.getFilingDate())) {
+				throw new CustomException(VALIDATION_ERR, "filingDate is mandatory for updating case");
 		}
 		//For not allowing certain fields to update
 		setUnEditableOnUpdate(existingCourtCaseList.get(0), caseRequest);

@@ -1,5 +1,6 @@
 import React from "react";
 import { COLOR_FILL } from "../contants";
+import warningInfoIconYellow from "../images/warningInfoIconYellow.png";
 
 const RegisterIcon = () => (
   <svg width="24" height="25" viewBox="0 0 24 25" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -1631,6 +1632,39 @@ const ArrowDown = ({ className, onClick, styles, disable }) => (
   </svg>
 );
 
+const ZoomInIcon = ({ size = 15 }) => (
+  <svg width={size} height={size} viewBox="0 0 15 15" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <path
+      d="M6 0C2.69 0 0 2.69 0 6C0 9.31 2.69 12 6 12C7.49 12 8.85 11.45 9.9 10.6L13.3 14L14.7 12.6L11.3 9.2C12.15 8.15 12.7 6.79 12.7 5.3C12.7 2 10.01 0 6.7 0H6ZM6 2C8.21 2 10 3.79 10 6C10 8.21 8.21 10 6 10C3.79 10 2 3.79 2 6C2 3.79 3.79 2 6 2ZM5 3V5H3V7H5V9H7V7H9V5H7V3H5Z"
+      fill="#F5FEFD"
+    />
+  </svg>
+);
+
+const ZoomOutIcon = ({ size = 15 }) => (
+  <svg width={size} height={size} viewBox="0 0 15 15" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <path
+      d="M6 0C2.69 0 0 2.69 0 6C0 9.31 2.69 12 6 12C7.49 12 8.85 11.45 9.9 10.6L13.3 14L14.7 12.6L11.3 9.2C12.15 8.15 12.7 6.79 12.7 5.3C12.7 2 10.01 0 6.7 0H6ZM6 2C8.21 2 10 3.79 10 6C10 8.21 8.21 10 6 10C3.79 10 2 3.79 2 6C2 3.79 3.79 2 6 2ZM3 5V7H9V5H3Z"
+      fill="#F5FEFD"
+    />
+  </svg>
+);
+
+const RotateIcon = ({ size = 15 }) => (
+  <svg width={size} height={size} viewBox="0 0 15 15" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <path
+      d="M7.5 0C3.91 0 1 2.91 1 6.5C1 8.75 2.13 10.72 3.87 11.84L5.01 10.14C3.77 9.39 3 8.04 3 6.5C3 4.01 5.01 2 7.5 2C9.99 2 12 4.01 12 6.5C12 8.52 10.62 10.23 8.74 10.82L9.74 12.82C12.34 11.93 14.2 9.42 14.2 6.5C14.2 2.91 11.09 0 7.5 0ZM7 3V7.5L10.25 9.31L11 7.94L8.5 6.5V3H7Z"
+      fill="#F5FEFD"
+    />
+  </svg>
+);
+
+const DownloadIcon = ({ size = 15 }) => (
+  <svg width={size} height={size} viewBox="0 0 15 17" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <path d="M14.6206 6H10.6206V0H4.62061V6H0.620605L7.62061 13L14.6206 6ZM0.620605 15V17H14.6206V15H0.620605Z" fill="#F5FEFD" />
+  </svg>
+);
+
 export {
   AdvocateIcon,
   CalendarLeftArrow,
@@ -1694,4 +1728,8 @@ export {
   ForwardArrow,
   CheckSvg,
   ArrowDown,
+  ZoomOutIcon,
+  ZoomInIcon,
+  RotateIcon,
+  DownloadIcon,
 };

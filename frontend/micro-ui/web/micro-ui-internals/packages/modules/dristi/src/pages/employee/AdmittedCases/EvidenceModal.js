@@ -69,6 +69,8 @@ const EvidenceModal = ({
   const [isSubmitDisabled, setIsSubmitDisabled] = useState(false);
   const [businessOfTheDay, setBusinessOfTheDay] = useState(null);
   const toast = useToast();
+  const urlParams = new URLSearchParams(window.location.search);
+  const applicationNumber = urlParams.get("applicationNumber");
 
   const setData = (data) => {
     setFormData(data);
@@ -679,8 +681,8 @@ const EvidenceModal = ({
                   displayFilename={docs?.additionalDetails?.name}
                   tenantId={tenantId}
                   docWidth={"calc(80vw * 62 / 100)"}
-                  docHeight={"60vh"}
                   showDownloadOption={false}
+                  docHeight={"unset"}
                   documentName={docs?.additionalDetails?.name}
                 />
               </div>
@@ -945,11 +947,14 @@ const EvidenceModal = ({
                   type: "documentUpload",
                   name: "doc",
                   validation: {},
-                  allowedFileTypes: /(.*?)(png|jpg|pdf)$/i,
+                  allowedFileTypes: /(.*?)(pdf)$/i,
                   isMandatory: true,
                   disableMandatoryFieldFor: ["aadharNumber"],
                   errorMessage: "CUSTOM_DOCUMENT_ERROR_MSG",
+                  notSupportedError: "ALLOW_PDF_TYPE",
+                  noteMsg: "CS_DOCUMENT_PDF_TYPE",
                   disableFormValidation: false,
+                  multiple: false,
                 },
               ],
               validation: {},
@@ -985,6 +990,14 @@ const EvidenceModal = ({
 
   return (
     <React.Fragment>
+      <style>
+        {`.popup-module.evidence-modal .popup-module-main .selector-button-border {
+          border-color: #BB2C2F !important;
+        }
+        .popup-module.evidence-modal .popup-module-main .selector-button-border h2 {
+          color: #BB2C2F !important;
+        }`}
+      </style>
       {!showConfirmationModal && !showSuccessModal && (
         <Modal
           headerBarEnd={<CloseBtn onClick={handleBack} />}
@@ -1027,8 +1040,8 @@ const EvidenceModal = ({
         >
           <div className="evidence-modal-main">
             <div className={"application-details"}>
-              <div style={{ display: "flex", flexDirection: "column", overflowY: "auto" }}>
-                {isJudge && documentSubmission?.[0]?.applicationList?.applicationType === "DELAY_CONDONATION" && (
+              <div style={{ display: "flex", flexDirection: "column" }}>
+                {isJudge && documentSubmission?.[0]?.applicationList?.applicationType === "DELAY_CONDONATION" && !Boolean(applicationNumber) && (
                   <div
                     className="dca-infobox-message"
                     style={{

@@ -379,11 +379,11 @@ function SelectReviewAccordion({ t, config, onSelect, formData = {}, errors, for
         const affidavitForm = { ...clonedFormData.litigentDetails?.respondentDetails?.form?.[0] } || {};
         set(affidavitForm, "image", {
           systemError: groupedByDocumentType?.AFFIDAVIT?.[0]?.message,
-          fileName: "Affidavit documents",
+          fileName: "AFFIDAVIT_UNDER_225",
         });
         set(affidavitForm, "inquiryAffidavitFileUpload.document", {
           systemError: groupedByDocumentType?.AFFIDAVIT?.[0]?.message,
-          fileName: "Affidavit documents",
+          fileName: "AFFIDAVIT_UNDER_225",
         });
         set(clonedFormData, "litigentDetails.respondentDetails.form[0]", affidavitForm);
       }

@@ -104,5 +104,26 @@
         "isActive": true
       }
     ]
+  },
+  {
+    "tenantId": "kl",
+    "moduleName": "BillingService",
+    "masterName": "TaxPeriod",
+    "mdmsPayload": [
+      {
+        "tenantId": "kl",
+        "schemaCode": "BillingService.TaxPeriod",
+        "uniqueIdentifier": "VASBAN202330",
+        "data": {
+          "code": "VASBAN202330",
+          "toDate": 1901145600000,
+          "service": "voluntary-application-submission-bail",
+          "fromDate": 1680287399999,
+          "periodCycle": "ANNUAL",
+          "financialYear": "2023-30"
+        },
+        "isActive": true
+      }
+    ]
   }
 ]

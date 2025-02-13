@@ -4000,8 +4000,9 @@ export const configsIssueBailAcceptance = [
       },
       {
         type: "amount",
-        label: "CS_CHEQUE_AMOUNT",
-        isMandatory: true,
+        label: "CS_BAIL_CHEQUE_AMOUNT",
+        labelChildren: "optional",
+        isMandatory: false,
         schemaKeyPath: "orderDetails.chequeAmount",
         populators: {
           error: "CORE_REQUIRED_FIELD_ERROR",

@@ -176,6 +176,21 @@ public class Configuration {
     @Value("${egov.sms.notification.evidence.requested.template.id}")
     private String smsNotificationEvidenceRequestedTemplateId;
 
+    @Value("${egov.sms.notification.examination.under.s351.bnss.scheduled.template.id}")
+    private String smsNotificationExaminationUnderS351BNSSScheduledTemplateId;
+
+    @Value("${egov.sms.notification.evidence.accused.published.template.id}")
+    private String smsNotificationEvidenceAccusedPublishedTemplateId;
+
+    @Value("${egov.sms.notification.evidence.complainant.published.template.id}")
+    private String smsNotificationEvidenceComplainantPublishedTemplateId;
+
+    @Value("${egov.sms.notification.appearance.published.template.id}")
+    private String smsNotificationAppearancePublishedTemplateId;
+
+    @Value("${egov.sms.notification.case.decision.available.template.id}")
+    private String smsNotificationCaseDecisionAvailableTemplateId;
+
     //Individual Service
     @Value("${egov.individual.host}")
     private String individualHost;

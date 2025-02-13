@@ -197,7 +197,7 @@ const PaymentForSummonModal = ({ path }) => {
   const todayDate = new Date().getTime();
   const dayInMillisecond = 24 * 3600 * 1000;
 
-  const { data: tasksData } = Digit.Hooks.hearings.useGetTaskList(
+  const { data: tasksData, isLoading: isTaskLoading } = Digit.Hooks.hearings.useGetTaskList(
     {
       criteria: {
         tenantId: tenantId,
@@ -220,7 +220,7 @@ const PaymentForSummonModal = ({ path }) => {
 
   const orderType = useMemo(() => orderData?.list?.[0]?.orderType, [orderData]);
 
-  const { data: hearingsData } = Digit.Hooks.hearings.useGetHearings(
+  const { data: hearingsData, isLoading: isHearingLoading } = Digit.Hooks.hearings.useGetHearings(
     {
       hearing: { tenantId },
       criteria: {
@@ -502,16 +502,8 @@ const PaymentForSummonModal = ({ path }) => {
   ]);
 
   const infos = useMemo(() => {
-    const name = [
-      orderData?.list?.[0]?.additionalDetails?.formdata?.[orderType === "SUMMONS" ? "SummonsOrder" : "noticeOrder"]?.party?.data?.firstName,
-      orderData?.list?.[0]?.additionalDetails?.formdata?.[orderType === "SUMMONS" ? "SummonsOrder" : "noticeOrder"]?.party?.data?.lastName,
-    ]
-      ?.filter(Boolean)
-      ?.join(" ");
-    const addressDetails =
-      orderData?.list?.[0]?.additionalDetails?.formdata?.[orderType === "SUMMONS" ? "SummonsOrder" : "noticeOrder"]?.party?.data?.addressDetails?.[0]
-        ?.addressDetails;
-
+    const name = filteredTasks?.[0]?.taskDetails?.respondentDetails?.name;
+    const addressDetails = filteredTasks?.[0]?.taskDetails?.respondentDetails?.address;
     const formattedAddress =
       typeof addressDetails === "object"
         ? `${addressDetails?.locality || ""}, ${addressDetails?.city || ""}, ${addressDetails?.district || ""}, ${addressDetails?.state || ""}, ${
@@ -526,7 +518,7 @@ const PaymentForSummonModal = ({ path }) => {
         value: `Post (${formattedAddress})`,
       },
     ];
-  }, [hearingsData?.HearingList, orderData?.list, orderType]);
+  }, [filteredTasks, hearingsData?.HearingList]);
 
   const orderDate = useMemo(() => {
     return hearingsData?.HearingList?.[0]?.startTime;
@@ -571,7 +563,7 @@ const PaymentForSummonModal = ({ path }) => {
     };
   }, [feeOptions, history, infos, isCaseAdmitted, links, orderDate, orderType, paymentLoader, isUserAdv]);
 
-  if (isOrdersLoading || isSummonsBreakUpLoading || isCourtBillLoading || isEPOSTBillLoading) {
+  if (isOrdersLoading || isSummonsBreakUpLoading || isCourtBillLoading || isEPOSTBillLoading || isTaskLoading || isHearingLoading) {
     return <Loader />;
   }
 

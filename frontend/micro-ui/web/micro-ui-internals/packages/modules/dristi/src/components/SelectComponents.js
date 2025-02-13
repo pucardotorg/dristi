@@ -2,7 +2,7 @@ import { CardLabel, CardLabelError, LabelFieldPair, TextInput, RadioButtons } fr
 import Axios from "axios";
 import React, { useMemo, useState } from "react";
 import LocationSearch from "./LocationSearch";
-import { generateUUID } from "../Utils";
+import { generateUUID, formatAddress } from "../Utils";
 
 const getLocation = (places, code) => {
   let location = null;
@@ -260,7 +260,11 @@ const SelectComponents = ({ t, config, onSelect, formData = {}, errors, formStat
                         ...input.validation,
                       })}
                       onChange={(e) => {
-                        setValue(e.target.value, input.name, input?.autoFill);
+                        let value = e.target.value;
+                        if (input?.isFormatRequired) {
+                          value = formatAddress(value);
+                        }
+                        setValue(value, input.name, input?.autoFill);
                       }}
                       disable={input.isDisabled || config?.disable}
                     />

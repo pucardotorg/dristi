@@ -22,7 +22,7 @@ const submissionDocumentConfig = [
         },
       },
       {
-        label: "DOCUMENT_TITLE_OPTIONAL",
+        label: "DOCUMENT_TITLE",
         labelChildren: "optional",
         isMandatory: false,
         key: "documentTitle",

@@ -4,7 +4,6 @@ import { Urls } from "../hooks";
 import useDownloadCasePdf from "../hooks/dristi/useDownloadCasePdf";
 
 function RenderFileUpload({ handleDeleteFile, fileData, index, disableUploadDelete = false, displayName, fileStoreId }) {
-  console.log(fileStoreId);
   const [file, setFile] = useState(null);
   const tenantId = window?.Digit.ULBService.getCurrentTenantId();
   const { downloadPdf } = useDownloadCasePdf();
@@ -22,7 +21,7 @@ function RenderFileUpload({ handleDeleteFile, fileData, index, disableUploadDele
       <div className={`uploaded-file-div-sub ${fileData?.uploadErrorInfo ? "error" : ""}`}>
         <div className="uploaded-file-div-icon-area">
           <div className="uploaded-file-icon">
-            <button onClick={() => downloadPdf(tenantId, fileStoreId?.fileStoreId)} style={{background :"black"}}>
+            <button onClick={() => downloadPdf(tenantId, fileStoreId?.fileStoreId)}>
               <FileIcon />
             </button>
           </div>

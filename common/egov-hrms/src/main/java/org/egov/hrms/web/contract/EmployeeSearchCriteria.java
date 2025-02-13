@@ -28,7 +28,7 @@ public class EmployeeSearchCriteria {
 	public List<String> names;
 	
 	public List<String> courtEstablishment;
-	
+
 	public List<String> designations;
 
 	public List<String> courtrooms;

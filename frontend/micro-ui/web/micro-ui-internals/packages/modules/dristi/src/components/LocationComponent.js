@@ -2,6 +2,7 @@ import React, { useCallback, useEffect, useMemo, useState } from "react";
 import { LabelFieldPair, CardLabel, TextInput, CardLabelError, RadioButtons } from "@egovernments/digit-ui-react-components";
 import LocationSearch, { defaultCoordinates } from "./LocationSearch";
 import Axios from "axios";
+import { formatAddress } from "../Utils";
 
 const getLocation = (places, code) => {
   let location = null;
@@ -225,7 +226,11 @@ const LocationComponent = ({
                     className="field desktop-w-full"
                     value={locationFormData && locationFormData[config.key] ? locationFormData[config.key][input.name] : undefined}
                     onChange={(e) => {
-                      setValue(e.target.value, input.name, input?.autoFill);
+                      let value = e.target.value;
+                      if (input?.isFormatRequired) {
+                        value = formatAddress(value);
+                      }
+                      setValue(value, input.name, input?.autoFill);
                     }}
                     disable={input.isDisabled || disable}
                     defaultValue={undefined}

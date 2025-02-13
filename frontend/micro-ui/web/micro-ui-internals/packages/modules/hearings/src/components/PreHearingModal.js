@@ -16,6 +16,7 @@ function PreHearingModal({ onCancel, hearingData, courtData, individualId, userT
   const [purposeModalOpen, setPurposeModalOpen] = useState(false);
   const [purposeModalData, setPurposeModalData] = useState({});
   const [rescheduleAll, setRescheduleAll] = useState(false);
+  const DateFormat = "DD-MM-YYYY";
 
   const Heading = (props) => {
     return <h1 className="heading-m">{props.label}</h1>;
@@ -132,7 +133,7 @@ function PreHearingModal({ onCancel, hearingData, courtData, individualId, userT
         style={{ display: "flex", justifyContent: "space-between", alignItems: "center", padding: "1rem 0 0 0", borderTop: "1px solid lightgray" }}
       >
         <div>
-          <strong>{formatDate(new Date(hearingData.fromDate))}</strong>, {hearingData.slot}
+          <strong>{formatDate(new Date(hearingData.fromDate), DateFormat)}</strong>, {hearingData.slot}
         </div>
         {Digit.UserService.getType() === "employee" && !isCourtRoomManager && (
           <Button

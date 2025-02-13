@@ -151,7 +151,7 @@ public class SmsNotificationService {
         StringBuilder uri = new StringBuilder();
         RequestInfoWrapper requestInfoWrapper = new RequestInfoWrapper();
         requestInfoWrapper.setRequestInfo(requestInfo);
-        uri.append(config.getLocalizationHost()).append(config.getLocalizationContextPath()).append(config.getLocalizationSearchEndpoint())
+        uri.append(config.getLocalizationHost()).append(config.getLocalizationSearchEndpoint())
                 .append("?tenantId=" + rootTenantId).append("&module=" + module).append("&locale=" + locale);
         List<String> codes = null;
         List<String> messages = null;

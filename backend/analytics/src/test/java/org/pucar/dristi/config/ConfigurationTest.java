@@ -45,7 +45,6 @@ class ConfigurationTest {
         assertEquals(expectedTaskList, configuration.getTaskBusinessServiceList());
         assertEquals(expectedApplicationList, configuration.getApplicationBusinessServiceList());
         assertEquals(expectedOrderList, configuration.getOrderBusinessServiceList());
-        assertEquals(expectedADiaryList, configuration.getADiaryBusinessServiceList());
     }
 
     @Test

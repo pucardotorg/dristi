@@ -175,7 +175,7 @@ public class CaseRegistrationEnrichment {
 
         enrichRepresentativesOnCreateAndUpdate(courtCase, auditDetails);
 
-        enrichCaseRegistrationFillingDate(courtCase);
+//        enrichCaseRegistrationFillingDate(courtCase);
 
         if (courtCase.getDocuments() != null) {
             List<Document> documentsListToCreate = courtCase.getDocuments().stream().filter(document -> document.getId() == null).toList();
@@ -183,11 +183,8 @@ public class CaseRegistrationEnrichment {
         }
     }
 
-    private void enrichCaseRegistrationFillingDate(CourtCase courtCase) {
-        if (courtCase.getWorkflow() != null && (courtCase.getWorkflow().getAction().equalsIgnoreCase(ServiceConstants.SUBMIT_CASE_WORKFLOW_ACTION)
-                || courtCase.getWorkflow().getAction().equalsIgnoreCase(ServiceConstants.SUBMIT_CASE_ADVOCATE_WORKFLOW_ACTION))) {
+    public void enrichCaseRegistrationFillingDate(CourtCase courtCase) {
             courtCase.setFilingDate(caseUtil.getCurrentTimeMil());
-        }
     }
 
     private void enrichStatuteAndSectionsOnCreateAndUpdate(CourtCase courtCase, AuditDetails auditDetails) {

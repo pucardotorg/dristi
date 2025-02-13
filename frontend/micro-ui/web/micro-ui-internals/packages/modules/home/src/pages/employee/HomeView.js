@@ -268,8 +268,6 @@ const HomeView = () => {
     switch (status) {
       case "UNDER_SCRUTINY":
         return userType === "employee" ? `/${contextPath}/${userType}/dristi/cases?${params}` : `${baseUrl}?${params}&tab=Complaint`;
-      case "ADMISSION_HEARING_SCHEDULED":
-        return `${baseUrl}?${params}&tab=Complaint`;
       case "PENDING_REGISTRATION":
         return userType === "employee" ? `/${contextPath}/${userType}/dristi/admission?${params}` : `${baseUrl}?${params}&tab=Complaint`;
       case "PENDING_E-SIGN":
@@ -304,7 +302,6 @@ const HomeView = () => {
       const statusArray = [
         "PENDING_REGISTRATION",
         "CASE_ADMITTED",
-        "ADMISSION_HEARING_SCHEDULED",
         "PENDING_PAYMENT",
         "UNDER_SCRUTINY",
         "PENDING_ADMISSION",

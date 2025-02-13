@@ -1,7 +1,10 @@
 import React from "react";
 import { FileIcon } from "@egovernments/digit-ui-react-components";
+import useDownloadCasePdf from "../hooks/dristi/useDownloadCasePdf";
 
 function CommentComponent({ key, comment }) {
+  const tenantId = window?.Digit.ULBService.getCurrentTenantId();
+  const { downloadPdf } = useDownloadCasePdf();
   return (
     <div className="comment-body" key={key}>
       <div className="name-logo">
@@ -35,13 +38,7 @@ function CommentComponent({ key, comment }) {
               marginTop: "10px",
               cursor: "pointer",
             }}
-            onClick={() => {
-              window.open(
-                `/filestore/v1/files/id?tenantId=kl&fileStoreId=${comment?.additionalDetails?.commentDocumentId}`,
-                "_blank",
-                "noopener,noreferrer"
-              );
-            }}
+            onClick={() => downloadPdf(tenantId, comment?.additionalDetails?.commentDocumentId)}
           >
             <FileIcon />
             <span style={{ fontWeight: "bold" }}>{comment?.additionalDetails?.commentDocumentName || "Attached File"}</span>

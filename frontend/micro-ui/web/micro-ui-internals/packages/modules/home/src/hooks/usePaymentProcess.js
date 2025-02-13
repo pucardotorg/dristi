@@ -15,7 +15,7 @@ const usePaymentProcess = ({ tenantId, consumerCode, service, path, caseDetails,
     return await DRISTIService.callFetchBill({}, { consumerCode: consumerCode, tenantId, businessService: service });
   };
   const userInfo = Digit.UserService.getUser()?.info;
-  const openPaymentPortal = async (bill) => {
+  const openPaymentPortal = async (bill, billAmount = null) => {
     try {
       const gateway = await DRISTIService.callETreasury(
         {
@@ -39,7 +39,7 @@ const usePaymentProcess = ({ tenantId, consumerCode, service, path, caseDetails,
             billId: bill?.Bill?.[0]?.billDetails?.[0]?.billId,
             serviceNumber: consumerCode,
             businessService: service,
-            totalDue: totalAmount,
+            totalDue: billAmount ? billAmount : totalAmount,
             mobileNumber: userInfo?.mobileNumber,
             paidBy: userInfo?.name,
             tenantId: tenantId,

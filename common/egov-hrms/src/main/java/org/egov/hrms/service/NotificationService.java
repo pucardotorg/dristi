@@ -50,7 +50,7 @@ public class NotificationService {
 
 	@Value("${kafka.topics.notification.email}")
 	private String emailTopic;
-    
+
     @Value("${egov.hrms.employee.app.link}")
     private String appLink;
     

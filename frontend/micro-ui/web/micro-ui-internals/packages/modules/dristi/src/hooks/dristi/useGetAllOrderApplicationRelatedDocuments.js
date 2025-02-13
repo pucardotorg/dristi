@@ -1,6 +1,15 @@
 import { useState, useCallback } from "react";
 import { DRISTIService } from "../../services";
 
+// sort like first document will signed one, rest will sort based on documentOrder
+const _getSortedByOrder = (documents) => {
+  return documents?.sort((a, b) => {
+    if (a?.documentType === "SIGNED" && b?.documentType !== "SIGNED") return -1;
+    if (a?.documentType !== "SIGNED" && b?.documentType === "SIGNED") return 1;
+    return (a?.documentOrder || 0) - (b?.documentOrder || 0);
+  });
+};
+
 const useGetAllOrderApplicationRelatedDocuments = () => {
   const [documents, setDocuments] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
@@ -12,10 +21,8 @@ const useGetAllOrderApplicationRelatedDocuments = () => {
     const collectedDocuments = [];
 
     if (currentResponse?.documents) {
-      // for Maintain the sequence like first will be SignedPDF
-      const signedDocuments = currentResponse?.documents?.filter((doc) => doc?.documentType === "SIGNED");
-      const otherDocuments = currentResponse?.documents?.filter((doc) => doc?.documentType !== "SIGNED");
-      collectedDocuments.push(...signedDocuments, ...otherDocuments);
+      const sortedDocuments = _getSortedByOrder(currentResponse?.documents);
+      collectedDocuments.push(...sortedDocuments);
     }
 
     while (currentResponse?.additionalDetails?.formdata?.refApplicationId || currentResponse?.additionalDetails?.formdata?.refOrderId) {
@@ -35,9 +42,8 @@ const useGetAllOrderApplicationRelatedDocuments = () => {
         );
 
         if (applicationData?.applicationList?.[0]?.documents) {
-          const signedApplicationDocuments = applicationData?.applicationList?.[0]?.documents?.filter((doc) => doc?.documentType === "SIGNED");
-          const otherApplictionDocuments = applicationData?.applicationList?.[0]?.documents?.filter((doc) => doc?.documentType !== "SIGNED");
-          collectedDocuments.push(...signedApplicationDocuments, ...otherApplictionDocuments);
+          const applicationDocuments = _getSortedByOrder(applicationData?.applicationList?.[0]?.documents);
+          collectedDocuments.push(...applicationDocuments);
         }
 
         nextResponse = applicationData?.applicationList?.[0];
@@ -56,9 +62,8 @@ const useGetAllOrderApplicationRelatedDocuments = () => {
         );
 
         if (orderData?.list?.[0]?.documents) {
-          const signedOrderDocuments = orderData?.list?.[0]?.documents?.filter((doc) => doc?.documentType === "SIGNED");
-          const otherOrderDocuments = orderData?.list?.[0]?.documents?.filter((doc) => doc?.documentType !== "SIGNED");
-          collectedDocuments.push(...signedOrderDocuments, ...otherOrderDocuments);
+          const orderDocuments = _getSortedByOrder(orderData?.list?.[0]?.documents);
+          collectedDocuments.push(...orderDocuments);
         }
 
         nextResponse = orderData?.list?.[0];

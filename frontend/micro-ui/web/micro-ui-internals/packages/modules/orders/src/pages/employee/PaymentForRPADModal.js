@@ -200,7 +200,7 @@ const PaymentForRPADModal = ({ path }) => {
   const todayDate = new Date().getTime();
   const dayInMillisecond = 24 * 3600 * 1000;
 
-  const { data: tasksData } = Digit.Hooks.hearings.useGetTaskList(
+  const { data: tasksData, isLoading: isTaskLoading } = Digit.Hooks.hearings.useGetTaskList(
     {
       criteria: {
         tenantId: tenantId,
@@ -224,7 +224,7 @@ const PaymentForRPADModal = ({ path }) => {
 
   const orderType = useMemo(() => orderDetails?.orderType || "", [orderDetails?.orderType]);
 
-  const { data: hearingsData } = Digit.Hooks.hearings.useGetHearings(
+  const { data: hearingsData, isLoading: isHearingLoading } = Digit.Hooks.hearings.useGetHearings(
     {
       hearing: { tenantId },
       criteria: {
@@ -450,16 +450,8 @@ const PaymentForRPADModal = ({ path }) => {
   ]);
 
   const infos = useMemo(() => {
-    const name = [
-      orderDetails?.additionalDetails?.formdata?.[orderType === "SUMMONS" ? "SummonsOrder" : "noticeOrder"]?.party?.data?.firstName,
-      orderDetails?.additionalDetails?.formdata?.[orderType === "SUMMONS" ? "SummonsOrder" : "noticeOrder"]?.party?.data?.lastName,
-    ]
-      ?.filter(Boolean)
-      ?.join(" ");
-    const addressDetails =
-      orderDetails?.additionalDetails?.formdata?.[orderType === "SUMMONS" ? "SummonsOrder" : "noticeOrder"]?.party?.data?.addressDetails?.[0]
-        ?.addressDetails;
-
+    const name = filteredTasks?.[0]?.taskDetails?.respondentDetails?.name;
+    const addressDetails = filteredTasks?.[0]?.taskDetails?.respondentDetails?.address;
     const formattedAddress =
       typeof addressDetails === "object"
         ? `${addressDetails?.locality || ""}, ${addressDetails?.city || ""}, ${addressDetails?.district || ""}, ${addressDetails?.state || ""}, ${
@@ -474,7 +466,7 @@ const PaymentForRPADModal = ({ path }) => {
         value: `RPAD (${formattedAddress})`,
       },
     ];
-  }, [hearingsData?.HearingList, orderDetails, orderType]);
+  }, [filteredTasks, hearingsData?.HearingList]);
 
   const orderDate = useMemo(() => {
     return hearingsData?.HearingList?.[0]?.startTime;
@@ -514,7 +506,7 @@ const PaymentForRPADModal = ({ path }) => {
     };
   }, [orderType, infos, links, feeOptions, orderDate, paymentLoader, isCaseAdmitted, isUserAdv, history]);
 
-  if (isOrdersLoading || isSummonsBreakUpLoading || isCourtBillLoading) {
+  if (isOrdersLoading || isSummonsBreakUpLoading || isCourtBillLoading || isTaskLoading || isHearingLoading) {
     return <Loader />;
   }
 

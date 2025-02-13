@@ -49,7 +49,7 @@ const CustomRadioInfoComponent = ({ t, config, onSelect, formData = {}, errors, 
                 onChange={(e) => {
                   setValue(e, config.name);
                 }}
-                config={config.populators}
+                config={{ ...config.populators, ...(config?.disable && { styles: { opacity: 0.5 } }) }}
                 errorStyle={errors?.[config.name]}
                 disable={config?.disable}
               />

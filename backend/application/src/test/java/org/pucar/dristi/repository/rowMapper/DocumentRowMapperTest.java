@@ -1,6 +1,5 @@
 package org.pucar.dristi.repository.rowMapper;
 
-import org.egov.common.contract.models.Document;
 import org.egov.tracer.model.CustomException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -8,6 +7,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.postgresql.util.PGobject;
+import org.pucar.dristi.web.models.Document;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.ResultSetExtractor;
 

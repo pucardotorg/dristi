@@ -14,10 +14,7 @@ import org.pucar.dristi.repository.ApplicationRepository;
 import org.pucar.dristi.util.CaseUtil;
 import org.pucar.dristi.util.FileStoreUtil;
 import org.pucar.dristi.util.OrderUtil;
-import org.pucar.dristi.web.models.Application;
-import org.pucar.dristi.web.models.ApplicationExists;
-import org.pucar.dristi.web.models.ApplicationRequest;
-import org.pucar.dristi.web.models.OrderExistsRequest;
+import org.pucar.dristi.web.models.*;
 
 import java.util.*;
 

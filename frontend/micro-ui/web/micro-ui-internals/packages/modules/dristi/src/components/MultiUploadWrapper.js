@@ -81,6 +81,7 @@ const MultiUploadWrapper = ({
   maxFileErrorMessage,
   displayName,
   disable,
+  multiple = true,
 }) => {
   const FILES_UPLOADED = "FILES_UPLOADED";
   const RESET_FILE = "RESET";
@@ -133,8 +134,10 @@ const MultiUploadWrapper = ({
   const [state, dispatch] = useReducer(uploadReducer, [...setuploadedstate]);
 
   useEffect(() => {
-    dispatch({ type: "RESET", payload: [...setuploadedstate] });
-  }, [JSON.stringify(setuploadedstate)]);
+    if (multiple) {
+      dispatch({ type: "RESET", payload: [...setuploadedstate] });
+    }
+  }, [multiple, JSON.stringify(setuploadedstate)]);
 
   const onUploadMultipleFiles = async (e) => {
     setEnableButton(false);
@@ -183,7 +186,7 @@ const MultiUploadWrapper = ({
         onUpload={(e) => onUploadMultipleFiles(e)}
         removeTargetedFile={(fileDetailsData) => dispatch({ type: TARGET_FILE_REMOVAL, payload: fileDetailsData })}
         uploadedFiles={state}
-        multiple={true}
+        multiple={multiple}
         showHintBelow={showHintBelow}
         hintText={hintText}
         extraStyleName={extraStyleName}

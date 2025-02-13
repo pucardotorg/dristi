@@ -511,6 +511,8 @@ function getPrayerSwornStatementDetails(cases) {
           (swornStatementData.caseSettlementCondition &&
             swornStatementData.caseSettlementCondition.text) ||
           null,
+        prayer:
+          (swornStatementData.prayer && swornStatementData.prayer.text) || null,
         memorandumOfComplaintText:
           (swornStatementData.memorandumOfComplaint &&
             swornStatementData.memorandumOfComplaint.text) ||
