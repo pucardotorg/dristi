@@ -133,6 +133,7 @@ public class PaymentUpdateService {
 
             CourtCase courtCase = updateRequest.getCriteria().get(0).getResponseList().get(0);
             courtCase.setStatus(state.getState());
+            enrichmentUtil.enrichCaseRegistrationFillingDate(courtCase);
             AuditDetails auditDetails = courtCase.getAuditdetails();
             auditDetails.setLastModifiedBy(paymentDetail.getAuditDetails().getLastModifiedBy());
             auditDetails.setLastModifiedTime(paymentDetail.getAuditDetails().getLastModifiedTime());
