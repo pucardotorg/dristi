@@ -21,6 +21,22 @@ const extractValue = (data, key) => {
 const CustomRadioInfoComponent = ({ t, config, onSelect, formData = {}, errors, formState, control, setError }) => {
   function setValue(value, name) {
     onSelect(config.key, { ...value }, { shouldValidate: true });
+    if (config?.resetFormData) {
+      Object?.keys(formData)?.forEach((key) => {
+        if (key !== config?.key) {
+          const prevValue = formData[key];
+          if (typeof prevValue === "string") {
+            onSelect(key, "");
+          } else if (typeof prevValue === "object") {
+            onSelect(key, {});
+          } else if (Array.isArray(prevValue)) {
+            onSelect(key, []);
+          } else {
+            onSelect(key, undefined);
+          }
+        }
+      });
+    }
   }
 
   return (
