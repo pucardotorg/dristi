@@ -22,10 +22,10 @@ const inboxModuleNameMap = {
 const userRoles = Digit.UserService.getUser()?.info?.roles.map((role) => role.code);
 
 const partyTypes = {
-  "complainant.primary": "Complainant",
-  "complainant.additional": "Complainant",
-  "respondent.primary": "Respondent",
-  "respondent.additional": "Respondent",
+  "complainant.primary": "COMPLAINANT",
+  "complainant.additional": "COMPLAINANT",
+  "respondent.primary": "ACCUSED",
+  "respondent.additional": "ACCUSED",
 };
 
 export const UICustomizations = {
@@ -1158,9 +1158,8 @@ export const UICustomizations = {
               return {
                 ...rep,
                 name: rep.additionalDetails?.advocateName,
-                partyType: `Advocate (for ${rep.representing
-                  ?.map((client) => removeInvalidNameParts(client?.additionalDetails?.fullName))
-                  ?.join(", ")})`,
+                partyType: `ADVOCATE`,
+                representingList: rep.representing?.map((client) => removeInvalidNameParts(client?.additionalDetails?.fullName))?.join(", "),
               };
             });
             const allParties = [...finalLitigantsData, ...finalRepresentativesData];
@@ -1192,7 +1191,11 @@ export const UICustomizations = {
           const formattedDate = `${day}-${month}-${year}`;
           return <span>{formattedDate || "N.A."}</span>;
         case "PARTY_TYPE":
-          return partyTypes[value] ? partyTypes[value] : value;
+          return value === "ADVOCATE"
+            ? `${t("ADVOCATE")} (${t("CS_FOR")} ${row?.representingList})`
+            : partyTypes[value]
+            ? t(partyTypes[value])
+            : t(value);
         default:
           break;
       }

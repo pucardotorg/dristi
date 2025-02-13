@@ -146,7 +146,7 @@ const LitigantVerification = ({
       !Object.keys(formState?.errors).includes("phoneNumberVerification") &&
       !formData?.phoneNumberVerification?.isUserVerified
     ) {
-      setError("phoneNumberVerification", { mobileNumber: "DUPLICATE_MOBILE_NUMBER_FOR_COMPLAINANT", isDuplicateNumber: true });
+      setError("phoneNumberVerification", { mobileNumber: "MOBILE_NUMBER_ALREADY_REGISTERED_FOR_THIS_CASE", isDuplicateNumber: true });
     } else if (
       !alreadyJoinedMobileNumber?.some((mobileNumber) => formData?.phoneNumberVerification?.mobileNumber === mobileNumber) &&
       Object.keys(formState?.errors).includes("phoneNumberVerification")

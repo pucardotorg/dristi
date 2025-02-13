@@ -4,7 +4,7 @@ import { CardLabel, CardLabelError, LabelFieldPair, TextInput } from "@egovernme
 import React, { useMemo } from "react";
 import { useTranslation } from "react-i18next";
 
-const AccessCodeValidation = ({ caseDetails, validationCode, setValidationCode, setIsDisabled, errors, setErrors }) => {
+const AccessCodeValidation = ({ caseDetails, validationCode, setValidationCode, setIsDisabled, errors, setErrors, setIsVerified }) => {
   const { t } = useTranslation();
 
   const caseInfo = useMemo(() => {
@@ -63,6 +63,7 @@ const AccessCodeValidation = ({ caseDetails, validationCode, setValidationCode, 
               val = val.substring(0, 6);
               val = val.replace(/\D/g, "");
               setValidationCode(val);
+              setIsVerified(false);
               if (val.length === 6) {
                 setIsDisabled(false);
               } else {
