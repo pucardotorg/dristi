@@ -1,0 +1,42 @@
+[
+  { 
+    "moduleName":"ACCESSCONTROL-ACTIONS-TEST",
+    "masterName":"actions-test",
+    "mdmsPayload": [
+      {
+        "tenantId": "kl",
+        "schemaCode": "ACCESSCONTROL-ACTIONS-TEST.actions-test",
+        "uniqueIdentifier": "2714",
+        "data": {
+          "id": 2714,
+          "url": "/kerala-icops/v1/integrations/iCops/_getLocationBasedJurisdiction",
+          "code": "2714",
+          "name": "Icops location ",
+          "enabled": true,
+          "displayName": "kerala-icops",
+          "serviceCode": "kerala-icops"
+        },
+        "isActive": true
+      }
+    ]
+  },
+  { 
+    "moduleName":"ACCESSCONTROL-ROLEACTIONS",
+    "masterName":"roleactions",
+    "mdmsPayload": [
+      {
+        "tenantId": "kl",
+        "schemaCode": "ACCESSCONTROL-ROLEACTIONS.roleactions",
+        "uniqueIdentifier": "431",
+        "data": {
+            "id": 431,
+            "actionid": 2714,
+            "rolecode": "CITIZEN",
+            "tenantid": "kl",
+            "actioncode": "2714"
+        },
+        "isActive": true
+      }
+    ]
+  }
+]
