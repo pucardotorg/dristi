@@ -32,7 +32,7 @@ export const loginConfig = [
         populators: {
           name: "district",
           optionsKey: "name",
-          error: "ERR_HRMS_INVALID_DISTRICT",
+          // error: "ERR_HRMS_INVALID_DISTRICT",
           mdmsConfig: {
             masterName: "District",
             moduleName: "common-masters",
@@ -50,7 +50,7 @@ export const loginConfig = [
         populators: {
           name: "courtroom",
           optionsKey: "name",
-          error: "ERR_HRMS_INVALID_COURT_ROOM",
+          // error: "ERR_HRMS_INVALID_COURT_ROOM",
           mdmsConfig: {
             masterName: "Court_Rooms",
             moduleName: "common-masters",

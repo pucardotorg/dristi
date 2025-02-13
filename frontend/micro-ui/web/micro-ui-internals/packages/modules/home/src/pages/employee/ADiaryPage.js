@@ -473,6 +473,19 @@ const ADiaryPage = ({ path }) => {
           >
             <div className="add-signature-main-div">
               <div className="not-signed">
+                <InfoCard
+                  variant={"default"}
+                  label={t("PLEASE_NOTE")}
+                  additionalElements={[
+                    <p key="note">
+                      {t("YOU_ARE_ADDING_YOUR_SIGNATURE_TO_THE")}
+                      <span style={{ fontWeight: "bold" }}>{`${t("ADIARY")} - ${formatDate(entryDate)}`}</span>
+                    </p>,
+                  ]}
+                  inline
+                  textStyle={{}}
+                  className={`custom-info-card`}
+                />
                 <h1>{t("YOUR_SIGNATURE")}</h1>
                 <div className="sign-button-wrap">
                   <Button
@@ -492,7 +505,7 @@ const ADiaryPage = ({ path }) => {
                   />
                 </div>
                 <div className="donwload-submission">
-                  <h2>{t("want to download Adiary")}</h2>
+                  <h2>{t("DOWNLOAD_ADIARY_TEXT")}</h2>
                   <AuthenticatedLink
                     uri={uri}
                     style={{ color: "#007E7E", cursor: "pointer", textDecoration: "underline" }}
@@ -524,19 +537,11 @@ const ADiaryPage = ({ path }) => {
             headerBarEnd={<CloseBtn onClick={onCancel} />}
             actionCancelLabel={t("CS_COMMON_BACK")}
             actionCancelOnSubmit={onCancel}
-            actionSaveLabel={t("submit")}
+            actionSaveLabel={t("SUBMIT_BUTTON")}
             actionSaveOnSubmit={uploadSignedPdf}
             className="add-signature-modal"
           >
-            <div
-              style={{
-                padding: "24px",
-                display: "flex",
-                flexDirection: "column",
-
-                gap: "24px",
-              }}
-            >
+            <div className="add-signature-main-div">
               <InfoCard
                 variant={"default"}
                 label={t("PLEASE_NOTE")}
@@ -550,7 +555,7 @@ const ADiaryPage = ({ path }) => {
                 textStyle={{}}
                 className={`custom-info-card`}
               />
-              <div style={{ display: "flex", flexDirection: "column", gap: "16px" }}>
+              <div style={{ display: "flex", flexDirection: "row", gap: "16px" }}>
                 <h1
                   style={{
                     margin: 0,
@@ -589,7 +594,7 @@ const ADiaryPage = ({ path }) => {
           <Modal
             headerBarEnd={<CloseBtn onClick={() => setNoAdiaryModal(false)} />}
             popupStyles={{ width: "600px" }}
-            actionSaveLabel={t("BACK")}
+            actionSaveLabel={t("CS_COMMON_BACK")}
             actionSaveOnSubmit={() => setNoAdiaryModal(false)}
             formId="modal-action"
             headerBarMainStyle={{ height: "60px" }}

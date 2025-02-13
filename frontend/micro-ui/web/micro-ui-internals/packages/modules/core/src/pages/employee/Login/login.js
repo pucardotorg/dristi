@@ -130,7 +130,7 @@ const Login = ({ config: propsConfig, t, isDisabled, tenantsData, isTenantsDataL
     const newPopulators = {
       name: "courtroom",
       optionsKey: "name",
-      error: "ERR_HRMS_INVALID_COURT_ROOM",
+      // error: "ERR_HRMS_INVALID_COURT_ROOM",
       options: getFilteredCourtRoom(district?.code),
     };
     let modifiedConfig = config;
