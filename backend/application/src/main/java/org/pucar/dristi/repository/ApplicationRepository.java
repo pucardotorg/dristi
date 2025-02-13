@@ -1,7 +1,6 @@
 package org.pucar.dristi.repository;
 
 import lombok.extern.slf4j.Slf4j;
-import org.egov.common.contract.models.Document;
 import org.egov.tracer.model.CustomException;
 import org.pucar.dristi.repository.queryBuilder.ApplicationQueryBuilder;
 import org.pucar.dristi.repository.rowMapper.ApplicationRowMapper;
@@ -113,8 +112,8 @@ public class ApplicationRepository {
                 if ((applicationExist.getFilingNumber() == null || applicationExist.getFilingNumber().isEmpty()) &&
                         (applicationExist.getCnrNumber() == null || applicationExist.getCnrNumber().isEmpty()) &&
                         (applicationExist.getApplicationNumber() == null || applicationExist.getApplicationNumber().isEmpty()) )
-                    {
-                        applicationExist.setExists(false);
+                {
+                    applicationExist.setExists(false);
                 } else {
                     List<Object> preparedStmtList = new ArrayList<>();
                     String applicationExistQuery = queryBuilder.checkApplicationExistQuery(applicationExist.getFilingNumber(), applicationExist.getCnrNumber(), applicationExist.getApplicationNumber(), preparedStmtList);

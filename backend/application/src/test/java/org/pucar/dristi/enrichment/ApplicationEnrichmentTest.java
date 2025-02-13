@@ -2,7 +2,6 @@ package org.pucar.dristi.enrichment;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import org.egov.common.contract.models.AuditDetails;
-import org.egov.common.contract.models.Document;
 import org.egov.common.contract.request.RequestInfo;
 import org.egov.common.contract.request.User;
 import org.egov.tracer.model.CustomException;
@@ -17,6 +16,7 @@ import org.pucar.dristi.util.CaseUtil;
 import org.pucar.dristi.util.IdgenUtil;
 import org.pucar.dristi.web.models.Application;
 import org.pucar.dristi.web.models.ApplicationRequest;
+import org.pucar.dristi.web.models.Document;
 import org.pucar.dristi.web.models.StatuteSection;
 
 import java.util.Arrays;

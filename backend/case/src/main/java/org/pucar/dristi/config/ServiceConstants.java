@@ -87,8 +87,6 @@ public class ServiceConstants {
     public static final String SUBMIT_CASE_ADVOCATE_WORKFLOW_ACTION = "SUBMIT_CASE_ADVOCATE";
     public static final String DELETE_DRAFT_WORKFLOW_ACTION = "DELETE_DRAFT";
     public static final String E_SIGN_PARTY_IN_PERSON = "E-SIGN_PARTY_IN_PERSON";
-    public static final String UPLOAD = "UPLOAD";
-    public static final String E_SIGN = "E-SIGN";
     public static final Long TAX_PERIOD_FROM = 1680287400000l;
     public static final Long TAX_PERIOD_TO = 1711909799000l;
     public static final BigDecimal TAX_AMOUNT = BigDecimal.valueOf(2000.00);
