@@ -54,6 +54,45 @@ const ModalHeading = ({ label, orderList }) => {
   );
 };
 
+function groupOrdersByParty(filteredOrders) {
+  const accusedWiseOrdersMap = new Map();
+
+  filteredOrders.forEach((order) => {
+    const party = order.orderDetails?.parties?.[0];
+    if (!party) return;
+
+    let partyName = party.partyName.trim();
+    let partyType = party.partyType.toLowerCase();
+    if (partyType === "respondent") {
+      partyType = "Accused";
+    }
+    if (partyType === "witness") {
+      partyType = "Witness";
+    }
+
+    if (!accusedWiseOrdersMap.has(partyName)) {
+      accusedWiseOrdersMap.set(partyName, { partyType, partyName, ordersList: [] });
+    }
+
+    accusedWiseOrdersMap.get(partyName).ordersList.push(order);
+  });
+
+  const accusedWiseOrdersList = Array.from(accusedWiseOrdersMap.values());
+
+  // Sort first by partyType: "respondent", then "witness"
+  accusedWiseOrdersList.sort((a, b) => {
+    if (a.partyType === "Accused" && b.partyType !== "Accused") return -1;
+    if (a.partyType !== "Accused" && b.partyType === "Accused") return 1;
+    return 0;
+  });
+
+  accusedWiseOrdersList.forEach((party) => {
+    party.ordersList.sort((a, b) => b.auditDetails.createdTime - a.auditDetails.createdTime);
+  });
+
+  return accusedWiseOrdersList;
+}
+
 const SummonsAndWarrantsModal = ({ handleClose }) => {
   const history = useHistory();
   const { t } = useTranslation();
@@ -197,22 +236,21 @@ const SummonsAndWarrantsModal = ({ handleClose }) => {
         (taskOrderType === "NOTICE" ? item.orderType === "NOTICE" : item.orderType === "SUMMONS" || item.orderType === "WARRANT") &&
         item?.status === "PUBLISHED" &&
         item?.hearingNumber === hearingId &&
-        item?.additionalDetails?.formdata?.noticeOrder?.party?.data?.partyIndex === partyIndex 
+        item?.additionalDetails?.formdata?.noticeOrder?.party?.data?.partyIndex === partyIndex
     );
 
-    const sortedOrders = filteredOrders?.sort((a, b) => {
-      return new Date(b.auditDetails.createdTime) - new Date(a.auditDetails.createdTime);
-    });
+    // make orders list by partyTypes Accused and Witness.
+    const accusedWiseOrdersList = groupOrdersByParty(filteredOrders);
 
-    return sortedOrders;
-  }, [hearingId, ordersData?.list, partyIndex, taskOrderType]);
+    return accusedWiseOrdersList;
+  }, [hearingId, ordersData?.list, partyIndex, taskOrderType, ordersData]);
 
-  const [activeIndex, setActiveIndex] = useState(0);
+  const [activeIndex, setActiveIndex] = useState({ partyIndex: 0, orderIndex: 0 });
   useEffect(() => {
-    setOrderList(orderListFiltered || []);
-    setOrderNumber(orderListFiltered?.[0]?.orderNumber);
-    setOrderType(orderListFiltered?.[0]?.orderType);
-    setOrderId(orderListFiltered?.[0]?.id);
+    setOrderList(orderListFiltered?.[0]?.ordersList || []);
+    setOrderNumber(orderListFiltered?.[0]?.ordersList?.[0]?.orderNumber);
+    setOrderType(orderListFiltered?.[0]?.ordersList?.[0]?.orderType);
+    setOrderId(orderListFiltered?.[0]?.ordersList?.[0]?.id);
   }, [orderListFiltered]);
 
   const config = useMemo(() => summonsConfig({ filingNumber, orderNumber, orderId, orderType, taskCnrNumber }), [
@@ -242,6 +280,92 @@ const SummonsAndWarrantsModal = ({ handleClose }) => {
     );
   };
 
+  const totalSummons = useMemo(() => {
+    return (orderList || [])?.filter((order) => order?.orderType === "SUMMONS")?.length;
+  }, [orderList]);
+
+  const totalWarrants = useMemo(() => {
+    return (orderList || [])?.filter((order) => order?.orderType === "WARRANT")?.length;
+  }, [orderList]);
+
+  const totalNotices = useMemo(() => {
+    return (orderList || [])?.filter((order) => order?.orderType === "NOTICE")?.length;
+  }, [orderList]);
+
+  const lastSummon = useMemo(() => {
+    return orderList?.find((order) => order?.orderType === "SUMMONS") || null;
+  }, [orderList]);
+
+  const lastWarrant = useMemo(() => {
+    return orderList?.find((order) => order?.orderType === "WARRANT") || null;
+  }, [orderList]);
+
+  const lastNotice = useMemo(() => {
+    return orderList?.find((order) => order?.orderType === "NOTICE") || null;
+  }, [orderList]);
+
+  const caseInfo = useMemo(() => {
+    return (
+      <div className="case-info">
+        <div className="case-info-column">
+          <div className="case-info-row" style={{ display: "flex", flexDirection: "row", gap: "20px" }}>
+            <span style={{ minWidth: "40%" }}>{t("Case Name & ID")}</span>
+            <span>
+              {caseDetails?.caseTitle}, {filingNumber}
+            </span>
+          </div>
+          <div className="case-info-row" style={{ display: "flex", flexDirection: "row", gap: "20px" }}>
+            <span style={{ minWidth: "40%" }}>{t("Issued to")}</span>
+            <span>{respondentName}</span>
+          </div>
+          <div className="case-info-row" style={{ display: "flex", flexDirection: "row", gap: "20px" }}>
+            <span style={{ minWidth: "40%" }}>{t("Next Hearing Date")}</span>
+            <span>{hearingDetails?.startTime && formatDate(new Date(hearingDetails?.startTime), "DD-MM-YYYY")}</span>
+          </div>
+          {totalSummons > 0 && (
+            <div className="case-info-row" style={{ display: "flex", flexDirection: "row", gap: "20px" }}>
+              <span style={{ minWidth: "40%" }}>{t("Last Summon issued on")}</span>
+              <span>
+                {lastSummon.createdDate && formatDate(new Date(lastSummon?.createdDate), "DD-MM-YYYY")} (Round {totalSummons})
+              </span>
+            </div>
+          )}
+          {totalWarrants > 0 && (
+            <div className="case-info-row" style={{ display: "flex", flexDirection: "row", gap: "20px" }}>
+              <span style={{ minWidth: "40%" }}>{t("Last Warrant issued on")}</span>
+              <span>
+                {lastWarrant?.createdDate && formatDate(new Date(lastWarrant?.createdDate), "DD-MM-YYYY")} (Round {totalWarrants})
+              </span>
+            </div>
+          )}
+          {totalNotices > 0 && (
+            <div className="case-info-row" style={{ display: "flex", flexDirection: "row", gap: "20px" }}>
+              <span style={{ minWidth: "40%" }}>{t("Last Notice issued on")}</span>
+              <span>
+                {lastNotice?.createdDate && formatDate(new Date(lastNotice?.createdDate), "DD-MM-YYYY")} (Round {totalNotices})
+              </span>
+            </div>
+          )}
+        </div>
+
+        <div className="case-info-column" style={{ marginLeft: "10px" }}>
+          <a
+            href={`/${window?.contextPath}/${userType}/dristi/home/view-case?caseId=${caseId}&filingNumber=${filingNumber}&tab=Overview`}
+            className="case-info-link"
+          >
+            {t("View Case")}
+          </a>
+          <a
+            href={`/${window?.contextPath}/${userType}/dristi/home/view-case?caseId=${caseId}&filingNumber=${filingNumber}&tab=Orders`}
+            className="case-info-link"
+          >
+            {t("View Order")}
+          </a>
+        </div>
+      </div>
+    );
+  }, [caseDetails, filingNumber, respondentName, hearingDetails, orderList, userType, caseId]);
+
   const modalLabel = ["SUMMONS", "WARRANT"].includes(orderType) ? "SUMMON_WARRANT_STATUS" : "NOTICE_STATUS";
 
   return (
@@ -261,54 +385,38 @@ const SummonsAndWarrantsModal = ({ handleClose }) => {
       }}
     >
       <div className="summon-modal" style={{ width: "100%" }}>
-        <div className="case-info">
-          <div className="case-info-column">
-            <span className="case-info-label">{t("Case Name & ID")}</span>
-            <span className="case-info-label">{t("Issued to")}</span>
-            <span className="case-info-label">{t("Next Hearing Date")}</span>
-            <span className="case-info-label">{t("Issued on")}</span>
-          </div>
-
-          <div className="case-info-column">
-            <span className="case-info-value">
-              {caseDetails?.caseTitle}, {filingNumber}
-            </span>
-            <span className="case-info-value">
-              {respondentName} ({partyType} 1)
-            </span>
-            <span className="case-info-value">{hearingDetails?.startTime && formatDate(new Date(hearingDetails?.startTime), "DD-MM-YYYY")}</span>
-            <span className="case-info-value">
-              {orderList[orderList.length - 1]?.createdDate && formatDate(new Date(orderList[orderList.length - 1]?.createdDate), "DD-MM-YYYY")}{" "}
-              (Round {orderList.length})
-            </span>
-          </div>
-
-          <div className="case-info-column">
-            <a
-              href={`/${window?.contextPath}/${userType}/dristi/home/view-case?caseId=${caseId}&filingNumber=${filingNumber}&tab=Overview`}
-              className="case-info-link"
+        <div className="rounds-of-delivery" style={{ cursor: "pointer", marginLeft: "17px" }}>
+          {orderListFiltered.map((item, index) => (
+            <div
+              key={index}
+              onClick={() => {
+                setActiveIndex({ partyIndex: index, orderIndex: 0 });
+                setOrderLoading(true);
+                setOrderList(item?.ordersList);
+                setOrderNumber(item?.ordersList?.[0]?.orderNumber);
+                setOrderType(item?.ordersList?.[0]?.orderType);
+                setOrderId(item?.ordersList?.[0]?.id);
+                setTimeout(() => {
+                  setOrderLoading((prev) => !prev);
+                }, 0);
+              }}
+              className={`round-item ${index === activeIndex?.partyIndex ? "active" : ""}`}
             >
-              {t("View Case")}
-            </a>
-            <a
-              href={`/${window?.contextPath}/${userType}/dristi/home/view-case?caseId=${caseId}&filingNumber=${filingNumber}&tab=Orders`}
-              className="case-info-link"
-            >
-              {t("View Order")}
-            </a>
-            <span></span>
-            <span></span>
-          </div>
+              <div style={{ display: "flex", flexDirection: "column" }}>
+                <span>{item?.partyName}</span>
+                <span style={{ fontWeight: "400" }}>{item?.partyType}</span>
+              </div>
+            </div>
+          ))}
         </div>
-
+        {caseInfo}
         <h1 className="heading-m">{t("Rounds Of Delivery")}</h1>
-        <div></div>
-        <div className="rounds-of-delivery" style={{ cursor: "pointer" }}>
+        <div className="rounds-of-delivery" style={{ cursor: "pointer", marginLeft: "17px" }}>
           {orderList.map((item, index) => (
             <div
               key={index}
               onClick={() => {
-                setActiveIndex(index);
+                setActiveIndex({ ...activeIndex, orderIndex: index });
                 setOrderLoading(true);
                 setOrderNumber(item?.orderNumber);
                 setOrderType(item?.orderType);
@@ -317,9 +425,13 @@ const SummonsAndWarrantsModal = ({ handleClose }) => {
                   setOrderLoading((prev) => !prev);
                 }, 0);
               }}
-              className={`round-item ${index === activeIndex ? "active" : ""}`}
+              className={`round-item ${index === activeIndex?.orderIndex ? "active" : ""}`}
+              style={{ height: "50px" }}
             >
-              {`${orderList.length - index} (${item?.orderType})`}
+              <div style={{ display: "flex", flexDirection: "column", width: "90px" }}>
+                <span>{item?.orderType}</span>
+                <span>{item.createdDate && formatDate(new Date(item.createdDate), "DD-MM-YYYY")}</span>
+              </div>
             </div>
           ))}
         </div>

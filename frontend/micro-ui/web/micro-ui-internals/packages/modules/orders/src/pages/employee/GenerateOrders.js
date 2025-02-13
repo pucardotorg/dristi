@@ -346,7 +346,7 @@ const GenerateOrders = () => {
   );
 
   const isDCANoticeGenerated = useMemo(
-    () => noticeOrdersData?.list?.some((notice) => "DCA Notice" === notice?.additionalDetails?.formdata?.noticeType.code),
+    () => noticeOrdersData?.list?.some((notice) => "DCA Notice" === notice?.additionalDetails?.formdata?.noticeType?.code),
     [noticeOrdersData]
   );
 
