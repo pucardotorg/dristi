@@ -13,6 +13,19 @@ import CustomErrorTooltip from "./CustomErrorTooltip";
 import RenderFileCard from "./RenderFileCard";
 import { FileUploader } from "react-drag-drop-files";
 import { useToast } from "./Toast/useToast";
+import { FSOErrorIcon } from "../icons/svgIndex";
+
+function ScrutinyInfoAdvocate({ message, t }) {
+  return (
+    <div style={{ backgroundColor: "#fce8e8", marginBottom: 8, padding: 6, borderRadius: 5 }}>
+      <div style={{ display: "flex", justifyContent: "flex-start", alignItems: "center", gap: "10px", marginBottom: 8 }}>
+        <FSOErrorIcon />
+        <div style={{ fontWeight: 700 }}>{t("CS_FSO_MARKED_ERROR")}</div>
+      </div>
+      {t(message)}
+    </div>
+  );
+}
 
 function splitNamesPartiallyFromFullName(fullName) {
   const nameParts = fullName?.trim()?.split(/\s+/);
@@ -229,6 +242,24 @@ function MultipleAdvocatesAndPip({ t, config, onSelect, formData, errors, setErr
     }),
     [caseData]
   );
+
+  const isCaseReAssigned = useMemo(() => {
+    const caseStatus = caseDetails?.status;
+    if (caseStatus === "CASE_REASSIGNED") {
+      const curentFormIndex = advocateAndPipData?.boxComplainant?.index;
+      const currentFormErrorObject =
+        caseDetails?.additionalDetails?.scrutiny?.data?.additionalDetails?.advocateDetails?.form?.[curentFormIndex] || {};
+      if (Object.keys(currentFormErrorObject)?.length > 0) {
+        if (currentFormErrorObject?.hasOwnProperty("multipleAdvocatesAndPip.vakalatnamaFileUpload.document")) {
+          return { vakalatnamaFileUpload: true, message: currentFormErrorObject?.image?.FSOError || "" };
+        }
+        if (currentFormErrorObject?.hasOwnProperty("multipleAdvocatesAndPip.pipAffidavitFileUpload.document")) {
+          return { pipAffidavitFileUpload: true, message: currentFormErrorObject?.image?.FSOError || "" };
+        }
+      } else return { reassigned: true };
+    }
+    return false;
+  }, [caseDetails, advocateAndPipData]);
 
   const { data: allAdvocatesData, isLoading: isAllAdvocateSearchLoading } = Digit?.Hooks?.dristi?.useGetAllAdvocates(
     { tenantId: window?.Digit.ULBService.getStateId() },
@@ -628,7 +659,10 @@ function MultipleAdvocatesAndPip({ t, config, onSelect, formData, errors, setErr
     };
 
     return (
-      <div className="dropdown-container" style={{ position: "relative", width: "100%", marginBottom: "20px" }}>
+      <div
+        className="dropdown-container"
+        style={{ position: "relative", width: "100%", marginBottom: "20px", pointerEvents: !isCaseReAssigned ? "auto" : "none" }}
+      >
         <input
           type="text"
           placeholder={t("ADVOCATE_PLACEHOLDER")}
@@ -666,7 +700,7 @@ function MultipleAdvocatesAndPip({ t, config, onSelect, formData, errors, setErr
             color: "black",
             cursor: "pointer",
             zIndex: 10,
-            pointerEvents: disabled ? "none" : "auto",
+            pointerEvents: disabled || isCaseReAssigned ? "none" : "auto",
           }}
         >
           <ArrowDown />
@@ -736,7 +770,6 @@ function MultipleAdvocatesAndPip({ t, config, onSelect, formData, errors, setErr
         <span style={{ fontSize: "16px", fontWeight: 700 }}>Complainant {advocateAndPipData?.boxComplainant?.index + 1 || 1}</span>
         <span style={{ fontSize: "16px" }}>{advocateAndPipData?.boxComplainant?.firstName || ""}</span>
       </div>
-
       <div
         style={{
           width: "100%",
@@ -745,6 +778,7 @@ function MultipleAdvocatesAndPip({ t, config, onSelect, formData, errors, setErr
           alignItems: "flex-start",
           gap: "30px",
           marginBottom: advocateAndPipData?.showVakalatNamaUpload ? "10px" : "0px",
+          pointerEvents: !isCaseReAssigned ? "auto" : "none",
         }}
         className="radio-div"
       >
@@ -819,7 +853,7 @@ function MultipleAdvocatesAndPip({ t, config, onSelect, formData, errors, setErr
         <div style={{ color: "#0A0A0A", fontWeight: 700, fontSize: "16px", marginBottom: "15px" }}>{t(config?.labelHeading)}</div>
       )}
       {!advocateAndPipData?.showAffidavit && (
-        <div className="advocate-details-div">
+        <div className="advocate-details-div" style={{ pointerEvents: !isCaseReAssigned ? "auto" : "none" }}>
           {Array.isArray(advocateAndPipData?.multipleAdvocateNameDetails) &&
             Object.keys(advocateAndPipData?.multipleAdvocateNameDetails?.[0] || {})?.length !== 0 &&
             advocateAndPipData?.multipleAdvocateNameDetails.map((data, index) => {
@@ -952,21 +986,25 @@ function MultipleAdvocatesAndPip({ t, config, onSelect, formData, errors, setErr
               ? formData?.[input?.isDocDependentOn]?.[input?.isDocDependentKey]
               : !input?.hideDocument;
           return (
-            <React.Fragment>
+            <div style={{ pointerEvents: isCaseReAssigned ? (isCaseReAssigned.hasOwnProperty(input?.fileKey) ? "auto" : "none") : "auto" }}>
               {showDocument && (
                 <div className="drag-drop-visible-main">
                   <div className="drag-drop-heading-main">
-                    {!config?.disableScrutinyHeader && (
+                    {
                       <div className="drag-drop-heading" style={{ marginLeft: 0 }}>
                         <h1 className="card-label custom-document-header" style={input?.documentHeaderStyle}>
                           {t(input?.documentHeader)}
                         </h1>
+
                         {input?.isOptional && <span style={{ color: "#77787B" }}>&nbsp;{`${t(input?.isOptional)}`}</span>}
                         <CustomErrorTooltip message={t(input?.infoTooltipMessage)} showTooltip={Boolean(input?.infoTooltipMessage)} icon />
                       </div>
-                    )}
+                    }
                     {input.documentSubText && <p className="custom-document-sub-header">{t(input.documentSubText)}</p>}
                   </div>
+                  {isCaseReAssigned && isCaseReAssigned.hasOwnProperty(input?.fileKey) && (
+                    <ScrutinyInfoAdvocate message={isCaseReAssigned?.message} t={t}></ScrutinyInfoAdvocate>
+                  )}
                   {currentValue.map((file, index) => (
                     <RenderFileCard
                       key={`${input?.name}${index}`}
@@ -977,7 +1015,6 @@ function MultipleAdvocatesAndPip({ t, config, onSelect, formData, errors, setErr
                       t={t}
                       uploadErrorInfo={fileErrors[index]}
                       input={input}
-                      disableUploadDelete={config?.disable}
                     />
                   ))}
 
@@ -1049,7 +1086,7 @@ function MultipleAdvocatesAndPip({ t, config, onSelect, formData, errors, setErr
                   )}
                 </div>
               )}
-            </React.Fragment>
+            </div>
           );
         })}
       </div>
