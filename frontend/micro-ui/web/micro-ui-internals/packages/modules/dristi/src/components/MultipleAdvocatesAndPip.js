@@ -14,6 +14,7 @@ import RenderFileCard from "./RenderFileCard";
 import { FileUploader } from "react-drag-drop-files";
 import { useToast } from "./Toast/useToast";
 import { FSOErrorIcon } from "../icons/svgIndex";
+import { CaseWorkflowState } from "../Utils/caseWorkflow";
 
 function ScrutinyInfoAdvocate({ message, t }) {
   return (
@@ -245,7 +246,10 @@ function MultipleAdvocatesAndPip({ t, config, onSelect, formData, errors, setErr
 
   const isCaseReAssigned = useMemo(() => {
     const caseStatus = caseDetails?.status;
-    if (caseStatus === "CASE_REASSIGNED") {
+    if (caseStatus === CaseWorkflowState.CASE_REASSIGNED) {
+      if (caseDetails?.additionalDetails?.judge?.comment) {
+        return { vakalatnamaFileUpload: true, pipAffidavitFileUpload: true };
+      }
       const curentFormIndex = advocateAndPipData?.boxComplainant?.index;
       const currentFormErrorObject =
         caseDetails?.additionalDetails?.scrutiny?.data?.additionalDetails?.advocateDetails?.form?.[curentFormIndex] || {};
@@ -1002,7 +1006,7 @@ function MultipleAdvocatesAndPip({ t, config, onSelect, formData, errors, setErr
                     }
                     {input.documentSubText && <p className="custom-document-sub-header">{t(input.documentSubText)}</p>}
                   </div>
-                  {isCaseReAssigned && isCaseReAssigned.hasOwnProperty(input?.fileKey) && (
+                  {isCaseReAssigned && isCaseReAssigned.hasOwnProperty(input?.fileKey) && isCaseReAssigned?.message && (
                     <ScrutinyInfoAdvocate message={isCaseReAssigned?.message} t={t}></ScrutinyInfoAdvocate>
                   )}
                   {currentValue.map((file, index) => (
