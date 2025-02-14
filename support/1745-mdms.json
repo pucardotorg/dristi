@@ -1,0 +1,518 @@
+[
+  {
+    "tenantId": "kl",
+    "moduleName": "commonUiConfig",
+    "masterName": "reviewCaseFileConfig",
+    "mdmsPayload": {
+      "id": "569fb70c-445d-4635-8b52-32d0a4af2aa0",
+      "tenantId": "kl",
+      "schemaCode": "commonUiConfig.reviewCaseFileConfig",
+      "uniqueIdentifier": "1",
+      "data": {
+        "id": 1,
+        "header": "CS_REVIEW_CASE_FILE_HEADING",
+        "subtext": "CS_REVIEW_CASE_FILE_SUBTEXT",
+        "className": "review-case-file",
+        "formconfig": [
+          {
+            "body": [
+              {
+                "key": "litigentDetails",
+                "type": "component",
+                "label": "CS_LITIGENT_DETAILS",
+                "number": 1,
+                "component": "SelectReviewAccordion",
+                "populators": {
+                  "inputs": [
+                    {
+                      "key": "complainantDetails",
+                      "data": {},
+                      "icon": "ComplainantDetailsIcon",
+                      "name": "complainantDetails",
+                      "label": "CS_COMPLAINT_DETAILS",
+                      "config": [
+                        {
+                          "type": "title",
+                          "value": ["firstName", "lastName"],
+                          "badgeType": "complainantType.name"
+                        },
+                        {
+                          "type": "phonenumber",
+                          "label": "PHONE_NUMBER",
+                          "value": "complainantVerification.mobileNumber"
+                        },
+                        {
+                          "type": "text",
+                          "label": "AGE",
+                          "value": "complainantAge"
+                        },
+                        {
+                          "type": "text",
+                          "label": "DESIGNATION",
+                          "value": "complainantDesignation",
+                          "dependentOn": "complainantType.code",
+                          "dependentValue": "REPRESENTATIVE"
+                        },
+                        {
+                          "type": "image",
+                          "label": "CS_ID_PROOF",
+                          "value": [
+                            "complainantVerification.individualDetails.document",
+                            "companyDetailsUpload.document"
+                          ],
+                          "enableScrutinyField": true
+                        },
+                        {
+                          "type": "address",
+                          "label": "ADDRESS",
+                          "value": "addressDetails",
+                          "dependentOn": "complainantType.code",
+                          "dependentValue": "INDIVIDUAL"
+                        },
+                        {
+                          "type": "text",
+                          "label": "TYPE_OF_ENTITY",
+                          "value": "complainantTypeOfEntity.name",
+                          "dependentOn": "complainantType.code",
+                          "dependentValue": "REPRESENTATIVE",
+                          "isLocalizationRequired": true
+                        },
+                        {
+                          "type": "text",
+                          "label": "company_Name",
+                          "value": "complainantCompanyName",
+                          "dependentOn": "complainantType.code",
+                          "dependentValue": "REPRESENTATIVE"
+                        },
+                        {
+                          "type": "address",
+                          "label": "COMPANY_ADDRESS",
+                          "value": "addressCompanyDetails",
+                          "dependentOn": "complainantType.code",
+                          "dependentValue": "REPRESENTATIVE"
+                        }
+                      ],
+                      "disableScrutiny": true
+                    },
+                    {
+                      "key": "respondentDetails",
+                      "data": {},
+                      "icon": "RespondentDetailsIcon",
+                      "name": "respondentDetails",
+                      "label": "CS_RESPONDENT_DETAILS",
+                      "config": [
+                        {
+                          "type": "title",
+                          "value": [
+                            "respondentFirstName",
+                            "respondentLastName"
+                          ],
+                          "badgeType": "respondentType.name"
+                        },
+                        {
+                          "type": "phonenumber",
+                          "label": "PHONE_NUMBER",
+                          "value": "phonenumbers.mobileNumber"
+                        },
+                        {
+                          "type": "text",
+                          "label": "AGE",
+                          "value": "respondentAge"
+                        },
+                        {
+                          "type": "text",
+                          "label": "DESIGNATION",
+                          "value": "respondentDesignation",
+                          "dependentOn": "respondentType.code",
+                          "dependentValue": "REPRESENTATIVE"
+                        },
+                        {
+                          "type": "text",
+                          "label": "CS_EMAIL_ID",
+                          "value": "emails.emailId"
+                        },
+                        {
+                          "type": "address",
+                          "label": "ADDRESS",
+                          "value": "addressDetails",
+                          "dependentOn": "respondentType.code",
+                          "dependentValue": "INDIVIDUAL"
+                        },
+                        {
+                          "type": "text",
+                          "label": "TYPE_OF_ENTITY",
+                          "value": "respondentTypeOfEntity.name",
+                          "dependentOn": "respondentType.code",
+                          "dependentValue": "REPRESENTATIVE",
+                          "isLocalizationRequired": true
+                        },
+                        {
+                          "type": "text",
+                          "label": "company_Name",
+                          "value": "respondentCompanyName",
+                          "dependentOn": "respondentType.code",
+                          "dependentValue": "REPRESENTATIVE"
+                        },
+                        {
+                          "type": "address",
+                          "label": "COMPANY_ADDRESS",
+                          "value": "addressDetails",
+                          "dependentOn": "respondentType.code",
+                          "dependentValue": "REPRESENTATIVE"
+                        },
+                        {
+                          "type": "image",
+                          "label": "CS_DOCUMENT",
+                          "value": [
+                            "companyDetailsUpload.document",
+                            "inquiryAffidavitFileUpload.document"
+                          ]
+                        }
+                      ]
+                    }
+                  ]
+                },
+                "withoutLabel": true,
+                "textAreaMaxLength": "255"
+              },
+              {
+                "key": "caseSpecificDetails",
+                "type": "component",
+                "label": "CS_CASE_SPECIFIC_DETAILS",
+                "number": 2,
+                "component": "SelectReviewAccordion",
+                "populators": {
+                  "inputs": [
+                    {
+                      "key": "chequeDetails",
+                      "data": {},
+                      "icon": "ChequeDetailsIcon",
+                      "name": "chequeDetails",
+                      "label": "CS_CHECKQUE_DETAILS",
+                      "config": [
+                        {
+                          "type": "title",
+                          "label": "CS_CHEQUE_NO",
+                          "value": "chequeNumber"
+                        },
+                        {
+                          "type": "text",
+                          "label": "CS_DISHONOURED_CHEQUE_SIGNATORY_NAME",
+                          "value": "chequeSignatoryName"
+                        },
+                        {
+                          "type": "text",
+                          "label": "CS_NAME_ON_CHEQUE",
+                          "value": "name"
+                        },
+                        {
+                          "type": "text",
+                          "label": "CS_PAYEE_BANK_NAME",
+                          "value": "payeeBankName"
+                        },
+                        {
+                          "type": "text",
+                          "label": "CS_PAYEE_BRANCH_NAME",
+                          "value": "payeeBranchName"
+                        },
+                        {
+                          "type": "text",
+                          "label": "CS_PAYER_BANK_NAME",
+                          "value": "payerBankName"
+                        },
+                        {
+                          "type": "date",
+                          "label": "CS_DATE_OF_ISSUANCE",
+                          "value": "issuanceDate"
+                        },
+                        {
+                          "type": "text",
+                          "label": "CS_PAYER_BRANCH_NAME",
+                          "value": "payerBranchName"
+                        },
+                        {
+                          "type": "text",
+                          "label": "CS_IFSC_CODE",
+                          "value": "ifsc"
+                        },
+                        {
+                          "type": "amount",
+                          "label": "CS_CHEQUE_AMOUNT",
+                          "value": "chequeAmount"
+                        },
+                        {
+                          "type": "text",
+                          "label": "POLICE_STATION",
+                          "value": "policeStation.code",
+                          "isLocalizationRequired": true
+                        },
+                        {
+                          "type": "date",
+                          "label": "CS_DATE_OF_CHEQUE_DEPOSIT",
+                          "value": "depositDate"
+                        },
+                        {
+                          "type": "text",
+                          "label": "REASON_FOR_RETURN_CHEQUE",
+                          "value": "delayReason.reasonForReturnCheque"
+                        },
+                        {
+                          "type": "text",
+                          "label": "CS_CHEQUE_ADDITIONAL_DETAILS",
+                          "value": "chequeAdditionalDetails.text"
+                        },
+                        {
+                          "type": "infoBox",
+                          "value": "infoBoxData"
+                        },
+                        {
+                          "type": "image",
+                          "label": "CS_DOCUMENT",
+                          "value": [
+                            "bouncedChequeFileUpload.document",
+                            "depositChequeFileUpload.document",
+                            "returnMemoFileUpload.document"
+                          ]
+                        }
+                      ]
+                    },
+                    {
+                      "key": "debtLiabilityDetails",
+                      "data": {},
+                      "icon": "DebtLiabilityIcon",
+                      "name": "debtLiabilityDetails",
+                      "label": "CS_DEBT_LIABILITY_DETAILS",
+                      "config": [
+                        {
+                          "type": "text",
+                          "label": "CS_NATURE_DEBT_LIABILITY",
+                          "value": "liabilityNature"
+                        },
+                        {
+                          "type": "text",
+                          "label": "CHEQUE_FOR_FULL_OR_PARTIAL_LIABILITY",
+                          "value": "liabilityType.name",
+                          "isLocalizationRequired": true
+                        },
+                        {
+                          "type": "amount",
+                          "label": "CS_PARIAL_AMOUNT",
+                          "value": "totalAmount"
+                        },
+                        {
+                          "type": "text",
+                          "label": "CS_DEBT_ADDITIONAL_DETAILS",
+                          "value": "additionalDebtLiabilityDetails.text"
+                        },
+                        {
+                          "type": "image",
+                          "label": "CS_DOCUMENT",
+                          "value": ["debtLiabilityFileUpload.document"]
+                        }
+                      ]
+                    },
+                    {
+                      "key": "demandNoticeDetails",
+                      "data": {},
+                      "icon": "DemandDetailsNoticeIcon",
+                      "name": "demandNoticeDetails",
+                      "label": "CS_DEMAND_NOTICE_DETAILS",
+                      "config": [
+                        {
+                          "type": "date",
+                          "label": "CS_DATE_OF_DISPATCH_LDN",
+                          "value": "dateOfDispatch"
+                        },
+                        {
+                          "type": "date",
+                          "label": "CS_DATE_OF_SERVICE_LDN",
+                          "value": "dateOfService"
+                        },
+                        {
+                          "type": "date",
+                          "label": "CS_DATE_OF_REPLY_LDN",
+                          "value": "dateOfReply",
+                          "notAvailable": "NO_REPLY_RECIEVED"
+                        },
+                        {
+                          "type": "date",
+                          "label": "CS_DATE_OF_ACCRUAL_LDN",
+                          "value": "dateOfAccrual"
+                        },
+                        {
+                          "type": "image",
+                          "label": "CS_DOCUMENT",
+                          "value": [
+                            "legalDemandNoticeFileUpload.document",
+                            "proofOfAcknowledgmentFileUpload.document",
+                            "proofOfDispatchFileUpload.document",
+                            "proofOfReplyFileUpload.document"
+                          ]
+                        }
+                      ]
+                    },
+                    {
+                      "key": "delayApplications",
+                      "data": {},
+                      "icon": "DemandDetailsNoticeIcon",
+                      "name": "delayApplications",
+                      "label": "CS_DELAY_CONDONATION_APPLICATION",
+                      "config": [
+                        {
+                          "type": "text",
+                          "label": "CS_QUESTION_DELAY_APPLICATION",
+                          "value": "delayCondonationType.name",
+                          "isLocalizationRequired": true
+                        },
+                        {
+                          "type": "text",
+                          "label": "SKIP_DELAY_APPLICATION_CONFIRM",
+                          "value": "isDcaSkippedInEFiling.name",
+                          "dependentOn": "delayCondonationType.name",
+                          "dependentValue": "NO",
+                          "isLocalizationRequired": true
+                        },
+                        {
+                          "type": "text",
+                          "label": "DEALY_ADDITIONAL_INFO",
+                          "value": "additionalDelayCondonationDetails.text",
+                          "dependentOn": "delayCondonationType.name",
+                          "dependentValue": "NO"
+                        },
+                        {
+                          "type": "image",
+                          "label": "CS_DOCUMENT",
+                          "value": ["condonationFileUpload.document"],
+                          "dependentOn": "delayCondonationType.name",
+                          "dependentValue": "NO"
+                        }
+                      ]
+                    }
+                  ]
+                },
+                "withoutLabel": true
+              },
+              {
+                "key": "additionalDetails",
+                "type": "component",
+                "label": "CS_ADDITIONAL_DETAILS",
+                "number": 3,
+                "component": "SelectReviewAccordion",
+                "populators": {
+                  "inputs": [
+                    {
+                      "key": "witnessDetails",
+                      "data": {},
+                      "icon": "WitnessDetailsIcon",
+                      "name": "witnessDetails",
+                      "label": "CS_WITNESS_DETAIL_HEADING",
+                      "config": [
+                        {
+                          "type": "title",
+                          "value": ["firstName", "lastName"]
+                        },
+                        {
+                          "type": "phonenumber",
+                          "label": "PHONE_NUMBER",
+                          "value": "phonenumbers.mobileNumber"
+                        },
+                        {
+                          "type": "text",
+                          "label": "CS_EMAIL_ID",
+                          "value": "emails.emailId"
+                        },
+                        {
+                          "type": "text",
+                          "label": "AGE",
+                          "value": "witnessAge"
+                        },
+                        {
+                          "type": "text",
+                          "label": "WITNESS_DESIGNATION",
+                          "value": "witnessDesignation"
+                        },
+                        {
+                          "type": "address",
+                          "label": "ADDRESS",
+                          "value": "addressDetails"
+                        },
+                        {
+                          "type": "text",
+                          "label": "CS_TEXTAREA_WITNESS_ADDITIONAL_DETAIL",
+                          "value": "witnessAdditionalDetails.text"
+                        }
+                      ],
+                      "noDataText": "NO_WITNESSES_ADDED"
+                    },
+                    {
+                      "key": "prayerSwornStatement",
+                      "data": {},
+                      "icon": "PrayerSwornIcon",
+                      "name": "prayerSwornStatement",
+                      "label": "CS_PRAYER_AND_SWORN_STATEMENT_HEADING",
+                      "config": [
+                        {
+                          "type": "text",
+                          "label": "CS_MEMORANDUM_OF_COMPLAINT_HEADER",
+                          "value": "memorandumOfComplaint.text"
+                        },
+                        {
+                          "type": "text",
+                          "label": "CS_SWORN_STATEMENT_HEADER",
+                          "value": "swornStatement.text",
+                          "textDependentOn": "swornStatement.document",
+                          "textDependentValue": "DOCUMENT_UPLOADED"
+                        },
+                        {
+                          "type": "text",
+                          "label": "CS_ADDITIONAL_DETAILS",
+                          "value": "additionalDetails.text"
+                        },
+                        {
+                          "type": "image",
+                          "label": "CS_DOCUMENT",
+                          "value": [
+                            "swornStatement.document",
+                            "SelectUploadDocWithName"
+                          ]
+                        }
+                      ]
+                    },
+                    {
+                      "key": "advocateDetails",
+                      "data": {},
+                      "icon": "AdvocateDetailsIcon",
+                      "name": "advocateDetails",
+                      "label": "CS_ADVOCATE_DETAILS",
+                      "config": [
+                        {
+                          "type": "title",
+                          "prefix": "Complainant:",
+                          "value": [
+                            "multipleAdvocatesAndPip.boxComplainant.firstName",
+                            "multipleAdvocatesAndPip.boxComplainant.middleName",
+                            "multipleAdvocatesAndPip.boxComplainant.lastName"
+                          ]
+                        }
+                      ],
+                      "disableScrutiny": true
+                    }
+                  ]
+                },
+                "withoutLabel": true
+              },
+              {
+                "key": "scrutinyMessage",
+                "type": "component",
+                "component": "SelectEmptyComponent",
+                "populators": {},
+                "withoutLabel": true
+              }
+            ]
+          }
+        ]
+      },
+      "isActive": true
+    }
+  }
+]
