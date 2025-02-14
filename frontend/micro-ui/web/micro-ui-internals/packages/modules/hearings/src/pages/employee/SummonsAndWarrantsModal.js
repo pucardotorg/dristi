@@ -235,8 +235,7 @@ const SummonsAndWarrantsModal = ({ handleClose }) => {
       (item) =>
         (taskOrderType === "NOTICE" ? item.orderType === "NOTICE" : item.orderType === "SUMMONS" || item.orderType === "WARRANT") &&
         item?.status === "PUBLISHED" &&
-        item?.hearingNumber === hearingId &&
-        item?.additionalDetails?.formdata?.noticeOrder?.party?.data?.partyIndex === partyIndex
+        item?.hearingNumber === hearingId
     );
 
     // make orders list by partyTypes Accused and Witness.
@@ -368,6 +367,10 @@ const SummonsAndWarrantsModal = ({ handleClose }) => {
 
   const modalLabel = ["SUMMONS", "WARRANT"].includes(orderType) ? "SUMMON_WARRANT_STATUS" : "NOTICE_STATUS";
 
+  function removeAccusedSuffix(partyName) {
+    return partyName.replace(/\s*\(Accused\)$/, "");
+  }
+
   return (
     <Modal
       isOpen={true}
@@ -403,7 +406,7 @@ const SummonsAndWarrantsModal = ({ handleClose }) => {
               className={`round-item ${index === activeIndex?.partyIndex ? "active" : ""}`}
             >
               <div style={{ display: "flex", flexDirection: "column" }}>
-                <span>{item?.partyName}</span>
+                <span>{removeAccusedSuffix(item?.partyName)}</span>
                 <span style={{ fontWeight: "400" }}>{item?.partyType}</span>
               </div>
             </div>

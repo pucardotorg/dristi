@@ -373,10 +373,10 @@ export const checkNameValidation = ({ formData, setValue, selected, reset, index
 
   // added for Nature of Debt/liablity
   if (selected === "debtLiabilityDetails") {
-    if(formData?.liabilityNature){
+    if (formData?.liabilityNature) {
       const formDataCopy = structuredClone(formData);
       for (const key in formDataCopy) {
-        if (["liabilityNature"].includes(key) && Object.hasOwnProperty.call(formDataCopy, key)){
+        if (["liabilityNature"].includes(key) && Object.hasOwnProperty.call(formDataCopy, key)) {
           const oldValue = formDataCopy[key];
           let value = oldValue;
           if (typeof value === "string") {
@@ -2614,7 +2614,7 @@ export const updateCaseDetails = async ({
     return null;
   }
 
-  return DRISTIService.caseUpdateService(
+  return await DRISTIService.caseUpdateService(
     {
       cases: {
         ...caseDetails,
