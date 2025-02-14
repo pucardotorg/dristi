@@ -193,6 +193,7 @@ const AdmittedCases = () => {
 
   const history = useHistory();
   const isCitizen = userRoles.includes("CITIZEN");
+  const isCourtStaff = userRoles.includes("COURT_ROOM_MANAGER");
   const OrderWorkflowAction = Digit.ComponentRegistryService.getComponent("OrderWorkflowActionEnum") || {};
   const ordersService = Digit.ComponentRegistryService.getComponent("OrdersService") || {};
   const OrderReviewModal = Digit.ComponentRegistryService.getComponent("OrderReviewModal") || {};
@@ -2136,17 +2137,36 @@ const AdmittedCases = () => {
 
   const handleDownloadPDF = async () => {
     const caseId = caseDetails?.id;
+    const caseStatus = caseDetails?.status;
+
+    // Early return if the status requires a simple download
+    if (["PENDING_PAYMENT", "UNDER_SCRUTINY", "PENDING_REGISTRATION"].includes(caseStatus)) {
+      const fileStoreId =
+      caseDetails?.documents?.find((doc) => doc?.key === "case.complaint.signed")?.fileStore || caseDetails?.additionalDetails?.signedCaseDocument;
+      if (fileStoreId) {
+        downloadPdf(tenantId, fileStoreId);
+        return;
+      } else {
+        console.error("No fileStoreId available for download.");
+        return;
+      }
+    }
+
     try {
       setDownloadCasePdfLoading(true);
+
       if (!caseId) {
         throw new Error("Case ID is not available.");
       }
+
       const response = await DRISTIService.downloadCaseBundle({ tenantId, caseId }, { tenantId });
-      const fileStoreId = response?.fileStoreId?.toLowerCase();
-      if (!fileStoreId || ["null", "undefined"].includes(fileStoreId)) {
+      const responseFileStoreId = response?.fileStoreId?.toLowerCase();
+
+      if (!responseFileStoreId || ["null", "undefined"].includes(responseFileStoreId)) {
         throw new Error("Invalid fileStoreId received in the response.");
       }
-      downloadPdf(tenantId, response?.fileStoreId);
+
+      downloadPdf(tenantId, responseFileStoreId);
     } catch (error) {
       console.error("Error downloading PDF: ", error.message || error);
       showToast({
@@ -2227,7 +2247,7 @@ const AdmittedCases = () => {
             )}
           </div>
           <div className="make-submission-action" style={{ display: "flex", gap: 20, justifyContent: "space-between", alignItems: "center" }}>
-            {isCitizen && (
+            {(isCitizen || isCourtStaff) && (
               <Button
                 variation={"outlined"}
                 label={t("DOWNLOAD_CASE_FILE")}
