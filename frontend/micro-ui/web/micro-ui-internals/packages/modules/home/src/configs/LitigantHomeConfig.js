@@ -182,7 +182,7 @@ export const TabLitigantSearchConfig = {
                 },
               },
               {
-                label: "CS_CASE_ID",
+                label: "CS_CASE_NAME_ID",
                 type: "text",
                 isMandatory: false,
                 disable: false,
@@ -265,7 +265,7 @@ export const TabLitigantSearchConfig = {
             },
             fields: [
               {
-                label: "CS_CASE_ID",
+                label: "CS_CASE_NAME_ID",
                 type: "text",
                 isMandatory: false,
                 disable: false,
@@ -389,7 +389,7 @@ export const TabLitigantSearchConfig = {
                 },
               },
               {
-                label: "CS_CASE_ID",
+                label: "CS_CASE_NAME_ID",
                 type: "text",
                 isMandatory: false,
                 disable: false,
