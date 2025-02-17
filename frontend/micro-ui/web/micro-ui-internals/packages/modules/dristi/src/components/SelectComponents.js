@@ -241,7 +241,13 @@ const SelectComponents = ({ t, config, onSelect, formData = {}, errors, formStat
                   />
                 ) : input?.type === "Radio" ? (
                   <RadioButtons
-                    style={{ display: "flex", justifyContent: "flex-start", gap: "3rem", ...input.styles }}
+                    style={{
+                      display: "flex",
+                      justifyContent: "flex-start",
+                      gap: "3rem",
+                      ...input.styles,
+                      ...(input?.disable && { opacity: 0.5 }),
+                    }}
                     selectedOption={formData?.[config?.key]?.[input?.name]}
                     options={input?.options}
                     optionsKey={"code"}
@@ -249,6 +255,7 @@ const SelectComponents = ({ t, config, onSelect, formData = {}, errors, formStat
                     onSelect={(value) => {
                       setValue(value, input?.name);
                     }}
+                    disabled={input?.disable || config?.disable}
                   />
                 ) : (
                   <React.Fragment>

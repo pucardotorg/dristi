@@ -1307,9 +1307,26 @@ function EFilingCases({ path }) {
                 modifiedFormComponent.disable = scrutiny?.[selected]?.scrutinyMessage?.FSOError || (judgeObj && !isPendingReESign) ? false : true;
                 if (
                   modifiedFormComponent?.type === "radio" &&
-                  (!scrutiny?.[selected]?.scrutinyMessage?.FSOError || !(judgeObj && !isPendingReESign))
+                  !(scrutiny?.[selected]?.scrutinyMessage?.FSOError || (judgeObj && !isPendingReESign))
                 ) {
                   modifiedFormComponent.populators.styles = { opacity: 0.5 };
+                }
+                if (judgeObj && !isPendingReESign) {
+                  if (selected === "complainantDetails") {
+                    const disabledFields = ["firstName", "middleName", "lastName", "complainantType", "complainantAge"];
+                    const fieldName = modifiedFormComponent?.populators?.name || modifiedFormComponent?.key;
+
+                    if (disabledFields?.includes(fieldName)) {
+                      modifiedFormComponent.disable = true;
+                    }
+                    if (modifiedFormComponent?.component === "SelectComponents") {
+                      modifiedFormComponent?.populators?.inputs?.forEach((input) => {
+                        if (input?.name === "typeOfAddress") {
+                          input.disable = true;
+                        }
+                      });
+                    }
+                  }
                 }
                 if (scrutiny?.[selected] && scrutiny?.[selected]?.form?.[index]) {
                   if (formComponent.component == "SelectUploadFiles") {
