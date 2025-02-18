@@ -203,11 +203,19 @@ const SelectParty = ({
           ) : (
             selectPartyData?.isReplaceAdvocate?.value && (
               <MultiSelectDropdown
-                options={parties?.filter((filterParty) =>
-                  selectPartyData?.partyInvolve?.value === "COMPLAINANTS"
-                    ? filterParty?.partyType?.includes("complainant")
-                    : filterParty?.partyType?.includes("respondent")
-                )}
+                options={parties
+                  ?.filter((filterParty) =>
+                    selectPartyData?.partyInvolve?.value === "COMPLAINANTS"
+                      ? filterParty?.partyType?.includes("complainant")
+                      : filterParty?.partyType?.includes("respondent")
+                  )
+                  ?.map((party) => ({
+                    ...party,
+                    isDisabled:
+                      selectPartyData?.isReplaceAdvocate?.value === "YES"
+                        ? party?.isAdvocateRepresenting && party?.advocateReprresentingLength === 1
+                        : party?.isAdvocateRepresenting,
+                  }))}
                 selected={party}
                 optionsKey={"fullName"}
                 onSelect={(value) => {

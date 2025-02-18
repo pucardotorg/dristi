@@ -48,7 +48,7 @@ const Response = ({ refetch, setHideBack }) => {
                   refetch();
                   history.push(`/${window?.contextPath}/citizen/dristi/home`);
                 }}
-                label={t("JOIN_CASE")}
+                label={t("SEARCH_NEW_CASE")}
                 className={"join-a-case"}
               />
             </React.Fragment>
