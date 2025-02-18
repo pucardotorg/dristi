@@ -518,29 +518,34 @@ function EFilingCases({ path }) {
   }, [selected]);
 
   useEffect(() => {
-    if (Object.keys(caseDetails).length !== 0) {
+    const currentCaseDetails = isCaseReAssigned && errorCaseDetails ? errorCaseDetails : caseDetails;
+
+    if (currentCaseDetails && Object.keys(currentCaseDetails).length !== 0) {
       const fieldsRemainingCopy = structuredClone(fieldsRemaining);
       const additionalDetailsArray = ["complainantDetails", "respondentDetails", "witnessDetails", "prayerSwornStatement", "advocateDetails"];
       const caseDetailsArray = ["chequeDetails", "debtLiabilityDetails", "demandNoticeDetails", "delayApplications"];
+
       for (const key of additionalDetailsArray) {
-        if (caseDetails?.additionalDetails?.[key]) {
+        if (currentCaseDetails?.additionalDetails?.[key]) {
           const index = fieldsRemainingCopy.findIndex((fieldsRemainingCopy) => fieldsRemainingCopy.selectedPage === key);
-          fieldsRemainingCopy[index] = setMandatoryAndOptionalRemainingFields(caseDetails?.additionalDetails?.[key]?.formdata, key);
+          fieldsRemainingCopy[index] = setMandatoryAndOptionalRemainingFields(currentCaseDetails?.additionalDetails?.[key]?.formdata, key);
         }
       }
+
       for (const key of caseDetailsArray) {
-        if (caseDetails?.caseDetails?.[key]) {
+        if (currentCaseDetails?.caseDetails?.[key]) {
           const index = fieldsRemainingCopy.findIndex((fieldsRemainingCopy) => fieldsRemainingCopy.selectedPage === key);
-          fieldsRemainingCopy[index] = setMandatoryAndOptionalRemainingFields(caseDetails?.caseDetails?.[key]?.formdata, key);
+          fieldsRemainingCopy[index] = setMandatoryAndOptionalRemainingFields(currentCaseDetails?.caseDetails?.[key]?.formdata, key);
         }
       }
-      if (isDraftInProgress) {
+
+      if (isDraftInProgress || isCaseReAssigned) {
         setFieldsRemaining(fieldsRemainingCopy);
       } else {
         setFieldsRemaining([{ mandatoryTotalCount: 0, optionalTotalCount: 0 }]);
       }
     }
-  }, [caseDetails]);
+  }, [caseDetails, errorCaseDetails, isCaseReAssigned, isDraftInProgress]);
 
   useEffect(() => {
     const filingParty = caseDetails?.auditDetails?.createdBy === userInfo?.uuid;
@@ -1598,8 +1603,8 @@ function EFilingCases({ path }) {
         currentPageOptionalFields.push(...currentPageOptionalDependentFields);
 
         if (currentPageMandatoryFields.length !== 0) {
-          for (let i = 0; i < currentPageMandatoryFields.length; i++) {
-            const value = extractValue(currentIndexData?.data, currentPageMandatoryFields[i]);
+          for (let j = 0; j < currentPageMandatoryFields.length; j++) {
+            const value = extractValue(currentIndexData?.data, currentPageMandatoryFields[j]);
             const isValueEmpty = isEmptyValue(value);
             if (isValueEmpty) {
               totalMandatoryLeft++;
@@ -1609,10 +1614,10 @@ function EFilingCases({ path }) {
 
         if ("ifMultipleAddressLocations" in currentPage) {
           const arrayValue = currentIndexData?.data[currentPage?.ifMultipleAddressLocations?.dataKey] || [];
-          for (let i = 0; i < arrayValue.length; i++) {
+          for (let k = 0; k < arrayValue.length; k++) {
             const mandatoryFields = currentPage?.ifMultipleAddressLocations?.mandatoryFields || [];
             for (let j = 0; j < mandatoryFields.length; j++) {
-              const value = extractValue(arrayValue[i], mandatoryFields[j]);
+              const value = extractValue(arrayValue[k], mandatoryFields[j]);
               const isValueEmpty = isEmptyValue(value);
               if (isValueEmpty) {
                 totalMandatoryLeft++;
@@ -1623,8 +1628,8 @@ function EFilingCases({ path }) {
 
         if ("anyOneOfTheseMandatoryFields" in currentPage) {
           const fieldsArray = currentPage.anyOneOfTheseMandatoryFields;
-          for (let i = 0; i < fieldsArray.length; i++) {
-            const currentChildArray = fieldsArray[i];
+          for (let k = 0; k < fieldsArray.length; k++) {
+            const currentChildArray = fieldsArray[k];
             let count = 0;
             for (let j = 0; j < currentChildArray.length; j++) {
               const value = extractValue(currentIndexData?.data, currentChildArray[j]);
@@ -1641,8 +1646,8 @@ function EFilingCases({ path }) {
 
         if (currentPageOptionalFields.length !== 0) {
           let optionalLeft = 0;
-          for (let i = 0; i < currentPageOptionalFields.length; i++) {
-            const value = extractValue(currentIndexData?.data, currentPageOptionalFields[i]);
+          for (let j = 0; j < currentPageOptionalFields.length; j++) {
+            const value = extractValue(currentIndexData?.data, currentPageOptionalFields[j]);
             const isValueEmpty = isEmptyValue(value);
             if (isValueEmpty) {
               optionalLeft++;
