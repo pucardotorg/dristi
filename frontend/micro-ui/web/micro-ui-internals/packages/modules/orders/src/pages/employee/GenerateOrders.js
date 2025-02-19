@@ -294,6 +294,7 @@ const GenerateOrders = () => {
             code: fullName,
             name: `${fullName} (Accused)`,
             uuid: allAdvocates[item?.additionalDetails?.uuid],
+            individualId: item?.individualId,
             isJoined: true,
             partyType: "respondent",
           };
@@ -1430,7 +1431,7 @@ const GenerateOrders = () => {
             filingNumber: filingNumber,
             isCompleted: false,
             stateSla,
-            additionalDetails: { ...additionalDetails },
+            additionalDetails: { ...additionalDetails, litigants: [assignee?.individualId] },
             tenantId,
           },
         });
@@ -1449,9 +1450,13 @@ const GenerateOrders = () => {
     if (order?.orderType === "INITIATING_RESCHEDULING_OF_HEARING_DATE") {
       create = true;
       status = "OPTOUT";
-      assignees = Object.values(allAdvocates)
-        ?.flat()
-        ?.map((uuid) => ({ uuid }));
+      assignees = [
+        ...new Map(
+          Object.values(allAdvocates)
+            ?.flat()
+            ?.map((uuid) => [uuid, { uuid }])
+        ).values(),
+      ];
       name = t("CHOOSE_DATES_FOR_RESCHEDULE_OF_HEARING_DATE");
       entityType = "hearing-default";
       const promises = assignees.map(async (assignee) => {
@@ -1467,7 +1472,12 @@ const GenerateOrders = () => {
             filingNumber: filingNumber,
             isCompleted: false,
             stateSla,
-            additionalDetails,
+            additionalDetails: {
+              ...additionalDetails,
+              litigants: caseDetails?.representatives
+                ?.find((representative) => representative?.additionalDetails?.uuid === assignee?.uuid)
+                ?.representing?.map((representing) => representing?.individualId),
+            },
             tenantId,
           },
         });
@@ -1496,7 +1506,11 @@ const GenerateOrders = () => {
           filingNumber: filingNumber,
           isCompleted: false,
           stateSla: stateSlaMap?.[order?.orderType || orderType] * dayInMillisecond + todayDate,
-          additionalDetails: { ...additionalDetails, applicationNumber: order?.additionalDetails?.formdata?.refApplicationId },
+          additionalDetails: {
+            ...additionalDetails,
+            applicationNumber: order?.additionalDetails?.formdata?.refApplicationId,
+            litigants: [...complainants?.map((data) => data?.individualId)],
+          },
           tenantId,
         },
       });
@@ -1511,21 +1525,27 @@ const GenerateOrders = () => {
         .map((com) => com?.additionalDetails?.uuid);
       assignees = [...assignee, ...complainantUuids]?.map((uuid) => ({ uuid }));
       entityType = "order-default";
-      return ordersService.customApiService(Urls.orders.pendingTask, {
-        pendingTask: {
-          name: t(`MAKE_PAYMENT_FOR_NOTICE_${channelTypeEnum?.[channel?.type]?.code}`),
-          entityType,
-          referenceId: `MANUAL_${refId}`,
-          status: `PAYMENT_PENDING_${channelTypeEnum?.[channel?.type]?.code}`,
-          assignedTo: assignees,
-          assignedRole,
-          cnrNumber: cnrNumber,
-          filingNumber: filingNumber,
-          isCompleted: false,
-          stateSla: stateSlaMap?.[order?.orderType || orderType] * dayInMillisecond + todayDate,
-          additionalDetails: { ...additionalDetails, applicationNumber: order?.additionalDetails?.formdata?.refApplicationId },
-          tenantId,
+      const pendingTask = {
+        name: t(`MAKE_PAYMENT_FOR_NOTICE_${channelTypeEnum?.[channel?.type]?.code}`),
+        entityType,
+        referenceId: `MANUAL_${refId}`,
+        status: `PAYMENT_PENDING_${channelTypeEnum?.[channel?.type]?.code}`,
+        assignedTo: assignees,
+        assignedRole,
+        cnrNumber: cnrNumber,
+        filingNumber: filingNumber,
+        isCompleted: false,
+        stateSla: stateSlaMap?.[order?.orderType || orderType] * dayInMillisecond + todayDate,
+        additionalDetails: {
+          ...additionalDetails,
+          applicationNumber: order?.additionalDetails?.formdata?.refApplicationId,
+          litigants: [...complainants?.map((data) => data?.individualId)],
         },
+        tenantId,
+      };
+
+      return ordersService.customApiService(Urls.orders.pendingTask, {
+        pendingTask,
       });
     }
     if ((order?.orderType === "WARRANT" || orderType === "WARRANT") && refId) {
@@ -1550,12 +1570,17 @@ const GenerateOrders = () => {
           filingNumber: filingNumber,
           isCompleted: false,
           stateSla: stateSlaMap?.[order?.orderType || orderType] * dayInMillisecond + todayDate,
-          additionalDetails: { ...additionalDetails, applicationNumber: order?.additionalDetails?.formdata?.refApplicationId },
+          additionalDetails: {
+            ...additionalDetails,
+            applicationNumber: order?.additionalDetails?.formdata?.refApplicationId,
+            litigants: [...complainants?.map((data) => data?.individualId)],
+          },
           tenantId,
         },
       });
     }
 
+    // need to check
     if (order?.orderType === "SET_BAIL_TERMS") {
       create = true;
       status = "CREATE_SUBMISSION";
@@ -1574,7 +1599,14 @@ const GenerateOrders = () => {
           filingNumber: filingNumber,
           isCompleted: false,
           stateSla,
-          additionalDetails,
+          additionalDetails: {
+            ...additionalDetails,
+            litigants: [
+              caseDetails?.litigants?.find(
+                (litigant) => litigant?.additionalDetails?.uuid === applicationDetails?.additionalDetails?.formdata?.selectComplainant?.uuid
+              )?.individualId,
+            ],
+          },
           tenantId,
         },
       });
@@ -2509,7 +2541,11 @@ const GenerateOrders = () => {
                   filingNumber: caseData?.filingNumber,
                   isCompleted: false,
                   stateSla: todayDate + 20 * 24 * 60 * 60 * 1000,
-                  additionalDetails: { individualId: respondent?.individualId, caseId: caseData?.id },
+                  additionalDetails: {
+                    individualId: respondent?.individualId,
+                    caseId: caseData?.id,
+                    litigants: [respondent?.map((data) => data?.individualId)],
+                  },
                   tenantId,
                 },
               });

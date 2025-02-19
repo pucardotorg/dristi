@@ -120,7 +120,12 @@ function CaseFileAdmission({ t, path }) {
   const caseDetails = useMemo(() => caseFetchResponse?.criteria?.[0]?.responseList?.[0] || null, [caseFetchResponse]);
   const delayCondonationData = useMemo(() => caseDetails?.caseDetails?.delayApplications?.formdata?.[0]?.data, [caseDetails]);
   const allAdvocates = useMemo(() => getAdvocates(caseDetails), [caseDetails]);
-  const representativesUuid = useMemo(() => allAdvocates?.[Object.keys(allAdvocates)?.[0]], [allAdvocates]);
+
+  const representativesUuid = useMemo(() => {
+    if (!caseDetails || !allAdvocates) return [];
+    return allAdvocates?.[caseDetails?.litigants?.find((litigant) => litigant?.partyType === "complainant.primary")?.additionalDetails?.uuid];
+  }, [allAdvocates, caseDetails]);
+
   const complainantPrimaryUUId = useMemo(
     () => caseDetails?.litigants?.find((item) => item?.partyType === "complainant.primary").additionalDetails?.uuid || "",
     [caseDetails]
@@ -790,7 +795,9 @@ function CaseFileAdmission({ t, path }) {
               cnrNumber: caseDetails?.cnrNumber,
               filingNumber: caseDetails?.filingNumber,
               isCompleted: false,
-              additionalDetails: {},
+              additionalDetails: {
+                litigants: [caseDetails?.litigants?.find((litigant) => litigant?.partyType === "complainant.primary")?.individualId],
+              },
               tenantId,
             },
           });
