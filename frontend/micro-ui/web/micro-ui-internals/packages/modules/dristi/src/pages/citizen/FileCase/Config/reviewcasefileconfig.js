@@ -310,6 +310,10 @@ export const reviewCaseFileFormConfig = [
                 //   value: "modeOfDispatchType.modeOfDispatchType.name",
                 // },
                 {
+                  type: "infoBox",
+                  value: "infoBoxData",
+                },
+                {
                   type: "date",
                   label: "CS_DATE_OF_DISPATCH_LDN",
                   value: "dateOfDispatch",
