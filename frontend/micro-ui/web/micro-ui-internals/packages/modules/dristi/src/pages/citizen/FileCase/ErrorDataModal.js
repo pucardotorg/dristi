@@ -33,7 +33,7 @@ function ErrorDataModal({ t, setIsSubmitDisabled, showErrorDataModal, setShowErr
     >
       <div>
         {showErrorDataModal?.errorData?.map((data) => {
-          return <h1>{`Complainant ${data?.complainant} : ${t("ES_COMMON_PLEASE_ENTER_ALL_MANDATORY_FIELDS")}`}</h1>;
+          return <h1>{`Complainant ${data?.complainant} : ${data?.errorKeys?.join(", ")}`}</h1>;
         })}
       </div>
     </Modal>
