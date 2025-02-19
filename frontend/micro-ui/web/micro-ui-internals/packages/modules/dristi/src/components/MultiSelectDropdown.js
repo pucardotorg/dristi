@@ -167,7 +167,7 @@ const MultiSelectDropdown = ({
   };
 
   return (
-    <div>
+    <div style={{ marginBottom: "1px" }}>
       <div className={`multi-select-dropdown-wrap ${disable ? "disabled" : ""}`} ref={dropdownRef}>
         <div className={`master${active ? `-active` : ``} ${disable ? "disabled" : ""}`}>
           <input

@@ -95,7 +95,7 @@ const JoinCaseSuccess = ({ success, messageHeader, caseDetails, closeModal, refr
                         <NameListWithModal t={t} data={successScreenData?.respondentList} type={"RESPONDENTS_TEXT"} />
                       </div>
                     </div>
-                    <div className="complainants-respondents">
+                    <div className="complainants-respondents" style={{ display: "flex", flexWrap: "wrap", gap: "0px" }}>
                       <div style={{ width: "50%" }}>
                         <h2 className="case-info-title">{t("COMPLAINTS_ADVOCATES")}</h2>
                         <NameListWithModal t={t} data={successScreenData?.complainantAdvocateList} type={"COMPLAINTS_ADVOCATES"} />
