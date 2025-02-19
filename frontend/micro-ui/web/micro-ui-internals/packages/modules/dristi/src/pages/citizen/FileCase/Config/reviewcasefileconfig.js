@@ -226,8 +226,8 @@ export const reviewCaseFileFormConfig = [
                 {
                   type: "text",
                   label: "POLICE_STATION",
-                  value: "policeStation.code",
-                  isLocalizationRequired: true,
+                  value: "policeStation.name",
+                  isLocalizationRequired: false,
                 },
                 {
                   type: "date",
