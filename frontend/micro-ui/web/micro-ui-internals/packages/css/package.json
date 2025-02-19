@@ -1,9 +1,9 @@
 {
-  "name": "@egovernments/digit-ui-css",
-  "version": "0.0.1-dristi-kerala.1",
+  "name": "dristi-ui-css",
+  "version": "0.0.1-dristi-kerala.5",
   "license": "MIT",
   "main": "dist/index.css",
-  "author": "Jagankumar <jagan.kumar@egov.org.in>",
+  "author": "Akshay Kumar <akshay.kumar@beehyv.com>",
   "engines": {
     "node": ">=14"
   },

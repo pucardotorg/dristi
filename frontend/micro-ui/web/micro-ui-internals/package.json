@@ -58,7 +58,7 @@
   "dependencies": {
     "@egovernments/digit-ui-components": "0.0.1-beta.28",
     "@egovernments/digit-ui-react-components": "1.8.2-beta.11",
-    "@egovernments/dristi-ui-css": "0.0.1-dristi-kerala.3",
+    "dristi-ui-css": "0.0.1-dristi-kerala.5",
     "lodash": "4.17.21",
     "microbundle-crl": "0.13.11",
     "react": "17.0.2",
