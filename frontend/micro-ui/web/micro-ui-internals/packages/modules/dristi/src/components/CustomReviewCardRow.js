@@ -98,6 +98,7 @@ const CustomReviewCardRow = ({
     enableScrutinyField = false,
   } = config;
   const tenantId = window?.Digit.ULBService.getCurrentTenantId();
+  const isCitizen = useMemo(() => Boolean(Digit?.UserService?.getUser()?.info?.type === "CITIZEN"), [Digit]);
 
   function getNestedValue(obj, path) {
     return path.split(".").reduce((acc, key) => acc?.[key], obj);
@@ -145,6 +146,9 @@ const CustomReviewCardRow = ({
     if (isPrevScrutiny && (!disableScrutiny || enableScrutinyField)) {
       showFlagIcon = prevDataError ? true : false;
     }
+
+    if (isCitizen) showFlagIcon = false;
+
     if (isScrutiny) {
       if (typeof prevDataError === "string" && (dataError || prevDataError)) {
         bgclassname = dataError === prevDataError ? "preverror" : "error";
