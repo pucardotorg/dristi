@@ -26,65 +26,17 @@ public class ReScheduleRequestValidatorTest {
     @Mock
     private DateUtil dateUtil;
 
-    private BulkReScheduleHearingRequest request;
-    private BulkReschedulingOfHearings buklRescheduling;
+    private BulkRescheduleRequest request;
+    private BulkReschedule buklRescheduling;
     @BeforeEach
     void setUp() {
-        request = new BulkReScheduleHearingRequest();
-        buklRescheduling = new BulkReschedulingOfHearings();
+        request = new BulkRescheduleRequest();
+        buklRescheduling = new BulkReschedule();
         buklRescheduling.setJudgeId("judgeId");
-        buklRescheduling.setStartTime(1722501060000L);
-        buklRescheduling.setEndTime(1722501120000L);
+
         buklRescheduling.setTenantId("tenantId");
         buklRescheduling.setScheduleAfter(1722501060000L);
 
         request.setRequestInfo(new RequestInfo());
-        request.setBulkRescheduling(buklRescheduling);
-    }
-
-
-    @Test
-    public void validateBulkRescheduleRequest_Success() {
-        when(dateUtil.getLocalDateTimeFromEpoch(buklRescheduling.getStartTime())).thenReturn(LocalDateTime.now().plusHours(2));
-        when(dateUtil.getLocalDateTimeFromEpoch(buklRescheduling.getEndTime())).thenReturn(LocalDateTime.now().plusHours(4));
-        when(dateUtil.getLocalDateFromEpoch(buklRescheduling.getScheduleAfter())).thenReturn(LocalDate.now().plusDays(1));
-
-        validator.validateBulkRescheduleRequest(request);
-    }
-
-    @Test
-    public void validateBulkRescheduleRequest_Exception() {
-        when(dateUtil.getLocalDateTimeFromEpoch(buklRescheduling.getStartTime())).thenReturn(LocalDateTime.now().minusDays(2));
-
-        CustomException exception = assertThrows(CustomException.class, () -> {
-            validator.validateBulkRescheduleRequest(request);
-        });
-
-        assertEquals("DK_SH_APP_ERR", exception.getCode());
-    }
-
-    @Test
-    public void validateBulkRescheduleRequest_Exception2() {
-        when(dateUtil.getLocalDateTimeFromEpoch(buklRescheduling.getStartTime())).thenReturn(LocalDateTime.now().plusHours(2));
-        when(dateUtil.getLocalDateTimeFromEpoch(buklRescheduling.getEndTime())).thenReturn(LocalDateTime.now().minusHours(2));
-
-        CustomException exception = assertThrows(CustomException.class, () -> {
-            validator.validateBulkRescheduleRequest(request);
-        });
-
-        assertEquals("DK_SH_APP_ERR", exception.getCode());
-    }
-
-    @Test
-    public void validateBulkRescheduleRequest_Exception3() {
-        when(dateUtil.getLocalDateTimeFromEpoch(buklRescheduling.getStartTime())).thenReturn(LocalDateTime.now().plusHours(2));
-        when(dateUtil.getLocalDateTimeFromEpoch(buklRescheduling.getEndTime())).thenReturn(LocalDateTime.now().plusHours(4));
-        when(dateUtil.getLocalDateFromEpoch(buklRescheduling.getScheduleAfter())).thenReturn(LocalDate.now().minusDays(1));
-
-        CustomException exception = assertThrows(CustomException.class, () -> {
-            validator.validateBulkRescheduleRequest(request);
-        });
-
-        assertEquals("DK_SH_APP_ERR", exception.getCode());
     }
 }

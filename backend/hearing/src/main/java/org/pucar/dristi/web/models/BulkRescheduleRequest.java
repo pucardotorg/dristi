@@ -1,29 +1,28 @@
-package digit.web.models;
-
+package org.pucar.dristi.web.models;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
-import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.Valid;
+import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.egov.common.contract.request.RequestInfo;
-import org.springframework.validation.annotation.Validated;
 
-@Schema(description = "Rescheduling request search criteria and Request info")
-@Validated
+
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-public class BulkReScheduleHearingRequest {
+public class BulkRescheduleRequest {
 
     @JsonProperty("RequestInfo")
     @Valid
+    @NotNull
     private RequestInfo requestInfo = null;
 
-    @JsonProperty("BulkRescheduling")
+    @JsonProperty("BulkReschedule")
     @Valid
-    private BulkReschedulingOfHearings bulkRescheduling = null;
+    @NotNull
+    private BulkReschedule bulkReschedule = null;
 }

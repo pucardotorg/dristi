@@ -5,6 +5,7 @@ import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.enums.ParameterIn;
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.Valid;
+import lombok.extern.slf4j.Slf4j;
 import org.egov.common.contract.response.ResponseInfo;
 import org.pucar.dristi.service.HearingService;
 import org.pucar.dristi.service.WitnessDepositionPdfService;
@@ -24,6 +25,7 @@ import java.util.List;
 @jakarta.annotation.Generated(value = "org.egov.codegen.SpringBootCodegen", date = "2024-04-18T11:14:11.072458+05:30[Asia/Calcutta]")
 @Controller
 @RequestMapping("")
+@Slf4j
 public class HearingApiController {
 
     private HearingService hearingService;
@@ -117,6 +119,17 @@ public class HearingApiController {
         ResponseInfo responseInfo = responseInfoFactory.createResponseInfoFromRequestInfo(body.getRequestInfo(), true);
         HearingResponse hearingResponse = HearingResponse.builder().hearing(hearing).responseInfo(responseInfo).build();
         return new ResponseEntity<>(hearingResponse, HttpStatus.OK);
+    }
+
+
+    @RequestMapping(value = "/v1/bulk/_reschedule", method = RequestMethod.POST)
+    public ResponseEntity<BulkRescheduleResponse> bulkRescheduleHearing(@Parameter(in = ParameterIn.DEFAULT, description = "Bulk Reschedule Request and Request Info", required = true, schema = @Schema()) @Valid @RequestBody BulkRescheduleRequest request) {
+        log.info("api =/v1/bulk/_reschedule, result = IN_PROGRESS");
+        List<ScheduleHearing> scheduledHearings = hearingService.bulkReschedule(request);
+        BulkRescheduleResponse response = BulkRescheduleResponse.builder().ResponseInfo(responseInfoFactory.createResponseInfoFromRequestInfo(request.getRequestInfo(), true))
+                .reScheduleHearings(scheduledHearings).build();
+        log.info("api =/v1/bulk/_reschedule, result = SUCCESS");
+        return ResponseEntity.accepted().body(response);
     }
 
 }

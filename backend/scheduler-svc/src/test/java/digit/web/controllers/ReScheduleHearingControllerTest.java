@@ -6,10 +6,8 @@ import digit.web.models.*;
 import org.egov.common.contract.request.RequestInfo;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.junit.MockitoJUnitRunner;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -59,11 +57,11 @@ public class ReScheduleHearingControllerTest {
 
     @Test
     void testBulkRescheduleHearing() {
-        BulkReScheduleHearingRequest request = new BulkReScheduleHearingRequest();
-        ReScheduleHearing reScheduleHearing = new ReScheduleHearing();
+        BulkRescheduleRequest request = new BulkRescheduleRequest();
+        ScheduleHearing reScheduleHearing = new ScheduleHearing();
         when(reScheduleHearingService.bulkReschedule(request)).thenReturn(Collections.singletonList(reScheduleHearing));
 
-        ResponseEntity<ReScheduleHearingResponse> responseEntity = reScheduleHearingController.bulkRescheduleHearing(request);
+        ResponseEntity<BulkRescheduleResponse> responseEntity = reScheduleHearingController.bulkRescheduleHearing(request);
 
         assertEquals(HttpStatus.ACCEPTED, responseEntity.getStatusCode());
         assertEquals(1, responseEntity.getBody().getReScheduleHearings().size());

@@ -150,6 +150,9 @@ public class Configuration {
     @Value("${egov.filestore.path}")
     private String fileStorePath;
 
+    @Value("${app.zone.id}")
+    private String zoneId;
+
 
     // Pdf Config
     @Value("${egov.pdf.create}")
@@ -178,4 +181,13 @@ public class Configuration {
 
     @Value("${egov.sms.notification.hearing.adjourned.template.id}")
     private String smsNotificationHearingAdjournedTemplateId;
+
+    @Value("${egov.scheduler.host}")
+    private String schedulerHost;
+
+    @Value("${egov.scheduler.bulk.reschedule.endpoint}")
+    private String bulkRescheduleEndPoint;
+
+    @Value("${bulk.reschedule.topic}")
+    private String bulkRescheduleTopic;
 }

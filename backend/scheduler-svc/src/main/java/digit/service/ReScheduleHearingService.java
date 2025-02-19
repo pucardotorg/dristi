@@ -12,7 +12,6 @@ import digit.validator.ReScheduleRequestValidator;
 import digit.web.models.*;
 import digit.web.models.cases.CaseCriteria;
 import digit.web.models.cases.SearchCaseRequest;
-import digit.web.models.hearing.*;
 import lombok.extern.slf4j.Slf4j;
 import org.egov.common.contract.request.RequestInfo;
 import org.egov.tracer.model.CustomException;
@@ -49,6 +48,7 @@ public class ReScheduleHearingService {
     private final DateUtil dateUtil;
     private final ReScheduleRequestValidator validator;
     private final AdvocateUtil advocateUtil;
+
 
     @Autowired
     public ReScheduleHearingService(Configuration config, ReScheduleRequestRepository repository, ReScheduleRequestValidator validator, ReScheduleRequestEnrichment enrichment, Producer producer, HearingService hearingService, CalendarService calendarService, ServiceConstants serviceConstants, MasterDataUtil helper, CaseUtil caseUtil, HearingUtil hearingUtil, ServiceConstants constants, DateUtil dateUtil, AdvocateUtil advocateUtil) {
@@ -95,8 +95,8 @@ public class ReScheduleHearingService {
                 JsonNode representatives = caseUtil.getRepresentatives(cases);
                 Set<String> representativeIds = caseUtil.getAdvocateIds(representatives);
 
-                if(!representativeIds.isEmpty()){
-                    representativeIds = advocateUtil.getAdvocate(requestInfo,representativeIds.stream().toList());
+                if (!representativeIds.isEmpty()) {
+                    representativeIds = advocateUtil.getAdvocate(requestInfo, representativeIds.stream().toList());
                 }
                 litigantIds = caseUtil.getLitigantsFromRepresentatives(litigantIds, representatives);
 
@@ -104,7 +104,7 @@ public class ReScheduleHearingService {
                 hearingDetail.setLitigants(litigantIds);
 
 
-                int noOfAttendees = representativeIds.size()+litigantIds.size();
+                int noOfAttendees = representativeIds.size() + litigantIds.size();
 
 
                 List<SchedulerConfig> dataFromMDMS = helper.getDataFromMDMS(SchedulerConfig.class, constants.SCHEDULER_CONFIG_MASTER_NAME, constants.SCHEDULER_CONFIG_MODULE_NAME);
@@ -179,20 +179,32 @@ public class ReScheduleHearingService {
 
 
     /**
-     * @param request
-     * @return
+     * This method is used to search the reschedule hearing request.
+     *
+     * @param request contains the search criteria
+     * @param limit   the maximum number of records to be returned
+     * @param offset  the offset for the pagination
+     * @return the list of reschedule hearing request
      */
     public List<ReScheduleHearing> search(ReScheduleHearingReqSearchRequest request, Integer limit, Integer offset) {
         return repository.getReScheduleRequest(request.getCriteria(), limit, offset);
     }
 
+
     /**
-     * @param request
-     * @return
+     * Reschedules multiple hearings in bulk to the available date and time slot.
+     * <p>
+     * The function first validates the request, retrieves necessary data from MDMS,
+     * and calculates the judge's availability. It then assigns available slots and
+     * updates both the hearing table
+     *
+     * @param request contains the bulk rescheduling details and request info
+     * @return a list of rescheduled hearings, or null if an error occurs
+     * @throws CustomException if the request is invalid
      */
-    public List<ReScheduleHearing> bulkReschedule(BulkReScheduleHearingRequest request) {
+    public List<ScheduleHearing> bulkReschedule(BulkRescheduleRequest request) {
         try {
-            log.info("operation = bulkReschedule, result = IN_PROGRESS,  BulkRescheduling = {}", request.getBulkRescheduling());
+            log.info("operation = bulkReschedule, result = IN_PROGRESS,  BulkRescheduling = {}", request.getBulkReschedule());
 
             validator.validateBulkRescheduleRequest(request);
 
@@ -200,31 +212,14 @@ public class ReScheduleHearingService {
             double totalHrs = defaultSlots.stream().reduce(0.0, (total, slot) -> total + slot.getSlotDuration() / 60.0, Double::sum);
             List<MdmsHearing> defaultHearings = helper.getDataFromMDMS(MdmsHearing.class, serviceConstants.DEFAULT_HEARING_MASTER_NAME, serviceConstants.DEFAULT_COURT_MODULE_NAME);
             Map<String, MdmsHearing> hearingTypeMap = defaultHearings.stream().collect(Collectors.toMap(MdmsHearing::getHearingType, obj -> obj));
-            BulkReschedulingOfHearings bulkRescheduling = request.getBulkRescheduling();
+            BulkReschedule bulkRescheduling = request.getBulkReschedule();
 
             String tenantId = bulkRescheduling.getTenantId();
             String judgeId = bulkRescheduling.getJudgeId();
-            Long endTime = bulkRescheduling.getEndTime();
-            Long startTime = bulkRescheduling.getStartTime();
             Long fromDate = bulkRescheduling.getScheduleAfter();
+            String courtId = bulkRescheduling.getCourtId();
 
-            List<String> hearingIds = bulkRescheduling.getHearingIds();
-
-            ScheduleHearingSearchCriteria criteria;
-
-            if (startTime != null && endTime != null) {
-
-                criteria = ScheduleHearingSearchCriteria.builder().judgeId(judgeId).startDateTime(startTime).endDateTime(endTime).tenantId(tenantId).status(Arrays.asList("SCHEDULE", "BLOCKED")).build();
-
-            } else if (!hearingIds.isEmpty()) {
-
-                criteria = ScheduleHearingSearchCriteria.builder().judgeId(judgeId).hearingIds(hearingIds).tenantId(tenantId).build();
-
-            } else {
-                throw new CustomException("DK_BULK_INVALID_REQUEST", "Request is not valid");
-            }
-
-
+            ScheduleHearingSearchCriteria criteria = ScheduleHearingSearchCriteria.builder().hearingIds(bulkRescheduling.getHearingIds()).build();
             List<ScheduleHearing> hearings = hearingService.search(HearingSearchRequest.builder().requestInfo(request.getRequestInfo()).criteria(criteria).build(), null, null);
 
             if (CollectionUtils.isEmpty(hearings)) {
@@ -236,8 +231,8 @@ public class ReScheduleHearingService {
                             .builder().requestInfo(request.getRequestInfo())
                             .criteria(JudgeAvailabilitySearchCriteria
                                     .builder()
-                                    .judgeId(judgeId).fromDate(fromDate).courtId("0001")   // need to configure some where
-                                    .numberOfSuggestedDays(hearings.size() + 10).tenantId(tenantId)
+                                    .judgeId(judgeId).fromDate(fromDate).courtId(courtId)
+                                    .numberOfSuggestedDays(2 * hearings.size()).tenantId(tenantId)
                                     .build()).build());
 
             // assign slots and push for schedule hearing
@@ -254,43 +249,24 @@ public class ReScheduleHearingService {
                     hearing.setHearingDate(Long.parseLong(availability.get(index).getDate()));
                     availability.get(index).setOccupiedBandwidth(occupiedBandwidth + requiredSlot);  // need to configure
                 } else {
-                    hearing.setHearingDate(Long.parseLong(availability.get(++index).getDate()));
-                    availability.get(index).setOccupiedBandwidth(availability.get(index).getOccupiedBandwidth() + requiredSlot);  // need to configure
+                    index++;
                 }
             }
-            // try to make it async
-            // updated hearing in hearing table
-            List<ScheduleHearing> rescheduleHearings = hearingService.updateBulk(ScheduleHearingRequest.builder().hearing(hearings).requestInfo(request.getRequestInfo()).build(), defaultSlots, hearingTypeMap);
 
-
-            // update hearing of dpg as well
-            // fetch dpg hearing with hearingids assign startTime and end time then hit their update api
-            LocalDate startDate = dateUtil.getLocalDateFromEpoch(bulkRescheduling.getStartTime());
-            LocalDate endDate = dateUtil.getLocalDateFromEpoch(bulkRescheduling.getEndTime());
-            HearingSearchCriteria searchCriteria = HearingSearchCriteria.builder().tenantId(bulkRescheduling.getTenantId()).fromDate(bulkRescheduling.getStartTime()).toDate(bulkRescheduling.getEndTime()).build();
-            Pagination pagination = Pagination.builder().limit(100.0).build();
-            HearingListSearchRequest searchRequest = HearingListSearchRequest.builder().requestInfo(request.getRequestInfo()).criteria(searchCriteria).pagination(pagination).build();
-
-            List<Hearing> hearingList = hearingUtil.fetchHearing(searchRequest);
-            Map<String, ScheduleHearing> scheduleHearingMap = rescheduleHearings.stream().collect(Collectors.toMap(ScheduleHearing::getHearingBookingId, obj -> obj));
-            for (Hearing hearing : hearingList) {
-                if (scheduleHearingMap.containsKey(hearing.getHearingId())) {
-                    ScheduleHearing scheduleHearing = scheduleHearingMap.get(hearing.getHearingId());
-                    hearing.setStartTime(scheduleHearing.getStartTime());
-                    hearing.setEndTime(scheduleHearing.getEndTime());
-                }
-            }
-            HearingUpdateBulkRequest updateBulkRequest = HearingUpdateBulkRequest.builder().requestInfo(request.getRequestInfo()).hearings(hearingList).build();
-            hearingUtil.callHearing(updateBulkRequest);
-            // one edge case is here , for opt out if that date or in that duration suggested days are there then what need to done
             log.info("operation = bulkReschedule, result = SUCCESS");
-            return null;
+
+            return hearingService.updateBulk(ScheduleHearingRequest.builder().hearing(hearings).requestInfo(request.getRequestInfo()).build(), defaultSlots, hearingTypeMap);
+            // one edge case is here , for opt out if that date or in that duration suggested days are there then what need to done
+        } catch (CustomException e) {
+            log.error(e.getMessage());
+            throw e;
         } catch (Exception e) {
             log.error("Error updating bulk reschdule request: {}", e.getMessage());
-            return null;
+            throw new CustomException("BULK_RESCHEDULE_ERR", "Error occurred while updating bulk reschedule request");
         }
-
     }
-
-
 }
+
+
+
+

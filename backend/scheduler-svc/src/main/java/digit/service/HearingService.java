@@ -26,26 +26,17 @@ import java.util.stream.Collectors;
 import static digit.config.ServiceConstants.SCHEDULE;
 
 
-/**
- * Contains methods related to schedule hearing , update hearing , search hearing , bulk update and available dates
- */
 @Service
 @Slf4j
 public class HearingService {
 
 
     private final HearingEnrichment hearingEnrichment;
-
     private final Producer producer;
-
     private final Configuration config;
-
     private final HearingRepository hearingRepository;
-
     private final ServiceConstants serviceConstants;
-
     private final MasterDataUtil helper;
-
     private final HearingUtil hearingUtil;
 
     @Autowired
@@ -60,6 +51,18 @@ public class HearingService {
     }
 
 
+    /**
+     * Schedules hearings based on the provided request.
+     * <p>
+     * The function validates the request, retrieves necessary data from MDMS,
+     * and calculates the judge's availability. It schedules the hearings by
+     * assigning available slots and updates both the hearing table and
+     * external systems using the hearing service and utility.
+     *
+     * @param schedulingRequests contains the scheduling request and request info
+     * @return a list of scheduled hearings, or null if an error occurs
+     * @throws CustomException if the request is invalid
+     */
     public List<ScheduleHearing> schedule(ScheduleHearingRequest schedulingRequests) {
         log.info("operation = schedule, result = IN_PROGRESS, ScheduleHearingRequest={}, Hearing={}", schedulingRequests, schedulingRequests.getHearing());
 
@@ -77,14 +80,14 @@ public class HearingService {
         return schedulingRequests.getHearing();
     }
 
-    /**
-     * This function update the hearing
-     *
-     * @param scheduleHearingRequest request object with request info and list of schedule hearing object
-     * @return updated hearings with audit details
-     */
 
-    // to update the status of existing hearing to reschedule
+    /**
+     * Updates the hearing based on the ScheduleHearingRequest object.
+     * This function first enriches the hearing object and then sends the updated hearing to kafka topic.
+     *
+     * @param scheduleHearingRequest object containing the request info and hearings
+     * @return list of updated schedule hearing object
+     */
     public List<ScheduleHearing> update(ScheduleHearingRequest scheduleHearingRequest) {
         log.info("operation = update, result = IN_PROGRESS, ScheduleHearingRequest={}, Hearing={}", scheduleHearingRequest, scheduleHearingRequest.getHearing());
 
@@ -99,48 +102,73 @@ public class HearingService {
 
     }
 
-    /**
-     * This function use to search in the hearing table with different search parameter
-     *
-     * @param request request object with request info and search criteria for hearings
-     * @return list of schedule hearing object
-     */
 
+    /**
+     * Searches for scheduled hearings based on the given criteria.
+     *
+     * @param request the search request containing the criteria for hearing search
+     * @param limit   the maximum number of records to return
+     * @param offset  the starting point for the records to return
+     * @return a list of scheduled hearings that match the search criteria
+     */
     public List<ScheduleHearing> search(HearingSearchRequest request, Integer limit, Integer offset) {
 
         return hearingRepository.getHearings(request.getCriteria(), limit, offset);
 
     }
 
-    /**
-     * This function provide the available date for judge and their occupied bandwidth after a start date ( fromDate )
-     *
-     * @param scheduleHearingSearchCriteria criteria and request info object
-     * @return list of availability dto
-     */
 
+    /**
+     * Returns a list of AvailabilityDTO objects representing the available dates
+     * for judges based on the given search criteria.
+     *
+     * @param scheduleHearingSearchCriteria the search criteria to filter the results
+     * @return a list of AvailabilityDTO objects
+     */
     public List<AvailabilityDTO> getAvailableDateForHearing(ScheduleHearingSearchCriteria scheduleHearingSearchCriteria) {
 
         return hearingRepository.getAvailableDatesOfJudges(scheduleHearingSearchCriteria);
     }
 
-    /**
-     * This function enrich the audit details as well as timing for hearing in updated date
-     *
-     * @param request        request object with request info and list of schedule hearings
-     * @param defaultSlot    default slots for court
-     * @param hearingTypeMap default hearings and their timing
-     */
 
+    /**
+     * Updates multiple hearings in bulk based on the provided request.
+     * <p>
+     * The function validates the request, retrieves necessary data from MDMS,
+     * and calculates the judge's availability. It updates the hearing schedules
+     * by assigning available slots and updates both the hearing table and
+     * external systems using the hearing service and utility.
+     *
+     * @param request        contains the bulk rescheduling details and request info
+     * @param defaultSlot    list of default slots for each judge
+     * @param hearingTypeMap map of hearing type to MdmsHearing
+     * @return a list of rescheduled hearings, or null if an error occurs
+     * @throws CustomException if the request is invalid
+     */
     public List<ScheduleHearing> updateBulk(ScheduleHearingRequest request, List<MdmsSlot> defaultSlot, Map<String, MdmsHearing> hearingTypeMap) {
 
+        log.info("operation = updateBulk, result = IN_PROGRESS");
         hearingEnrichment.enrichBulkReschedule(request, defaultSlot, hearingTypeMap);
-
         producer.push(config.getScheduleHearingUpdateTopic(), request);
+        log.info("operation = updateBulk, result = SUCCESS");
 
         return request.getHearing();
     }
 
+
+    /**
+     * Updates a hearing by rescheduling it to a new date and time.
+     * <p>
+     * The function first retrieves the hearing to be updated from the database,
+     * then reschedules it to the new date and time provided in the request, and
+     * finally updates the hearing in the database.
+     * <p>
+     * The function also updates the associated hearings in the database that
+     * were previously blocked due to the rescheduling of the hearing.
+     *
+     * @param request contains the hearing to be updated and the request info
+     * @return the updated hearing
+     */
     public ScheduleHearing updateHearing(UpdateHearingRequest request) {
 
         ScheduleHearing hearing = request.getHearing();

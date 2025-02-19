@@ -13,7 +13,10 @@ import org.springframework.stereotype.Component;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
-import java.util.*;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.UUID;
 
 @Component
 @Slf4j
@@ -36,7 +39,7 @@ public class HearingEnrichment {
         for (ScheduleHearing hearing : hearingList) {
             hearing.setAuditDetails(auditDetails);
             hearing.setRowVersion(1);
-            if (hearing.getStatus()!=null && hearing.getStatus().equals("BLOCKED")) {
+            if (hearing.getStatus() != null && hearing.getStatus().equals("BLOCKED")) {
                 hearing.setHearingBookingId(UUID.randomUUID().toString());
             }
         }
@@ -48,24 +51,30 @@ public class HearingEnrichment {
 
     void updateTimingInHearings(List<ScheduleHearing> hearingList, Map<String, MdmsHearing> hearingTypeMap, List<MdmsSlot> defaultSlots) {
 
-        List<String> statuses = new ArrayList<>();
-        statuses.add("SCHEDULED");
-        statuses.add("BLOCKED");
+        List<String> statuses = List.of("SCHEDULED", "BLOCKED");
+
         HashMap<String, List<ScheduleHearing>> sameDayHearings = new HashMap<>();
         for (ScheduleHearing hearing : hearingList) {
 
-            ScheduleHearingSearchCriteria searchCriteria = ScheduleHearingSearchCriteria.builder()
-                    .judgeId(hearing.getJudgeId())
-                    .startDateTime(hearing.getStartTime())
-                    .endDateTime(hearing.getEndTime())
-                    .status(statuses).build();
-
             List<ScheduleHearing> hearings;
-            hearings = repository.getHearings(searchCriteria, null, null);
+
+            String key = hearing.getJudgeId() + "_" + hearing.getStartTime() + "_" + hearing.getEndTime();
+            if (sameDayHearings.containsKey(key)) {
+                hearings = sameDayHearings.get(key);
+            } else {
+                ScheduleHearingSearchCriteria searchCriteria = ScheduleHearingSearchCriteria.builder()
+                        .judgeId(hearing.getJudgeId())
+                        .startDateTime(hearing.getStartTime())
+                        .endDateTime(hearing.getEndTime())
+                        .status(statuses).build();
+
+                hearings = repository.getHearings(searchCriteria, null, null);
+                sameDayHearings.put(key, hearings);
+            }
+
             Integer hearingTime = hearingTypeMap.get(hearing.getHearingType()).getHearingTime();
             updateHearingTime(hearing, defaultSlots, hearings, hearingTime);
-
-
+            sameDayHearings.get(key).add(hearing);
         }
 
     }

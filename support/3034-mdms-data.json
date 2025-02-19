@@ -1,0 +1,70 @@
+[
+  {
+    "tenantId": "kl",
+    "masterName": "actions-test",
+    "moduleName": "ACCESSCONTROL-ACTIONS-TEST",
+    "mdmsPayload": [
+      {
+        "tenantId": "kl",
+        "schemaCode": "ACCESSCONTROL-ACTIONS-TEST.actions-test",
+        "uniqueIdentifier": null,
+        "data": {
+          "id": 2715,
+          "url": "/hearing/v1/bulk/_reschedule",
+          "code": "2715",
+          "name": "Bulk Reschedule",
+          "enabled": true,
+          "displayName": "Bulk Reschedule",
+          "serviceCode": "Hearing"
+        },
+        "isActive": true
+      }
+    ]
+  },
+  {
+    "tenantId": "kl",
+    "masterName": "roleactions",
+    "moduleName": "ACCESSCONTROL-ROLEACTIONS",
+    "mdmsPayload": [
+      {
+        "tenantId": "kl",
+        "schemaCode": "ACCESSCONTROL-ROLEACTIONS.roleactions",
+        "uniqueIdentifier": null,
+        "data": {
+          "id": 432,
+          "actionid": 2715,
+          "rolecode": "JUDGE_ROLE",
+          "tenantid": "kl",
+          "actioncode": "2715"
+        },
+        "isActive": true
+      },
+      {
+        "tenantId": "kl",
+        "schemaCode": "ACCESSCONTROL-ROLEACTIONS.roleactions",
+        "uniqueIdentifier": null,
+        "data": {
+          "id": 433,
+          "actionid": 2715,
+          "rolecode": "COURT_ROOM_MANAGER",
+          "tenantid": "kl",
+          "actioncode": "2715"
+        },
+        "isActive": true
+      },
+      {
+        "tenantId": "kl",
+        "schemaCode": "ACCESSCONTROL-ROLEACTIONS.roleactions",
+        "uniqueIdentifier": null,
+        "data": {
+          "id": 434,
+          "actionid": 2715,
+          "rolecode": "GENERAL_COURT_ROOM_MANAGER",
+          "tenantid": "kl",
+          "actioncode": "2715"
+        },
+        "isActive": true
+      }
+    ]
+  }
+]
