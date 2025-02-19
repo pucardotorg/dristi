@@ -51,17 +51,21 @@ const AddSignatureComponent = ({ t, isSigned, setIsSigned, handleSigned, rowData
     }
   };
 
-  useEffect(() => {
-    const upload = async () => {
-      if (formData?.uploadSignature?.Signature?.length > 0) {
+  const onSubmit = async () => {
+    if (formData?.uploadSignature?.Signature?.length > 0) {
+      try {
         const uploadedFileId = await uploadDocuments(formData?.uploadSignature?.Signature, tenantId);
         setSignatureId(uploadedFileId?.[0]?.fileStoreId);
         handleSigned(true);
+        localStorage.setItem("formData", JSON.stringify(formData));
+        setOpenUploadSignatureModal(false);
+      } catch (error) {
+        console.error("error", error);
+        setFormData({});
+        handleSigned(false);
       }
-    };
-
-    upload();
-  }, [formData]);
+    }
+  };
 
   useEffect(() => {
     checkSignStatus(name, formData, uploadModalConfig, onSelect, handleSigned);
@@ -199,6 +203,7 @@ const AddSignatureComponent = ({ t, isSigned, setIsSigned, handleSigned, rowData
           onSelect={onSelect}
           config={uploadModalConfig}
           formData={formData}
+          onSubmit={onSubmit}
         />
       )}
     </div>

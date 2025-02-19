@@ -79,17 +79,20 @@ const WitnessModal = ({ handleClose, hearingId, setSignedDocumentUploadID, handl
     }
   };
 
-  useEffect(() => {
-    const upload = async () => {
-      if (formData?.uploadSignature?.Signature?.length > 0) {
+  const onSubmit = async () => {
+    if (formData?.uploadSignature?.Signature?.length > 0) {
+      try {
         const uploadedFileId = await uploadDocuments(formData?.uploadSignature?.Signature, tenantId);
         setSignedDocumentUploadID(uploadedFileId?.[0]?.fileStoreId);
         setUploaded(true);
+        localStorage.setItem("formData", JSON.stringify(formData));
+        setOpenUploadSignatureModal(false);
+      } catch (error) {
+        console.error("error", error);
+        setFormData({});
       }
-    };
-
-    upload();
-  }, [formData]);
+    }
+  };
 
   const reqBody = {
     hearing: { tenantId },
@@ -189,6 +192,7 @@ const WitnessModal = ({ handleClose, hearingId, setSignedDocumentUploadID, handl
       onSelect={onSelect}
       config={uploadModalConfig}
       formData={formData}
+      onSubmit={onSubmit}
     />
   );
 };

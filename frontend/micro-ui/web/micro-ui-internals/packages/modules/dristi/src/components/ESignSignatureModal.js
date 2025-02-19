@@ -71,18 +71,21 @@ function ESignSignatureModal({
     }
   };
 
-  // check the data from upload
-  useEffect(() => {
-    const upload = async () => {
-      if (formData?.uploadSignature?.Signature?.length > 0) {
+  const onSubmit = async () => {
+    if (formData?.uploadSignature?.Signature?.length > 0) {
+      try {
         const uploadedFileId = await uploadDocuments(formData?.uploadSignature?.Signature, tenantId);
         setSignedDocumentUploadID(uploadedFileId?.[0]?.fileStoreId);
         setIsSigned(true);
+        localStorage.setItem("formData", JSON.stringify(formData));
+        setOpenUploadSignatureModal(false);
+      } catch (error) {
+        console.error("error", error);
+        setFormData({});
+        setIsSigned(false);
       }
-    };
-
-    upload();
-  }, [formData]);
+    }
+  };
 
   useEffect(() => {
     checkSignStatus(name, formData, uploadModalConfig, onSelect, setIsSigned);
@@ -201,6 +204,7 @@ function ESignSignatureModal({
       onSelect={onSelect}
       config={uploadModalConfig}
       formData={formData}
+      onSubmit={onSubmit}
     />
   );
 }

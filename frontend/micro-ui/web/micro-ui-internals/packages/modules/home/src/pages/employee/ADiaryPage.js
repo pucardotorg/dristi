@@ -173,16 +173,22 @@ const ADiaryPage = ({ path }) => {
       }));
     }
   };
-  useEffect(() => {
-    const upload = async () => {
-      if (formData?.uploadSignature?.Signature?.length > 0) {
+
+  const onUploadSubmit = async () => {
+    if (formData?.uploadSignature?.Signature?.length > 0) {
+      try {
         const uploadedFileId = await uploadDocuments(formData?.uploadSignature?.Signature, tenantId);
-        setSignedDocumentUploadID(uploadedFileId[0]?.fileStoreId);
+        setSignedDocumentUploadID(uploadedFileId?.[0]?.fileStoreId);
         setIsSigned(true);
+        localStorage.setItem("formData", JSON.stringify(formData));
+        setOpenUploadSignatureModal(false);
+      } catch (error) {
+        console.error("error", error);
+        setFormData({});
+        setIsSigned(false);
       }
-    };
-    upload();
-  }, [formData]);
+    }
+  };
 
   useEffect(() => {
     checkSignStatus(name, formData, uploadModalConfig, onSelect, setIsSigned);
@@ -528,6 +534,7 @@ const ADiaryPage = ({ path }) => {
             onSelect={onSelect}
             config={uploadModalConfig}
             formData={formData}
+            onSubmit={onUploadSubmit}
           />
         )}
 

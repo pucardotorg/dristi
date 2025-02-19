@@ -243,17 +243,20 @@ const ComplainantSignature = ({ path }) => {
     }
   };
 
-  useEffect(() => {
-    const upload = async () => {
-      if (formData?.uploadSignature?.Signature?.length > 0) {
+  const onSubmit = async () => {
+    if (formData?.uploadSignature?.Signature?.length > 0) {
+      try {
         const uploadedFileId = await uploadDocuments(formData?.uploadSignature?.Signature, tenantId);
-        setSignatureDocumentId(uploadedFileId[0]?.fileStoreId);
+        setSignatureDocumentId(uploadedFileId?.[0]?.fileStoreId);
         setUploadDoc(true);
+        localStorage.setItem("formData", JSON.stringify(formData));
+        setDocumentUpload(false);
+      } catch (error) {
+        console.error("error", error);
+        setFormData({});
       }
-    };
-
-    upload();
-  }, [formData, tenantId, uploadDocuments]);
+    }
+  };
 
   const { data: caseData, refetch: refetchCaseData, isLoading } = useSearchCaseService(
     {
@@ -938,6 +941,7 @@ const ComplainantSignature = ({ path }) => {
           formData={formData}
           showWarning={true}
           warningText={t("UPLOAD_SIGNED_DOC_WARNING")}
+          onSubmit={onSubmit}
         />
       )}
       {isEditCaseModal && (
