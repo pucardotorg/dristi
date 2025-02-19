@@ -184,11 +184,23 @@ const SubmissionsCreate = ({ path }) => {
       );
   }, [caseDetails]);
 
+  const pipAccuseds = useMemo(() => {
+    return caseDetails?.litigants
+      ?.filter((litigant) => litigant.partyType.includes("respondent"))
+      ?.filter(
+        (litigant) =>
+          !caseDetails?.representatives?.some((representative) =>
+            representative?.representing?.some((rep) => rep?.individualId === litigant?.individualId)
+          )
+      );
+  }, [caseDetails]);
+
   const complainantsList = useMemo(() => {
     const loggedinUserUuid = userInfo?.uuid;
     // If logged in person is an advocate
     const isAdvocateLoggedIn = caseDetails?.representatives?.find((rep) => rep?.additionalDetails?.uuid === loggedinUserUuid);
     const isPipLoggedIn = pipComplainants?.find((p) => p?.additionalDetails?.uuid === loggedinUserUuid);
+    const accusedLoggedIn = pipAccuseds?.find((p) => p?.additionalDetails?.uuid === loggedinUserUuid);
 
     if (isAdvocateLoggedIn) {
       return isAdvocateLoggedIn?.representing?.map((r) => {
@@ -206,8 +218,16 @@ const SubmissionsCreate = ({ path }) => {
           uuid: isPipLoggedIn?.additionalDetails?.uuid,
         },
       ];
+    } else if (accusedLoggedIn) {
+      return [
+        {
+          code: accusedLoggedIn?.additionalDetails?.fullName,
+          name: accusedLoggedIn?.additionalDetails?.fullName,
+          uuid: accusedLoggedIn?.additionalDetails?.uuid,
+        },
+      ];
     }
-  }, [caseDetails, pipComplainants, userInfo]);
+  }, [caseDetails, pipComplainants, pipAccuseds, userInfo]);
 
   const { data: applicationData, isloading: isApplicationLoading, refetch: applicationRefetch } = Digit.Hooks.submissions.useSearchSubmissionService(
     {
