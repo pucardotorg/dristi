@@ -117,6 +117,7 @@ const JoinCaseHome = ({ refreshInbox, setShowSubmitResponseModal, setResponsePen
     respondentList: [],
     respondentAdvocateList: [],
   });
+  const [showConfirmModal, setShowConfirmModal] = useState(false);
 
   const [party, setParty] = useState({});
   const [validationCode, setValidationCode] = useState("");
@@ -976,6 +977,157 @@ const JoinCaseHome = ({ refreshInbox, setShowSubmitResponseModal, setResponsePen
     };
   };
 
+  const onPipConfirm = useCallback(async () => {
+    setShowConfirmModal(false);
+    try {
+      const { representing } = searchLitigantInRepresentives(caseDetails?.representatives, individualId);
+
+      const affidavitUpload = await onDocumentUpload(
+        selectPartyData?.affidavit?.affidavitData?.document?.[0],
+        selectPartyData?.affidavit?.affidavitData?.document?.name,
+        tenantId
+      ).then((uploadedData) => ({
+        document: [
+          {
+            documentType: uploadedData.fileType || document?.documentType,
+            fileStore: uploadedData.file?.files?.[0]?.fileStoreId || document?.fileStore,
+            documentName: `UPLOAD_PIP_AFFIDAVIT`,
+            fileName: `UPLOAD_PIP_AFFIDAVIT`,
+          },
+        ],
+      }));
+      const litigantPipPayload = {
+        additionalDetails: {
+          ...caseDetails?.additionalDetails,
+          ...(party?.isComplainant && {
+            advocateDetails: {
+              ...caseDetails?.additionalDetails?.advocateDetails,
+              formdata: caseDetails?.additionalDetails?.advocateDetails?.formdata?.map((litigant) => {
+                if (litigant?.data?.multipleAdvocatesAndPip?.boxComplainant?.individualId === representing?.individualId) {
+                  return {
+                    ...litigant,
+                    data: {
+                      ...litigant?.data,
+                      multipleAdvocatesAndPip: {
+                        ...litigant?.data?.multipleAdvocatesAndPip,
+                        isComplainantPip: {
+                          code: "YES",
+                          isEnabled: true,
+                          name: "Yes",
+                        },
+                        multipleAdvocateNameDetails: [],
+                        pipAffidavitFileUpload: affidavitUpload,
+                        vakalatnamaFileUpload: { document: [] },
+                      },
+                    },
+                  };
+                } else return litigant;
+              }),
+            },
+          }),
+        },
+        caseFilingNumber: caseDetails?.filingNumber,
+        tenantId: tenantId,
+        accessCode: validationCode,
+        caseId: caseDetails?.id,
+        isLitigantPIP: true,
+        litigant: [
+          {
+            ...caseDetails?.litigants?.find((litigant) => litigant?.individualId === representing?.individualId),
+            documents: [
+              {
+                documentType: affidavitUpload?.document?.[0]?.documentType,
+                fileStore: affidavitUpload?.document?.[0]?.fileStore,
+                additionalDetails: { documentName: "UPLOAD_PIP_AFFIDAVIT" },
+              },
+            ],
+          },
+        ],
+      };
+      const [res, err] = await submitJoinCase(litigantPipPayload, {});
+      if (res) {
+        let advocateList = caseDetails?.representatives
+          ?.filter((represent) => represent?.representing?.[0]?.partyType?.includes(party?.isComplainant ? "complainant" : "respondent"))
+          ?.filter((representative) => {
+            const filterData = representative?.representing?.filter((represent) => party?.individualId === represent?.individualId);
+
+            if (filterData?.length === 1 && representative?.representing?.length === 1) return false;
+            return true;
+          });
+
+        if (party.isComplainant) {
+          setSuccessScreenData((successScreenData) => ({
+            ...successScreenData,
+            complainantAdvocateList: [...advocateList?.map((adv) => adv?.additionalDetails?.fullName)],
+          }));
+        } else {
+          setSuccessScreenData((successScreenData) => ({
+            ...successScreenData,
+            respondentAdvocateList: [...advocateList?.map((adv) => adv?.additionalDetails?.fullName)],
+          }));
+        }
+
+        // updating hearing attendees silently
+        if (nextHearing) {
+          const updatedHearing = structuredClone(nextHearing);
+          updatedHearing.attendees = updatedHearing.attendees || [];
+
+          const { isFound, representatives } = searchLitigantInRepresentives(caseDetails?.representatives, party?.individualId);
+
+          const updatedRepresentatives = representatives?.map(async (representative) => {
+            let individualData;
+            try {
+              individualData = await searchIndividualUserWithUuid(representative?.additionalDetails?.uuid, tenantId);
+            } catch (error) {
+              console.error("error :>> ", error);
+            }
+            return {
+              ...representative,
+              individualId: individualData?.Individual?.[0]?.individualId,
+            };
+          });
+
+          if (isFound && representatives?.length) {
+            updatedHearing.attendees = updatedHearing.attendees?.filter((attendee) => {
+              const temp = updatedRepresentatives?.find((representative) => representative?.individualId === attendee?.individualId);
+              if (temp && temp?.representing?.length === 1) return false;
+              return true;
+            });
+          }
+
+          try {
+            await updateAttendees({ body: { hearing: updatedHearing } });
+          } catch (error) {
+            console.error("Error updating attendees:", error);
+          }
+        }
+
+        setMessageHeader(t("YOU_ARE_NOW_PARTY_IN_PERSON"));
+        setSuccess(true);
+        setStep(step + 3);
+      }
+    } catch (error) {
+      console.error("error :>> ", error);
+    }
+  }, [
+    caseDetails?.additionalDetails,
+    caseDetails?.filingNumber,
+    caseDetails?.id,
+    caseDetails?.litigants,
+    caseDetails?.representatives,
+    individualId,
+    nextHearing,
+    party?.individualId,
+    party.isComplainant,
+    searchLitigantInRepresentives,
+    selectPartyData?.affidavit?.affidavitData?.document,
+    step,
+    t,
+    tenantId,
+    updateAttendees,
+    validationCode,
+  ]);
+
   const onProceed = useCallback(
     async (litigants) => {
       if (step === 0) {
@@ -1035,134 +1187,7 @@ const JoinCaseHome = ({ refreshInbox, setShowSubmitResponseModal, setResponsePen
             setSuccess(true);
             setStep(step + 3);
           } else if (isLitigantJoined && partyInPerson?.value === "YES" && isFound) {
-            try {
-              const affidavitUpload = await onDocumentUpload(
-                selectPartyData?.affidavit?.affidavitData?.document?.[0],
-                selectPartyData?.affidavit?.affidavitData?.document?.name,
-                tenantId
-              ).then((uploadedData) => ({
-                document: [
-                  {
-                    documentType: uploadedData.fileType || document?.documentType,
-                    fileStore: uploadedData.file?.files?.[0]?.fileStoreId || document?.fileStore,
-                    documentName: `UPLOAD_PIP_AFFIDAVIT`,
-                    fileName: `UPLOAD_PIP_AFFIDAVIT`,
-                  },
-                ],
-              }));
-              const litigantPipPayload = {
-                additionalDetails: {
-                  ...caseDetails?.additionalDetails,
-                  ...(party?.isComplainant && {
-                    advocateDetails: {
-                      ...caseDetails?.additionalDetails?.advocateDetails,
-                      formdata: caseDetails?.additionalDetails?.advocateDetails?.formdata?.map((litigant) => {
-                        if (litigant?.data?.multipleAdvocatesAndPip?.boxComplainant?.individualId === representing?.individualId) {
-                          return {
-                            ...litigant,
-                            data: {
-                              ...litigant?.data,
-                              multipleAdvocatesAndPip: {
-                                ...litigant?.data?.multipleAdvocatesAndPip,
-                                isComplainantPip: {
-                                  code: "YES",
-                                  isEnabled: true,
-                                  name: "Yes",
-                                },
-                                multipleAdvocateNameDetails: [],
-                                pipAffidavitFileUpload: affidavitUpload,
-                                vakalatnamaFileUpload: { document: [] },
-                              },
-                            },
-                          };
-                        } else return litigant;
-                      }),
-                    },
-                  }),
-                },
-                caseFilingNumber: caseDetails?.filingNumber,
-                tenantId: tenantId,
-                accessCode: validationCode,
-                caseId: caseDetails?.id,
-                isLitigantPIP: true,
-                litigant: [
-                  {
-                    ...caseDetails?.litigants?.find((litigant) => litigant?.individualId === representing?.individualId),
-                    documents: [
-                      {
-                        documentType: affidavitUpload?.document?.[0]?.documentType,
-                        fileStore: affidavitUpload?.document?.[0]?.fileStore,
-                        additionalDetails: { documentName: "UPLOAD_PIP_AFFIDAVIT" },
-                      },
-                    ],
-                  },
-                ],
-              };
-              const [res, err] = await submitJoinCase(litigantPipPayload, {});
-              if (res) {
-                let advocateList = caseDetails?.representatives
-                  ?.filter((represent) => represent?.representing?.[0]?.partyType?.includes(party?.isComplainant ? "complainant" : "respondent"))
-                  ?.filter((representative) => {
-                    const filterData = representative?.representing?.filter((represent) => party?.individualId === represent?.individualId);
-
-                    if (filterData?.length === 1 && representative?.representing?.length === 1) return false;
-                    return true;
-                  });
-
-                if (party.isComplainant) {
-                  setSuccessScreenData((successScreenData) => ({
-                    ...successScreenData,
-                    complainantAdvocateList: [...advocateList?.map((adv) => adv?.additionalDetails?.fullName)],
-                  }));
-                } else {
-                  setSuccessScreenData((successScreenData) => ({
-                    ...successScreenData,
-                    respondentAdvocateList: [...advocateList?.map((adv) => adv?.additionalDetails?.fullName)],
-                  }));
-                }
-
-                // updating hearing attendees silently
-                if (nextHearing) {
-                  const updatedHearing = structuredClone(nextHearing);
-                  updatedHearing.attendees = updatedHearing.attendees || [];
-
-                  const { isFound, representatives } = searchLitigantInRepresentives(caseDetails?.representatives, party?.individualId);
-
-                  const updatedRepresentatives = representatives?.map(async (representative) => {
-                    let individualData;
-                    try {
-                      individualData = await searchIndividualUserWithUuid(representative?.additionalDetails?.uuid, tenantId);
-                    } catch (error) {
-                      console.error("error :>> ", error);
-                    }
-                    return {
-                      ...representative,
-                      individualId: individualData?.Individual?.[0]?.individualId,
-                    };
-                  });
-
-                  if (isFound && representatives?.length) {
-                    updatedHearing.attendees = updatedHearing.attendees?.filter((attendee) => {
-                      const temp = updatedRepresentatives?.find((representative) => representative?.individualId === attendee?.individualId);
-                      if (temp && temp?.representing?.length === 1) return false;
-                      return true;
-                    });
-                  }
-
-                  try {
-                    await updateAttendees({ body: { hearing: updatedHearing } });
-                  } catch (error) {
-                    console.error("Error updating attendees:", error);
-                  }
-                }
-
-                setMessageHeader(t("YOU_ARE_NOW_PARTY_IN_PERSON"));
-                setSuccess(true);
-                setStep(step + 3);
-              }
-            } catch (error) {
-              console.error("error :>> ", error);
-            }
+            setShowConfirmModal(true);
           } else if (!isLitigantJoined && !Boolean(party?.individualId)) {
             try {
               setMessageHeader(t("JOIN_CASE_SUCCESS"));
@@ -2029,6 +2054,30 @@ const JoinCaseHome = ({ refreshInbox, setShowSubmitResponseModal, setResponsePen
           isDleteBtn={true}
           onClose={closeToast}
         />
+      )}
+      {showConfirmModal && (
+        <Modal
+          headerBarEnd={
+            <CloseBtn
+              onClick={() => {
+                setShowConfirmModal(false);
+              }}
+              isMobileView={true}
+            />
+          }
+          actionCancelOnSubmit={() => {
+            setShowConfirmModal(false);
+          }}
+          actionSaveLabel={t("CS_COMMON_CONFIRM")}
+          actionCancelLabel={t("BACK")}
+          actionSaveOnSubmit={async () => await onPipConfirm()}
+          formId="modal-action"
+          headerBarMain={<Heading label={t("CONFIRM_REPLACE_ADVOCATE")} />}
+          submitTextClassName={"verification-button-text-modal"}
+          className={"verify-mobile-modal"}
+        >
+          <div className="verify-mobile-modal-main">{t("CONFIRM_REPLACE_ADVOCATE_PIP_MESSAGE")}</div>
+        </Modal>
       )}
     </div>
   );
