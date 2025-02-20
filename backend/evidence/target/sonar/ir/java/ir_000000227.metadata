@@ -1,0 +1,9 @@
+org.pucar.dristi.repository.querybuilder.EvidenceQueryBuilder#addCitizenCriteria(Ljava/lang/String;Ljava/lang/String;Ljava/util/List;Ljava/util/List;)Ljava/lang/String;
+false
+6f795ae4ea8c32ef2f24ae5af2d705d9
+java.lang.StringBuilder#<init>()V
+java.lang.StringBuilder#append(Ljava/lang/String;)Ljava/lang/StringBuilder;
+java.lang.StringBuilder#instance-init#
+java.lang.StringBuilder#toString()Ljava/lang/String;
+==
+add java.util.List#add(Ljava/lang/Object;)Z

@@ -1,0 +1,873 @@
+
+1.0solutions_taskJavaFrontend"1739451664435*java2.B‹
+8
+3src/main/java/org/pucar/dristi/web/models/Bill.java2
+
+package4
+ 
+org.pucar.dristi.web.models5
+%
+ org.pucar.dristi.web.models.Bill7
+
+
+class8
+
+access9
+
+public10
+
+simple name11
+
+
+Bill12
+
+lombok.Getter14
+
+unknown15
+
+annotated by16
+
+
+uses17
+
+lombok.Setter19
+
+lombok.ToString21
+
+lombok.Builder23
+
+lombok.NoArgsConstructor25
+
+lombok.AllArgsConstructor27
+
+lombok.EqualsAndHashCode29
+)
+#org.pucar.dristi.web.models.Bill.id31
+
+field32
+
+private33
+
+id34
+3
+-com.fasterxml.jackson.annotation.JsonProperty36
+3
+-org.pucar.dristi.web.models.Bill.mobileNumber38
+
+mobileNumber39
+-
+'org.pucar.dristi.web.models.Bill.paidBy41
+
+paidBy42
+0
+*org.pucar.dristi.web.models.Bill.payerName44
+
+	payerName45
+3
+-org.pucar.dristi.web.models.Bill.payerAddress47
+
+payerAddress48
+1
++org.pucar.dristi.web.models.Bill.payerEmail50
+
+
+payerEmail51
+.
+(org.pucar.dristi.web.models.Bill.payerId53
+
+payerId54
+-
+'org.pucar.dristi.web.models.Bill.status56
+
+status57
+1
++org.pucar.dristi.web.models.Bill$StatusEnum59
+
+is type60
+
+
+references61
+<
+6org.pucar.dristi.web.models.Bill.reasonForCancellation63
+
+reasonForCancellation64
+2
+,org.pucar.dristi.web.models.Bill.isCancelled66
+
+isCancelled67
+8
+2org.pucar.dristi.web.models.Bill.additionalDetails69
+
+additionalDetails70
+-
+'com.fasterxml.jackson.databind.JsonNode72
+2
+,org.pucar.dristi.web.models.Bill.billDetails74
+
+billDetails75
+,
+&org.pucar.dristi.web.models.BillDetail77
+/
+)org.pucar.dristi.web.models.Bill.tenantId79
+
+tenantId80
+3
+-org.pucar.dristi.web.models.Bill.auditDetails82
+
+auditDetails83
+2
+,org.egov.common.contract.models.AuditDetails85
+@
+:org.pucar.dristi.web.models.Bill.collectionModesNotAllowed87
+
+collectionModesNotAllowed88
+9
+3org.pucar.dristi.web.models.Bill.partPaymentAllowed90
+
+partPaymentAllowed91
+7
+1org.pucar.dristi.web.models.Bill.isAdvanceAllowed93
+
+isAdvanceAllowed94
+<
+6org.pucar.dristi.web.models.Bill.minimumAmountToBePaid96
+
+minimumAmountToBePaid97
+6
+0org.pucar.dristi.web.models.Bill.businessService99
+
+businessService100
+3
+,org.pucar.dristi.web.models.Bill.totalAmount102
+
+totalAmount103
+4
+-org.pucar.dristi.web.models.Bill.consumerCode105
+
+consumerCode106
+2
++org.pucar.dristi.web.models.Bill.billNumber108
+
+
+billNumber109
+0
+)org.pucar.dristi.web.models.Bill.billDate111
+
+billDate112
+2
++org.pucar.dristi.web.models.Bill.amountPaid114
+
+
+amountPaid115
+
+enum116
+
+
+StatusEnum117
+i
+borg.pucar.dristi.web.models.Bill$StatusEnum#values()[Lorg/pucar/dristi/web/models/Bill$StatusEnum;119
+
+method120
+
+values121
+{
+torg.pucar.dristi.web.models.Bill$StatusEnum#valueOf(Ljava/lang/String;)Lorg/pucar/dristi/web/models/Bill$StatusEnum;123
+
+valueOf124
+9
+2org.pucar.dristi.web.models.Bill$StatusEnum.ACTIVE126
+
+ACTIVE127
+
+calls128
+<
+5org.pucar.dristi.web.models.Bill$StatusEnum.CANCELLED130
+
+	CANCELLED131
+7
+0org.pucar.dristi.web.models.Bill$StatusEnum.PAID133
+
+PAID134
+:
+3org.pucar.dristi.web.models.Bill$StatusEnum.EXPIRED136
+
+EXPIRED137
+8
+1org.pucar.dristi.web.models.Bill$StatusEnum.value139
+
+value140
+a
+Zorg.pucar.dristi.web.models.Bill$StatusEnum#<init>(Ljava/lang/String;ILjava/lang/String;)V142
+O
+Horg.pucar.dristi.web.models.Bill$StatusEnum#toString()Ljava/lang/String;144
+
+toString145
+1
+*com.fasterxml.jackson.annotation.JsonValue147J
+
+1
+12Z
+
+3	
+354jø
+@
+65:
+656632 *
+11 1(26:3B
+	
+9
+33
+
+
+11
+67
+
+35
+353615
+
+18
+181915
+D
+104=
+10410532 *
+1S S(26:3B
+	
+9
+33
+
+11
+106
+
+13
+131415
+@
+30:
+303132 *
+1 (26:3B
+	
+9
+33
+
+
+11
+34
+@
+86:
+868732 *
+1A A(26:3B
+	
+9
+33
+
+
+11
+88
+F
+141?
+141142120 *
+1l	 l(258:3B
+	
+9
+33
+
+11
+117
+@
+78:
+787932 *
+1; ;(26:3B
+	
+9
+33
+
+
+11
+80
+@
+55:
+555632 *
+1+ +(26:3B
+	
+9
+33
+
+
+11
+57
+@
+92:
+929332 *
+1G G(26:3B
+	
+9
+33
+
+
+11
+94
+@
+81:
+818232 *
+1> >(26:3B
+	
+9
+33
+
+
+11
+83
+A
+98;
+989932 *
+1M M(26:3B
+	
+9
+33
+
+11
+100
+@
+73:
+737432 *
+17 7(26:3B
+	
+9
+33
+
+
+11
+75
+D
+113=
+11311432 *
+1\ \(26:3B
+	
+9
+33
+
+11
+115
+D
+107=
+10710832 *
+1V V(26:3B
+	
+9
+33
+
+11
+109
+B
+58<
+5859116 *
+1a a(26:3B
+	
+9
+10
+
+11
+117
+F
+143?
+143144120 *
+1q	 q(
+258:3B
+	
+9
+10
+
+11
+145
+
+84
+848515
+
+146
+14614715
+
+76
+767715
+@
+89:
+899032 *
+1D D(26:3B
+	
+9
+33
+
+
+11
+91
+:
+1323
+13213332 *
+1f	 f(258:3B
+
+11
+134
+
+20
+202115
+@
+46:
+464732 *
+1" "(26:3B
+	
+9
+33
+
+
+11
+48
+
+71
+717215
+;
+1184
+118119120 *
+1a a(258:3B
+
+11
+121
+@
+62:
+626332 *
+1. .(26:3B
+	
+9
+33
+
+
+11
+64
+@
+95:
+959632 *
+1J J(26:3B
+	
+9
+33
+
+
+11
+97
+:
+1253
+12512632 *
+1b	 b(258:3B
+
+11
+127
+@
+52:
+525332 *
+1( ((26:3B
+	
+9
+33
+
+
+11
+54
+:
+1293
+12913032 *
+1d	 d(258:3B
+
+11
+131
+
+28
+282915
+@
+37:
+373832 *
+1 (26:3B
+	
+9
+33
+
+
+11
+39
+E
+138>
+13813932 *
+1j	 j(258:3B
+	
+9
+33
+
+11
+140
+
+22
+222315
+@
+43:
+434432 *
+1 (26:3B
+	
+9
+33
+
+
+11
+45
+9
+64
+678 *
+1 (:3B
+	
+9
+10
+
+
+11
+12
+@
+68:
+686932 *
+14 4(26:3B
+	
+9
+33
+
+
+11
+70
+
+26
+262715
+D
+101=
+10110232 *
+1P P(26:3B
+	
+9
+33
+
+11
+103
+:
+1353
+13513632 *
+1h	 h(258:3B
+
+11
+137
+@
+40:
+404132 *
+1 (26:3B
+	
+9
+33
+
+
+11
+42
+@
+49:
+495032 *
+1% %(26:3B
+	
+9
+33
+
+
+11
+51
+
+24
+242515
+D
+110=
+11011132 *
+1Y Y(26:3B
+	
+9
+33
+
+11
+112
+;
+1224
+122123120 *
+1a a(258:3B
+
+11
+124r”
+
+61316*
+1 (
+
+61317*
+1 (
+
+61816*
+1 (
+
+61817*
+1 (
+
+62016*
+1 (
+
+62017*
+1 (
+
+
+62216*
+1 (
+
+62217*
+1 (	
+
+62416*
+1 (
+
+62417*
+1 (
+
+62616*
+1 (
+
+62617*
+1 (
+
+62816*
+1 (
+
+62817*
+1 (
+
+6617*
+1 (
+
+303516*
+1 (
+
+303517*
+1 (
+
+373516*
+1 (
+
+373517*
+1 (
+
+403516*
+1 (
+
+403517*
+1 (
+
+433516*
+1 (
+
+433517*
+1 (
+
+463516*
+1" "(
+
+463517*
+1" "(
+
+493516*
+1% %(
+
+493517*
+1% %(
+
+523516*
+1( ((
+
+523517*
+1( ((
+
+555860*
+1, ,(
+
+553516*
+1+ +(
+
+553517*
+1+ +(
+
+555817*
+1, ,(
+
+555861*
+1, ,(
+
+555817*
+1, ,(
+
+623516*
+1. .(
+
+623517*
+1. .(
+
+653516*
+11 1(
+
+653517*
+11 1(
+
+687160*
+15 5(
+
+683516*
+14 4(
+
+683517*
+14 4(
+
+687117*
+15 5(
+
+687117*
+15 5('
+
+733516*
+17 7(
+
+733517*
+17 7(
+
+737617*
+19 9(
+
+783516*
+1; ;(
+
+783517*
+1; ;(
+
+818460*
+1? ?(
+
+813516*
+1> >(
+
+813517*
+1> >(
+
+818417*
+1? ?(
+
+818417*
+1? ?(&
+
+863516*
+1A A(
+
+863517*
+1A A(
+
+893516*
+1D D(
+
+893517*
+1D D(
+
+923516*
+1G G(
+
+923517*
+1G G(
+
+953516*
+1J J(
+
+953517*
+1J J(
+
+983516*
+1M M(
+
+983517*
+1M M(
+
+1013516*
+1P P(
+
+1013517*
+1P P(
+
+1043516*
+1S S(
+
+1043517*
+1S S(
+
+1073516*
+1V V(
+
+1073517*
+1V V(
+
+1103516*
+1Y Y(
+
+1103517*
+1Y Y(
+
+1133516*
+1\ \(
+
+1133517*
+1\ \(
+
+585817*
+1a a(
+
+12558128*
+1b	 b(
+
+12558128*
+1b	 b(
+
+12958128*
+1d	 d(
+
+12958128*
+1d	 d(
+
+13258128*
+1f	 f(
+
+13258128*
+1f	 f(
+
+13558128*
+1h	 h(
+
+13558128*
+1h	 h(
+
+14158128*
+1l	 l(
+
+1415817*
+1m m(
+
+1415861*
+1m m(
+
+14113861*
+1m m(
+
+14314616*
+1r	 r(
+
+
+14314617*
+1r
+ r(
+
+14313861*
+1t# t((

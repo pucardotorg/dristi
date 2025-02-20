@@ -1,0 +1,20 @@
+org.egov.hrms.web.validator.EmployeeValidator#getBoundaryList(Lorg/egov/common/contract/request/RequestInfo;Lorg/egov/hrms/model/Employee;)Ljava/util/Map;
+false
+f1109f7a3fe9d7493f8f0c9bd7312d5c
+java.util.ArrayList#<init>()V
+java.util.ArrayList#instance-init#
+java.util.HashMap#<init>()V
+java.util.HashMap#instance-init#
+org.springframework.util.CollectionUtils#isEmpty(Ljava/util/Collection;)Z
+org.springframework.util.CollectionUtils#isEmpty(Ljava/util/Map;)Z
+==
+!unknownMethod! !unknownMethod!
+add java.util.List#add(Ljava/lang/Object;)Z
+addAll java.util.List#addAll(Ljava/util/Collection;)Z
+contains java.util.List#contains(Ljava/lang/Object;)Z
+fetchMDMSDataLoc org.egov.hrms.service.MDMSService#fetchMDMSDataLoc(Lorg/egov/common/contract/request/RequestInfo;Ljava/lang/String;)Lorg/egov/mdms/model/MdmsResponse;
+get java.util.Map#get(Ljava/lang/Object;)Ljava/lang/Object;
+getBoundary org.egov.hrms.model.Jurisdiction#getBoundary()Ljava/lang/String;
+getMdmsRes org.egov.mdms.model.MdmsResponse#getMdmsRes()Ljava/util/Map;
+keySet java.util.Map#keySet()Ljava/util/Set;
+put java.util.Map#put(Ljava/lang/Object;Ljava/lang/Object;)Ljava/lang/Object;

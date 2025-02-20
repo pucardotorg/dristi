@@ -1,0 +1,4 @@
+org.pucar.dristi.repository.querybuilder.TaskQueryBuilder#addClauseIfRequired(Ljava/lang/StringBuilder;Z)V
+false
+9c129290979118875a1d949e985b8efe
+java.lang.StringBuilder#append(Ljava/lang/String;)Ljava/lang/StringBuilder;

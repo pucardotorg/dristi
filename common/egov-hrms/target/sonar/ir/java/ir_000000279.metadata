@@ -1,0 +1,14 @@
+org.egov.hrms.service.EmployeeService#enrichUpdateRequest(Lorg/egov/hrms/model/Employee;Lorg/egov/common/contract/request/RequestInfo;Ljava/util/List;)V
+false
+404de050d007b0fefae2f32741dad580
+java.util.Date#<init>()V
+java.util.Date#instance-init#
+java.util.Optional#get()Ljava/lang/Object;
+==
+!unknownMethod! !unknownMethod!
+filter java.util.stream.Stream#filter(Ljava/util/function/Predicate;)Ljava/util/stream/Stream;
+findFirst java.util.stream.Stream#findFirst()Ljava/util/Optional;
+getTime java.util.Date#getTime()J
+getUserInfo org.egov.common.contract.request.RequestInfo#getUserInfo()Lorg/egov/common/contract/request/User;
+getUserName org.egov.common.contract.request.User#getUserName()Ljava/lang/String;
+stream java.util.Collection#stream()Ljava/util/stream/Stream;

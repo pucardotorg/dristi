@@ -1,0 +1,17 @@
+org.egov.hrms.service.UserService#getEncrichedandCopiedUserInfo(Ljava/lang/String;)Lorg/egov/common/contract/request/User;
+false
+9739012ef6274367a0c1c960582f37a6
+java.util.Collections#singletonList(Ljava/lang/Object;)Ljava/util/List;
+org.egov.common.contract.request.Role#builder()Lorg/egov/common/contract/request/Role$RoleBuilder;
+org.egov.common.contract.request.User#builder()Lorg/egov/common/contract/request/User$UserBuilder;
+==
+build org.egov.common.contract.request.Role$RoleBuilder#build()Lorg/egov/common/contract/request/Role;
+build org.egov.common.contract.request.User$UserBuilder#build()Lorg/egov/common/contract/request/User;
+code org.egov.common.contract.request.Role$RoleBuilder#code(Ljava/lang/String;)Lorg/egov/common/contract/request/Role$RoleBuilder;
+getStateLevelTenant org.egov.common.utils.MultiStateInstanceUtil#getStateLevelTenant(Ljava/lang/String;)Ljava/lang/String;
+id org.egov.common.contract.request.User$UserBuilder#id(Ljava/lang/Long;)Lorg/egov/common/contract/request/User$UserBuilder;
+name org.egov.common.contract.request.Role$RoleBuilder#name(Ljava/lang/String;)Lorg/egov/common/contract/request/Role$RoleBuilder;
+roles org.egov.common.contract.request.User$UserBuilder#roles(Ljava/util/List;)Lorg/egov/common/contract/request/User$UserBuilder;
+tenantId org.egov.common.contract.request.Role$RoleBuilder#tenantId(Ljava/lang/String;)Lorg/egov/common/contract/request/Role$RoleBuilder;
+type org.egov.common.contract.request.User$UserBuilder#type(Ljava/lang/String;)Lorg/egov/common/contract/request/User$UserBuilder;
+uuid org.egov.common.contract.request.User$UserBuilder#uuid(Ljava/lang/String;)Lorg/egov/common/contract/request/User$UserBuilder;

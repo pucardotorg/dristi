@@ -1,0 +1,11 @@
+org.pucar.dristi.repository.rowmapper.StatuteSectionRowMapper#stringToList(Ljava/lang/String;)Ljava/util/List;
+false
+e8c3bed926a2c923b63d24151ae60dcf
+java.util.ArrayList#<init>()V
+java.util.ArrayList#instance-init#
+java.util.StringTokenizer#<init>(Ljava/lang/String;Ljava/lang/String;)V
+java.util.StringTokenizer#instance-init#
+==
+add java.util.List#add(Ljava/lang/Object;)Z
+hasMoreTokens java.util.StringTokenizer#hasMoreTokens()Z
+nextToken java.util.StringTokenizer#nextToken()Ljava/lang/String;

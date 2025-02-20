@@ -1,0 +1,7 @@
+org.pucar.dristi.web.models.BillResponse#addBillItem(Lorg/pucar/dristi/web/models/Bill;)Lorg/pucar/dristi/web/models/BillResponse;
+false
+da2489af097e24f3e01a7ac5d6283d24
+java.util.ArrayList#<init>()V
+java.util.ArrayList#instance-init#
+==
+add java.util.List#add(Ljava/lang/Object;)Z

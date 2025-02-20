@@ -1,0 +1,10 @@
+org.egov.hrms.utils.HRMSUtils#isAssignmentSearchReqd(Lorg/egov/hrms/web/contract/EmployeeSearchCriteria;)Z
+false
+251a89fd254a94864a8fdea787b3426c
+org.springframework.util.CollectionUtils#isEmpty(Ljava/util/Collection;)Z
+==
+getAsOnDate org.egov.hrms.web.contract.EmployeeSearchCriteria#getAsOnDate()Ljava/lang/Long;
+getCourtEstablishment org.egov.hrms.web.contract.EmployeeSearchCriteria#getCourtEstablishment()Ljava/util/List;
+getCourtrooms org.egov.hrms.web.contract.EmployeeSearchCriteria#getCourtrooms()Ljava/util/List;
+getDesignations org.egov.hrms.web.contract.EmployeeSearchCriteria#getDesignations()Ljava/util/List;
+getPositions org.egov.hrms.web.contract.EmployeeSearchCriteria#getPositions()Ljava/util/List;

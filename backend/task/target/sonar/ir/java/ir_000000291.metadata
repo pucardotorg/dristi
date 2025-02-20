@@ -1,0 +1,20 @@
+org.pucar.dristi.repository.TaskRepository#getTaskWithCaseDetails(Lorg/pucar/dristi/web/models/TaskCaseSearchRequest;)Ljava/util/List;
+false
+df3b1126ab08ddab6e26e4f6edab827c
+java.lang.Double#valueOf(D)Ljava/lang/Double;
+java.util.ArrayList#<init>()V
+java.util.ArrayList#instance-init#
+==
+!unknownMethod! !unknownMethod!
+add java.util.List#add(Ljava/lang/Object;)Z
+addApplicationStatusQuery org.pucar.dristi.repository.querybuilder.TaskCaseQueryBuilder#addApplicationStatusQuery(Lorg/pucar/dristi/web/models/TaskCaseSearchCriteria;Ljava/lang/String;Ljava/util/List;)Ljava/lang/String;
+addOrderByQuery org.pucar.dristi.repository.querybuilder.TaskCaseQueryBuilder#addOrderByQuery(Ljava/lang/String;Lorg/pucar/dristi/web/models/Pagination;)Ljava/lang/String;
+addPaginationQuery org.pucar.dristi.repository.querybuilder.TaskCaseQueryBuilder#addPaginationQuery(Ljava/lang/String;Lorg/pucar/dristi/web/models/Pagination;Ljava/util/List;)Ljava/lang/String;
+addWithClauseQuery org.pucar.dristi.repository.querybuilder.TaskCaseQueryBuilder#addWithClauseQuery(Ljava/lang/String;)Ljava/lang/String;
+forEach java.lang.Iterable#forEach(Ljava/util/function/Consumer;)V
+getDocumentSearchQuery org.pucar.dristi.repository.querybuilder.TaskQueryBuilder#getDocumentSearchQuery(Ljava/util/List;Ljava/util/List;Ljava/util/List;)Ljava/lang/String;
+getFinalTaskCaseSearchQuery org.pucar.dristi.repository.querybuilder.TaskCaseQueryBuilder#getFinalTaskCaseSearchQuery()Ljava/lang/String;
+getTaskTableSearchQuery org.pucar.dristi.repository.querybuilder.TaskCaseQueryBuilder#getTaskTableSearchQuery(Lorg/pucar/dristi/web/models/TaskCaseSearchCriteria;Ljava/util/List;)Ljava/lang/String;
+getTotalCountTaskCase org.pucar.dristi.repository.TaskRepository#getTotalCountTaskCase(Ljava/lang/String;Ljava/lang/String;Lorg/pucar/dristi/web/models/TaskCaseSearchCriteria;Ljava/util/List;)Ljava/lang/Integer;
+query org.springframework.jdbc.core.JdbcTemplate#query(Ljava/lang/String;[Ljava/lang/Object;Lorg/springframework/jdbc/core/ResultSetExtractor;)Ljava/lang/Object;
+toArray java.util.List#toArray()[Ljava/lang/Object;

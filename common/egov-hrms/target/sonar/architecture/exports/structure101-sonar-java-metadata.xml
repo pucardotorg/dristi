@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<flavor name="com.sonarsource.architecture.export.java" version="1.0.0" availability="public">
+  <provider name="Sonar" email="https://www.sonarsource.com/" url="https://www.sonarsource.com/" />
+  <description>Flavor generated from the export of Sonar Architecture data</description>
+  <item-types>
+    <module-types>
+      <module-type name="file" sep="/" icon="file.gif" />
+    </module-types>
+    <nested-types>
+      <nested-type name="folder" sep="." icon="source.gif" />
+      <nested-type name="unknown" sep="." icon="source.gif" />
+      <nested-type name="file" sep="." icon="source.gif" />
+      <nested-type name="class" sep="." icon="source.gif" />
+      <nested-type name="field" sep="." icon="source.gif" />
+      <nested-type name="enum" sep="." icon="source.gif" />
+      <nested-type name="method" sep="." icon="source.gif" />
+    </nested-types>
+    <virtual-types>
+      <virtual-type nature="root" icon="root.gif" />
+      <virtual-type nature="folder" name="dir" />
+      <virtual-type nature="file" name="file" />
+      <virtual-type nature="module" name="source" />
+      <virtual-type nature="bundle" />
+    </virtual-types>
+  </item-types>
+  <dependency-types>
+    <dependency-type name="annotated by" />
+    <dependency-type name="uses" />
+    <dependency-type name="is type" />
+    <dependency-type name="calls" />
+    <dependency-type name="references" />
+    <dependency-type name="returns" />
+    <dependency-type name="has param" />
+    <dependency-type name="implements" />
+  </dependency-types>
+</flavor>

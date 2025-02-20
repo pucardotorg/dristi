@@ -1,0 +1,275 @@
+
+1.0solutions_evidenceJavaFrontend"1739451578862*java2.B×
+C
+>src/main/java/org/pucar/dristi/web/models/EvidenceRequest.java2
+
+package4
+ 
+org.pucar.dristi.web.models5
+0
++org.pucar.dristi.web.models.EvidenceRequest7
+
+
+class8
+
+access9
+
+public10
+
+simple name11
+
+EvidenceRequest12
+9
+3org.springframework.validation.annotation.Validated14
+
+unknown15
+
+annotated by16
+
+
+uses17
+"
+jakarta.annotation.Generated19
+
+lombok.Data21
+
+lombok.AllArgsConstructor23
+
+lombok.NoArgsConstructor25
+
+lombok.Builder27
+=
+7org.pucar.dristi.web.models.EvidenceRequest.requestInfo29
+
+field30
+
+private31
+
+requestInfo32
+2
+,org.egov.common.contract.request.RequestInfo34
+
+is type35
+3
+-com.fasterxml.jackson.annotation.JsonProperty37
+
+jakarta.validation.Valid39
+:
+4org.pucar.dristi.web.models.EvidenceRequest.artifact41
+
+artifact42
+*
+$org.pucar.dristi.web.models.Artifact44
+“
+Œorg.pucar.dristi.web.models.EvidenceRequest#addArtifact(Lorg/pucar/dristi/web/models/Artifact;)Lorg/pucar/dristi/web/models/EvidenceRequest;46
+
+method47
+
+addArtifact48
+
+returns49
+
+	has param50
+
+
+references51J
+
+1
+12Z
+
+3	
+354jÉ
+
+36
+363715
+
+13
+131415
+
+43
+434415
+9
+64
+678 *
+1 (:3B
+	
+9
+10
+
+
+11
+12
+
+38
+383915
+@
+28:
+282930 *
+1 (26:3B
+	
+9
+31
+
+
+11
+32
+
+18
+181915
+
+26
+262715
+
+20
+202115
+@
+45:
+454647 *
+1$ $(26:3B
+	
+9
+10
+
+
+11
+48
+
+22
+222315
+
+33
+333415
+@
+40:
+404130 *
+1   (26:3B
+	
+9
+31
+
+
+11
+42
+
+24
+242515rî
+
+61316*
+1 (
+
+61317*
+1 (
+
+61816*
+1 (
+
+61817*
+1 (
+
+62016*
+1 (
+
+62017*
+1 (
+
+62216*
+1 (
+
+62217*
+1 (
+
+62416*
+1 (
+
+62417*
+1 (
+
+62616*
+1 (
+
+62617*
+1 (	
+
+6617*
+1 (
+
+283335*
+1
+ (
+
+283616*
+1 (
+
+283617*
+1 (
+
+283816*
+1 (
+
+283817*
+1 (
+
+283317*
+1
+ (
+
+283317*
+1 (!
+
+404335*
+1"
+ "(
+
+403616*
+1   (
+
+403617*
+1   (
+
+403816*
+1! !(
+
+403817*
+1! !(
+
+404317*
+1"
+ "(
+
+404317*
+1" "(
+
+45649*
+1$	 $(
+
+454350*
+1$% $(-
+
+45617*
+1$	 $(
+
+454335*
+1$. $(6
+
+454317*
+1$% $(-
+
+45617*
+1% %(
+
+45651*
+1% %(
+
+454317*
+1% %(
+
+454051*
+1% %(
+
+45617*
+1&
+ &(
+
+45651*
+1&
+ &(

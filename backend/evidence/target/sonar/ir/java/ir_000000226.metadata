@@ -1,0 +1,15 @@
+org.pucar.dristi.repository.querybuilder.EvidenceQueryBuilder#getCitizenQuery(Ljava/util/List;Lorg/pucar/dristi/web/models/EvidenceSearchCriteria;Ljava/util/List;Ljava/util/List;)Ljava/lang/String;
+false
+605cd34466aac3b177442715ccd20e1c
+java.lang.String#equals(Ljava/lang/Object;)Z
+java.lang.StringBuilder#<init>()V
+java.lang.StringBuilder#append(Ljava/lang/String;)Ljava/lang/StringBuilder;
+java.lang.StringBuilder#instance-init#
+java.lang.StringBuilder#toString()Ljava/lang/String;
+java.util.UUID#toString()Ljava/lang/String;
+org.pucar.dristi.repository.querybuilder.EvidenceQueryBuilder#addCitizenCriteria(Ljava/lang/String;Ljava/lang/String;Ljava/util/List;Ljava/util/List;)Ljava/lang/String;
+==
+!unknownMethod! !unknownMethod!
+getFilingNumber org.pucar.dristi.web.models.EvidenceSearchCriteria#getFilingNumber()Ljava/lang/String;
+getOwner org.pucar.dristi.web.models.EvidenceSearchCriteria#getOwner()Ljava/util/UUID;
+getStatusQuery org.pucar.dristi.repository.querybuilder.EvidenceQueryBuilder#getStatusQuery(Ljava/util/List;Ljava/util/List;Ljava/util/List;)Ljava/lang/String;

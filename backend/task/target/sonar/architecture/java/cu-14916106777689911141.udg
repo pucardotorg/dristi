@@ -1,0 +1,570 @@
+
+1.0solutions_taskJavaFrontend"1739451663802*java2.Bý
+>
+9src/main/java/org/pucar/dristi/web/models/BillDetail.java2
+
+package4
+ 
+org.pucar.dristi.web.models5
++
+&org.pucar.dristi.web.models.BillDetail7
+
+
+class8
+
+access9
+
+public10
+
+simple name11
+
+
+BillDetail12
+
+lombok.Setter14
+
+unknown15
+
+annotated by16
+
+
+uses17
+
+lombok.Getter19
+
+lombok.ToString21
+
+lombok.Builder23
+
+lombok.NoArgsConstructor25
+
+lombok.AllArgsConstructor27
+
+lombok.EqualsAndHashCode29
+/
+)org.pucar.dristi.web.models.BillDetail.id31
+
+field32
+
+private33
+
+id34
+3
+-com.fasterxml.jackson.annotation.JsonProperty36
+5
+/org.pucar.dristi.web.models.BillDetail.tenantId38
+
+tenantId39
+5
+/org.pucar.dristi.web.models.BillDetail.demandId41
+
+demandId42
+3
+-org.pucar.dristi.web.models.BillDetail.billId44
+
+billId45
+3
+-org.pucar.dristi.web.models.BillDetail.amount47
+
+amount48
+7
+1org.pucar.dristi.web.models.BillDetail.amountPaid50
+
+
+amountPaid51
+7
+1org.pucar.dristi.web.models.BillDetail.fromPeriod53
+
+
+fromPeriod54
+5
+/org.pucar.dristi.web.models.BillDetail.toPeriod56
+
+toPeriod57
+>
+8org.pucar.dristi.web.models.BillDetail.additionalDetails59
+
+additionalDetails60
+-
+'com.fasterxml.jackson.databind.JsonNode62
+
+is type63
+4
+.org.pucar.dristi.web.models.BillDetail.channel65
+
+channel66
+:
+4org.pucar.dristi.web.models.BillDetail.voucherHeader68
+
+voucherHeader69
+5
+/org.pucar.dristi.web.models.BillDetail.boundary71
+
+boundary72
+@
+:org.pucar.dristi.web.models.BillDetail.manualReceiptNumber74
+
+manualReceiptNumber75
+>
+8org.pucar.dristi.web.models.BillDetail.manualReceiptDate77
+
+manualReceiptDate78
+?
+9org.pucar.dristi.web.models.BillDetail.billAccountDetails80
+
+billAccountDetails81
+3
+-org.pucar.dristi.web.models.BillAccountDetail83
+;
+5org.pucar.dristi.web.models.BillDetail.collectionType85
+
+collectionType86
+9
+3org.pucar.dristi.web.models.BillDetail.auditDetails88
+
+auditDetails89
+2
+,org.egov.common.contract.models.AuditDetails91
+<
+6org.pucar.dristi.web.models.BillDetail.billDescription93
+
+billDescription94
+7
+1org.pucar.dristi.web.models.BillDetail.expiryDate96
+
+
+expiryDate97J
+
+1
+12Z
+
+3	
+354jý
+@
+37:
+373832 *
+1 (26:3B
+	
+9
+33
+
+
+11
+39
+@
+64:
+646532 *
+13 3(26:3B
+	
+9
+33
+
+
+11
+66
+
+35
+353615
+
+13
+131415
+
+18
+181915
+@
+52:
+525332 *
+1( ((26:3B
+	
+9
+33
+
+
+11
+54
+@
+76:
+767732 *
+1? ?(26:3B
+	
+9
+33
+
+
+11
+78
+
+82
+828315
+@
+55:
+555632 *
+1, ,(26:3B
+	
+9
+33
+
+
+11
+57
+
+90
+909115
+9
+64
+678 *
+1 (:3B
+	
+9
+10
+
+
+11
+12
+
+20
+202115
+@
+70:
+707132 *
+19 9(26:3B
+	
+9
+33
+
+
+11
+72
+
+61
+616215
+@
+92:
+929332 *
+1L L(26:3B
+	
+9
+33
+
+
+11
+94
+@
+49:
+495032 *
+1% %(26:3B
+	
+9
+33
+
+
+11
+51
+@
+79:
+798032 *
+1B B(26:3B
+	
+9
+33
+
+
+11
+81
+@
+87:
+878832 *
+1I I(26:3B
+	
+9
+33
+
+
+11
+89
+@
+40:
+404132 *
+1 (26:3B
+	
+9
+33
+
+
+11
+42
+@
+95:
+959632 *
+1N N(26:3B
+	
+9
+33
+
+
+11
+97
+@
+46:
+464732 *
+1! !(26:3B
+	
+9
+33
+
+
+11
+48
+
+28
+282915
+@
+67:
+676832 *
+16 6(26:3B
+	
+9
+33
+
+
+11
+69
+
+22
+222315
+@
+43:
+434432 *
+1 (26:3B
+	
+9
+33
+
+
+11
+45
+@
+58:
+585932 *
+10 0(26:3B
+	
+9
+33
+
+
+11
+60
+@
+73:
+737432 *
+1< <(26:3B
+	
+9
+33
+
+
+11
+75
+
+26
+262715
+
+24
+242515
+@
+30:
+303132 *
+1 (26:3B
+	
+9
+33
+
+
+11
+34
+@
+84:
+848532 *
+1E E(26:3B
+	
+9
+33
+
+
+11
+86rŽ
+
+61316*
+1 (
+
+61317*
+1 (
+
+61816*
+1 (
+
+61817*
+1 (
+
+62016*
+1 (
+
+62017*
+1 (
+
+
+62216*
+1 (
+
+62217*
+1 (	
+
+62416*
+1 (
+
+62417*
+1 (
+
+62616*
+1 (
+
+62617*
+1 (
+
+62816*
+1 (
+
+62817*
+1 (
+
+6617*
+1 (
+
+303516*
+1 (
+
+303517*
+1 (
+
+373516*
+1 (
+
+373517*
+1 (
+
+403516*
+1 (
+
+403517*
+1 (
+
+433516*
+1 (
+
+433517*
+1 (
+
+463516*
+1! !(
+
+463517*
+1! !(
+
+493516*
+1% %(
+
+493517*
+1% %(
+
+523516*
+1) )(
+
+523517*
+1) )(
+
+553516*
+1- -(
+
+553517*
+1- -(
+
+586163*
+11 1(
+
+583516*
+10 0(
+
+583517*
+10 0(
+
+586117*
+11 1(
+
+586117*
+11 1('
+
+643516*
+13 3(
+
+643517*
+13 3(
+
+673516*
+16 6(
+
+673517*
+16 6(
+
+703516*
+19 9(
+
+703517*
+19 9(
+
+733516*
+1< <(
+
+733517*
+1< <(
+
+763516*
+1? ?(
+
+763517*
+1? ?(
+
+793516*
+1B B(
+
+793517*
+1B B(
+
+798217*
+1C C(#
+
+843516*
+1F F(
+
+843517*
+1F F(
+
+879063*
+1J J(
+
+873516*
+1I I(
+
+873517*
+1I I(
+
+879017*
+1J J(
+
+879017*
+1J J(&
+
+953516*
+1O O(
+
+953517*
+1O O(

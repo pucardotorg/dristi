@@ -1,0 +1,43 @@
+
+Dorg.pucar.dristi.web.models.AdvocateSearchRequest#%field_initializer
+__unknown_file ("1*Œ
+
+1 (è
+å
+‚
+x/home/bhcp0191/pucar/dristi-solutions/backend/order/src/main/java/org/pucar/dristi/web/models/AdvocateSearchRequest.java (+D3
+1org.pucar.dristi.web.models.AdvocateSearchRequest"
+requestInfo"__id*
+ (
+""å
+â
+‚
+x/home/bhcp0191/pucar/dristi-solutions/backend/order/src/main/java/org/pucar/dristi/web/models/AdvocateSearchRequest.java (#A3
+1org.pucar.dristi.web.models.AdvocateSearchRequest"
+
+tenantId"__id*
+ (
+""¸µ
+‚
+x/home/bhcp0191/pucar/dristi-solutions/backend/order/src/main/java/org/pucar/dristi/web/models/AdvocateSearchRequest.java"8 "(C
+%0java.util.ArrayList"java.util.ArrayListÖ
+Ó
+‚
+x/home/bhcp0191/pucar/dristi-solutions/backend/order/src/main/java/org/pucar/dristi/web/models/AdvocateSearchRequest.java"4 "(E
+%1"java.util.ArrayList#<init>()V*'
+ (
+
+%0java.util.ArrayListú
+÷
+‚
+x/home/bhcp0191/pucar/dristi-solutions/backend/order/src/main/java/org/pucar/dristi/web/models/AdvocateSearchRequest.java  "(FA3
+1org.pucar.dristi.web.models.AdvocateSearchRequest"
+
+criteria"__id*'
+ (
+
+%0java.util.ArrayList"˜
+€
+x/home/bhcp0191/pucar/dristi-solutions/backend/order/src/main/java/org/pucar/dristi/web/models/AdvocateSearchRequest.java %(
+implicit returnB53
+1org.pucar.dristi.web.models.AdvocateSearchRequest

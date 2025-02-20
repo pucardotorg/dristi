@@ -1,0 +1,622 @@
+
+ºorg.pucar.dristi.repository.querybuilder.EvidenceQueryBuilder#getArtifactSearchQuery(Ljava/util/List;Ljava/util/List;Lorg/pucar/dristi/web/models/EvidenceSearchCriteria;)Ljava/lang/String;í
+á/home/bhcp0191/pucar/dristi-solutions/backend/evidence/src/main/java/org/pucar/dristi/repository/querybuilder/EvidenceQueryBuilder.java (("35*‰
+24. .(/d
+b
+. .(/
+orderjava.lang.String"__id*5
+
+__unknown_file (
+
+%11java.lang.StringÁ‰
+/ /(4
+%12java.lang.String"Rorg.pucar.dristi.web.models.EvidenceSearchCriteria#getSourceId()Ljava/lang/String;*\
+
+__unknown_file (@
+>
+criteria2org.pucar.dristi.web.models.EvidenceSearchCriteria2getSourceId()*
+23*‡
+25- -(3f
+d
+- -(3
+hearingjava.lang.String"__id*5
+
+__unknown_file (
+
+%10java.lang.String·ﬁ
+. .(.
+%11java.lang.String"Oorg.pucar.dristi.web.models.EvidenceSearchCriteria#getOrder()Ljava/lang/String;*\
+
+__unknown_file (@
+>
+criteria2org.pucar.dristi.web.models.EvidenceSearchCriteria2
+getOrder()*
+24*Ë
+26, ,(=j
+h
+, ,(= 
+filingNumberjava.lang.String"__id*4
+
+__unknown_file (
+
+%9java.lang.StringÂ‚
+- -(2
+%10java.lang.String"Qorg.pucar.dristi.web.models.EvidenceSearchCriteria#getHearing()Ljava/lang/String;*\
+
+__unknown_file (@
+>
+criteria2org.pucar.dristi.web.models.EvidenceSearchCriteria2getHearing()*
+25*
+27+ +(Ai
+g
++ +(A
+applicationjava.lang.String"__id*4
+
+__unknown_file (
+
+%8java.lang.StringÓÎ
+," ,(<
+%9java.lang.String"Vorg.pucar.dristi.web.models.EvidenceSearchCriteria#getFilingNumber()Ljava/lang/String;*\
+
+__unknown_file (@
+>
+criteria2org.pucar.dristi.web.models.EvidenceSearchCriteria2getFilingNumber()*
+26*ı
+28* *(1d
+b
+* *(1
+caseIdjava.lang.String"__id*4
+
+__unknown_file (
+
+%7java.lang.String¯ı
++! +(@
+%8java.lang.String"[org.pucar.dristi.web.models.EvidenceSearchCriteria#getApplicationNumber()Ljava/lang/String;*\
+
+__unknown_file (@
+>
+criteria2org.pucar.dristi.web.models.EvidenceSearchCriteria2getApplicationNumber()*
+27*€
+29) )()`
+^
+) )()
+idjava.lang.String"__id*4
+
+__unknown_file (
+
+%6java.lang.String‚ﬂ
+* *(0
+%7java.lang.String"Porg.pucar.dristi.web.models.EvidenceSearchCriteria#getCaseId()Ljava/lang/String;*\
+
+__unknown_file (@
+>
+criteria2org.pucar.dristi.web.models.EvidenceSearchCriteria2getCaseId()*
+28*Œ
+30( ((B[
+Y
+( ((B#
+evidenceStatusjava.lang.Boolean"__id*"
+
+__unknown_file (
+""⁄◊
+) )((
+%6java.lang.String"Lorg.pucar.dristi.web.models.EvidenceSearchCriteria#getId()Ljava/lang/String;*\
+
+__unknown_file (@
+>
+criteria2org.pucar.dristi.web.models.EvidenceSearchCriteria2getId()*
+29*n
+31' '(=X
+V
+' '(= 
+artifactTypejava.lang.String"__id*"
+
+__unknown_file (
+""*
+30*u
+32& &(-_
+]
+& &(-
+ownerjava.util.UUID"__id*2
+
+__unknown_file (
+
+%5java.util.UUID*
+31*q
+10=S =(W\
+Z
+=S =(W
+%25java.lang.String"__id*/
+
+__unknown_file (
+
+%27
+<nulltype>*
+9*Û
+33#$ #((‹Ÿ
+& &(,
+%5java.util.UUID"Morg.pucar.dristi.web.models.EvidenceSearchCriteria#getOwner()Ljava/util/UUID;*\
+
+__unknown_file (@
+>
+criteria2org.pucar.dristi.web.models.EvidenceSearchCriteria2
+getOwner()*
+32*ê
+11=@ =(Eñì
+=@ =(P
+%26java.lang.String"+java.util.UUID#toString()Ljava/lang/String;*5
+
+__unknown_file (
+
+ownerjava.util.UUID2
+toString()b
+`
+=@ =(P
+%25java.lang.String"__id*5
+
+__unknown_file (
+
+%26java.lang.String*
+9*Ö
+34! !(Iq
+o
+! !(I 
+queryjava.lang.StringBuilder"__id*;
+
+__unknown_file (
+
+%1java.lang.StringBuildern
+l
+" "(-
+%3java.lang.String"__id*B
+
+__unknown_file (&$
+" FROM dristi_evidence_artifact artãà
+" "(.
+%4java.lang.StringBuilder"Kjava.lang.StringBuilder#append(Ljava/lang/String;)Ljava/lang/StringBuilder;*>
+
+__unknown_file ("
+ 
+queryjava.lang.StringBuilder*4
+
+__unknown_file (
+
+%3java.lang.String2append(Ljava/lang/String;)*
+33*ë
+12	< <(âv
+t
+=0 =(=
+%24boolean"	__compare*
+=6 =(8
+!=*%
+=0 =(5
+
+ownerjava.util.UUID*
+=9 =(=
+""*
+10
+11*≤
+
+35!4 !(Gó
+î
+!4 !(G
+%0java.lang.String"__id*È
+
+__unknown_file (Ã…
+∆ SELECT art.id as id, art.tenantId as tenantId, art.artifactNumber as artifactNumber, art.evidenceNumber as evidenceNumber, art.externalRefNumber as externalRefNumber, art.caseId as caseId, art.application as application, art.filingNumber as filingNumber, art.hearing as hearing, art.orders as orders, art.mediaType as mediaType, art.artifactType as artifactType, art.sourceType as sourceType, art.sourceID as sourceID, art.sourceName as sourceName, art.applicableTo as applicableTo, art.comments as comments, art.file as file, art.createdDate as createdDate, art.isActive as isActive, art.isEvidence as isEvidence, art.status as status, art.description as description, art.artifactDetails as artifactDetails, art.additionalDetails as additionalDetails, art.createdBy as createdBy, art.lastModifiedBy as lastModifiedBy, art.createdTime as createdTime, art.lastModifiedTime as lastModifiedTime, art.isVoid as isVoid, art.reason as reason, art.filingType as filingTypeDB
+!& !(3
+%1java.lang.StringBuilder"java.lang.StringBuilderª
+∏
+!" !(H
+%2"3java.lang.StringBuilder#<init>(Ljava/lang/String;)V*;
+
+__unknown_file (
+
+%1java.lang.StringBuilder*4
+
+__unknown_file (
+
+%0java.lang.String*
+34*ò
+13	; ;(ÑÄ˝
+	< <(â
+%23boolean"≤org.pucar.dristi.repository.querybuilder.EvidenceQueryBuilder#addArtifactCriteria(Ljava/lang/String;Ljava/lang/StringBuilder;Ljava/util/List;ZLjava/lang/String;Ljava/util/List;)Z*]
+
+__unknown_file (A?
+=org.pucar.dristi.repository.querybuilder.EvidenceQueryBuilder*:
+
+__unknown_file (
+
+sourceIdjava.lang.String*>
+
+__unknown_file ("
+ 
+queryjava.lang.StringBuilder*@
+
+__unknown_file ($
+"
+preparedStmtListjava.util.List*"
+
+__unknown_file (
+""*0
+
+__unknown_file (
+art.sourceId = ?*C
+
+__unknown_file ('
+%
+preparedStmtArgListjava.util.List2saddArtifactCriteria(Ljava/lang/String;Ljava/lang/StringBuilder;Ljava/util/List;ZLjava/lang/String;Ljava/util/List;)*
+12*ì
+14	: :(á˚¯
+	; ;(Ñ
+%22boolean"≤org.pucar.dristi.repository.querybuilder.EvidenceQueryBuilder#addArtifactCriteria(Ljava/lang/String;Ljava/lang/StringBuilder;Ljava/util/List;ZLjava/lang/String;Ljava/util/List;)Z*]
+
+__unknown_file (A?
+=org.pucar.dristi.repository.querybuilder.EvidenceQueryBuilder*7
+
+__unknown_file (
+
+orderjava.lang.String*>
+
+__unknown_file ("
+ 
+queryjava.lang.StringBuilder*@
+
+__unknown_file ($
+"
+preparedStmtListjava.util.List*"
+
+__unknown_file (
+""*.
+
+__unknown_file (
+art.orders = ?*C
+
+__unknown_file ('
+%
+preparedStmtArgListjava.util.List2saddArtifactCriteria(Ljava/lang/String;Ljava/lang/StringBuilder;Ljava/util/List;ZLjava/lang/String;Ljava/util/List;)*
+13*ñ
+15	9 9(ë˛˚
+	: :(á
+%21boolean"≤org.pucar.dristi.repository.querybuilder.EvidenceQueryBuilder#addArtifactCriteria(Ljava/lang/String;Ljava/lang/StringBuilder;Ljava/util/List;ZLjava/lang/String;Ljava/util/List;)Z*]
+
+__unknown_file (A?
+=org.pucar.dristi.repository.querybuilder.EvidenceQueryBuilder*9
+
+__unknown_file (
+
+hearingjava.lang.String*>
+
+__unknown_file ("
+ 
+queryjava.lang.StringBuilder*@
+
+__unknown_file ($
+"
+preparedStmtListjava.util.List*"
+
+__unknown_file (
+""*/
+
+__unknown_file (
+art.hearing = ?*C
+
+__unknown_file ('
+%
+preparedStmtArgListjava.util.List2saddArtifactCriteria(Ljava/lang/String;Ljava/lang/StringBuilder;Ljava/util/List;ZLjava/lang/String;Ljava/util/List;)*
+14*ü
+168 8({àÖ
+	9 9(ë
+%20boolean"≤org.pucar.dristi.repository.querybuilder.EvidenceQueryBuilder#addArtifactCriteria(Ljava/lang/String;Ljava/lang/StringBuilder;Ljava/util/List;ZLjava/lang/String;Ljava/util/List;)Z*]
+
+__unknown_file (A?
+=org.pucar.dristi.repository.querybuilder.EvidenceQueryBuilder*>
+
+__unknown_file ("
+ 
+filingNumberjava.lang.String*>
+
+__unknown_file ("
+ 
+queryjava.lang.StringBuilder*@
+
+__unknown_file ($
+"
+preparedStmtListjava.util.List*"
+
+__unknown_file (
+""*4
+
+__unknown_file (
+art.filingNumber = ?*C
+
+__unknown_file ('
+%
+preparedStmtArgListjava.util.List2saddArtifactCriteria(Ljava/lang/String;Ljava/lang/StringBuilder;Ljava/util/List;ZLjava/lang/String;Ljava/util/List;)*
+15* 
+17	7 7(ë≤Ø
+8 8({
+%19boolean"°org.pucar.dristi.repository.querybuilder.EvidenceQueryBuilder#addArtifactCriteria(Ljava/lang/Boolean;Ljava/lang/StringBuilder;Ljava/util/List;ZLjava/util/List;)Z*]
+
+__unknown_file (A?
+=org.pucar.dristi.repository.querybuilder.EvidenceQueryBuilder*A
+
+__unknown_file (%
+#
+evidenceStatusjava.lang.Boolean*>
+
+__unknown_file ("
+ 
+queryjava.lang.StringBuilder*@
+
+__unknown_file ($
+"
+preparedStmtListjava.util.List*"
+
+__unknown_file (
+""*C
+
+__unknown_file ('
+%
+preparedStmtArgListjava.util.List2baddArtifactCriteria(Ljava/lang/Boolean;Ljava/lang/StringBuilder;Ljava/util/List;ZLjava/util/List;)*
+16*†
+18	6 6(èàÖ
+	7 7(ë
+%18boolean"≤org.pucar.dristi.repository.querybuilder.EvidenceQueryBuilder#addArtifactCriteria(Ljava/lang/String;Ljava/lang/StringBuilder;Ljava/util/List;ZLjava/lang/String;Ljava/util/List;)Z*]
+
+__unknown_file (A?
+=org.pucar.dristi.repository.querybuilder.EvidenceQueryBuilder*>
+
+__unknown_file ("
+ 
+artifactTypejava.lang.String*>
+
+__unknown_file ("
+ 
+queryjava.lang.StringBuilder*@
+
+__unknown_file ($
+"
+preparedStmtListjava.util.List*"
+
+__unknown_file (
+""*4
+
+__unknown_file (
+art.artifactType = ?*C
+
+__unknown_file ('
+%
+preparedStmtArgListjava.util.List2saddArtifactCriteria(Ljava/lang/String;Ljava/lang/StringBuilder;Ljava/util/List;ZLjava/lang/String;Ljava/util/List;)*
+17*û
+19	5 5(ÖÜÉ
+	6 6(è
+%17boolean"≤org.pucar.dristi.repository.querybuilder.EvidenceQueryBuilder#addArtifactCriteria(Ljava/lang/String;Ljava/lang/StringBuilder;Ljava/util/List;ZLjava/lang/String;Ljava/util/List;)Z*]
+
+__unknown_file (A?
+=org.pucar.dristi.repository.querybuilder.EvidenceQueryBuilder*=
+
+__unknown_file (!
+
+applicationjava.lang.String*>
+
+__unknown_file ("
+ 
+queryjava.lang.StringBuilder*@
+
+__unknown_file ($
+"
+preparedStmtListjava.util.List*"
+
+__unknown_file (
+""*3
+
+__unknown_file (
+art.application = ?*C
+
+__unknown_file ('
+%
+preparedStmtArgListjava.util.List2saddArtifactCriteria(Ljava/lang/String;Ljava/lang/StringBuilder;Ljava/util/List;ZLjava/lang/String;Ljava/util/List;)*
+18*4
+5A A($"%
+A A($
+
+%31java.lang.String*Ω
+6A A(®•
+A A(#
+%31java.lang.String"4java.lang.StringBuilder#toString()Ljava/lang/String;*>
+
+__unknown_file ("
+ 
+queryjava.lang.StringBuilder2
+toString()*
+5*–
+7	> >(ç∫∑
+? ?(r
+%30void"ßorg.pucar.dristi.repository.querybuilder.EvidenceQueryBuilder#addArtifactPartialCriteria(Ljava/lang/String;Ljava/lang/StringBuilder;Ljava/util/List;ZLjava/util/List;)V*]
+
+__unknown_file (A?
+=org.pucar.dristi.repository.querybuilder.EvidenceQueryBuilder*@
+
+__unknown_file ($
+"
+artifactNumberjava.lang.String*>
+
+__unknown_file ("
+ 
+queryjava.lang.StringBuilder*@
+
+__unknown_file ($
+"
+preparedStmtListjava.util.List*"
+
+__unknown_file (
+""*C
+
+__unknown_file ('
+%
+preparedStmtArgListjava.util.List2haddArtifactPartialCriteria(Ljava/lang/String;Ljava/lang/StringBuilder;Ljava/util/List;ZLjava/util/List;)*
+6*ö
+8	= =(©ÑÅ
+	> >(ç
+%29boolean"≤org.pucar.dristi.repository.querybuilder.EvidenceQueryBuilder#addArtifactCriteria(Ljava/lang/String;Ljava/lang/StringBuilder;Ljava/util/List;ZLjava/lang/String;Ljava/util/List;)Z*]
+
+__unknown_file (A?
+=org.pucar.dristi.repository.querybuilder.EvidenceQueryBuilder*<
+
+__unknown_file ( 
+
+
+sourceNamejava.lang.String*>
+
+__unknown_file ("
+ 
+queryjava.lang.StringBuilder*@
+
+__unknown_file ($
+"
+preparedStmtListjava.util.List*"
+
+__unknown_file (
+""*2
+
+__unknown_file (
+art.sourceName = ?*C
+
+__unknown_file ('
+%
+preparedStmtArgListjava.util.List2saddArtifactCriteria(Ljava/lang/String;Ljava/lang/StringBuilder;Ljava/util/List;ZLjava/lang/String;Ljava/util/List;)*
+7*ë
+9=Y =(^¸˘
+	= =(©
+%28boolean"≤org.pucar.dristi.repository.querybuilder.EvidenceQueryBuilder#addArtifactCriteria(Ljava/lang/String;Ljava/lang/StringBuilder;Ljava/util/List;ZLjava/lang/String;Ljava/util/List;)Z*]
+
+__unknown_file (A?
+=org.pucar.dristi.repository.querybuilder.EvidenceQueryBuilder*5
+
+__unknown_file (
+
+%25java.lang.String*>
+
+__unknown_file ("
+ 
+queryjava.lang.StringBuilder*@
+
+__unknown_file ($
+"
+preparedStmtListjava.util.List*"
+
+__unknown_file (
+""*1
+
+__unknown_file (
+art.createdBy = ?*C
+
+__unknown_file ('
+%
+preparedStmtArgListjava.util.List2saddArtifactCriteria(Ljava/lang/String;Ljava/lang/StringBuilder;Ljava/util/List;ZLjava/lang/String;Ljava/util/List;)*
+8*ì
+204 4(}¸˘
+	5 5(Ö
+%16boolean"≤org.pucar.dristi.repository.querybuilder.EvidenceQueryBuilder#addArtifactCriteria(Ljava/lang/String;Ljava/lang/StringBuilder;Ljava/util/List;ZLjava/lang/String;Ljava/util/List;)Z*]
+
+__unknown_file (A?
+=org.pucar.dristi.repository.querybuilder.EvidenceQueryBuilder*8
+
+__unknown_file (
+
+caseIdjava.lang.String*>
+
+__unknown_file ("
+ 
+queryjava.lang.StringBuilder*@
+
+__unknown_file ($
+"
+preparedStmtListjava.util.List*"
+
+__unknown_file (
+""*.
+
+__unknown_file (
+art.caseId = ?*C
+
+__unknown_file ('
+%
+preparedStmtArgListjava.util.List2saddArtifactCriteria(Ljava/lang/String;Ljava/lang/StringBuilder;Ljava/util/List;ZLjava/lang/String;Ljava/util/List;)*
+19*˘
+211 1(Am
+k
+1 1(A"
+artifactNumberjava.lang.String"__id*5
+
+__unknown_file (
+
+%14java.lang.StringÛ
+4 4(}
+%15boolean"≤org.pucar.dristi.repository.querybuilder.EvidenceQueryBuilder#addArtifactCriteria(Ljava/lang/String;Ljava/lang/StringBuilder;Ljava/util/List;ZLjava/lang/String;Ljava/util/List;)Z*]
+
+__unknown_file (A?
+=org.pucar.dristi.repository.querybuilder.EvidenceQueryBuilder*4
+
+__unknown_file (
+
+idjava.lang.String*>
+
+__unknown_file ("
+ 
+queryjava.lang.StringBuilder*@
+
+__unknown_file ($
+"
+preparedStmtListjava.util.List*"
+
+__unknown_file (
+""**
+
+__unknown_file (
+
+art.id = ?*C
+
+__unknown_file ('
+%
+preparedStmtArgListjava.util.List2saddArtifactCriteria(Ljava/lang/String;Ljava/lang/StringBuilder;Ljava/util/List;ZLjava/lang/String;Ljava/util/List;)*
+20*ı
+220 0(9i
+g
+0 0(9
+
+sourceNamejava.lang.String"__id*5
+
+__unknown_file (
+
+%13java.lang.StringÛ
+1$ 1(@
+%14java.lang.String"Xorg.pucar.dristi.web.models.EvidenceSearchCriteria#getArtifactNumber()Ljava/lang/String;*\
+
+__unknown_file (@
+>
+criteria2org.pucar.dristi.web.models.EvidenceSearchCriteria2getArtifactNumber()*
+21*Î
+23/ /(5g
+e
+/ /(5
+sourceIdjava.lang.String"__id*5
+
+__unknown_file (
+
+%12java.lang.StringÎË
+0  0(8
+%13java.lang.String"Torg.pucar.dristi.web.models.EvidenceSearchCriteria#getSourceName()Ljava/lang/String;*\
+
+__unknown_file (@
+>
+criteria2org.pucar.dristi.web.models.EvidenceSearchCriteria2getSourceName()*
+22:.
+) (G"
+preparedStmtListjava.util.List:1
+H (j%
+preparedStmtArgListjava.util.List:K
+	k (ä>
+criteria2org.pucar.dristi.web.models.EvidenceSearchCriteriaBA?
+=org.pucar.dristi.repository.querybuilder.EvidenceQueryBuilderH`

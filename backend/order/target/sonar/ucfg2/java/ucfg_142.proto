@@ -1,0 +1,73 @@
+
+>org.pucar.dristi.web.models.AdvocateMapping#%field_initializer
+__unknown_file ("1*Þ
+1 (Ò
+Ï
+|
+r/home/bhcp0191/pucar/dristi-solutions/backend/order/src/main/java/org/pucar/dristi/web/models/AdvocateMapping.java (5-
++org.pucar.dristi.web.models.AdvocateMapping"
+id"__id*
+ (
+""Ø
+Õ
+|
+r/home/bhcp0191/pucar/dristi-solutions/backend/order/src/main/java/org/pucar/dristi/web/models/AdvocateMapping.java  "(#;-
++org.pucar.dristi.web.models.AdvocateMapping"
+
+tenantId"__id*
+ (
+""Ú
+×
+|
+r/home/bhcp0191/pucar/dristi-solutions/backend/order/src/main/java/org/pucar/dristi/web/models/AdvocateMapping.java$ %(%=-
++org.pucar.dristi.web.models.AdvocateMapping"
+
+advocateId"__id*
+ (
+""Ö
+Ó
+|
+r/home/bhcp0191/pucar/dristi-solutions/backend/order/src/main/java/org/pucar/dristi/web/models/AdvocateMapping.java' ((!9-
++org.pucar.dristi.web.models.AdvocateMapping"
+caseId"__id*
+ (
+""Ü
+Ù
+|
+r/home/bhcp0191/pucar/dristi-solutions/backend/order/src/main/java/org/pucar/dristi/web/models/AdvocateMapping.java* -(,?-
++org.pucar.dristi.web.models.AdvocateMapping"
+representing"__id*
+ (
+""Ö
+Ó
+|
+r/home/bhcp0191/pucar/dristi-solutions/backend/order/src/main/java/org/pucar/dristi/web/models/AdvocateMapping.java/ 0($;-
++org.pucar.dristi.web.models.AdvocateMapping"
+
+isActive"__id*
+ (2Ù
+Ö
+|
+r/home/bhcp0191/pucar/dristi-solutions/backend/order/src/main/java/org/pucar/dristi/web/models/AdvocateMapping.java2 4(,<-
++org.pucar.dristi.web.models.AdvocateMapping"
+	documents"__id*
+ (
+""Ü
+Ù
+|
+r/home/bhcp0191/pucar/dristi-solutions/backend/order/src/main/java/org/pucar/dristi/web/models/AdvocateMapping.java6 9(-?-
++org.pucar.dristi.web.models.AdvocateMapping"
+auditDetails"__id*
+ (
+""á
+Þ
+|
+r/home/bhcp0191/pucar/dristi-solutions/backend/order/src/main/java/org/pucar/dristi/web/models/AdvocateMapping.java; <(,D-
++org.pucar.dristi.web.models.AdvocateMapping"
+additionalDetails"__id*
+ (
+"""‘
+z
+r/home/bhcp0191/pucar/dristi-solutions/backend/order/src/main/java/org/pucar/dristi/web/models/AdvocateMapping.java ?(
+implicit returnB/-
++org.pucar.dristi.web.models.AdvocateMapping

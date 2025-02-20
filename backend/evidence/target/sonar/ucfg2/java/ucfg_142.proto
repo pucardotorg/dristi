@@ -1,0 +1,44 @@
+
+Iorg.pucar.dristi.web.models.EvidenceAddCommentResponse#%field_initializer
+__unknown_file ("1*¯
+1 (÷ô
+‹
+€/home/bhcp0191/pucar/dristi-solutions/backend/evidence/src/main/java/org/pucar/dristi/web/models/EvidenceAddCommentResponse.java, (84
+%0.org.egov.common.contract.response.ResponseInfo".org.egov.common.contract.response.ResponseInfo•
+’
+‹
+€/home/bhcp0191/pucar/dristi-solutions/backend/evidence/src/main/java/org/pucar/dristi/web/models/EvidenceAddCommentResponse.java( (:
+%1"8org.egov.common.contract.response.ResponseInfo#<init>()V*B
+ (6
+4
+%0.org.egov.common.contract.response.ResponseInfo§
+¤
+‹
+€/home/bhcp0191/pucar/dristi-solutions/backend/evidence/src/main/java/org/pucar/dristi/web/models/EvidenceAddCommentResponse.java (;J8
+6org.pucar.dristi.web.models.EvidenceAddCommentResponse"
+responseInfo"__id*B
+ (6
+4
+%0.org.egov.common.contract.response.ResponseInfo÷ô
+‹
+€/home/bhcp0191/pucar/dristi-solutions/backend/evidence/src/main/java/org/pucar/dristi/web/models/EvidenceAddCommentResponse.java9 (K4
+%2.org.pucar.dristi.web.models.EvidenceAddComment".org.pucar.dristi.web.models.EvidenceAddComment•
+’
+‹
+€/home/bhcp0191/pucar/dristi-solutions/backend/evidence/src/main/java/org/pucar/dristi/web/models/EvidenceAddCommentResponse.java5 (M
+%3"8org.pucar.dristi.web.models.EvidenceAddComment#<init>()V*B
+ (6
+4
+%2.org.pucar.dristi.web.models.EvidenceAddComment­
+ª
+‹
+€/home/bhcp0191/pucar/dristi-solutions/backend/evidence/src/main/java/org/pucar/dristi/web/models/EvidenceAddCommentResponse.java (NP8
+6org.pucar.dristi.web.models.EvidenceAddCommentResponse"
+evidenceAddComment"__id*B
+ (6
+4
+%2.org.pucar.dristi.web.models.EvidenceAddComment"¡
+‰
+€/home/bhcp0191/pucar/dristi-solutions/backend/evidence/src/main/java/org/pucar/dristi/web/models/EvidenceAddCommentResponse.java (
+implicit returnB:8
+6org.pucar.dristi.web.models.EvidenceAddCommentResponse

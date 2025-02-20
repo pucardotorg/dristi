@@ -1,0 +1,10 @@
+org.pucar.dristi.util.WorkflowUtil#updateWorkflowStatus(Lorg/egov/common/contract/request/RequestInfo;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Lorg/egov/common/contract/models/Workflow;Ljava/lang/String;)Ljava/lang/String;
+false
+82c54bf149d8ab0ec37d74687bb89f15
+java.util.Collections#singletonList(Ljava/lang/Object;)Ljava/util/List;
+org.egov.common.contract.workflow.ProcessInstanceRequest#<init>(Lorg/egov/common/contract/request/RequestInfo;Ljava/util/List;)V
+org.egov.common.contract.workflow.ProcessInstanceRequest#instance-init#
+org.pucar.dristi.util.WorkflowUtil#callWorkFlow(Lorg/egov/common/contract/workflow/ProcessInstanceRequest;)Lorg/egov/common/contract/workflow/State;
+org.pucar.dristi.util.WorkflowUtil#getProcessInstanceForWorkflow(Lorg/egov/common/contract/request/RequestInfo;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Lorg/egov/common/contract/models/Workflow;Ljava/lang/String;)Lorg/egov/common/contract/workflow/ProcessInstance;
+==
+getApplicationStatus org.egov.common.contract.workflow.State#getApplicationStatus()Ljava/lang/String;

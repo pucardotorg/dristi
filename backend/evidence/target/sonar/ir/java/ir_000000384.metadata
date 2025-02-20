@@ -1,0 +1,9 @@
+org.pucar.dristi.web.controllers.ArtifactsApiController#applicationV1AddCommentPost(Lorg/pucar/dristi/web/models/EvidenceAddCommentRequest;)Lorg/springframework/http/ResponseEntity;
+false
+a4b0e58a3e583c9125a5879d6ccce510
+org.springframework.http.ResponseEntity#<init>(Ljava/lang/Object;Lorg/springframework/http/HttpStatusCode;)V
+org.springframework.http.ResponseEntity#instance-init#
+==
+!unknownMethod! !unknownMethod!
+addComments org.pucar.dristi.service.EvidenceService#addComments(Lorg/pucar/dristi/web/models/EvidenceAddCommentRequest;)V
+createResponseInfoFromRequestInfo org.pucar.dristi.util.ResponseInfoFactory#createResponseInfoFromRequestInfo(Lorg/egov/common/contract/request/RequestInfo;Ljava/lang/Boolean;)Lorg/egov/common/contract/response/ResponseInfo;

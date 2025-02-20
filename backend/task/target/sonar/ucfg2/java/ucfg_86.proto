@@ -1,0 +1,30 @@
+
+F__sonar_lambda_4$org.pucar.dristi.validators.TaskRegistrationValidator…
+{/home/bhcp0191/pucar/dristi-solutions/backend/task/src/main/java/org/pucar/dristi/validators/TaskRegistrationValidator.javar r(z"1*Ê
+1r7 r(Qg
+e
+r7 r(Q
+%17java.lang.String"__id*:
+
+__unknown_file (
+UPLOAD_TASK_DOCUMENT_ERRORa_
+r' r(6,
+%18%org.egov.tracer.model.CustomException"%org.egov.tracer.model.CustomException²
+¯
+r# r(z
+%19"Sorg.egov.tracer.model.CustomException#<init>(Ljava/lang/String;Ljava/lang/String;)V*J
+
+__unknown_file (.
+,
+%18%org.egov.tracer.model.CustomException*5
+
+__unknown_file (
+
+%17java.lang.String*D
+
+__unknown_file ((&
+$No task found for the given criteria":
+r# r(z.
+,
+%18%org.egov.tracer.model.CustomExceptionB
+java.util.function.Supplier

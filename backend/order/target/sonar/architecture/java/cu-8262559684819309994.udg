@@ -1,0 +1,542 @@
+
+1.0solutions_orderJavaFrontend"1739452510613*java2.B¦
+@
+;src/main/java/org/pucar/dristi/web/models/CaseCriteria.java2
+
+package4
+ 
+org.pucar.dristi.web.models5
+-
+(org.pucar.dristi.web.models.CaseCriteria7
+
+
+class8
+
+access9
+
+public10
+
+simple name11
+
+CaseCriteria12
+9
+3org.springframework.validation.annotation.Validated14
+
+unknown15
+
+annotated by16
+
+
+uses17
+
+lombok.Data19
+
+lombok.AllArgsConstructor21
+
+lombok.NoArgsConstructor23
+
+lombok.Builder25
+5
+/org.pucar.dristi.web.models.CaseCriteria.caseId27
+
+field28
+
+private29
+
+caseId30
+3
+-com.fasterxml.jackson.annotation.JsonProperty32
+<
+6org.pucar.dristi.web.models.CaseCriteria.defaultFields34
+
+defaultFields35
+8
+2org.pucar.dristi.web.models.CaseCriteria.cnrNumber37
+
+	cnrNumber38
+;
+5org.pucar.dristi.web.models.CaseCriteria.filingNumber40
+
+filingNumber41
+6
+0org.pucar.dristi.web.models.CaseCriteria.outcome43
+
+outcome44
+>
+8org.pucar.dristi.web.models.CaseCriteria.courtCaseNumber46
+
+courtCaseNumber47
+=
+7org.pucar.dristi.web.models.CaseCriteria.filingFromDate49
+
+filingFromDate50
+
+jakarta.validation.Valid52
+;
+5org.pucar.dristi.web.models.CaseCriteria.filingToDate54
+
+filingToDate55
+C
+=org.pucar.dristi.web.models.CaseCriteria.registrationFromDate57
+
+registrationFromDate58
+A
+;org.pucar.dristi.web.models.CaseCriteria.registrationToDate60
+
+registrationToDate61
+6
+0org.pucar.dristi.web.models.CaseCriteria.judgeId63
+
+judgeId64
+4
+.org.pucar.dristi.web.models.CaseCriteria.stage66
+
+stage67
+7
+1org.pucar.dristi.web.models.CaseCriteria.substage69
+
+substage70
+9
+3org.pucar.dristi.web.models.CaseCriteria.litigantId72
+
+
+litigantId73
+9
+3org.pucar.dristi.web.models.CaseCriteria.advocateId75
+
+
+advocateId76
+5
+/org.pucar.dristi.web.models.CaseCriteria.status78
+
+status79
+9
+3org.pucar.dristi.web.models.CaseCriteria.pagination81
+
+
+pagination82
+,
+&org.pucar.dristi.web.models.Pagination84
+
+is type85J
+
+1
+12Z
+
+3	
+354j½
+
+
+31
+313215
+@
+56:
+565728 *
+11 1(26:3B
+	
+9
+29
+
+
+11
+58
+@
+65:
+656628 *
+1= =(26:3B
+	
+9
+29
+
+
+11
+67
+@
+26:
+262728 *
+1 (26:3B
+	
+9
+29
+
+
+11
+30
+@
+62:
+626328 *
+1: :(26:3B
+	
+9
+29
+
+
+11
+64
+
+51
+515215
+@
+48:
+484928 *
+1) )(26:3B
+	
+9
+29
+
+
+11
+50
+@
+39:
+394028 *
+1   (26:3B
+	
+9
+29
+
+
+11
+41
+@
+36:
+363728 *
+1 (26:3B
+	
+9
+29
+
+
+11
+38
+@
+33:
+333428 *
+1 (26:3B
+	
+9
+29
+
+
+11
+35
+@
+80:
+808128 *
+1O O(26:3B
+	
+9
+29
+
+
+11
+82
+@
+68:
+686928 *
+1@ @(26:3B
+	
+9
+29
+
+
+11
+70
+@
+59:
+596028 *
+15 5(26:3B
+	
+9
+29
+
+
+11
+61
+
+13
+131415
+@
+42:
+424328 *
+1# #(26:3B
+	
+9
+29
+
+
+11
+44
+@
+45:
+454628 *
+1& &(26:3B
+	
+9
+29
+
+
+11
+47
+@
+71:
+717228 *
+1C C(26:3B
+	
+9
+29
+
+
+11
+73
+@
+77:
+777828 *
+1K K(26:3B
+	
+9
+29
+
+
+11
+79
+
+24
+242515
+
+83
+838415
+9
+64
+678 *
+1 (:3B
+	
+9
+10
+
+
+11
+12
+
+18
+181915
+@
+53:
+535428 *
+1- -(26:3B
+	
+9
+29
+
+
+11
+55
+
+20
+202115
+@
+74:
+747528 *
+1G G(26:3B
+	
+9
+29
+
+
+11
+76
+
+22
+222315r´
+
+61316*
+1 (
+
+61317*
+1 (
+
+61816*
+1 (
+
+61817*
+1 (
+
+62016*
+1 (
+
+62017*
+1 (
+
+62216*
+1 (
+
+62217*
+1 (
+
+62416*
+1 (
+
+62417*
+1 (	
+
+6617*
+1 (
+
+263116*
+1 (
+
+263117*
+1 (
+
+333116*
+1 (
+
+333117*
+1 (
+
+363116*
+1 (
+
+363117*
+1 (
+
+393116*
+1   (
+
+393117*
+1   (
+
+423116*
+1# #(
+
+423117*
+1# #(
+
+453116*
+1& &(
+
+453117*
+1& &(
+
+483116*
+1) )(
+
+483117*
+1) )(
+
+485116*
+1* *(
+
+485117*
+1* *(
+
+533116*
+1- -(
+
+533117*
+1- -(
+
+535116*
+1. .(
+
+535117*
+1. .(
+
+563116*
+11 1(
+
+563117*
+11 1(
+
+565116*
+12 2(
+
+565117*
+12 2(
+
+593116*
+15 5(
+
+593117*
+15 5(
+
+595116*
+16 6(
+
+595117*
+16 6(
+
+623116*
+1: :(
+
+623117*
+1: :(
+
+653116*
+1= =(
+
+653117*
+1= =(
+
+683116*
+1@ @(
+
+683117*
+1@ @(
+
+713116*
+1C C(
+
+713117*
+1C C(
+
+715116*
+1D D(
+
+715117*
+1D D(
+
+743116*
+1G G(
+
+743117*
+1G G(
+
+745116*
+1H H(
+
+745117*
+1H H(
+
+773116*
+1K K(
+
+773117*
+1K K(
+
+775116*
+1L L(
+
+775117*
+1L L(
+
+808385*
+1R R(
+
+803116*
+1O O(
+
+803117*
+1O O(
+
+805116*
+1Q Q(
+
+805117*
+1Q Q(
+
+808317*
+1R R(
+
+808317*
+1R R("

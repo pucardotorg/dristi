@@ -1,0 +1,16 @@
+org.pucar.dristi.validators.EvidenceValidator#validateEvidenceRegistration(Lorg/pucar/dristi/web/models/EvidenceRequest;)V
+false
+6b321f2304e0b63ac45eecaa79d05d05
+org.apache.commons.lang3.ObjectUtils#isEmpty(Ljava/lang/Object;)Z
+org.egov.tracer.model.CustomException#<init>(Ljava/lang/String;Ljava/lang/String;)V
+org.egov.tracer.model.CustomException#instance-init#
+==
+!unknownMethod! !unknownMethod!
+createApplicationExistRequest org.pucar.dristi.validators.EvidenceValidator#createApplicationExistRequest(Lorg/egov/common/contract/request/RequestInfo;Lorg/pucar/dristi/web/models/Artifact;)Lorg/pucar/dristi/web/models/ApplicationExistsRequest;
+createCaseExistsRequest org.pucar.dristi.validators.EvidenceValidator#createCaseExistsRequest(Lorg/egov/common/contract/request/RequestInfo;Lorg/pucar/dristi/web/models/Artifact;)Lorg/pucar/dristi/web/models/CaseExistsRequest;
+createHearingExistRequest org.pucar.dristi.validators.EvidenceValidator#createHearingExistRequest(Lorg/egov/common/contract/request/RequestInfo;Lorg/pucar/dristi/web/models/Artifact;)Lorg/pucar/dristi/web/models/HearingExistsRequest;
+createOrderExistRequest org.pucar.dristi.validators.EvidenceValidator#createOrderExistRequest(Lorg/egov/common/contract/request/RequestInfo;Lorg/pucar/dristi/web/models/Artifact;)Lorg/pucar/dristi/web/models/OrderExistsRequest;
+fetchApplicationDetails org.pucar.dristi.util.ApplicationUtil#fetchApplicationDetails(Lorg/pucar/dristi/web/models/ApplicationExistsRequest;)Ljava/lang/Boolean;
+fetchCaseDetails org.pucar.dristi.util.CaseUtil#fetchCaseDetails(Lorg/pucar/dristi/web/models/CaseExistsRequest;)Ljava/lang/Boolean;
+fetchHearingDetails org.pucar.dristi.util.HearingUtil#fetchHearingDetails(Lorg/pucar/dristi/web/models/HearingExistsRequest;)Ljava/lang/Boolean;
+fetchOrderDetails org.pucar.dristi.util.OrderUtil#fetchOrderDetails(Lorg/pucar/dristi/web/models/OrderExistsRequest;)Ljava/lang/Boolean;

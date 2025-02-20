@@ -1,0 +1,8 @@
+org.pucar.dristi.validator.HearingRegistrationValidator#baseValidations(Lorg/egov/common/contract/request/RequestInfo;)V
+false
+5cf6b5f31a1cf88cc9843a6ab7647578
+org.egov.tracer.model.CustomException#<init>(Ljava/lang/String;Ljava/lang/String;)V
+org.egov.tracer.model.CustomException#instance-init#
+==
+getTenantId org.egov.common.contract.request.User#getTenantId()Ljava/lang/String;
+getUserInfo org.egov.common.contract.request.RequestInfo#getUserInfo()Lorg/egov/common/contract/request/User;

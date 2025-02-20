@@ -1,0 +1,32 @@
+
+xorg.pucar.dristi.service.TaskService#searchCaseTask(Lorg/pucar/dristi/web/models/TaskCaseSearchRequest;)Ljava/util/List;v
+j/home/bhcp0191/pucar/dristi-solutions/backend/task/src/main/java/org/pucar/dristi/service/TaskService.javaÇ Ç(("1*ƒ
+1
+È È(¡
+ž
+
+È È(0
+%0*org.pucar.dristi.repository.TaskRepository"__id*X
+
+__unknown_file (<*:&
+$org.pucar.dristi.service.TaskService"
+taskRepository§¤
+
+È È(=
+%1java.util.List"†org.pucar.dristi.repository.TaskRepository#getTaskWithCaseDetails(Lorg/pucar/dristi/web/models/TaskCaseSearchRequest;)Ljava/util/List;*N
+
+__unknown_file (2
+0
+%0*org.pucar.dristi.repository.TaskRepository*Z
+
+__unknown_file (>
+<
+request1org.pucar.dristi.web.models.TaskCaseSearchRequest2KgetTaskWithCaseDetails(Lorg/pucar/dristi/web/models/TaskCaseSearchRequest;)"$
+
+È È(>
+
+%1java.util.List:J
+
+Ç) Ç(F<
+request1org.pucar.dristi.web.models.TaskCaseSearchRequestB(&
+$org.pucar.dristi.service.TaskServiceH

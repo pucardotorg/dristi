@@ -1,0 +1,12 @@
+org.pucar.dristi.validators.EvidenceValidator#createApplicationExistRequest(Lorg/egov/common/contract/request/RequestInfo;Lorg/pucar/dristi/web/models/Artifact;)Lorg/pucar/dristi/web/models/ApplicationExistsRequest;
+false
+7dd6bba8601284313577cfb5d61e7202
+java.util.ArrayList#<init>()V
+java.util.ArrayList#instance-init#
+org.pucar.dristi.web.models.ApplicationExists#<init>()V
+org.pucar.dristi.web.models.ApplicationExists#instance-init#
+org.pucar.dristi.web.models.ApplicationExistsRequest#<init>()V
+org.pucar.dristi.web.models.ApplicationExistsRequest#instance-init#
+==
+!unknownMethod! !unknownMethod!
+add java.util.List#add(Ljava/lang/Object;)Z

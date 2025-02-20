@@ -1,0 +1,153 @@
+
+1.0solutions_hearingJavaFrontend"1739451880695*java2.Bš
+F
+Asrc/main/java/org/pucar/dristi/web/models/RequestInfoWrapper.java2
+
+package4
+ 
+org.pucar.dristi.web.models5
+3
+.org.pucar.dristi.web.models.RequestInfoWrapper7
+
+
+class8
+
+access9
+
+public10
+
+simple name11
+
+RequestInfoWrapper12
+
+lombok.Getter14
+
+unknown15
+
+annotated by16
+
+
+uses17
+
+lombok.Setter19
+
+lombok.AllArgsConstructor21
+
+lombok.NoArgsConstructor23
+
+lombok.Builder25
+@
+:org.pucar.dristi.web.models.RequestInfoWrapper.requestInfo27
+
+field28
+
+private29
+
+requestInfo30
+2
+,org.egov.common.contract.request.RequestInfo32
+
+is type33
+3
+-com.fasterxml.jackson.annotation.JsonProperty35J
+
+1
+12Z
+
+3	
+354j‰
+
+34
+343515
+
+18
+181915
+
+13
+131415
+
+24
+242515
+@
+26:
+262728 *
+1 (26:3B
+	
+9
+29
+
+
+11
+30
+9
+64
+678 *
+1 ( :3B
+	
+9
+10
+
+
+11
+12
+
+20
+202115
+
+31
+313215
+
+22
+222315r¤
+
+61316*
+1 (
+
+61317*
+1 (
+
+61816*
+1	 	(
+
+61817*
+1	 	(
+
+62016*
+1
+ 
+(
+
+62017*
+1
+ 
+(
+
+62216*
+1 (
+
+62217*
+1 (
+
+62416*
+1 (
+
+62417*
+1 (	
+
+6617*
+1 ( 
+
+263133*
+1 (
+
+263416*
+1 (
+
+263417*
+1 (
+
+263117*
+1 (
+
+263117*
+1 ($

@@ -1,0 +1,7 @@
+java.util.Arrays#copyOf([BI)[B
+true
+f3281eaaa74c799a519669285b689d71
+java.lang.NegativeArraySizeException#<init>()V
+java.lang.NegativeArraySizeException#instance-init#
+java.lang.NullPointerException#<init>()V
+java.lang.NullPointerException#instance-init#

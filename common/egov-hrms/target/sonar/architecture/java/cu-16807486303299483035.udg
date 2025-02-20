@@ -1,0 +1,136 @@
+
+1.0solutions_hrmsJavaFrontend"1738843533538*java2.Bº
+@
+;src/main/java/org/egov/hrms/repository/EmployeeQueries.java2
+
+package4
+
+org.egov.hrms.repository5
+-
+(org.egov.hrms.repository.EmployeeQueries7
+
+
+class8
+
+access9
+
+public10
+
+simple name11
+
+EmployeeQueries12
+.
+(org.springframework.stereotype.Component14
+
+unknown15
+
+annotated by16
+
+
+uses17
+A
+;org.egov.hrms.repository.EmployeeQueries.HRMS_GET_EMPLOYEES19
+
+field20
+
+HRMS_GET_EMPLOYEES21
+F
+@org.egov.hrms.repository.EmployeeQueries.HRMS_PAGINATION_WRAPPER23
+
+HRMS_PAGINATION_WRAPPER24
+@
+:org.egov.hrms.repository.EmployeeQueries.HRMS_POSITION_SEQ26
+
+HRMS_POSITION_SEQ27
+B
+<org.egov.hrms.repository.EmployeeQueries.HRMS_GET_ASSIGNMENT29
+
+HRMS_GET_ASSIGNMENT30
+C
+=org.egov.hrms.repository.EmployeeQueries.HRMS_COUNT_EMP_QUERY32
+
+HRMS_COUNT_EMP_QUERY33J
+
+1
+12Z
+
+3	
+354j™
+@
+25:
+252620 *
+12 2(26:3B
+	
+9
+10
+
+
+11
+27
+
+13
+131415
+@
+31:
+313220 *
+16 6(26:3B
+	
+9
+10
+
+
+11
+33
+@
+28:
+282920 *
+14 4(26:3B
+	
+9
+10
+
+
+11
+30
+@
+22:
+222320 *
+1. .(26:3B
+	
+9
+10
+
+
+11
+24
+@
+18:
+181920 *
+1 (26:3B
+	
+9
+10
+
+
+11
+21
+9
+64
+678 *
+1 (:3B
+	
+9
+10
+
+
+11
+12rM
+
+61316*
+1 (
+
+61317*
+1 (
+
+6617*
+1 (

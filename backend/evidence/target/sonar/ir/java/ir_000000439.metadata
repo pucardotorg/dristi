@@ -1,0 +1,8 @@
+org.pucar.dristi.service.EvidenceService#createCaseSearchRequest(Lorg/egov/common/contract/request/RequestInfo;Ljava/lang/String;)Lorg/pucar/dristi/web/models/CaseSearchRequest;
+false
+ccc005e2d7d58267f493be24825cb4a6
+org.pucar.dristi.web.models.CaseSearchRequest#<init>()V
+org.pucar.dristi.web.models.CaseSearchRequest#instance-init#
+==
+!unknownMethod! !unknownMethod!
+addCriteriaItem org.pucar.dristi.web.models.CaseSearchRequest#addCriteriaItem(Lorg/pucar/dristi/web/models/CaseCriteria;)Lorg/pucar/dristi/web/models/CaseSearchRequest;

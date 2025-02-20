@@ -1,0 +1,8 @@
+org.pucar.dristi.util.IndividualUtil#getIndividualId(Lorg/pucar/dristi/web/models/IndividualSearchRequest;Ljava/lang/StringBuilder;)Ljava/lang/String;
+false
+b18154ad72806de2416eaa5cd358966f
+com.google.gson.JsonObject#get(Ljava/lang/String;)Lcom/google/gson/JsonElement;
+org.springframework.util.ObjectUtils#isEmpty(Ljava/lang/Object;)Z
+==
+getAsString com.google.gson.JsonElement#getAsString()Ljava/lang/String;
+getIndividual org.pucar.dristi.util.IndividualUtil#getIndividual(Lorg/pucar/dristi/web/models/IndividualSearchRequest;Ljava/lang/StringBuilder;)Lcom/google/gson/JsonObject;

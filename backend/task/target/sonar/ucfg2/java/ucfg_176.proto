@@ -1,0 +1,81 @@
+
+›org.pucar.dristi.repository.querybuilder.TaskCaseQueryBuilder#addOrderByQuery(Ljava/lang/String;Lorg/pucar/dristi/web/models/Pagination;)Ljava/lang/String;Ž
+ƒ/home/bhcp0191/pucar/dristi-solutions/backend/task/src/main/java/org/pucar/dristi/repository/querybuilder/TaskCaseQueryBuilder.javaR R(!"5*ç
+2V V(o
+m
+V V(*
+%3java.lang.String"__id*C
+
+__unknown_file ('%
+# ORDER BY {orderBy} {sortingOrder} }
+{
+V V(*
+%4java.lang.String"__concat*'
+V V(
+
+queryjava.lang.String*$
+V V(*
+
+%3java.lang.Stringc
+a
+V V(*
+queryjava.lang.String"__id*4
+
+__unknown_file (
+
+%4java.lang.String*
+1*›
+3T T(g
+e
+T T(1
+%1java.lang.String"__id*;
+
+__unknown_file (
+ ORDER BY createdtime DESC }
+{
+T T(1
+%2java.lang.String"__concat*'
+T T(
+
+queryjava.lang.String*$
+T T(1
+
+%1java.lang.String"$
+T T(2
+
+%2java.lang.String*å
+5S S(Í
+Ê
+S S(+
+%0boolean"|org.pucar.dristi.repository.querybuilder.TaskCaseQueryBuilder#isPaginationInvalid(Lorg/pucar/dristi/web/models/Pagination;)Z*]
+
+__unknown_file (A"?
+=org.pucar.dristi.repository.querybuilder.TaskCaseQueryBuilder*R
+
+__unknown_file (6
+4
+
+pagination&org.pucar.dristi.web.models.Pagination*
+2
+3*Ø
+1X X(´±
+X X(A
+%5"\java.lang.String#replace(Ljava/lang/CharSequence;Ljava/lang/CharSequence;)Ljava/lang/String;*7
+
+__unknown_file (
+
+queryjava.lang.String*)
+
+__unknown_file (
+	{orderBy}*"
+
+__unknown_file (
+""29replace(Ljava/lang/CharSequence;Ljava/lang/CharSequence;)"
+X X(z
+"":%
+R" R(/
+queryjava.lang.String:@
+R0 R(E4
+
+pagination&org.pucar.dristi.web.models.PaginationBA?
+=org.pucar.dristi.repository.querybuilder.TaskCaseQueryBuilderH

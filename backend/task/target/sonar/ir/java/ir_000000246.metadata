@@ -1,0 +1,9 @@
+org.pucar.dristi.web.controllers.TaskApiController#taskV1UploadDocument(Lorg/pucar/dristi/web/models/TaskRequest;)Lorg/springframework/http/ResponseEntity;
+false
+eef7a472ea901503c4b7fa3f5eae0173
+org.springframework.http.ResponseEntity#<init>(Ljava/lang/Object;Lorg/springframework/http/HttpStatusCode;)V
+org.springframework.http.ResponseEntity#instance-init#
+==
+!unknownMethod! !unknownMethod!
+createResponseInfoFromRequestInfo org.pucar.dristi.util.ResponseInfoFactory#createResponseInfoFromRequestInfo(Lorg/egov/common/contract/request/RequestInfo;Ljava/lang/Boolean;)Lorg/egov/common/contract/response/ResponseInfo;
+uploadDocument org.pucar.dristi.service.TaskService#uploadDocument(Lorg/pucar/dristi/web/models/TaskRequest;)Lorg/pucar/dristi/web/models/Task;

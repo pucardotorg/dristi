@@ -1,0 +1,166 @@
+
+3org.pucar.dristi.web.models.Task#%field_initializer
+__unknown_file ("1*†#
+1 (»
+¸
+p
+f/home/bhcp0191/pucar/dristi-solutions/backend/task/src/main/java/org/pucar/dristi/web/models/Task.java  "(*"
+ org.pucar.dristi.web.models.Task"
+id"__id*
+ (
+""Á
+¾
+p
+f/home/bhcp0191/pucar/dristi-solutions/backend/task/src/main/java/org/pucar/dristi/web/models/Task.java$ &(#0"
+ org.pucar.dristi.web.models.Task"
+
+tenantId"__id*
+ (
+""À
+½
+p
+f/home/bhcp0191/pucar/dristi-solutions/backend/task/src/main/java/org/pucar/dristi/web/models/Task.java( )( /"
+ org.pucar.dristi.web.models.Task"	
+orderId"__id*
+ (
+""Å
+Â
+p
+f/home/bhcp0191/pucar/dristi-solutions/backend/task/src/main/java/org/pucar/dristi/web/models/Task.java+ -('4"
+ org.pucar.dristi.web.models.Task"
+filingNumber"__id*
+ (
+""Ã
+À
+p
+f/home/bhcp0191/pucar/dristi-solutions/backend/task/src/main/java/org/pucar/dristi/web/models/Task.java/ 0(%2"
+ org.pucar.dristi.web.models.Task"
+
+taskNumber"__id*
+ (
+""Â
+¿
+p
+f/home/bhcp0191/pucar/dristi-solutions/backend/task/src/main/java/org/pucar/dristi/web/models/Task.java2 3($1"
+ org.pucar.dristi.web.models.Task"
+	cnrNumber"__id*
+ (
+""Ä
+Á
+p
+f/home/bhcp0191/pucar/dristi-solutions/backend/task/src/main/java/org/pucar/dristi/web/models/Task.java5 7($3"
+ org.pucar.dristi.web.models.Task"
+createdDate"__id*
+ (
+""Ä
+Á
+p
+f/home/bhcp0191/pucar/dristi-solutions/backend/task/src/main/java/org/pucar/dristi/web/models/Task.java9 ;($3"
+ org.pucar.dristi.web.models.Task"
+dateCloseBy"__id*
+ (
+""Ã
+À
+p
+f/home/bhcp0191/pucar/dristi-solutions/backend/task/src/main/java/org/pucar/dristi/web/models/Task.java= ?(#2"
+ org.pucar.dristi.web.models.Task"
+
+dateClosed"__id*
+ (
+""È
+Å
+p
+f/home/bhcp0191/pucar/dristi-solutions/backend/task/src/main/java/org/pucar/dristi/web/models/Task.javaA B(*7"
+ org.pucar.dristi.web.models.Task"
+taskDescription"__id*
+ (
+""Á
+¾
+p
+f/home/bhcp0191/pucar/dristi-solutions/backend/task/src/main/java/org/pucar/dristi/web/models/Task.javaD F(#0"
+ org.pucar.dristi.web.models.Task"
+
+taskType"__id*
+ (
+""Ä
+Á
+p
+f/home/bhcp0191/pucar/dristi-solutions/backend/task/src/main/java/org/pucar/dristi/web/models/Task.javaH I(&3"
+ org.pucar.dristi.web.models.Task"
+taskDetails"__id*
+ (
+""¿
+¼
+p
+f/home/bhcp0191/pucar/dristi-solutions/backend/task/src/main/java/org/pucar/dristi/web/models/Task.javaK M(!."
+ org.pucar.dristi.web.models.Task"
+amount"__id*
+ (
+""¿
+¼
+p
+f/home/bhcp0191/pucar/dristi-solutions/backend/task/src/main/java/org/pucar/dristi/web/models/Task.javaO Q(!."
+ org.pucar.dristi.web.models.Task"
+status"__id*
+ (
+""Ã
+À
+p
+f/home/bhcp0191/pucar/dristi-solutions/backend/task/src/main/java/org/pucar/dristi/web/models/Task.javaS T(/2"
+ org.pucar.dristi.web.models.Task"
+
+assignedTo"__id*
+ (
+""Á
+¾
+p
+f/home/bhcp0191/pucar/dristi-solutions/backend/task/src/main/java/org/pucar/dristi/web/models/Task.javaV W($0"
+ org.pucar.dristi.web.models.Task"
+
+isActive"__id*
+ (
+""¥¢
+p
+f/home/bhcp0191/pucar/dristi-solutions/backend/task/src/main/java/org/pucar/dristi/web/models/Task.java[+ [(6
+%0java.util.ArrayList"java.util.ArrayListÃ
+À
+p
+f/home/bhcp0191/pucar/dristi-solutions/backend/task/src/main/java/org/pucar/dristi/web/models/Task.java[' [(8
+%1"java.util.ArrayList#<init>()V*'
+ (
+
+%0java.util.ArrayList×
+Ô
+p
+f/home/bhcp0191/pucar/dristi-solutions/backend/task/src/main/java/org/pucar/dristi/web/models/Task.javaY [(91"
+ org.pucar.dristi.web.models.Task"
+	documents"__id*'
+ (
+
+%0java.util.ArrayListÊ
+Ç
+p
+f/home/bhcp0191/pucar/dristi-solutions/backend/task/src/main/java/org/pucar/dristi/web/models/Task.java] ^(,9"
+ org.pucar.dristi.web.models.Task"
+additionalDetails"__id*
+ (
+""Å
+Â
+p
+f/home/bhcp0191/pucar/dristi-solutions/backend/task/src/main/java/org/pucar/dristi/web/models/Task.java` b(-4"
+ org.pucar.dristi.web.models.Task"
+auditDetails"__id*
+ (
+""Á
+¾
+p
+f/home/bhcp0191/pucar/dristi-solutions/backend/task/src/main/java/org/pucar/dristi/web/models/Task.javad f(%0"
+ org.pucar.dristi.web.models.Task"
+
+workflow"__id*
+ (
+"""…
+n
+f/home/bhcp0191/pucar/dristi-solutions/backend/task/src/main/java/org/pucar/dristi/web/models/Task.java w(
+implicit returnB$"
+ org.pucar.dristi.web.models.Task

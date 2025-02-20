@@ -1,0 +1,396 @@
+
+1.0solutions_taskJavaFrontend"1739451663960*java2.B¸
+E
+@src/main/java/org/pucar/dristi/web/models/BillAccountDetail.java2
+
+package4
+ 
+org.pucar.dristi.web.models5
+2
+-org.pucar.dristi.web.models.BillAccountDetail7
+
+
+class8
+
+access9
+
+public10
+
+simple name11
+
+BillAccountDetail12
+
+lombok.Setter14
+
+unknown15
+
+annotated by16
+
+
+uses17
+
+lombok.Getter19
+
+lombok.ToString21
+
+lombok.Builder23
+
+lombok.NoArgsConstructor25
+
+lombok.AllArgsConstructor27
+
+lombok.EqualsAndHashCode29
+6
+0org.pucar.dristi.web.models.BillAccountDetail.id31
+
+field32
+
+private33
+
+id34
+3
+-com.fasterxml.jackson.annotation.JsonProperty36
+<
+6org.pucar.dristi.web.models.BillAccountDetail.tenantId38
+
+tenantId39
+@
+:org.pucar.dristi.web.models.BillAccountDetail.billDetailId41
+
+billDetailId42
+B
+<org.pucar.dristi.web.models.BillAccountDetail.demandDetailId44
+
+demandDetailId45
+9
+3org.pucar.dristi.web.models.BillAccountDetail.order47
+
+order48
+:
+4org.pucar.dristi.web.models.BillAccountDetail.amount50
+
+amount51
+B
+<org.pucar.dristi.web.models.BillAccountDetail.adjustedAmount53
+
+adjustedAmount54
+B
+<org.pucar.dristi.web.models.BillAccountDetail.isActualDemand56
+
+isActualDemand57
+?
+9org.pucar.dristi.web.models.BillAccountDetail.taxHeadCode59
+
+taxHeadCode60
+E
+?org.pucar.dristi.web.models.BillAccountDetail.additionalDetails62
+
+additionalDetails63
+-
+'com.fasterxml.jackson.databind.JsonNode65
+
+is type66
+@
+:org.pucar.dristi.web.models.BillAccountDetail.auditDetails68
+
+auditDetails69
+2
+,org.egov.common.contract.models.AuditDetails71J
+
+1
+12Z
+
+3	
+354jÙ
+
+35
+353615
+
+13
+131415
+
+18
+181915
+9
+64
+678 *
+1 (:3B
+	
+9
+10
+
+
+11
+12
+@
+40:
+404132 *
+1 (26:3B
+	
+9
+33
+
+
+11
+42
+@
+37:
+373832 *
+1 (26:3B
+	
+9
+33
+
+
+11
+39
+@
+46:
+464732 *
+1$ $(26:3B
+	
+9
+33
+
+
+11
+48
+@
+30:
+303132 *
+1 (26:3B
+	
+9
+33
+
+
+11
+34
+
+28
+282915
+@
+52:
+525332 *
+1* *(26:3B
+	
+9
+33
+
+
+11
+54
+@
+67:
+676832 *
+17 7(26:3B
+	
+9
+33
+
+
+11
+69
+
+22
+222315
+@
+61:
+616232 *
+14 4(26:3B
+	
+9
+33
+
+
+11
+63
+
+70
+707115
+@
+55:
+555632 *
+1- -(26:3B
+	
+9
+33
+
+
+11
+57
+
+20
+202115
+@
+43:
+434432 *
+1   (26:3B
+	
+9
+33
+
+
+11
+45
+@
+58:
+585932 *
+10 0(26:3B
+	
+9
+33
+
+
+11
+60
+
+64
+646515
+
+26
+262715
+@
+49:
+495032 *
+1' '(26:3B
+	
+9
+33
+
+
+11
+51
+
+24
+242515rù
+
+61316*
+1 (
+
+61317*
+1 (
+
+61816*
+1 (
+
+61817*
+1 (
+
+62016*
+1 (
+
+62017*
+1 (
+
+
+62216*
+1 (
+
+62217*
+1 (	
+
+62416*
+1 (
+
+62417*
+1 (
+
+62616*
+1 (
+
+62617*
+1 (
+
+62816*
+1 (
+
+62817*
+1 (
+
+6617*
+1 (
+
+303516*
+1 (
+
+303517*
+1 (
+
+373516*
+1 (
+
+373517*
+1 (
+
+403516*
+1 (
+
+403517*
+1 (
+
+433516*
+1! !(
+
+433517*
+1! !(
+
+463516*
+1$ $(
+
+463517*
+1$ $(
+
+493516*
+1' '(
+
+493517*
+1' '(
+
+523516*
+1* *(
+
+523517*
+1* *(
+
+553516*
+1- -(
+
+553517*
+1- -(
+
+583516*
+11 1(
+
+583517*
+11 1(
+
+616466*
+15 5(
+
+613516*
+14 4(
+
+613517*
+14 4(
+
+616417*
+15 5(
+
+616417*
+15 5('
+
+677066*
+18 8(
+
+673516*
+17 7(
+
+673517*
+17 7(
+
+677017*
+18 8(
+
+677017*
+18 8(&

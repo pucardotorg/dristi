@@ -1,0 +1,13 @@
+org.egov.hrms.repository.EmployeeQueryBuilder#addWhereClause(Lorg/egov/hrms/web/contract/EmployeeSearchCriteria;Ljava/lang/StringBuilder;Ljava/util/List;)V
+false
+ec5fa96e5ea5e094d2220612dba1cfcd
+java.lang.StringBuilder#append(Ljava/lang/Object;)Ljava/lang/StringBuilder;
+java.lang.StringBuilder#append(Ljava/lang/String;)Ljava/lang/StringBuilder;
+java.util.stream.Collectors#toList()Ljava/util/stream/Collector;
+org.apache.commons.lang3.StringUtils#isEmpty(Ljava/lang/CharSequence;)Z
+org.egov.hrms.repository.EmployeeQueryBuilder#addToPreparedStatement(Ljava/util/List;Ljava/util/List;)V
+org.egov.hrms.repository.EmployeeQueryBuilder#createQuery(Ljava/util/List;)Ljava/lang/String;
+org.springframework.util.CollectionUtils#isEmpty(Ljava/util/Collection;)Z
+==
+!unknownMethod! !unknownMethod!
+add java.util.List#add(Ljava/lang/Object;)Z

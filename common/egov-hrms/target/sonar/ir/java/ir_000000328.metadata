@@ -1,0 +1,13 @@
+org.egov.hrms.web.validator.EmployeeValidator#validateJudgeAssignment(Lorg/egov/hrms/web/contract/EmployeeRequest;Ljava/util/Map;)V
+false
+dd1c0c0121009ea60e7e244522aa620e
+java.time.Instant#toEpochMilli()J
+java.time.LocalDateTime#now()Ljava/time/LocalDateTime;
+java.util.List#of(Ljava/lang/Object;)Ljava/util/List;
+java.util.stream.Collectors#toList()Ljava/util/stream/Collector;
+==
+!unknownMethod! !unknownMethod!
+isEmpty java.util.List#isEmpty()Z
+put java.util.Map#put(Ljava/lang/Object;Ljava/lang/Object;)Ljava/lang/Object;
+search org.egov.hrms.service.EmployeeService#search(Lorg/egov/hrms/web/contract/EmployeeSearchCriteria;Lorg/egov/common/contract/request/RequestInfo;)Lorg/egov/hrms/web/contract/EmployeeResponse;
+toInstant java.time.chrono.ChronoLocalDateTime#toInstant(Ljava/time/ZoneOffset;)Ljava/time/Instant;

@@ -1,0 +1,207 @@
+
+1.0solutions_evidenceJavaFrontend"1739451578382*java2.Bó
+E
+@src/main/java/org/pucar/dristi/web/models/ApplicationExists.java2
+
+package4
+ 
+org.pucar.dristi.web.models5
+2
+-org.pucar.dristi.web.models.ApplicationExists7
+
+
+class8
+
+access9
+
+public10
+
+simple name11
+
+ApplicationExists12
+9
+3org.springframework.validation.annotation.Validated14
+
+unknown15
+
+annotated by16
+
+
+uses17
+"
+jakarta.annotation.Generated19
+
+lombok.Data21
+
+lombok.AllArgsConstructor23
+
+lombok.NoArgsConstructor25
+
+lombok.Builder27
+@
+:org.pucar.dristi.web.models.ApplicationExists.filingNumber29
+
+field30
+
+private31
+
+filingNumber32
+3
+-com.fasterxml.jackson.annotation.JsonProperty34
+=
+7org.pucar.dristi.web.models.ApplicationExists.cnrNumber36
+
+	cnrNumber37
+E
+?org.pucar.dristi.web.models.ApplicationExists.applicationNumber39
+
+applicationNumber40
+:
+4org.pucar.dristi.web.models.ApplicationExists.exists42
+
+exists43J
+
+1
+12Z
+
+3	
+354jœ
+
+18
+181915
+
+33
+333415
+
+13
+131415
+@
+41:
+414230 *
+1 (26:3B
+	
+9
+31
+
+
+11
+43
+
+26
+262715
+@
+35:
+353630 *
+1 (26:3B
+	
+9
+31
+
+
+11
+37
+9
+64
+678 *
+1 (:3B
+	
+9
+10
+
+
+11
+12
+
+20
+202115
+@
+28:
+282930 *
+1 (26:3B
+	
+9
+31
+
+
+11
+32
+@
+38:
+383930 *
+1 (26:3B
+	
+9
+31
+
+
+11
+40
+
+22
+222315
+
+24
+242515r©
+
+61316*
+1 (
+
+61317*
+1 (
+
+61816*
+1 (
+
+61817*
+1 (
+
+62016*
+1 (
+
+62017*
+1 (
+
+62216*
+1 (
+
+62217*
+1 (
+
+62416*
+1 (
+
+62417*
+1 (
+
+62616*
+1 (
+
+62617*
+1 (	
+
+6617*
+1 (
+
+283316*
+1 (
+
+283317*
+1 (
+
+353316*
+1 (
+
+353317*
+1 (
+
+383316*
+1 (
+
+383317*
+1 (
+
+413316*
+1 (
+
+413317*
+1 (

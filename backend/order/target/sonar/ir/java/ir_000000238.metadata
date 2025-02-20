@@ -1,0 +1,16 @@
+org.pucar.dristi.util.ResponseInfoFactory#createResponseInfoFromRequestInfo(Lorg/egov/common/contract/request/RequestInfo;Ljava/lang/Boolean;Ljava/lang/String;)Lorg/egov/common/contract/response/ResponseInfo;
+false
+5f02f2483589b39b272c7a1b10dabb84
+org.egov.common.contract.response.ResponseInfo#builder()Lorg/egov/common/contract/response/ResponseInfo$ResponseInfoBuilder;
+==
+apiId org.egov.common.contract.response.ResponseInfo$ResponseInfoBuilder#apiId(Ljava/lang/String;)Lorg/egov/common/contract/response/ResponseInfo$ResponseInfoBuilder;
+build org.egov.common.contract.response.ResponseInfo$ResponseInfoBuilder#build()Lorg/egov/common/contract/response/ResponseInfo;
+getApiId org.egov.common.contract.request.RequestInfo#getApiId()Ljava/lang/String;
+getMsgId org.egov.common.contract.request.RequestInfo#getMsgId()Ljava/lang/String;
+getTs org.egov.common.contract.request.RequestInfo#getTs()Ljava/lang/Long;
+getVer org.egov.common.contract.request.RequestInfo#getVer()Ljava/lang/String;
+msgId org.egov.common.contract.response.ResponseInfo$ResponseInfoBuilder#msgId(Ljava/lang/String;)Lorg/egov/common/contract/response/ResponseInfo$ResponseInfoBuilder;
+resMsgId org.egov.common.contract.response.ResponseInfo$ResponseInfoBuilder#resMsgId(Ljava/lang/String;)Lorg/egov/common/contract/response/ResponseInfo$ResponseInfoBuilder;
+status org.egov.common.contract.response.ResponseInfo$ResponseInfoBuilder#status(Ljava/lang/String;)Lorg/egov/common/contract/response/ResponseInfo$ResponseInfoBuilder;
+ts org.egov.common.contract.response.ResponseInfo$ResponseInfoBuilder#ts(Ljava/lang/Long;)Lorg/egov/common/contract/response/ResponseInfo$ResponseInfoBuilder;
+ver org.egov.common.contract.response.ResponseInfo$ResponseInfoBuilder#ver(Ljava/lang/String;)Lorg/egov/common/contract/response/ResponseInfo$ResponseInfoBuilder;

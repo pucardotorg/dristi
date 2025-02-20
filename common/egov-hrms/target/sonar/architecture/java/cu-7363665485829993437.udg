@@ -1,0 +1,524 @@
+
+1.0solutions_hrmsJavaFrontend"1738843533571*java2.B—
+>
+9src/main/java/org/egov/hrms/config/PropertiesManager.java2
+
+package4
+
+org.egov.hrms.config5
++
+&org.egov.hrms.config.PropertiesManager7
+
+
+class8
+
+access9
+
+public10
+
+simple name11
+
+PropertiesManager12
+.
+(org.springframework.stereotype.Component14
+
+unknown15
+
+annotated by16
+
+
+uses17
+
+lombok.Getter19
+
+lombok.Setter21
+
+lombok.NoArgsConstructor23
+
+lombok.AllArgsConstructor25
+
+lombok.ToString27
+5
+/org.egov.hrms.config.PropertiesManager.mdmsHost29
+
+field30
+
+mdmsHost31
+8
+2org.springframework.beans.factory.annotation.Value33
+?
+9org.egov.hrms.config.PropertiesManager.mdmsSearchEndpoint35
+
+mdmsSearchEndpoint36
+5
+/org.egov.hrms.config.PropertiesManager.userHost38
+
+userHost39
+?
+9org.egov.hrms.config.PropertiesManager.userSearchEndpoint41
+
+userSearchEndpoint42
+?
+9org.egov.hrms.config.PropertiesManager.userCreateEndpoint44
+
+userCreateEndpoint45
+?
+9org.egov.hrms.config.PropertiesManager.userUpdateEndpoint47
+
+userUpdateEndpoint48
+=
+7org.egov.hrms.config.PropertiesManager.localizationHost50
+
+localizationHost51
+G
+Aorg.egov.hrms.config.PropertiesManager.localizationSearchEndpoint53
+ 
+localizationSearchEndpoint54
+6
+0org.egov.hrms.config.PropertiesManager.idGenHost56
+
+	idGenHost57
+:
+4org.egov.hrms.config.PropertiesManager.idGenEndpoint59
+
+idGenEndpoint60
+>
+8org.egov.hrms.config.PropertiesManager.saveEmployeeTopic62
+
+saveEmployeeTopic63
+@
+:org.egov.hrms.config.PropertiesManager.UpdateEmployeeTopic65
+
+UpdateEmployeeTopic66
+B
+<org.egov.hrms.config.PropertiesManager.coreNotificationTopic68
+
+coreNotificationTopic69
+8
+2org.egov.hrms.config.PropertiesManager.updateTopic71
+
+updateTopic72
+9
+3org.egov.hrms.config.PropertiesManager.hrmsIdGenKey74
+
+hrmsIdGenKey75
+<
+6org.egov.hrms.config.PropertiesManager.hrmsIdGenFormat77
+
+hrmsIdGenFormat78
+C
+=org.egov.hrms.config.PropertiesManager.openSearchEnabledRoles80
+
+openSearchEnabledRoles81
+?
+9org.egov.hrms.config.PropertiesManager.stateLevelTenantId83
+
+stateLevelTenantId84
+?
+9org.egov.hrms.config.PropertiesManager.isDecryptionEnable86
+
+private87
+
+isDecryptionEnable88J
+
+1
+12Z
+
+3	
+354j­
+
+20
+202115
+@
+70:
+707130 *
+1a a(26:3B
+	
+9
+10
+
+
+11
+72
+
+18
+181915
+@
+43:
+434430 *
+1D D(26:3B
+	
+9
+10
+
+
+11
+45
+@
+82:
+828330 *
+1o o(26:3B
+	
+9
+10
+
+
+11
+84
+@
+85:
+858630 *
+1r r(26:3B
+	
+9
+87
+
+
+11
+88
+@
+49:
+495030 *
+1J J(26:3B
+	
+9
+10
+
+
+11
+51
+
+32
+323315
+
+26
+262715
+@
+46:
+464730 *
+1G G(26:3B
+	
+9
+10
+
+
+11
+48
+@
+61:
+616230 *
+1X X(26:3B
+	
+9
+10
+
+
+11
+63
+@
+67:
+676830 *
+1^ ^(26:3B
+	
+9
+10
+
+
+11
+69
+@
+55:
+555630 *
+1P P(26:3B
+	
+9
+10
+
+
+11
+57
+@
+58:
+585930 *
+1S S(26:3B
+	
+9
+10
+
+
+11
+60
+9
+64
+678 *
+15 5(:3B
+	
+9
+10
+
+
+11
+12
+@
+34:
+343530 *
+1; ;(26:3B
+	
+9
+10
+
+
+11
+36
+@
+28:
+282930 *
+18 8(26:3B
+	
+9
+10
+
+
+11
+31
+@
+37:
+373830 *
+1> >(26:3B
+	
+9
+10
+
+
+11
+39
+@
+40:
+404130 *
+1A A(26:3B
+	
+9
+10
+
+
+11
+42
+@
+79:
+798030 *
+1l l(26:3B
+	
+9
+10
+
+
+11
+81
+
+13
+131415
+@
+73:
+737430 *
+1f f(26:3B
+	
+9
+10
+
+
+11
+75
+@
+76:
+767730 *
+1i i(26:3B
+	
+9
+10
+
+
+11
+78
+
+24
+242515
+@
+64:
+646530 *
+1[ [(26:3B
+	
+9
+10
+
+
+11
+66
+
+22
+222315
+@
+52:
+525330 *
+1M M(26:3B
+	
+9
+10
+
+
+11
+54rÓ
+
+
+61316*
+1/ /(
+
+61317*
+1/ /(
+
+61816*
+10 0(
+
+61817*
+10 0(
+
+62016*
+11 1(
+
+62017*
+11 1(
+
+62216*
+12 2(
+
+62217*
+12 2(
+
+62416*
+13 3(
+
+62417*
+13 3(
+
+62616*
+14 4(
+
+62617*
+14 4(
+
+
+6617*
+15 5(
+
+283216*
+18 8(
+
+283217*
+18 8(
+
+343216*
+1; ;(
+
+343217*
+1; ;(
+
+373216*
+1> >(
+
+373217*
+1> >(
+
+403216*
+1A A(
+
+403217*
+1A A(
+
+433216*
+1D D(
+
+433217*
+1D D(
+
+463216*
+1G G(
+
+463217*
+1G G(
+
+493216*
+1J J(
+
+493217*
+1J J(
+
+523216*
+1M M(
+
+523217*
+1M M(
+
+553216*
+1P P(
+
+553217*
+1P P(
+
+583216*
+1S S(
+
+583217*
+1S S(
+
+613216*
+1X X(
+
+613217*
+1X X(
+
+643216*
+1[ [(
+
+643217*
+1[ [(
+
+673216*
+1^ ^(
+
+673217*
+1^ ^(
+
+703216*
+1a a(
+
+703217*
+1a a(
+
+733216*
+1f f(
+
+733217*
+1f f(
+
+763216*
+1i i(
+
+763217*
+1i i(
+
+793216*
+1l l(
+
+793217*
+1l l(
+
+823216*
+1o o(
+
+823217*
+1o o(
+
+853216*
+1r r(
+
+853217*
+1r r(

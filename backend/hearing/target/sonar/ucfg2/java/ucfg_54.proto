@@ -1,0 +1,33 @@
+
+=org.pucar.dristi.web.models.HearingRequest#%field_initializer
+__unknown_file ("1*Ç
+1 (Û
+Ø
+}
+s/home/bhcp0191/pucar/dristi-solutions/backend/hearing/src/main/java/org/pucar/dristi/web/models/HearingRequest.java (7=,
+*org.pucar.dristi.web.models.HearingRequest"
+requestInfo"__id*
+ (
+""ÒÏ
+}
+s/home/bhcp0191/pucar/dristi-solutions/backend/hearing/src/main/java/org/pucar/dristi/web/models/HearingRequest.java .  (5)
+%0#org.pucar.dristi.web.models.Hearing"#org.pucar.dristi.web.models.Hearingð
+í
+}
+s/home/bhcp0191/pucar/dristi-solutions/backend/hearing/src/main/java/org/pucar/dristi/web/models/HearingRequest.java *  (7
+%1"-org.pucar.dristi.web.models.Hearing#<init>()V*7
+ (+
+)
+%0#org.pucar.dristi.web.models.Hearingü
+ù
+}
+s/home/bhcp0191/pucar/dristi-solutions/backend/hearing/src/main/java/org/pucar/dristi/web/models/HearingRequest.java  (89,
+*org.pucar.dristi.web.models.HearingRequest"	
+hearing"__id*7
+ (+
+)
+%0#org.pucar.dristi.web.models.Hearing"’
+{
+s/home/bhcp0191/pucar/dristi-solutions/backend/hearing/src/main/java/org/pucar/dristi/web/models/HearingRequest.java #(
+implicit returnB.,
+*org.pucar.dristi.web.models.HearingRequest

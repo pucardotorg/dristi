@@ -1,0 +1,7 @@
+organization=solutions
+projectKey=solutions_hearing
+serverUrl=https://sonarcloud.io
+serverVersion=8.0.0.59623
+dashboardUrl=https://sonarcloud.io/dashboard?id=solutions_hearing
+ceTaskId=AZT_aWcwA8FUbEeR-G6M
+ceTaskUrl=https://sonarcloud.io/api/ce/task?id=AZT_aWcwA8FUbEeR-G6M

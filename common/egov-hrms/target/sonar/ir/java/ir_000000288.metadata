@@ -1,0 +1,6 @@
+org.egov.hrms.model.enums.EmployeeDocumentReferenceType#fromValue(Ljava/lang/String;)Lorg/egov/hrms/model/enums/EmployeeDocumentReferenceType;
+false
+29354b3b8c1b2036793e310b7783d5f8
+java.lang.String#equals(Ljava/lang/Object;)Z
+java.lang.String#toUpperCase()Ljava/lang/String;
+java.lang.String#valueOf(Ljava/lang/Object;)Ljava/lang/String;

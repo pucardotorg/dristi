@@ -1,0 +1,7 @@
+org.pucar.dristi.web.models.Individual#addAddressItem(Lorg/egov/common/models/individual/Address;)Lorg/pucar/dristi/web/models/Individual;
+false
+407dbe931704bd8a754bbcc7296c99d8
+java.util.ArrayList#<init>()V
+java.util.ArrayList#instance-init#
+==
+add java.util.List#add(Ljava/lang/Object;)Z

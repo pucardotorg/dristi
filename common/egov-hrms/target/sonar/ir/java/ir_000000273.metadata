@@ -1,0 +1,11 @@
+org.egov.hrms.service.EmployeeService#create(Lorg/egov/hrms/web/contract/EmployeeRequest;)Lorg/egov/hrms/web/contract/EmployeeResponse;
+false
+15c71dcee4058842ecf849d7b4cd2cc1
+java.util.HashMap#<init>()V
+java.util.HashMap#instance-init#
+org.egov.hrms.service.EmployeeService#generateResponse(Lorg/egov/hrms/web/contract/EmployeeRequest;)Lorg/egov/hrms/web/contract/EmployeeResponse;
+==
+!unknownMethod! !unknownMethod!
+push org.egov.hrms.producer.HRMSProducer#push(Ljava/lang/String;Ljava/lang/String;Ljava/lang/Object;)V
+sendNotification org.egov.hrms.service.NotificationService#sendNotification(Lorg/egov/hrms/web/contract/EmployeeRequest;Ljava/util/Map;)V
+setIds org.egov.hrms.service.IdGenService#setIds(Lorg/egov/hrms/web/contract/EmployeeRequest;)V

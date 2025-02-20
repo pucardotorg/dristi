@@ -1,0 +1,9 @@
+java.util.Arrays#copyOfRange([Ljava/lang/Object;IILjava/lang/Class;)[Ljava/lang/Object;
+true
+99f26bae7c0b0cb8eee35c848f55b7bd
+java.lang.ArrayIndexOutOfBoundsException#<init>()V
+java.lang.ArrayIndexOutOfBoundsException#instance-init#
+java.lang.IllegalArgumentException#<init>()V
+java.lang.IllegalArgumentException#instance-init#
+java.lang.NullPointerException#<init>()V
+java.lang.NullPointerException#instance-init#

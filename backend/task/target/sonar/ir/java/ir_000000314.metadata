@@ -1,0 +1,3 @@
+org.pucar.dristi.util.MdmsUtil#<init>(Lorg/springframework/web/client/RestTemplate;Lcom/fasterxml/jackson/databind/ObjectMapper;Lorg/pucar/dristi/config/Configuration;)V
+false
+164337562b4906a0d5994ad58952d452

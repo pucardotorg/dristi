@@ -1,0 +1,265 @@
+
+1.0solutions_hearingJavaFrontend"1739451879690*java2.BÅ	
+>
+9src/main/java/org/pucar/dristi/web/models/SMSRequest.java2
+
+package4
+ 
+org.pucar.dristi.web.models5
++
+&org.pucar.dristi.web.models.SMSRequest7
+
+
+class8
+
+access9
+
+public10
+
+simple name11
+
+
+SMSRequest12
+
+lombok.Getter14
+
+unknown15
+
+annotated by16
+
+
+uses17
+
+lombok.AllArgsConstructor19
+
+lombok.NoArgsConstructor21
+
+lombok.ToString23
+
+lombok.Builder25
+9
+3org.pucar.dristi.web.models.SMSRequest.mobileNumber27
+
+field28
+
+private29
+
+mobileNumber30
+4
+.org.pucar.dristi.web.models.SMSRequest.message32
+
+message33
+5
+/org.pucar.dristi.web.models.SMSRequest.category35
+
+category36
+7
+1org.pucar.dristi.web.models.SMSRequest.expiryTime38
+
+
+expiryTime39
+7
+1org.pucar.dristi.web.models.SMSRequest.templateId41
+
+
+templateId42
+3
+-org.pucar.dristi.web.models.SMSRequest.locale44
+
+locale45
+5
+/org.pucar.dristi.web.models.SMSRequest.tenantId47
+
+tenantId48
+2
+,org.pucar.dristi.web.models.SMSRequest.email50
+
+email51
+2
+,org.pucar.dristi.web.models.SMSRequest.users53
+
+users54
+8
+2org.pucar.dristi.web.models.SMSRequest.contentType56
+
+contentType57J
+
+1
+12Z
+
+3	
+354j≥
+@
+26:
+262728 *
+1 (26:3B
+	
+9
+29
+
+
+11
+30
+
+13
+131415
+@
+37:
+373828 *
+1 (26:3B
+	
+9
+29
+
+
+11
+39
+@
+43:
+434428 *
+1 (26:3B
+	
+9
+29
+
+
+11
+45
+@
+52:
+525328 *
+1 (26:3B
+	
+9
+29
+
+
+11
+54
+@
+34:
+343528 *
+1 (26:3B
+	
+9
+29
+
+
+11
+36
+9
+64
+678 *
+1 (:3B
+	
+9
+10
+
+
+11
+12
+
+24
+242515
+@
+40:
+404128 *
+1 (26:3B
+	
+9
+29
+
+
+11
+42
+@
+31:
+313228 *
+1 (26:3B
+	
+9
+29
+
+
+11
+33
+@
+55:
+555628 *
+1! !(26:3B
+	
+9
+29
+
+
+11
+57
+
+22
+222315
+@
+49:
+495028 *
+1 (26:3B
+	
+9
+29
+
+
+11
+51
+@
+46:
+464728 *
+1 (26:3B
+	
+9
+29
+
+
+11
+48
+
+18
+181915
+
+20
+202115rù
+
+61316*
+1
+ 
+(
+
+61317*
+1
+ 
+(
+
+61816*
+1 (
+
+61817*
+1 (
+
+62016*
+1 (
+
+62017*
+1 (
+
+62216*
+1 (
+
+62217*
+1 (
+
+
+62416*
+1 (
+
+62417*
+1 (	
+
+6617*
+1 (

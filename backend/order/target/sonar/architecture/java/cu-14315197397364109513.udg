@@ -1,0 +1,210 @@
+
+1.0solutions_orderJavaFrontend"1739452511232*java2.BÃ
+I
+Dsrc/main/java/org/pucar/dristi/web/models/AdvocateSearchRequest.java2
+
+package4
+ 
+org.pucar.dristi.web.models5
+6
+1org.pucar.dristi.web.models.AdvocateSearchRequest7
+
+
+class8
+
+access9
+
+public10
+
+simple name11
+
+AdvocateSearchRequest12
+9
+3org.springframework.validation.annotation.Validated14
+
+unknown15
+
+annotated by16
+
+
+uses17
+"
+jakarta.annotation.Generated19
+
+lombok.Data21
+
+lombok.AllArgsConstructor23
+
+lombok.NoArgsConstructor25
+
+lombok.Builder27
+C
+=org.pucar.dristi.web.models.AdvocateSearchRequest.requestInfo29
+
+field30
+
+private31
+
+requestInfo32
+2
+,org.egov.common.contract.request.RequestInfo34
+
+is type35
+3
+-com.fasterxml.jackson.annotation.JsonProperty37
+@
+:org.pucar.dristi.web.models.AdvocateSearchRequest.tenantId39
+
+tenantId40
+@
+:org.pucar.dristi.web.models.AdvocateSearchRequest.criteria42
+
+criteria43
+8
+2org.pucar.dristi.web.models.AdvocateSearchCriteria45J
+
+1
+12Z
+
+3	
+354jµ
+
+36
+363715
+
+13
+131415
+@
+38:
+383930 *
+1 (26:3B
+	
+9
+31
+
+
+11
+40
+@
+41:
+414230 *
+1   (26:3B
+	
+9
+31
+
+
+11
+43
+
+18
+181915
+
+26
+262715
+@
+28:
+282930 *
+1 (26:3B
+	
+9
+31
+
+
+11
+32
+
+20
+202115
+
+22
+222315
+
+33
+333415
+
+44
+444515
+9
+64
+678 *
+1 (#:3B
+	
+9
+10
+
+
+11
+12
+
+24
+242515rﬂ
+
+61316*
+1 (
+
+61317*
+1 (
+
+61816*
+1 (
+
+61817*
+1 (
+
+62016*
+1 (
+
+62017*
+1 (
+
+62216*
+1 (
+
+62217*
+1 (
+
+62416*
+1 (
+
+62417*
+1 (
+
+62616*
+1 (
+
+62617*
+1 (	
+
+6617*
+1 (#
+
+283335*
+1 (
+
+283616*
+1 (
+
+283617*
+1 (
+
+283317*
+1 (
+
+283317*
+1 ($
+
+383616*
+1 (
+
+383617*
+1 (
+
+413616*
+1   (
+
+413617*
+1   (
+
+414417*
+1" "((

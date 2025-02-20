@@ -1,0 +1,10 @@
+org.egov.hrms.web.validator.EmployeeValidator#validateUserData(Lorg/egov/hrms/model/Employee;Lorg/egov/hrms/model/Employee;Ljava/util/Map;Lorg/egov/common/contract/request/RequestInfo;)V
+false
+837284b73099cca5b62c20232c33668d
+java.util.HashMap#<init>()V
+java.util.HashMap#instance-init#
+org.springframework.util.CollectionUtils#isEmpty(Ljava/util/Collection;)Z
+==
+!unknownMethod! !unknownMethod!
+getUser org.egov.hrms.service.UserService#getUser(Lorg/egov/common/contract/request/RequestInfo;Ljava/util/Map;)Lorg/egov/hrms/web/contract/UserResponse;
+put java.util.Map#put(Ljava/lang/Object;Ljava/lang/Object;)Ljava/lang/Object;

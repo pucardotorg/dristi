@@ -1,0 +1,11 @@
+org.pucar.dristi.service.HearingService#callIndividualService(Lorg/egov/common/contract/request/RequestInfo;Ljava/util/Set;)Ljava/util/Set;
+false
+89f0f24fd6090b448835b8ba155cb036
+java.util.ArrayList#<init>(Ljava/util/Collection;)V
+java.util.ArrayList#instance-init#
+java.util.HashSet#<init>()V
+java.util.HashSet#instance-init#
+==
+add java.util.Set#add(Ljava/lang/Object;)Z
+getIndividuals org.pucar.dristi.service.IndividualService#getIndividuals(Lorg/egov/common/contract/request/RequestInfo;Ljava/util/List;)Ljava/util/List;
+getMobileNumber org.egov.common.models.individual.Individual#getMobileNumber()Ljava/lang/String;

@@ -1,0 +1,1195 @@
+
+1.0solutions_hrmsJavaFrontend"1738843535283*java2.BÊ)
+A
+<src/main/java/org/egov/hrms/service/NotificationService.java2
+
+package4
+
+org.egov.hrms.service5
+.
+)org.egov.hrms.service.NotificationService7
+
+
+class8
+
+access9
+
+public10
+
+simple name11
+
+NotificationService12
+,
+&org.springframework.stereotype.Service14
+
+unknown15
+
+annotated by16
+
+
+uses17
+
+lombok.extern.slf4j.Slf4j19
+8
+2org.egov.hrms.service.NotificationService.producer21
+
+field22
+
+private23
+
+producer24
+)
+#org.egov.hrms.producer.HRMSProducer26
+
+is type27
+<
+6org.springframework.beans.factory.annotation.Autowired29
+:
+4org.egov.hrms.service.NotificationService.repository31
+
+
+repository32
+1
++org.egov.hrms.repository.RestCallRepository34
+<
+6org.egov.hrms.service.NotificationService.restTemplate36
+
+restTemplate37
+1
++org.springframework.web.client.RestTemplate39
+C
+=org.egov.hrms.service.NotificationService.centralInstanceUtil41
+
+centralInstanceUtil42
+2
+,org.egov.common.utils.MultiStateInstanceUtil44
+8
+2org.egov.hrms.service.NotificationService.smsTopic46
+
+smsTopic47
+8
+2org.springframework.beans.factory.annotation.Value49
+7
+1org.egov.hrms.service.NotificationService.appLink51
+
+appLink52
+@
+:org.egov.hrms.service.NotificationService.localizationHost54
+
+localizationHost55
+J
+Dorg.egov.hrms.service.NotificationService.localizationSearchEndpoint57
+ 
+localizationSearchEndpoint58
+7
+1org.egov.hrms.service.NotificationService.otpHost60
+
+otpHost61
+A
+;org.egov.hrms.service.NotificationService.otpCreateEndpoint63
+
+otpCreateEndpoint64
+7
+1org.egov.hrms.service.NotificationService.envHost66
+
+envHost67
+~
+xorg.egov.hrms.service.NotificationService#sendNotification(Lorg/egov/hrms/web/contract/EmployeeRequest;Ljava/util/Map;)V69
+
+method70
+
+sendNotification71
+0
+*org.egov.hrms.web.contract.EmployeeRequest73
+
+	has param74
+
+
+references75
+
+†org.egov.hrms.service.NotificationService#getMessage(Lorg/egov/hrms/web/contract/EmployeeRequest;Ljava/lang/String;)Ljava/lang/String;77
+
+calls78
+'
+!org.egov.hrms.utils.HRMSConstants80
+C
+=org.egov.hrms.utils.HRMSConstants.HRMS_EMP_CREATE_LOCLZN_CODE82
+"
+org.egov.hrms.model.Employee84
+B
+<org.egov.hrms.model.Employee#getTenantId()Ljava/lang/String;86
+
+returns87
+O
+Iorg.egov.hrms.web.contract.EmployeeRequest#getEmployees()Ljava/util/List;89
+*
+$org.apache.commons.lang3.StringUtils91
+M
+Gorg.apache.commons.lang3.StringUtils#isEmpty(Ljava/lang/CharSequence;)Z93
+
+‰org.egov.hrms.service.NotificationService#buildMessage(Lorg/egov/hrms/model/Employee;Ljava/lang/String;Ljava/util/Map;)Ljava/lang/String;95
+$
+org.egov.hrms.model.SMSRequest97
+%
+org.egov.hrms.web.contract.User99
+J
+Corg.egov.hrms.web.contract.User#getMobileNumber()Ljava/lang/String;101
+N
+Gorg.egov.hrms.model.Employee#getUser()Lorg/egov/hrms/web/contract/User;103
+h
+aorg.egov.hrms.producer.HRMSProducer#push(Ljava/lang/String;Ljava/lang/String;Ljava/lang/Object;)V105
+|
+uorg.egov.hrms.service.NotificationService#sendReactivationNotification(Lorg/egov/hrms/web/contract/EmployeeRequest;)V107
+#
+sendReactivationNotification108
+H
+Aorg.egov.hrms.utils.HRMSConstants.HRMS_EMP_REACTIVATE_LOCLZN_CODE110
+3
+,org.egov.common.contract.request.RequestInfo112
+p
+iorg.egov.hrms.web.contract.EmployeeRequest#getRequestInfo()Lorg/egov/common/contract/request/RequestInfo;114
+L
+Eorg.egov.hrms.model.Employee#getReactivationDetails()Ljava/util/List;116
+N
+Gorg.egov.hrms.model.Employee#getReActivateEmployee()Ljava/lang/Boolean;118
+˜
+org.egov.hrms.service.NotificationService#getOTP(Lorg/egov/hrms/model/Employee;Lorg/egov/common/contract/request/RequestInfo;)Ljava/lang/String;120
+B
+;org.egov.hrms.web.contract.User#getName()Ljava/lang/String;122
+?
+8org.egov.hrms.model.Employee#getCode()Ljava/lang/String;124
+.
+'org.egov.hrms.model.ReactivationDetails126
+Q
+Jorg.egov.hrms.model.ReactivationDetails#getEffectiveFrom()Ljava/lang/Long;128
+
+getOTP129
+
+•org.springframework.web.client.RestTemplate#postForObject(Ljava/lang/String;Ljava/lang/Object;Ljava/lang/Class;[Ljava/lang/Object;)Ljava/lang/Object;131
+#
+com.jayway.jsonpath.JsonPath133
+€
+ycom.jayway.jsonpath.JsonPath#read(Ljava/lang/Object;Ljava/lang/String;[Lcom/jayway/jsonpath/Predicate;)Ljava/lang/Object;135
+
+
+getMessage136
+»
+³org.egov.hrms.service.NotificationService#getLocalisedMessages(Lorg/egov/common/contract/request/RequestInfo;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;)Ljava/util/Map;138
+J
+Corg.egov.hrms.utils.HRMSConstants.HRMS_LOCALIZATION_ENG_LOCALE_CODE140
+F
+?org.egov.hrms.utils.HRMSConstants.HRMS_LOCALIZATION_MODULE_CODE142
+
+buildMessage143
+?
+8org.egov.hrms.model.Employee#getUuid()Ljava/lang/String;145
+
+getLocalisedMessages146
+4
+-org.egov.hrms.web.contract.RequestInfoWrapper148
+t
+morg.egov.hrms.web.contract.RequestInfoWrapper#setRequestInfo(Lorg/egov/common/contract/request/RequestInfo;)V150
+m
+forg.egov.common.utils.MultiStateInstanceUtil#getStateLevelTenant(Ljava/lang/String;)Ljava/lang/String;152
+}
+vorg.egov.hrms.repository.RestCallRepository#fetchResult(Ljava/lang/StringBuilder;Ljava/lang/Object;)Ljava/lang/Object;154
+I
+Borg.egov.hrms.utils.HRMSConstants.HRMS_LOCALIZATION_CODES_JSONPATH156
+H
+Aorg.egov.hrms.utils.HRMSConstants.HRMS_LOCALIZATION_MSGS_JSONPATH158J
+
+1
+12Z
+
+3	
+354jÁ
+@
+59:
+596022 *
+16 6(26:3B
+	
+9
+23
+
+
+11
+61
+
+147
+14714815
+@
+53:
+535422 *
+10 0(26:3B
+	
+9
+23
+
+
+11
+55
+
+109
+10911015
+D
+106=
+10610770 *
+1X X(26:3B
+	
+9
+10
+
+11
+108
+
+28
+282915
+
+104
+10410515
+
+90
+909115
+@
+30:
+303122 *
+1! !(26:3B
+	
+9
+23
+
+
+11
+32
+
+130
+13013115
+
+100
+10010115
+
+102
+10210315
+C
+76=
+767770 *
+1’ ’(26:3B
+	
+9
+10
+
+11
+136
+
+38
+383915
+
+92
+929315
+
+113
+11311415
+@
+45:
+454622 *
+1* *(26:3B
+	
+9
+23
+
+
+11
+47
+
+96
+969715
+
+141
+14114215
+
+85
+858615
+
+43
+434415
+@
+50:
+505122 *
+1- -(26:3B
+	
+9
+23
+
+
+11
+52
+
+18
+181915
+
+153
+15315415
+
+117
+11711815
+@
+65:
+656622 *
+1< <(26:3B
+	
+9
+23
+
+
+11
+67
+
+125
+12512615
+
+33
+333415
+
+157
+15715815
+
+111
+11111215
+F
+137?
+13713870 *
+1± ±(26:3B
+	
+9
+10
+
+11
+146
+
+149
+14915015
+
+83
+838415
+
+81
+818215
+
+155
+15515615
+D
+119=
+11912070 *
+1s s(26:3B
+	
+9
+10
+
+11
+129
+9
+64
+678 *
+1 (!:3B
+	
+9
+10
+
+
+11
+12
+@
+20:
+202122 *
+1 (26:3B
+	
+9
+23
+
+
+11
+24
+
+151
+15115215
+@
+62:
+626322 *
+19 9(26:3B
+	
+9
+23
+
+
+11
+64
+
+48
+484915
+
+127
+12712815
+@
+35:
+353622 *
+1$ $(26:3B
+	
+9
+23
+
+
+11
+37
+
+134
+13413515
+
+13
+131415
+@
+40:
+404122 *
+1' '(26:3B
+	
+9
+23
+
+
+11
+42
+C
+94=
+949570 *
+1¡ ¡(26:3B
+	
+9
+10
+
+11
+143
+
+139
+13914015
+
+98
+989915
+@
+68:
+686970 *
+1G G(26:3B
+	
+9
+10
+
+
+11
+71
+
+121
+12112215
+
+144
+14414515
+
+123
+12312415
+@
+56:
+565722 *
+13 3(26:3B
+	
+9
+23
+
+
+11
+58
+
+132
+13213315
+
+72
+727315
+
+88
+888915
+
+79
+798015
+
+115
+11511615
+
+25
+252615rƒ1
+
+61316*
+1 (
+
+61317*
+1 (	
+
+61816*
+1 (
+
+61817*
+1 (
+
+6617*
+1 (!
+
+202527*
+1
+ (
+
+202816*
+1 (
+
+202817*
+1 (
+
+202517*
+1
+ (
+
+202517*
+1 (
+
+303327*
+1"
+ "(
+
+302816*
+1! !(
+
+302817*
+1! !(
+
+303317*
+1"
+ "(
+
+303317*
+1" "('
+
+353827*
+1%
+ %(
+
+352816*
+1$ $(
+
+352817*
+1$ $(
+
+353817*
+1%
+ %(
+
+353817*
+1% %(#
+
+404327*
+1(
+ (( 
+
+402816*
+1' '(
+
+402817*
+1' '(
+
+404317*
+1(
+ (( 
+
+404317*
+1(! ((4
+
+454816*
+1* *(
+
+454817*
+1* *(
+
+504816*
+1- -(
+
+504817*
+1- -(
+
+534816*
+10 0(
+
+534817*
+10 0(
+
+564816*
+13 3(
+
+564817*
+13 3(
+
+594816*
+16 6(
+
+594817*
+16 6(
+
+624816*
+19 9(
+
+624817*
+19 9(
+
+654816*
+1< <(
+
+654817*
+1< <(
+
+687274*
+1G G(.
+
+687227*
+1G/ G(6
+
+687217*
+1G G(.
+
+68675*
+1I I(
+
+687678*
+1I I(
+
+687917*
+1I' I(4
+
+688175*
+1I5 I(P
+
+688375*
+1J J(
+
+688578*
+1J3 J(>
+
+688387*
+1J J(
+
+687275*
+1J J(
+
+688878*
+1J J()
+
+689075*
+1L L(
+
+689278*
+1L L(
+
+689017*
+1L L(
+
+688327*
+1P P(
+
+688317*
+1P P(
+
+687275*
+1P P(!
+
+688878*
+1P" P(.
+
+68675*
+1R R(
+
+689478*
+1R R(
+
+689627*
+1S S(
+
+689617*
+1S S(
+
+689617*
+1S S(&
+
+689875*
+1S> S(F
+
+6810078*
+1SQ S(`
+
+689887*
+1S> S(F
+
+688375*
+1S> S(F
+
+6810278*
+1SG S(N
+
+682575*
+1T T(
+
+6810478*
+1T T(
+
+682075*
+1T T(
+
+682517*
+1T T(
+
+682075*
+1T T(
+
+684575*
+1T T($
+
+1067274*
+1X+ X(:
+
+1067227*
+1X; X(B
+
+1067217*
+1X+ X(:
+
+106675*
+1Z Z(
+
+1067678*
+1Z Z(
+
+1067917*
+1Z' Z(4
+
+10610975*
+1Z5 Z(T
+
+1068375*
+1[ [(
+
+1068578*
+1[3 [(>
+
+1068387*
+1[ [(
+
+1067275*
+1[ [(
+
+1068878*
+1[ [()
+
+1069075*
+1\ \(
+
+1069278*
+1\ \(
+
+1069017*
+1\ \(
+
+10611127*
+1` `(
+
+10611117*
+1` `(
+
+10611187*
+1` `($
+
+1067275*
+1` `($
+
+10611378*
+1`% `(3
+
+1068327*
+1a a(
+
+1068317*
+1a a(
+
+1067275*
+1a a(!
+
+1068878*
+1a" a(.
+
+1068375*
+1b b(
+
+10611578*
+1b b(&
+
+1068375*
+1b2 b(:
+
+10611778*
+1b; b(P
+
+106675*
+1c c(
+
+10611978*
+1c c(
+
+1066575*
+1d d(
+
+1069875*
+1f1 f(9
+
+10612178*
+1fD f(K
+
+1069887*
+1f1 f(9
+
+1068375*
+1f1 f(9
+
+10610278*
+1f: f(A
+
+1068375*
+1fd f(l
+
+10612378*
+1fm f(t
+
+10612575*
+1g) g(1
+
+10612778*
+1gR g(b
+
+10612587*
+1g) g(1
+
+1068375*
+1g) g(1
+
+10611578*
+1g2 g(H
+
+1069627*
+1j j(
+
+1069617*
+1j j(
+
+1069617*
+1j j('
+
+1069875*
+1j? j(G
+
+10610078*
+1jR j(a
+
+1069887*
+1j? j(G
+
+1068375*
+1j? j(G
+
+10610278*
+1jH j(O
+
+1062575*
+1l l(
+
+10610478*
+1l l(
+
+1062075*
+1l l(
+
+1062517*
+1l l(
+
+1062075*
+1l l(
+
+1064575*
+1l l(%
+
+1198374*
+1s s(
+
+11911174*
+1s) s(4
+
+1198327*
+1s  s((
+
+1198317*
+1s s(
+
+11911127*
+1s5 s(@
+
+11911117*
+1s) s(4
+
+1199875*
+1v v("
+
+11910078*
+1v- v(<
+
+1199887*
+1v v("
+
+1198375*
+1v v("
+
+11910278*
+1v# v(*
+
+1198375*
+1x x(
+
+1198578*
+1x x(*
+
+1199875*
+1z z(
+
+11910078*
+1z) z(8
+
+1199887*
+1z z(
+
+1198375*
+1z z(
+
+11910278*
+1z z(&
+
+1195975*
+1 (
+
+1196275*
+1 (/
+
+1193875*
+1ƒ ƒ(
+
+11913078*
+1ƒ ƒ()
+
+1193575*
+1ƒ ƒ(
+
+1193817*
+1ƒ ƒ(
+
+1193575*
+1ƒ ƒ(
+
+11913275*
+1ˆ ˆ(
+
+11913478*
+1ˆ ˆ( 
+
+11913217*
+1ˆ ˆ(
+
+767274*
+1’ ’(*
+
+767227*
+1’+ ’(2
+
+767217*
+1’ ’(*
+
+768375*
+1“ “(
+
+768578*
+1“3 “(>
+
+768387*
+1“ “(
+
+767275*
+1“ “(
+
+768878*
+1“ “()
+
+76675*
+1”: ”(N
+
+7613778*
+1”: ”(N
+
+7611187*
+1”O ”(V
+
+767275*
+1”O ”(V
+
+7611378*
+1”W ”(e
+
+767917*
+1• •(
+
+7613975*
+1• •(4
+
+767917*
+1•6 •(C
+
+7614175*
+1•D •(a
+
+767917*
+1–" –(/
+
+7613975*
+1–0 –(Q
+
+948374*
+1¡ ¡(%
+
+948327*
+1¡& ¡(.
+
+948317*
+1¡ ¡(%
+
+948375*
+1¢* ¢(2
+
+9412378*
+1¢3 ¢(:
+
+948375*
+1¢^ ¢(f
+
+9414478*
+1¢g ¢(n
+
+949875*
+1£ £('
+
+9412178*
+1£2 £(9
+
+949887*
+1£ £('
+
+948375*
+1£ £('
+
+9410278*
+1£( £(/
+
+945075*
+1¤) ¤(0
+
+13711174*
+1±? ±(J
+
+13711127*
+1±K ±(V
+
+13711117*
+1±? ±(J
+
+13714727*
+1¶ ¶((
+
+13714717*
+1¶ ¶(
+
+13714778*
+1¶/ ¶(A
+
+13714775*
+1· ·(
+
+13714978*
+1· ·($
+
+1374375*
+1¸ ¸(!
+
+13715178*
+1¸" ¸(5
+
+1374075*
+1¸ ¸(!
+
+1374317*
+1¸ ¸(!
+
+1374075*
+1¸ ¸(!
+
+1375375*
+1¹ ¹(
+
+1375675*
+1¹' ¹(A
+
+1373375*
+1¿ ¿(
+
+13715378*
+1¿ ¿(#
+
+1373075*
+1¿ ¿(
+
+1373317*
+1¿ ¿(
+
+1373075*
+1¿ ¿(
+
+13713275*
+1À À(
+
+13713478*
+1À À(
+
+13713217*
+1À À(
+
+1377917*
+1À" À(/
+
+13715575*
+1À0 À(P
+
+13713275*
+1Á Á(
+
+13713478*
+1Á Á(
+
+13713217*
+1Á Á(
+
+1377917*
+1Á% Á(2
+
+13715775*
+1Á3 Á(R

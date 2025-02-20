@@ -1,0 +1,7 @@
+organization=solutions
+projectKey=solutions_hrms
+serverUrl=https://sonarcloud.io
+serverVersion=8.0.0.59480
+dashboardUrl=https://sonarcloud.io/dashboard?id=solutions_hrms
+ceTaskId=AZTbJsjp0PNXFnUmArVl
+ceTaskUrl=https://sonarcloud.io/api/ce/task?id=AZTbJsjp0PNXFnUmArVl

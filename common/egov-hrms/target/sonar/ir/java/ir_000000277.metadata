@@ -1,0 +1,5 @@
+org.egov.hrms.service.EmployeeService#getPosition()Ljava/lang/Long;
+false
+341bf9b7fdbd7b1921fc1584f18c838c
+==
+fetchPosition org.egov.hrms.repository.EmployeeRepository#fetchPosition()Ljava/lang/Long;

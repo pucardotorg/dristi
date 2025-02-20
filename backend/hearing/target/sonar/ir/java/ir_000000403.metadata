@@ -1,0 +1,12 @@
+org.pucar.dristi.validator.HearingRegistrationValidator#validateHearingType(Lorg/egov/common/contract/request/RequestInfo;Lorg/pucar/dristi/web/models/Hearing;)V
+false
+aca77148cdb2042c62427384593d2881
+java.util.Collections#singletonList(Ljava/lang/Object;)Ljava/util/List;
+org.egov.tracer.model.CustomException#<init>(Ljava/lang/String;Ljava/lang/String;)V
+org.egov.tracer.model.CustomException#instance-init#
+==
+!unknownMethod! !unknownMethod!
+convertValue com.fasterxml.jackson.databind.ObjectMapper#convertValue(Ljava/lang/Object;Ljava/lang/Class;)Ljava/lang/Object;
+fetchMdmsData org.pucar.dristi.util.MdmsUtil#fetchMdmsData(Lorg/egov/common/contract/request/RequestInfo;Ljava/lang/String;Ljava/lang/String;Ljava/util/List;)Ljava/util/Map;
+getTenantId org.egov.common.contract.request.User#getTenantId()Ljava/lang/String;
+getUserInfo org.egov.common.contract.request.RequestInfo#getUserInfo()Lorg/egov/common/contract/request/User;

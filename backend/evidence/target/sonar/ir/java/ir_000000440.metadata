@@ -1,0 +1,11 @@
+org.pucar.dristi.service.EvidenceService#callIndividualService(Lorg/egov/common/contract/request/RequestInfo;Ljava/util/Set;)Ljava/util/Set;
+false
+c95aa9b603e59ee112c358d49e2d099a
+java.util.ArrayList#<init>(Ljava/util/Collection;)V
+java.util.ArrayList#instance-init#
+java.util.HashSet#<init>()V
+java.util.HashSet#instance-init#
+==
+!unknownMethod! !unknownMethod!
+add java.util.Set#add(Ljava/lang/Object;)Z
+getIndividualsBylId org.pucar.dristi.service.IndividualService#getIndividualsBylId(Lorg/egov/common/contract/request/RequestInfo;Ljava/util/List;)Ljava/util/List;

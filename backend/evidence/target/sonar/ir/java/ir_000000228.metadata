@@ -1,0 +1,12 @@
+org.pucar.dristi.repository.querybuilder.EvidenceQueryBuilder#getStatusQuery(Ljava/util/List;Ljava/util/List;Ljava/util/List;)Ljava/lang/String;
+false
+7a78a263f9f30a5efe475e65f57856cc
+java.lang.StringBuilder#<init>(Ljava/lang/String;)V
+java.lang.StringBuilder#append(Ljava/lang/String;)Ljava/lang/StringBuilder;
+java.lang.StringBuilder#instance-init#
+java.lang.StringBuilder#toString()Ljava/lang/String;
+==
+add java.util.List#add(Ljava/lang/Object;)Z
+get java.util.List#get(I)Ljava/lang/Object;
+isEmpty java.util.List#isEmpty()Z
+size java.util.List#size()I

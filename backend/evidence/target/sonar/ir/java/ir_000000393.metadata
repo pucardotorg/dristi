@@ -1,0 +1,9 @@
+org.pucar.dristi.service.WorkflowService#getSearchURLForProcessInstanceWithParams(Ljava/lang/String;Ljava/lang/String;)Ljava/lang/StringBuilder;
+false
+0c376ddfa43d934fe5336ba725d243e5
+java.lang.StringBuilder#<init>(Ljava/lang/String;)V
+java.lang.StringBuilder#append(Ljava/lang/Object;)Ljava/lang/StringBuilder;
+java.lang.StringBuilder#append(Ljava/lang/String;)Ljava/lang/StringBuilder;
+java.lang.StringBuilder#instance-init#
+==
+!unknownMethod! !unknownMethod!

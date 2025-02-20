@@ -1,0 +1,571 @@
+
+1.0solutions_hrmsJavaFrontend"1738843535164*java2.B¦
+4
+/src/main/java/org/egov/hrms/model/Employee.java2
+
+package4
+
+org.egov.hrms.model5
+!
+org.egov.hrms.model.Employee7
+
+
+class8
+
+access9
+
+public10
+
+simple name11
+
+Employee12
+9
+3org.springframework.validation.annotation.Validated14
+
+unknown15
+
+annotated by16
+
+
+uses17
+
+lombok.AllArgsConstructor19
+
+lombok.EqualsAndHashCode21
+
+lombok.Getter23
+
+lombok.NoArgsConstructor25
+
+lombok.Setter27
+
+lombok.ToString29
+
+lombok.Builder31
+%
+org.egov.hrms.model.Employee.id33
+
+field34
+
+private35
+
+id36
+'
+!org.egov.hrms.model.Employee.uuid38
+
+
+uuid39
+2
+,org.hibernate.validator.constraints.SafeHtml41
+'
+!org.egov.hrms.model.Employee.code43
+
+
+code44
+1
++org.egov.hrms.model.Employee.employeeStatus46
+
+employeeStatus47
+/
+)org.egov.hrms.model.Employee.employeeType49
+
+employeeType50
+4
+.org.egov.hrms.model.Employee.dateOfAppointment52
+
+dateOfAppointment53
+0
+*org.egov.hrms.model.Employee.jurisdictions55
+
+jurisdictions56
+2
+,org.hibernate.validator.constraints.NotEmpty58
+&
+ org.egov.hrms.model.Jurisdiction60
+.
+(org.egov.hrms.model.Employee.assignments62
+
+assignments63
+$
+org.egov.hrms.model.Assignment65
+1
++org.egov.hrms.model.Employee.serviceHistory67
+
+serviceHistory68
+(
+"org.egov.hrms.model.ServiceHistory70
++
+%org.egov.hrms.model.Employee.IsActive72
+
+IsActive73
+,
+&org.egov.hrms.model.Employee.education75
+
+	education76
+2
+,org.egov.hrms.model.EducationalQualification78
+(
+"org.egov.hrms.model.Employee.tests80
+
+tests81
+*
+$org.egov.hrms.model.DepartmentalTest83
++
+%org.egov.hrms.model.Employee.tenantId85
+
+tenantId86
+,
+&org.egov.hrms.model.Employee.documents88
+
+	documents89
+*
+$org.egov.hrms.model.EmployeeDocument91
+6
+0org.egov.hrms.model.Employee.deactivationDetails93
+
+deactivationDetails94
+-
+'org.egov.hrms.model.DeactivationDetails96
+6
+0org.egov.hrms.model.Employee.reactivationDetails98
+
+reactivationDetails99
+.
+'org.egov.hrms.model.ReactivationDetails101
+0
+)org.egov.hrms.model.Employee.auditDetails103
+
+auditDetails104
+'
+ org.egov.hrms.model.AuditDetails106
+
+is type107
+6
+/org.egov.hrms.model.Employee.reActivateEmployee109
+
+reActivateEmployee110
+(
+!org.egov.hrms.model.Employee.user112
+
+user113
+&
+org.egov.hrms.web.contract.User115J
+
+1
+12Z
+
+3	
+354jÊ
+9
+64
+678 *
+1? ?(:3B
+	
+9
+10
+
+
+11
+12
+@
+48:
+484934 *
+1O O(26:3B
+	
+9
+35
+
+
+11
+50
+
+26
+262715
+@
+74:
+747534 *
+1h h(26:3B
+	
+9
+35
+
+
+11
+76
+
+22
+222315
+@
+87:
+878834 *
+1u u(26:3B
+	
+9
+35
+
+
+11
+89
+
+77
+777815
+@
+71:
+717234 *
+1f f(26:3B
+	
+9
+35
+
+
+11
+73
+
+40
+404115
+F
+111?
+11111234 *
+1‚ ‚(26:3B
+	
+9
+35
+
+11
+113
+
+59
+596015
+@
+79:
+798034 *
+1l l(26:3B
+	
+9
+35
+
+
+11
+81
+@
+66:
+666734 *
+1a a(26:3B
+	
+9
+35
+
+
+11
+68
+@
+84:
+848534 *
+1p p(26:3B
+	
+9
+35
+
+
+11
+86
+
+28
+282915
+
+95
+959615
+
+114
+11411515
+
+105
+10510615
+
+82
+828315
+
+90
+909115
+
+13
+131415
+@
+42:
+424334 *
+1G G(26:3B
+	
+9
+35
+
+
+11
+44
+@
+92:
+929334 *
+1y y(26:3B
+	
+9
+35
+
+
+11
+94
+@
+45:
+454634 *
+1K K(26:3B
+	
+9
+35
+
+
+11
+47
+@
+54:
+545534 *
+1V V(26:3B
+	
+9
+35
+
+
+11
+56
+@
+97:
+979834 *
+1| |(26:3B
+	
+9
+35
+
+
+11
+99
+D
+102=
+10210334 *
+1~ ~(26:3B
+	
+9
+35
+
+11
+104
+
+20
+202115
+
+69
+697015
+
+64
+646515
+@
+32:
+323334 *
+1A A(26:3B
+	
+9
+35
+
+
+11
+36
+
+30
+303115
+
+57
+575815
+@
+61:
+616234 *
+1\ \(26:3B
+	
+9
+35
+
+
+11
+63
+
+100
+10010115
+
+18
+181915
+@
+51:
+515234 *
+1T T(26:3B
+	
+9
+35
+
+
+11
+53
+@
+37:
+373834 *
+1C C(26:3B
+	
+9
+35
+
+
+11
+39
+F
+108?
+10810934 *
+1€ €(26:3B
+	
+9
+35
+
+11
+110
+
+24
+242515rÂ	
+
+61316*
+17 7(
+
+61317*
+17 7(
+
+61816*
+18 8(
+
+61817*
+18 8(
+
+62016*
+19 9(
+
+62017*
+19 9(
+
+62216*
+1: :(
+
+62217*
+1: :(
+
+62416*
+1; ;(
+
+62417*
+1; ;(
+
+62616*
+1< <(
+
+62617*
+1< <(
+
+62816*
+1= =(
+
+62817*
+1= =(
+
+
+63016*
+1> >(
+
+63017*
+1> >(	
+
+6617*
+1? ?(
+
+374016*
+1C C(
+
+374017*
+1C C(
+
+424016*
+1G G(
+
+424017*
+1G G(
+
+454016*
+1K K(
+
+454017*
+1K K(
+
+484016*
+1O O(
+
+484017*
+1O O(
+
+545716*
+1W W(
+
+545717*
+1W W(
+
+545917*
+1Y Y(
+
+615716*
+1] ](
+
+615717*
+1] ](
+
+616417*
+1_ _(
+
+666917*
+1c c( 
+
+747717*
+1j j(*
+
+798217*
+1n n("
+
+844016*
+1p p(
+
+844017*
+1p p(
+
+879017*
+1w w("
+
+929517*
+1z z(%
+
+9710017*
+1| |(%
+
+102105107*
+1~ ~(
+
+10210517*
+1~ ~(
+
+10210517*
+1~ ~(&
+
+111114107*
+1„ „(
+
+11111417*
+1„ „(
+
+11111417*
+1„ „(

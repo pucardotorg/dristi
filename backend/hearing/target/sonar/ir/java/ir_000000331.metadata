@@ -1,0 +1,7 @@
+org.pucar.dristi.util.WorkflowUtil#getWorkflow(Ljava/util/List;)Ljava/util/Map;
+false
+df0900d2595b9daa29f284f25ca2a774
+java.util.HashMap#<init>()V
+java.util.HashMap#instance-init#
+==
+forEach java.lang.Iterable#forEach(Ljava/util/function/Consumer;)V

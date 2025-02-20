@@ -1,0 +1,6 @@
+org.pucar.dristi.repository.querybuilder.OrderQueryBuilder#addPaginationQuery(Ljava/lang/String;Lorg/pucar/dristi/web/models/Pagination;Ljava/util/List;Ljava/util/List;)Ljava/lang/String;
+false
+64af97161b5ab4ca489cf1a95adab21f
+==
+!unknownMethod! !unknownMethod!
+add java.util.List#add(Ljava/lang/Object;)Z

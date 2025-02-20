@@ -1,0 +1,4 @@
+org.pucar.dristi.service.OrderRegistrationService#getReceiverParty(Ljava/lang/String;)Ljava/lang/String;
+false
+bb6208f9bf34150d100dd6f3ac11b5ee
+java.lang.String#equalsIgnoreCase(Ljava/lang/String;)Z

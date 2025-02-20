@@ -1,0 +1,1477 @@
+
+1.0solutions_hrmsJavaFrontend"1738843534095*java2.B‚4
+9
+4src/main/java/org/egov/hrms/service/UserService.java2
+
+package4
+
+org.egov.hrms.service5
+&
+!org.egov.hrms.service.UserService7
+
+
+class8
+
+access9
+
+public10
+
+simple name11
+
+UserService12
+
+lombok.extern.slf4j.Slf4j14
+
+unknown15
+
+annotated by16
+
+
+uses17
+,
+&org.springframework.stereotype.Service19
+9
+3org.egov.hrms.service.UserService.propertiesManager21
+
+field22
+
+private23
+
+propertiesManager24
+,
+&org.egov.hrms.config.PropertiesManager26
+
+is type27
+<
+6org.springframework.beans.factory.annotation.Autowired29
+4
+.org.egov.hrms.service.UserService.objectMapper31
+
+objectMapper32
+1
++com.fasterxml.jackson.databind.ObjectMapper34
+:
+4org.egov.hrms.service.UserService.restCallRepository36
+
+restCallRepository37
+1
++org.egov.hrms.repository.RestCallRepository39
+;
+5org.egov.hrms.service.UserService.centralInstanceUtil41
+
+centralInstanceUtil42
+2
+,org.egov.common.utils.MultiStateInstanceUtil44
+:
+4org.egov.hrms.service.UserService.userCreateEndpoint46
+
+userCreateEndpoint47
+8
+2org.springframework.beans.factory.annotation.Value49
+:
+4org.egov.hrms.service.UserService.userSearchEndpoint51
+
+userSearchEndpoint52
+:
+4org.egov.hrms.service.UserService.userUpdateEndpoint54
+
+userUpdateEndpoint55
+D
+>org.egov.hrms.service.UserService.internalMicroserviceRoleUuid57
+"
+internalMicroserviceRoleUuid58
+>
+8org.egov.hrms.service.UserService.multiStateInstanceUtil60
+
+multiStateInstanceUtil61
+;
+5org.egov.hrms.service.UserService.TENANTID_MDC_STRING63
+
+TENANTID_MDC_STRING64
+>
+8org.egov.hrms.service.UserService#initalizeSystemuser()V66
+
+method67
+
+	protected68
+
+initalizeSystemuser69
+&
+ jakarta.annotation.PostConstruct71
+2
+,org.egov.common.contract.request.RequestInfo73
+
+calls74
+
+
+references75
+E
+?org.egov.hrms.utils.HRMSConstants.INTERNALMICROSERVICEROLE_CODE77
+g
+aorg.egov.common.utils.MultiStateInstanceUtil#getIsEnvironmentCentralInstance()Ljava/lang/Boolean;79
+
+org.slf4j.MDC81
+>
+8org.slf4j.MDC#put(Ljava/lang/String;Ljava/lang/String;)V83
+|
+vorg.egov.hrms.repository.RestCallRepository#fetchResult(Ljava/lang/StringBuilder;Ljava/lang/Object;)Ljava/lang/Object;85
+w
+qorg.egov.hrms.service.UserService#createInternalMicroserviceUser(Lorg/egov/common/contract/request/RequestInfo;)V87
++
+%org.egov.tracer.model.CustomException89
+$
+createInternalMicroserviceUser90
+
+	has param91
++
+%org.egov.common.contract.request.Role93
+7
+1org.egov.common.contract.request.Role$RoleBuilder95
+
+returns96
+à
+Åorg.egov.common.contract.request.Role$RoleBuilder#tenantId(Ljava/lang/String;)Lorg/egov/common/contract/request/Role$RoleBuilder;98
+Ñ
+}org.egov.common.contract.request.Role$RoleBuilder#code(Ljava/lang/String;)Lorg/egov/common/contract/request/Role$RoleBuilder;100
+Ñ
+}org.egov.common.contract.request.Role$RoleBuilder#name(Ljava/lang/String;)Lorg/egov/common/contract/request/Role$RoleBuilder;102
+i
+borg.egov.common.contract.request.Role#builder()Lorg/egov/common/contract/request/Role$RoleBuilder;104
+F
+?org.egov.hrms.utils.HRMSConstants.INTERNALMICROSERVICEROLE_NAME106
+,
+%org.egov.common.contract.request.User108
+8
+1org.egov.common.contract.request.User$UserBuilder110
+â
+Åorg.egov.common.contract.request.User$UserBuilder#tenantId(Ljava/lang/String;)Lorg/egov/common/contract/request/User$UserBuilder;112
+Ñ
+}org.egov.common.contract.request.User$UserBuilder#type(Ljava/lang/String;)Lorg/egov/common/contract/request/User$UserBuilder;114
+ç
+Öorg.egov.common.contract.request.User$UserBuilder#mobileNumber(Ljava/lang/String;)Lorg/egov/common/contract/request/User$UserBuilder;116
+Ñ
+}org.egov.common.contract.request.User$UserBuilder#name(Ljava/lang/String;)Lorg/egov/common/contract/request/User$UserBuilder;118
+â
+Åorg.egov.common.contract.request.User$UserBuilder#userName(Ljava/lang/String;)Lorg/egov/common/contract/request/User$UserBuilder;120
+i
+borg.egov.common.contract.request.User#builder()Lorg/egov/common/contract/request/User$UserBuilder;122
+J
+Corg.egov.hrms.utils.HRMSConstants.INTERNALMICROSERVICEUSER_USERNAME124
+F
+?org.egov.hrms.utils.HRMSConstants.INTERNALMICROSERVICEUSER_NAME126
+J
+Corg.egov.hrms.utils.HRMSConstants.INTERNALMICROSERVICEUSER_MOBILENO128
+F
+?org.egov.hrms.utils.HRMSConstants.INTERNALMICROSERVICEUSER_TYPE130
+Ü
+org.egov.hrms.service.UserService#createUser(Lorg/egov/hrms/web/contract/UserRequest;)Lorg/egov/hrms/web/contract/UserResponse;132
+
+
+createUser133
+.
+'org.egov.hrms.web.contract.UserResponse135
+-
+&org.egov.hrms.web.contract.UserRequest137
+à
+Äorg.egov.hrms.service.UserService#userCall(Ljava/lang/Object;Ljava/lang/StringBuilder;)Lorg/egov/hrms/web/contract/UserResponse;139
+Ü
+org.egov.hrms.service.UserService#updateUser(Lorg/egov/hrms/web/contract/UserRequest;)Lorg/egov/hrms/web/contract/UserResponse;141
+
+
+updateUser142
+ô
+ëorg.egov.hrms.service.UserService#getUser(Lorg/egov/common/contract/request/RequestInfo;Ljava/util/Map;)Lorg/egov/hrms/web/contract/UserResponse;144
+
+getUser145
+h
+aorg.egov.common.contract.request.RequestInfo#getUserInfo()Lorg/egov/common/contract/request/User;147
+Å
+zorg.egov.hrms.service.UserService#getEncrichedandCopiedUserInfo(Ljava/lang/String;)Lorg/egov/common/contract/request/User;149
+i
+borg.egov.common.contract.request.RequestInfo#setUserInfo(Lorg/egov/common/contract/request/User;)V151
+(
+!org.egov.hrms.utils.HRMSConstants153
+P
+Iorg.egov.hrms.utils.HRMSConstants.HRMS_USER_SERACH_CRITERIA_USERTYPE_CODE155
+K
+Dorg.egov.hrms.utils.HRMSConstants.HRMS_USER_SERACH_CRITERIA_USERTYPE157
+$
+getEncrichedandCopiedUserInfo158
+g
+`org.egov.common.contract.request.Role$RoleBuilder#build()Lorg/egov/common/contract/request/Role;160
+m
+forg.egov.common.utils.MultiStateInstanceUtil#getStateLevelTenant(Ljava/lang/String;)Ljava/lang/String;162
+g
+`org.egov.common.contract.request.User$UserBuilder#build()Lorg/egov/common/contract/request/User;164
+Ä
+yorg.egov.common.contract.request.User$UserBuilder#id(Ljava/lang/Long;)Lorg/egov/common/contract/request/User$UserBuilder;166
+É
+|org.egov.common.contract.request.User$UserBuilder#roles(Ljava/util/List;)Lorg/egov/common/contract/request/User$UserBuilder;168
+Ñ
+}org.egov.common.contract.request.User$UserBuilder#uuid(Ljava/lang/String;)Lorg/egov/common/contract/request/User$UserBuilder;170
+
+userCall171
+d
+]org.egov.hrms.service.UserService#parseResponse(Ljava/util/LinkedHashMap;Ljava/lang/String;)V173
+v
+ocom.fasterxml.jackson.databind.ObjectMapper#convertValue(Ljava/lang/Object;Ljava/lang/Class;)Ljava/lang/Object;175
+
+parseResponse176
+i
+borg.egov.hrms.service.UserService#dateTolong(Ljava/lang/String;Ljava/lang/String;)Ljava/lang/Long;178
+
+
+dateTolong179J
+
+1
+12Z
+
+3	
+354j˘
+
+123
+12312415
+
+28
+282915
+
+70
+707115
+
+107
+10710815
+F
+131?
+13113267 *
+1£ £(26:3B
+	
+9
+10
+
+11
+133
+F
+140?
+14014167 *
+1∞ ∞(26:3B
+	
+9
+10
+
+11
+142
+@
+53:
+535422 *
+1f f(26:3B
+	
+9
+23
+
+
+11
+55
+@
+62:
+626322 *
+1n n(26:3B
+	
+9
+10
+
+
+11
+64
+
+78
+787915
+F
+172?
+17217367 *
+1Ü Ü(26:3B
+	
+9
+23
+
+11
+176
+@
+45:
+454622 *
+1` `(26:3B
+	
+9
+23
+
+
+11
+47
+F
+143?
+14314467 *
+1Ω Ω(26:3B
+	
+9
+10
+
+11
+145
+
+136
+13613715
+@
+35:
+353622 *
+1Z Z(26:3B
+	
+9
+23
+
+
+11
+37
+
+146
+14614715
+
+25
+252615
+
+117
+11711815
+
+94
+949515
+
+109
+10911015
+
+82
+828315
+B
+86<
+868767 *
+1â â(	26:3B
+	
+9
+23
+
+
+11
+90
+
+43
+434415
+
+13
+131415
+
+154
+15415515
+
+84
+848515
+
+105
+10510615
+
+134
+13413515
+
+125
+12512615
+
+38
+383915
+
+72
+727315
+
+88
+888915
+
+119
+11912015
+@
+40:
+404122 *
+1] ](26:3B
+	
+9
+23
+
+
+11
+42
+
+111
+11111215
+
+115
+11511615
+@
+30:
+303122 *
+1W W(26:3B
+	
+9
+23
+
+
+11
+32
+@
+56:
+565722 *
+1i i(	26:3B
+	
+9
+23
+
+
+11
+58
+
+113
+11311415
+F
+148?
+14814967 *
+1ÿ ÿ(	26:3B
+	
+9
+23
+
+11
+158
+
+156
+15615715
+
+129
+12913015
+
+161
+16116215
+
+165
+16516615
+
+121
+12112215
+
+48
+484915
+
+169
+16917015
+@
+59:
+596022 *
+1k k(26:3B
+	
+9
+23
+
+
+11
+61
+
+127
+12712815
+
+167
+16716815
+
+18
+181915
+@
+50:
+505122 *
+1c c(26:3B
+	
+9
+23
+
+
+11
+52
+
+97
+979815
+
+174
+17417515
+9
+64
+678 *
+1R R(:3B
+	
+9
+10
+
+
+11
+12
+@
+65:
+656667 *
+1q q(26:3B
+	
+9
+68
+
+
+11
+69
+
+92
+929315
+
+99
+9910015
+
+159
+15916015
+
+163
+16316415
+
+76
+767715
+
+33
+333415
+@
+20:
+202122 *
+1T T(26:3B
+	
+9
+23
+
+
+11
+24
+F
+138?
+13813967 *
+1Ó Ó(26:3B
+	
+9
+23
+
+11
+171
+
+150
+15015115
+
+101
+10110215
+
+80
+808115
+
+103
+10310415
+
+152
+15215315
+F
+177?
+17717867 *
+1û û(	26:3B
+	
+9
+23
+
+11
+179r™B
+
+61316*
+1P P(
+
+61317*
+1P P(
+
+61816*
+1Q Q(
+
+61817*
+1Q Q(	
+
+6617*
+1R R(
+
+202527*
+1U
+ U(
+
+202816*
+1T T(
+
+202817*
+1T T(
+
+202517*
+1U
+ U(
+
+202517*
+1U U(-
+
+303327*
+1X
+ X(
+
+302816*
+1W W(
+
+302817*
+1W W(
+
+303317*
+1X
+ X(
+
+303317*
+1X X(#
+
+353827*
+1[
+ [(
+
+352816*
+1Z Z(
+
+352817*
+1Z Z(
+
+353817*
+1[
+ [(
+
+353817*
+1[ [(/
+
+404327*
+1^
+ ^( 
+
+402816*
+1] ](
+
+402817*
+1] ](
+
+404317*
+1^
+ ^( 
+
+404317*
+1^! ^(4
+
+454816*
+1` `(
+
+454817*
+1` `(
+
+504816*
+1c c(
+
+504817*
+1c c(
+
+534816*
+1f f(
+
+534817*
+1f f(
+
+594327*
+1l
+ l( 
+
+592816*
+1k k(
+
+592817*
+1k k(
+
+594317*
+1l
+ l( 
+
+594317*
+1l! l(7
+
+657016*
+1q q(
+
+657017*
+1q q(
+
+657227*
+1s s(
+
+657217*
+1s s(
+
+657274*
+1s! s(,
+
+652075*
+1u u(
+
+652517*
+1u u(
+
+652075*
+1u u(
+
+652075*
+1u6 u(G
+
+652517*
+1u6 u(G
+
+652075*
+1u6 u(G
+
+652075*
+1x% x(6
+
+652517*
+1x% x(6
+
+652075*
+1x% x(6
+
+657675*
+1y@ y(]
+
+654375*
+1z z(
+
+657874*
+1z z(<
+
+655975*
+1z z(
+
+654317*
+1z z(
+
+655975*
+1z z(
+
+658075*
+1{ {(
+
+658274*
+1{ {(
+
+658017*
+1{ {(
+
+656275*
+1{ {(
+
+652075*
+1{! {(2
+
+652517*
+1{! {(2
+
+652075*
+1{! {(2
+
+653875*
+1~P ~(b
+
+658474*
+1~c ~(n
+
+653575*
+1~P ~(b
+
+653817*
+1~P ~(b
+
+653575*
+1~P ~(b
+
+65675*
+1Å Å(#
+
+658674*
+1Å Å(#
+
+655675*
+1Ç Ç( 
+
+658874*
+1Ñ Ñ(
+
+867291*
+1â. â(9
+
+867227*
+1â: â(E
+
+867217*
+1â. â(9
+
+869227*
+1å å(
+
+869217*
+1å å(
+
+869496*
+1å å(
+
+869475*
+1å å(
+
+869774*
+1é é(
+
+869496*
+1å å(
+
+869475*
+1å å(
+
+869974*
+1ç* ç(.
+
+869496*
+1å å(
+
+869475*
+1å å(
+
+8610174*
+1ç ç(
+
+
+869496*
+1å å(
+
+869275*
+1å å(
+
+8610374*
+1å å(
+
+869217*
+1å å(
+
+8610575*
+1ç ç((
+
+867675*
+1ç/ ç(L
+
+862075*
+1é é( 
+
+862517*
+1é é( 
+
+862075*
+1é é( 
+
+8610727*
+1è è(
+
+8610717*
+1è è(
+
+8610996*
+1è è(
+
+8610975*
+1è è(
+
+8611174*
+1ë* ë(2
+
+8610996*
+1è è(
+
+8610975*
+1è è(
+
+8611374*
+1ë ë(
+
+
+8610996*
+1è è(
+
+8610975*
+1è è(
+
+8611574*
+1ê* ê(6
+
+8610996*
+1è è(
+
+8610975*
+1è è(
+
+8611774*
+1ê ê(
+
+
+8610996*
+1è è(
+
+8610975*
+1è è(
+
+8611974*
+1è è(&
+
+8610996*
+1è è(
+
+8610775*
+1è è(
+
+8612174*
+1è è(
+
+8610717*
+1è è(
+
+8612375*
+1è' è(H
+
+8612575*
+1ê ê((
+
+8612775*
+1ê7 ê(X
+
+8612975*
+1ë ë((
+
+862075*
+1ë3 ë(D
+
+862517*
+1ë3 ë(D
+
+862075*
+1ë3 ë(D
+
+862075*
+1ò ò(
+
+862517*
+1ò ò(
+
+862075*
+1ò ò(
+
+862075*
+1ò6 ò(G
+
+862517*
+1ò6 ò(G
+
+862075*
+1ò6 ò(G
+
+863875*
+1õP õ(b
+
+868474*
+1õc õ(n
+
+863575*
+1õP õ(b
+
+863817*
+1õP õ(b
+
+863575*
+1õP õ(b
+
+865675*
+1ù ù( 
+
+868874*
+1ü ü(
+
+13113496*
+1£	 £(
+
+13113691*
+1£! £(,
+
+13113417*
+1£	 £(
+
+13113627*
+1£- £(8
+
+13113617*
+1£! £(,
+
+1312075*
+1• •(
+
+1312517*
+1• •(
+
+1312075*
+1• •(
+
+1312075*
+1•6 •(G
+
+1312517*
+1•6 •(G
+
+1312075*
+1•6 •(G
+
+13113427*
+1¶ ¶(
+
+13113417*
+1¶ ¶(
+
+13113496*
+1® ®(
+
+131675*
+1® ®(
+
+13113874*
+1® ®(
+
+14013496*
+1∞	 ∞(
+
+14013691*
+1∞! ∞(,
+
+14013417*
+1∞	 ∞(
+
+14013627*
+1∞- ∞(8
+
+14013617*
+1∞! ∞(,
+
+1402075*
+1≤ ≤(
+
+1402517*
+1≤ ≤(
+
+1402075*
+1≤ ≤(
+
+1402075*
+1≤6 ≤(G
+
+1402517*
+1≤6 ≤(G
+
+1402075*
+1≤6 ≤(G
+
+14013427*
+1≥ ≥(
+
+14013417*
+1≥ ≥(
+
+14013496*
+1µ µ(
+
+140675*
+1µ µ(
+
+14013874*
+1µ µ(
+
+14313496*
+1Ω	 Ω(
+
+1437291*
+1Ω Ω()
+
+14313417*
+1Ω	 Ω(
+
+1437227*
+1Ω* Ω(5
+
+1437217*
+1Ω Ω()
+
+14310727*
+1¿ ¿(
+
+14310717*
+1¿ ¿(
+
+14310796*
+1¿ ¿("
+
+1437275*
+1¿ ¿("
+
+14314674*
+1¿# ¿(.
+
+1432075*
+1¬ ¬(
+
+1432517*
+1¬ ¬(
+
+1432075*
+1¬ ¬(
+
+14310727*
+1√	 √(
+
+14310717*
+1√ √(
+
+14310796*
+1√ √(9
+
+143675*
+1√ √(9
+
+14314874*
+1√ √(9
+
+1437275*
+1ƒ ƒ(
+
+14315074*
+1ƒ ƒ(
+
+14315217*
+1» »("
+
+14315475*
+1»# »(J
+
+14315217*
+1»K »(X
+
+14315675*
+1»Y »({
+
+1432075*
+1À À(
+
+1432517*
+1À À(
+
+1432075*
+1À À(
+
+1432075*
+1À6 À(G
+
+1432517*
+1À6 À(G
+
+1432075*
+1À6 À(G
+
+14313427*
+1Ã Ã(
+
+14313417*
+1Ã Ã(
+
+14313474*
+1Ã# Ã(/
+
+14313496*
+1Œ Œ(
+
+143675*
+1Œ Œ(
+
+14313874*
+1Œ Œ(
+
+1432075*
+1“ “(
+
+1432517*
+1“ “(
+
+1432075*
+1“ “(
+
+1437275*
+1” ”(
+
+14315074*
+1” ”(
+
+14810796*
+1ÿ
+ ÿ(
+
+14810717*
+1ÿ
+ ÿ(
+
+1489227*
+1⁄ ⁄(
+
+1489217*
+1⁄ ⁄(
+
+1489296*
+1⁄ ⁄(
+
+1489475*
+1⁄ ⁄(
+
+14815974*
+1‹B ‹(G
+
+1489496*
+1⁄ ⁄(
+
+1489475*
+1⁄ ⁄(
+
+1489774*
+1‹ ‹(
+
+1489496*
+1⁄ ⁄(
+
+1489475*
+1⁄ ⁄(
+
+1489974*
+1€* €(.
+
+1489496*
+1⁄ ⁄(
+
+1489475*
+1⁄ ⁄(
+
+14810174*
+1€ €(
+
+
+1489496*
+1⁄ ⁄(
+
+1489275*
+1⁄ ⁄(
+
+14810374*
+1⁄ ⁄(
+
+1489217*
+1⁄ ⁄(
+
+14810575*
+1€ €((
+
+1487675*
+1€/ €(L
+
+1484375*
+1‹ ‹("
+
+14816174*
+1‹# ‹(6
+
+1484075*
+1‹ ‹("
+
+1484317*
+1‹ ‹("
+
+1484075*
+1‹ ‹("
+
+14810727*
+1ﬂ ﬂ(
+
+14810717*
+1ﬂ ﬂ(
+
+14810796*
+1ﬂ ﬂ(
+
+14810975*
+1ﬂ ﬂ(
+
+14816374*
+1‚4 ‚(9
+
+14810996*
+1ﬂ ﬂ(
+
+14810975*
+1ﬂ ﬂ(
+
+14816574*
+1‚- ‚(/
+
+14810996*
+1ﬂ ﬂ(
+
+14810975*
+1ﬂ ﬂ(
+
+14816774*
+1‚ ‚(
+
+14810996*
+1ﬂ ﬂ(
+
+14810975*
+1ﬂ ﬂ(
+
+14811374*
+1· ·(
+
+
+14810996*
+1ﬂ ﬂ(
+
+14810975*
+1ﬂ ﬂ(
+
+14816974*
+1‡ ‡(
+
+
+14810996*
+1ﬂ ﬂ(
+
+14810775*
+1ﬂ ﬂ(
+
+14812174*
+1ﬂ ﬂ(
+
+14810717*
+1ﬂ ﬂ(
+
+1485675*
+1‡ ‡('
+
+14812975*
+1· ·((
+
+13813496*
+1Ô
+ Ô(
+
+13813417*
+1Ô
+ Ô(
+
+1385075*
+1Ò Ò(0
+
+1385375*
+1ÒM Ò(_
+
+1384575*
+1Û# Û(5
+
+1383875*
+1ˆ0 ˆ(B
+
+1388474*
+1ˆC ˆ(N
+
+1383575*
+1ˆ0 ˆ(B
+
+1383817*
+1ˆ0 ˆ(B
+
+1383575*
+1ˆ0 ˆ(B
+
+138675*
+1˜ ˜(
+
+13817274*
+1˜ ˜(
+
+13813427*
+1¯ ¯(#
+
+13813417*
+1¯ ¯(
+
+13813496*
+1¯& ¯(2
+
+1383375*
+1¯& ¯(2
+
+13817474*
+1¯3 ¯(?
+
+1383075*
+1¯& ¯(2
+
+1383317*
+1¯& ¯(2
+
+1383075*
+1¯& ¯(2
+
+13813417*
+1¯L ¯(X
+
+1388874*
+1¸ ¸(
+
+172675*
+1å å('
+
+17217774*
+1å å('
+
+172675*
+1é# é(-
+
+17217774*
+1é# é(-
+
+172675*
+1ê ê( 
+
+17217774*
+1ê ê( 
+
+172675*
+1í  í(*
+
+17217774*
+1í  í(*

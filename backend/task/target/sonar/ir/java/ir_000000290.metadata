@@ -1,0 +1,8 @@
+org.pucar.dristi.repository.TaskRepository#getTotalCountTaskCase(Ljava/lang/String;Ljava/lang/String;Lorg/pucar/dristi/web/models/TaskCaseSearchCriteria;Ljava/util/List;)Ljava/lang/Integer;
+false
+a44be7d3ee5e1c0989eee9dc48282211
+==
+!unknownMethod! !unknownMethod!
+getTotalCountQuery org.pucar.dristi.repository.querybuilder.TaskCaseQueryBuilder#getTotalCountQuery(Ljava/lang/String;)Ljava/lang/String;
+queryForObject org.springframework.jdbc.core.JdbcTemplate#queryForObject(Ljava/lang/String;Ljava/lang/Class;[Ljava/lang/Object;)Ljava/lang/Object;
+toArray java.util.List#toArray()[Ljava/lang/Object;

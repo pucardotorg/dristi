@@ -1,0 +1,7 @@
+org.pucar.dristi.repository.querybuilder.EvidenceQueryBuilder#addArtifactCriteria(Ljava/lang/Boolean;Ljava/lang/StringBuilder;Ljava/util/List;ZLjava/util/List;)Z
+false
+25f042e827a2701bfc5836d02ef8302c
+java.lang.StringBuilder#append(Ljava/lang/String;)Ljava/lang/StringBuilder;
+org.pucar.dristi.repository.querybuilder.EvidenceQueryBuilder#addClauseIfRequired(Ljava/lang/StringBuilder;Z)V
+==
+add java.util.List#add(Ljava/lang/Object;)Z

@@ -1,0 +1,5 @@
+org.pucar.dristi.service.TaskService#searchCaseTask(Lorg/pucar/dristi/web/models/TaskCaseSearchRequest;)Ljava/util/List;
+false
+bc5d08f926e8c465e10678eaa6209e3a
+==
+getTaskWithCaseDetails org.pucar.dristi.repository.TaskRepository#getTaskWithCaseDetails(Lorg/pucar/dristi/web/models/TaskCaseSearchRequest;)Ljava/util/List;

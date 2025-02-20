@@ -1,0 +1,5 @@
+org.pucar.dristi.web.models.CaseExistsRequest#addCriteriaItem(Lorg/pucar/dristi/web/models/CaseExists;)Lorg/pucar/dristi/web/models/CaseExistsRequest;
+false
+9edd9f19948714a895a1c98383c0a4c7
+==
+add java.util.List#add(Ljava/lang/Object;)Z

@@ -1,0 +1,10 @@
+org.egov.hrms.web.validator.EmployeeValidator#validateReactivationDetails(Lorg/egov/hrms/model/Employee;Lorg/egov/hrms/model/Employee;Ljava/util/Map;Ljava/util/Map;)V
+false
+f459dc095c4c541c5f0e419dc4fa500d
+java.util.Date#<init>()V
+java.util.Date#instance-init#
+org.springframework.util.CollectionUtils#isEmpty(Ljava/util/Collection;)Z
+==
+!unknownMethod! !unknownMethod!
+getTime java.util.Date#getTime()J
+put java.util.Map#put(Ljava/lang/Object;Ljava/lang/Object;)Ljava/lang/Object;

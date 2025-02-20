@@ -1,0 +1,975 @@
+
+1.0solutions_evidenceJavaFrontend"1739451578644*java2.BÔ 
+O
+Jsrc/main/java/org/pucar/dristi/web/controllers/ArtifactsApiController.java2
+
+package4
+%
+ org.pucar.dristi.web.controllers5
+<
+7org.pucar.dristi.web.controllers.ArtifactsApiController7
+
+
+class8
+
+access9
+
+public10
+
+simple name11
+
+ArtifactsApiController12
+"
+jakarta.annotation.Generated14
+
+unknown15
+
+annotated by16
+
+
+uses17
+/
+)org.springframework.stereotype.Controller19
+<
+6org.springframework.web.bind.annotation.RequestMapping21
+M
+Gorg.pucar.dristi.web.controllers.ArtifactsApiController.evidenceService23
+
+field24
+
+private25
+
+evidenceService26
+.
+(org.pucar.dristi.service.EvidenceService28
+
+is type29
+Q
+Korg.pucar.dristi.web.controllers.ArtifactsApiController.responseInfoFactory31
+
+responseInfoFactory32
+/
+)org.pucar.dristi.util.ResponseInfoFactory34
+
+–org.pucar.dristi.web.controllers.ArtifactsApiController#<init>(Lorg/pucar/dristi/service/EvidenceService;Lorg/pucar/dristi/util/ResponseInfoFactory;)V36
+
+method37
+
+	has param38
+<
+6org.springframework.beans.factory.annotation.Autowired40
+
+calls41
+
+
+references42
+¬
+¥org.pucar.dristi.web.controllers.ArtifactsApiController#artifactsV1CreatePost(Lorg/pucar/dristi/web/models/EvidenceRequest;)Lorg/springframework/http/ResponseEntity;44
+
+artifactsV1CreatePost45
+-
+'org.springframework.http.ResponseEntity47
+
+returns48
+1
++org.pucar.dristi.web.models.EvidenceRequest50
+;
+5org.springframework.web.bind.annotation.RequestMethod52
+@
+:org.springframework.web.bind.annotation.RequestMethod.POST54
+2
+,org.pucar.dristi.web.models.EvidenceResponse56
+-
+'io.swagger.v3.oas.annotations.Parameter58
+5
+/io.swagger.v3.oas.annotations.enums.ParameterIn60
+=
+7io.swagger.v3.oas.annotations.enums.ParameterIn.DEFAULT62
+0
+*io.swagger.v3.oas.annotations.media.Schema64
+
+jakarta.validation.Valid66
+9
+3org.springframework.web.bind.annotation.RequestBody68
+*
+$org.pucar.dristi.web.models.Artifact70
+“
+Œorg.pucar.dristi.service.EvidenceService#createEvidence(Lorg/pucar/dristi/web/models/EvidenceRequest;)Lorg/pucar/dristi/web/models/Artifact;72
+4
+.org.egov.common.contract.response.ResponseInfo74
+Å
+¾org.pucar.dristi.util.ResponseInfoFactory#createResponseInfoFromRequestInfo(Lorg/egov/common/contract/request/RequestInfo;Ljava/lang/Boolean;)Lorg/egov/common/contract/response/ResponseInfo;76
+)
+#org.springframework.http.HttpStatus78
+,
+&org.springframework.http.HttpStatus.OK80
+²
+«org.pucar.dristi.web.controllers.ArtifactsApiController#artifactsV1SearchPost(Lorg/pucar/dristi/web/models/EvidenceSearchRequest;)Lorg/springframework/http/ResponseEntity;82
+
+artifactsV1SearchPost83
+7
+1org.pucar.dristi.web.models.EvidenceSearchRequest85
+8
+2org.pucar.dristi.web.models.EvidenceSearchResponse87
+Ú
+Óorg.pucar.dristi.service.EvidenceService#searchEvidence(Lorg/egov/common/contract/request/RequestInfo;Lorg/pucar/dristi/web/models/EvidenceSearchCriteria;Lorg/pucar/dristi/web/models/Pagination;)Ljava/util/List;89
+2
+,org.egov.common.contract.request.RequestInfo91
+v
+porg.pucar.dristi.web.models.EvidenceSearchRequest#getRequestInfo()Lorg/egov/common/contract/request/RequestInfo;93
+8
+2org.pucar.dristi.web.models.EvidenceSearchCriteria95
+y
+sorg.pucar.dristi.web.models.EvidenceSearchRequest#getCriteria()Lorg/pucar/dristi/web/models/EvidenceSearchCriteria;97
+¬
+¥org.pucar.dristi.web.controllers.ArtifactsApiController#artifactsV1UpdatePost(Lorg/pucar/dristi/web/models/EvidenceRequest;)Lorg/springframework/http/ResponseEntity;99
+
+artifactsV1UpdatePost100
+”
+Œorg.pucar.dristi.service.EvidenceService#updateEvidence(Lorg/pucar/dristi/web/models/EvidenceRequest;)Lorg/pucar/dristi/web/models/Artifact;102
+½
+µorg.pucar.dristi.web.controllers.ArtifactsApiController#applicationV1AddCommentPost(Lorg/pucar/dristi/web/models/EvidenceAddCommentRequest;)Lorg/springframework/http/ResponseEntity;104
+"
+applicationV1AddCommentPost105
+<
+5org.pucar.dristi.web.models.EvidenceAddCommentRequest107
+=
+6org.pucar.dristi.web.models.EvidenceAddCommentResponse109
+u
+norg.pucar.dristi.service.EvidenceService#addComments(Lorg/pucar/dristi/web/models/EvidenceAddCommentRequest;)V111J
+
+1
+12Z
+
+3	
+354jÂ	
+@
+22:
+222324 *
+1 (26:3B
+	
+9
+25
+
+
+11
+26
+
+20
+202115
+
+39
+394015
+
+18
+181915
+
+49
+495015
+
+65
+656615
+9
+64
+678 *
+1 ($:3B
+	
+9
+10
+
+
+11
+12
+
+59
+596015
+
+73
+737415
+@
+43:
+434437 *
+1$ $(26:3B
+	
+9
+10
+
+
+11
+45
+
+67
+676815
+
+106
+10610715
+
+101
+10110215
+
+27
+272815
+
+92
+929315
+
+33
+333415
+
+55
+555615
+
+53
+535415
+
+96
+969715
+@
+30:
+303124 *
+1 (26:3B
+	
+9
+25
+
+
+11
+32
+
+63
+636415
+
+61
+616215
+
+84
+848515
+
+71
+717215
+
+86
+868715
+
+69
+697015
+
+108
+10810915
+
+51
+515215
+
+94
+949515
+A
+98;
+989937 *
+1; ;(26:3B
+	
+9
+10
+
+11
+100
+@
+81:
+818237 *
+1- -(26:3B
+	
+9
+10
+
+
+11
+83
+D
+103=
+10310437 *
+1D D(26:3B
+	
+9
+10
+
+11
+105
+
+13
+131415
+
+57
+575815
+
+77
+777815
+
+110
+11011115
+
+75
+757615
+
+88
+888915
+@
+35:
+353637 *
+1 (26:3B
+	
+9
+10
+
+
+11
+12
+
+46
+464715
+
+79
+798015
+
+90
+909115rý-
+
+61316*
+1 (
+
+61317*
+1 (
+
+61816*
+1 (
+
+61817*
+1 (
+
+62016*
+1 (
+
+62017*
+1 (
+
+6617*
+1 ($
+
+222729*
+1 (
+
+222717*
+1 (
+
+222717*
+1 (,
+
+303329*
+1 ( 
+
+303317*
+1 ( 
+
+303317*
+1! (4
+
+352738*
+1# (2
+
+353338*
+1D (W
+
+353916*
+1 (
+
+353917*
+1 (
+
+35641*
+1 ("
+
+352729*
+13 (B
+
+352717*
+1# (2
+
+353329*
+1X (k
+
+353317*
+1D (W
+
+35617*
+1 	  (
+
+35642*
+1 	  (
+
+352717*
+1   (
+
+352242*
+1   (
+
+35617*
+1!	 !(
+
+35642*
+1!	 !(
+
+353317*
+1! !(!
+
+353042*
+1! !(!
+
+434648*
+1% %(
+
+434938*
+1&® &(½
+
+432016*
+1$ $(
+
+432017*
+1$ $(
+
+435117*
+1$5 $(B
+
+435117*
+1$C $(G
+
+435342*
+1$C $(G
+
+434617*
+1% %(
+
+435517*
+1% %(+
+
+434929*
+1&¾ &(Â
+
+435716*
+1& &(
+
+435717*
+1& &(
+
+435917*
+1& &((
+
+435917*
+1&) &(0
+
+436142*
+1&) &(0
+
+436316*
+1& &(
+
+436317*
+1& &(–
+
+436516*
+1&š &(›
+
+436517*
+1&› &( 
+
+436716*
+1&¡ &(¢
+
+436717*
+1&¢ &(­
+
+434917*
+1&® &(½
+
+436929*
+1' '(
+
+436917*
+1'	 '(
+
+436948*
+1' '(,
+
+432742*
+1' '(,
+
+437141*
+1'- '(;
+
+432242*
+1' '(,
+
+432717*
+1' '(,
+
+432242*
+1' '(,
+
+437329*
+1( (("
+
+437317*
+1(	 ((
+
+437348*
+1(% ((8
+
+433342*
+1(% ((8
+
+437541*
+1(9 ((Z
+
+433042*
+1(% ((8
+
+433317*
+1(% ((8
+
+433042*
+1(% ((8
+
+435529*
+1) )(*
+
+435517*
+1)	 )(
+
+435517*
+1)- )(=
+
+434641*
+1* *("
+
+437717*
+1*7 *(A
+
+437717*
+1*B *(D
+
+437942*
+1*B *(D
+
+814648*
+1.	 .(
+
+818438*
+1/œ /(±
+
+812016*
+1- -(
+
+812017*
+1- -(
+
+815117*
+1-5 -(B
+
+815117*
+1-C -(G
+
+815342*
+1-C -(G
+
+814617*
+1.	 .(
+
+818617*
+1. .(.
+
+818429*
+1/² /(¶
+
+815716*
+1/ /(
+
+815717*
+1/ /(
+
+815917*
+1/ /(
+
+815917*
+1/  /('
+
+816142*
+1/  /('
+
+816316*
+1/} /(~
+
+816317*
+1/~ /(„
+
+816516*
+1/ˆ /(‰
+
+816517*
+1/‰ /(Ž
+
+816716*
+1/ /(
+
+816717*
+1/ /(›
+
+818417*
+1/œ /(±
+
+816917*
+11 1(
+
+812742*
+11! 1(0
+
+818841*
+111 1(?
+
+812242*
+11! 1(0
+
+812717*
+11! 1(0
+
+812242*
+11! 1(0
+
+819048*
+11@ 1(D
+
+818442*
+11@ 1(D
+
+819241*
+11E 1(S
+
+819448*
+11W 1([
+
+818442*
+11W 1([
+
+819641*
+11\ 1(g
+
+817329*
+12 2(
+
+817317*
+12 2(
+
+817348*
+12 2(2
+
+813342*
+12 2(2
+
+817541*
+123 2(T
+
+813042*
+12 2(2
+
+813317*
+12 2(2
+
+813042*
+12 2(2
+
+819048*
+12U 2(Y
+
+818442*
+12U 2(Y
+
+819241*
+12Z 2(h
+
+818629*
+13 3(*
+
+818617*
+13 3(
+
+818617*
+13- 3(C
+
+814641*
+18 8(
+
+817717*
+181 8(;
+
+817717*
+18< 8(>
+
+817942*
+18< 8(>
+
+984648*
+1<	 <(
+
+984938*
+1=³ =(Â
+
+982016*
+1; ;(
+
+982017*
+1; ;(
+
+985117*
+1;2 ;(?
+
+985117*
+1;@ ;(D
+
+985342*
+1;@ ;(D
+
+984617*
+1<	 <(
+
+985517*
+1< <((
+
+984929*
+1=Ã =(Ç
+
+985716*
+1= =(
+
+985717*
+1= =(
+
+985917*
+1= =(
+
+985917*
+1=  =('
+
+986142*
+1=  =('
+
+986316*
+1=” =(•
+
+986317*
+1=• =(›
+
+986516*
+1=Ÿ =( 
+
+986517*
+1=  =(¥
+
+986716*
+1=¦ =(§
+
+986717*
+1=§ =(²
+
+984917*
+1=³ =(Â
+
+986929*
+1> >(
+
+986917*
+1> >(
+
+986948*
+1> >((
+
+982742*
+1> >((
+
+9810141*
+1>) >(7
+
+982242*
+1> >((
+
+982717*
+1> >((
+
+982242*
+1> >((
+
+987329*
+1? ?(
+
+987317*
+1? ?(
+
+987348*
+1?! ?(4
+
+983342*
+1?! ?(4
+
+987541*
+1?5 ?(V
+
+983042*
+1?! ?(4
+
+983317*
+1?! ?(4
+
+983042*
+1?! ?(4
+
+985529*
+1@ @(&
+
+985517*
+1@ @(
+
+985517*
+1@) @(9
+
+984641*
+1A A(
+
+987717*
+1A3 A(=
+
+987717*
+1A> A(@
+
+987942*
+1A> A(@
+
+1034648*
+1E	 E(
+
+10310638*
+1Eé E(‚
+
+1032016*
+1D D(
+
+1032017*
+1D D(
+
+1035117*
+1D3 D(@
+
+1035117*
+1DA D(E
+
+1035342*
+1DA D(E
+
+1034617*
+1E	 E(
+
+10310817*
+1E E(2
+
+10310629*
+1Eƒ E(‡
+
+1035716*
+1EP E(Q
+
+1035717*
+1EQ E(Z
+
+1035917*
+1E` E(k
+
+1035917*
+1El E(s
+
+1036142*
+1El E(s
+
+1036316*
+1EÊ E(Ë
+
+1036317*
+1EË E(Ñ
+
+1036516*
+1EÕ E(Ö
+
+1036517*
+1EÖ E(Û
+
+1036716*
+1EÜ E(Ý
+
+1036717*
+1EÝ E(è
+
+10310617*
+1Eé E(‚
+
+1032742*
+1F F(
+
+10311041*
+1F F(
+
+1032242*
+1F F(
+
+1032717*
+1F F(
+
+1032242*
+1F F(
+
+1037329*
+1G G(
+
+1037317*
+1G G(
+
+1037348*
+1G G(2
+
+1033342*
+1G G(2
+
+1037541*
+1G3 G(T
+
+1033042*
+1G G(2
+
+1033317*
+1G G(2
+
+1033042*
+1G G(2
+
+10310829*
+1H H(;
+
+10310817*
+1H H(
+
+10310817*
+1H> H(X
+
+1034641*
+1I I(
+
+1037717*
+1I> I(H
+
+1037717*
+1II I(K
+
+1037942*
+1II I(K

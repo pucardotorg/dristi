@@ -1,0 +1,7 @@
+org.pucar.dristi.service.WitnessDepositionPdfService#extractCaseYear(Ljava/lang/String;)Ljava/lang/String;
+false
+eacbaadfb86ab11e0a44eae70b6468ac
+java.util.regex.Matcher#find()Z
+java.util.regex.Matcher#group(I)Ljava/lang/String;
+java.util.regex.Pattern#compile(Ljava/lang/String;)Ljava/util/regex/Pattern;
+java.util.regex.Pattern#matcher(Ljava/lang/CharSequence;)Ljava/util/regex/Matcher;

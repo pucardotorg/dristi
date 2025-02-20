@@ -1,0 +1,9 @@
+org.pucar.dristi.repository.querybuilder.TaskCaseQueryBuilder#createQuery(Ljava/util/List;)Ljava/lang/String;
+false
+dc3999474de77c6edd9195869f4d98a5
+java.lang.StringBuilder#<init>()V
+java.lang.StringBuilder#append(Ljava/lang/String;)Ljava/lang/StringBuilder;
+java.lang.StringBuilder#instance-init#
+java.lang.StringBuilder#toString()Ljava/lang/String;
+==
+size java.util.List#size()I

@@ -1,0 +1,755 @@
+
+1.0solutions_taskJavaFrontend"1739451664732*java2.Bƒ(
+U
+Psrc/main/java/org/pucar/dristi/repository/querybuilder/TaskCaseQueryBuilder.java2
+
+package4
+-
+(org.pucar.dristi.repository.querybuilder5
+B
+=org.pucar.dristi.repository.querybuilder.TaskCaseQueryBuilder7
+
+
+class8
+
+access9
+
+public10
+
+simple name11
+
+TaskCaseQueryBuilder12
+
+lombok.extern.slf4j.Slf4j14
+
+unknown15
+
+annotated by16
+
+
+uses17
+.
+(org.springframework.stereotype.Component19
+S
+Morg.pucar.dristi.repository.querybuilder.TaskCaseQueryBuilder.BASE_TASK_QUERY21
+
+field22
+
+private23
+
+BASE_TASK_QUERY24
+X
+Rorg.pucar.dristi.repository.querybuilder.TaskCaseQueryBuilder.DOCUMENT_SWITCH_CASE26
+
+DOCUMENT_SWITCH_CASE27
+S
+Morg.pucar.dristi.repository.querybuilder.TaskCaseQueryBuilder.FROM_TASK_TABLE29
+
+FROM_TASK_TABLE30
+X
+Rorg.pucar.dristi.repository.querybuilder.TaskCaseQueryBuilder.FROM_DOCUMENTS_TABLE32
+
+FROM_DOCUMENTS_TABLE33
+^
+Xorg.pucar.dristi.repository.querybuilder.TaskCaseQueryBuilder.DOCUMENT_SELECT_QUERY_TASK35
+ 
+DOCUMENT_SELECT_QUERY_TASK36
+U
+Oorg.pucar.dristi.repository.querybuilder.TaskCaseQueryBuilder.TOTAL_COUNT_QUERY38
+
+TOTAL_COUNT_QUERY39
+R
+Lorg.pucar.dristi.repository.querybuilder.TaskCaseQueryBuilder.ORDERBY_CLAUSE41
+
+ORDERBY_CLAUSE42
+Z
+Torg.pucar.dristi.repository.querybuilder.TaskCaseQueryBuilder.DEFAULT_ORDERBY_CLAUSE44
+
+DEFAULT_ORDERBY_CLAUSE45
+T
+Norg.pucar.dristi.repository.querybuilder.TaskCaseQueryBuilder.PAGINATION_QUERY47
+
+PAGINATION_QUERY48
+W
+Qorg.pucar.dristi.repository.querybuilder.TaskCaseQueryBuilder.DEFAULT_JOIN_CLAUSE50
+
+DEFAULT_JOIN_CLAUSE51
+R
+Lorg.pucar.dristi.repository.querybuilder.TaskCaseQueryBuilder.ROW_NUM_CLAUSE53
+
+ROW_NUM_CLAUSE54
+U
+Oorg.pucar.dristi.repository.querybuilder.TaskCaseQueryBuilder.WITH_CLAUSE_QUERY56
+
+WITH_CLAUSE_QUERY57
+V
+Porg.pucar.dristi.repository.querybuilder.TaskCaseQueryBuilder.DOCUMENT_LEFT_JOIN59
+
+DOCUMENT_LEFT_JOIN60
+Z
+Torg.pucar.dristi.repository.querybuilder.TaskCaseQueryBuilder.TASK_CASE_SELECT_QUERY62
+
+TASK_CASE_SELECT_QUERY63
+X
+Rorg.pucar.dristi.repository.querybuilder.TaskCaseQueryBuilder.ROW_NUM_WHERE_CLAUSE65
+
+ROW_NUM_WHERE_CLAUSE66
+´
+­org.pucar.dristi.repository.querybuilder.TaskCaseQueryBuilder#getTaskTableSearchQuery(Lorg/pucar/dristi/web/models/TaskCaseSearchCriteria;Ljava/util/List;)Ljava/lang/String;68
+
+method69
+
+getTaskTableSearchQuery70
+8
+2org.pucar.dristi.web.models.TaskCaseSearchCriteria72
+
+	has param73
+
+is type74
+
+
+references75
+³
+¬org.pucar.dristi.repository.querybuilder.TaskCaseQueryBuilder#getWhereFields(Lorg/pucar/dristi/web/models/TaskCaseSearchCriteria;Ljava/lang/StringBuilder;Ljava/util/List;)V77
+
+calls78
++
+%org.egov.tracer.model.CustomException80
+J
+Dorg.pucar.dristi.config.ServiceConstants.TASK_SEARCH_QUERY_EXCEPTION82
+|
+vorg.pucar.dristi.repository.querybuilder.TaskCaseQueryBuilder#addWithClauseQuery(Ljava/lang/String;)Ljava/lang/String;84
+
+addWithClauseQuery85
+s
+morg.pucar.dristi.repository.querybuilder.TaskCaseQueryBuilder#getFinalTaskCaseSearchQuery()Ljava/lang/String;87
+!
+getFinalTaskCaseSearchQuery88
+È
+Áorg.pucar.dristi.repository.querybuilder.TaskCaseQueryBuilder#addApplicationStatusQuery(Lorg/pucar/dristi/web/models/TaskCaseSearchCriteria;Ljava/lang/String;Ljava/util/List;)Ljava/lang/String;90
+
+addApplicationStatusQuery91
+*
+$org.apache.commons.lang3.ObjectUtils93
+G
+Aorg.apache.commons.lang3.ObjectUtils#isEmpty(Ljava/lang/Object;)Z95
+µ
+®org.pucar.dristi.repository.querybuilder.TaskCaseQueryBuilder#addPaginationQuery(Ljava/lang/String;Lorg/pucar/dristi/web/models/Pagination;Ljava/util/List;)Ljava/lang/String;97
+
+addPaginationQuery98
+-
+&org.pucar.dristi.web.models.Pagination100
+£
+›org.pucar.dristi.repository.querybuilder.TaskCaseQueryBuilder#addOrderByQuery(Ljava/lang/String;Lorg/pucar/dristi/web/models/Pagination;)Ljava/lang/String;102
+
+addOrderByQuery103
+ƒ
+|org.pucar.dristi.repository.querybuilder.TaskCaseQueryBuilder#isPaginationInvalid(Lorg/pucar/dristi/web/models/Pagination;)Z105
+
+isPaginationInvalid106
+
+ˆorg.pucar.dristi.repository.querybuilder.TaskCaseQueryBuilder#getDocumentSearchQuery(Ljava/util/List;Ljava/util/List;)Ljava/lang/String;108
+
+getDocumentSearchQuery109
+O
+Horg.pucar.dristi.config.ServiceConstants.DOCUMENT_SEARCH_QUERY_EXCEPTION111
+}
+vorg.pucar.dristi.repository.querybuilder.TaskCaseQueryBuilder#getTotalCountQuery(Ljava/lang/String;)Ljava/lang/String;113
+
+getTotalCountQuery114
+
+getWhereFields115
+/
+(org.springframework.util.CollectionUtils117
+P
+Iorg.springframework.util.CollectionUtils#isEmpty(Ljava/util/Collection;)Z119
+„
+}org.pucar.dristi.repository.querybuilder.TaskCaseQueryBuilder#addClauseIfRequired(Ljava/lang/StringBuilder;Ljava/util/List;)V121
+t
+morg.pucar.dristi.repository.querybuilder.TaskCaseQueryBuilder#createQuery(Ljava/util/List;)Ljava/lang/String;123
+~
+worg.pucar.dristi.repository.querybuilder.TaskCaseQueryBuilder#addToPreparedStatement(Ljava/util/List;Ljava/util/List;)V125
+
+addClauseIfRequired126
+
+createQuery127
+
+addToPreparedStatement128J
+
+1
+12Z
+
+3	
+354jü
+@
+34:
+343522 *
+1 (26:3B
+	
+9
+23
+
+
+11
+36
+@
+37:
+373822 *
+1! !(26:3B
+	
+9
+23
+
+
+11
+39
+@
+52:
+525322 *
+1( ((26:3B
+	
+9
+23
+
+
+11
+54
+@
+86:
+868769 *
+1A A(26:3B
+	
+9
+10
+
+
+11
+88
+D
+104=
+10410569 *
+1[ [(26:3B
+	
+9
+23
+
+11
+106
+@
+40:
+404122 *
+1" "(26:3B
+	
+9
+23
+
+
+11
+42
+
+110
+11011115
+F
+120?
+12012169 *
+1 (26:3B
+	
+9
+10
+
+11
+126
+@
+64:
+646522 *
+1, ,(26:3B
+	
+9
+23
+
+
+11
+66
+@
+25:
+252622 *
+1 (26:3B
+	
+9
+23
+
+
+11
+27
+@
+20:
+202122 *
+1 (26:3B
+	
+9
+23
+
+
+11
+24
+
+71
+717215
+
+92
+929315
+@
+55:
+555622 *
+1) )(26:3B
+	
+9
+23
+
+
+11
+57
+@
+58:
+585922 *
+1* *(26:3B
+	
+9
+23
+
+
+11
+60
+@
+96:
+969769 *
+1L L(26:3B
+	
+9
+10
+
+
+11
+98
+D
+107=
+10710869 *
+1_ _(26:3B
+	
+9
+10
+
+11
+109
+9
+64
+678 *
+1 (":3B
+	
+9
+10
+
+
+11
+12
+@
+67:
+676869 *
+1. .(26:3B
+	
+9
+10
+
+
+11
+70
+A
+76;
+767769 *
+1w w(26:3B
+	
+9
+23
+
+11
+115
+@
+83:
+838469 *
+1= =(26:3B
+	
+9
+10
+
+
+11
+85
+@
+43:
+434422 *
+1# #(26:3B
+	
+9
+23
+
+
+11
+45
+@
+49:
+495022 *
+1% %(26:3B
+	
+9
+23
+
+
+11
+51
+@
+31:
+313222 *
+1 (26:3B
+	
+9
+23
+
+
+11
+33
+D
+101=
+10110269 *
+1R R(26:3B
+	
+9
+10
+
+11
+103
+@
+46:
+464722 *
+1$ $(26:3B
+	
+9
+23
+
+
+11
+48
+@
+89:
+899069 *
+1D D(26:3B
+	
+9
+10
+
+
+11
+91
+
+13
+131415
+
+18
+181915
+@
+28:
+282922 *
+1 (26:3B
+	
+9
+23
+
+
+11
+30
+@
+61:
+616222 *
+1+ +(26:3B
+	
+9
+23
+
+
+11
+63
+
+99
+9910015
+
+116
+11611715
+
+81
+818215
+
+94
+949515
+F
+122?
+12212369 *
+1— —(26:3B
+	
+9
+10
+
+11
+127
+D
+112=
+11211369 *
+1s s(26:3B
+	
+9
+10
+
+11
+114
+
+79
+798015
+F
+124?
+12412569 *
+1£ £(26:3B
+	
+9
+10
+
+11
+128
+
+118
+11811915r¬
+
+61316*
+1 (
+
+61317*
+1 (
+
+61816*
+1 (
+
+61817*
+1 (
+
+6617*
+1 ("
+
+677173*
+1.+ .(A
+
+677174*
+1.B .(J
+
+677117*
+1.+ .(A
+
+672075*
+105 0(D
+
+672575*
+11 1(.
+
+675275*
+12 2((
+
+672875*
+13 3()
+
+674975*
+14 4(-
+
+675875*
+15 5(,
+
+67675*
+16 6(
+
+677678*
+16 6(
+
+677978*
+1: :(&
+
+678175*
+1:' :(B
+
+835575*
+1> >(!
+
+835575*
+1> >(!
+
+866175*
+1B B(&
+
+866475*
+1B) B(=
+
+897173*
+1D- D(C
+
+897174*
+1DD D(R
+
+897117*
+1D- D(C
+
+899275*
+1E E(
+
+899478*
+1E E( 
+
+899217*
+1E E(
+
+969973*
+1L4 L(>
+
+969974*
+1L? L(I
+
+969917*
+1L4 L(>
+
+964675*
+1O O((
+
+1019973*
+1R1 R(;
+
+1019974*
+1R< R(F
+
+1019917*
+1R1 R(;
+
+101675*
+1S S( 
+
+10110478*
+1S S( 
+
+1014375*
+1T T(2
+
+1014075*
+1V V(+
+
+1049973*
+1[0 [(:
+
+1049974*
+1[; [(E
+
+1049917*
+1[0 [(:
+
+1073475*
+1a5 a(O
+
+1073175*
+1b b(.
+
+1077974*
+1k" k(#
+
+1077917*
+1k k(!
+
+1077978*
+1o o(&
+
+10711075*
+1o' o(F
+
+1123775*
+1t t(!
+
+1123775*
+1t t(!
+
+767173*
+1w! w(7
+
+767174*
+1w8 w(N
+
+767117*
+1w! w(7
+
+7611675*
+1y y(
+
+7611878*
+1y y(%
+
+7611617*
+1y y(
+
+76675*
+1z z( 
+
+7612078*
+1z z( 
+
+76675*
+1{7 {(B
+
+7612278*
+1{7 {(B
+
+76675*
+1| |(#
+
+7612478*
+1| |(#
+
+7611675*
+1 (
+
+7611878*
+1 (%
+
+7611617*
+1 (
+
+76675*
+1€ €( 
+
+7612078*
+1€ €( 
+
+76675*
+15 (@
+
+7612278*
+15 (@
+
+76675*
+1‚ ‚(#
+
+7612478*
+1‚ ‚(#
+
+769275*
+1† †(
+
+769478*
+1† †(!
+
+769217*
+1† †(
+
+76675*
+1‡ ‡( 
+
+7612078*
+1‡ ‡( 

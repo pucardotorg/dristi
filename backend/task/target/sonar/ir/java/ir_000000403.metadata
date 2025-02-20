@@ -1,0 +1,7 @@
+org.pucar.dristi.repository.querybuilder.TaskCaseQueryBuilder#addApplicationStatusQuery(Lorg/pucar/dristi/web/models/TaskCaseSearchCriteria;Ljava/lang/String;Ljava/util/List;)Ljava/lang/String;
+false
+338f271cc8073c87b100a23f42b6b74b
+org.apache.commons.lang3.ObjectUtils#isEmpty(Ljava/lang/Object;)Z
+==
+!unknownMethod! !unknownMethod!
+add java.util.List#add(Ljava/lang/Object;)Z

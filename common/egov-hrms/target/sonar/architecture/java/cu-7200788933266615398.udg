@@ -1,0 +1,434 @@
+
+1.0solutions_hrmsJavaFrontend"1738843533272*java2.BÙ
+6
+1src/main/java/org/egov/hrms/model/Assignment.java2
+
+package4
+
+org.egov.hrms.model5
+#
+org.egov.hrms.model.Assignment7
+
+
+class8
+
+access9
+
+public10
+
+simple name11
+
+
+Assignment12
+9
+3org.springframework.validation.annotation.Validated14
+
+unknown15
+
+annotated by16
+
+
+uses17
+
+lombok.EqualsAndHashCode19
+
+lombok.AllArgsConstructor21
+
+lombok.Builder23
+
+lombok.Getter25
+
+lombok.NoArgsConstructor27
+
+lombok.Setter29
+
+lombok.ToString31
+'
+!org.egov.hrms.model.Assignment.id33
+
+field34
+
+private35
+
+id36
+2
+,org.hibernate.validator.constraints.SafeHtml38
+-
+'org.egov.hrms.model.Assignment.position40
+
+position41
+-
+'org.egov.hrms.model.Assignment.district43
+
+district44
+0
+*org.egov.hrms.model.Assignment.designation46
+
+designation47
+7
+1org.egov.hrms.model.Assignment.courtEstablishment49
+
+courtEstablishment50
+.
+(org.egov.hrms.model.Assignment.courtroom52
+
+	courtroom53
+-
+'org.egov.hrms.model.Assignment.fromDate55
+
+fromDate56
++
+%org.egov.hrms.model.Assignment.toDate58
+
+toDate59
+4
+.org.egov.hrms.model.Assignment.govtOrderNumber61
+
+govtOrderNumber62
+-
+'org.egov.hrms.model.Assignment.tenantid64
+
+tenantid65
+0
+*org.egov.hrms.model.Assignment.reportingTo67
+
+reportingTo68
+*
+$org.egov.hrms.model.Assignment.isHOD70
+
+isHOD71
+3
+-com.fasterxml.jackson.annotation.JsonProperty73
+8
+2org.egov.hrms.model.Assignment.isCurrentAssignment75
+
+isCurrentAssignment76
+1
++org.egov.hrms.model.Assignment.auditDetails78
+
+auditDetails79
+&
+ org.egov.hrms.model.AuditDetails81
+
+is type82J
+
+1
+12Z
+
+3	
+354j³	
+
+72
+727315
+
+28
+282915
+
+24
+242515
+@
+57:
+575834 *
+1S S(	26:3B
+	
+9
+35
+
+
+11
+59
+@
+60:
+606134 *
+1U U(26:3B
+	
+9
+35
+
+
+11
+62
+@
+48:
+484934 *
+1H H(26:3B
+	
+9
+35
+
+
+11
+50
+
+37
+373815
+@
+51:
+515234 *
+1L L(26:3B
+	
+9
+35
+
+
+11
+53
+
+30
+303115
+@
+45:
+454634 *
+1D D(26:3B
+	
+9
+35
+
+
+11
+47
+@
+63:
+636434 *
+1X X(26:3B
+	
+9
+35
+
+
+11
+65
+@
+69:
+697034 *
+1^ ^(26:3B
+	
+9
+35
+
+
+11
+71
+
+80
+808115
+@
+74:
+747534 *
+1a a(26:3B
+	
+9
+35
+
+
+11
+76
+
+13
+131415
+@
+66:
+666734 *
+1[ [(26:3B
+	
+9
+35
+
+
+11
+68
+
+18
+181915
+@
+32:
+323334 *
+1< <(26:3B
+	
+9
+35
+
+
+11
+36
+9
+64
+678 *
+1: :(:3B
+	
+9
+10
+
+
+11
+12
+@
+77:
+777834 *
+1d d(	26:3B
+	
+9
+35
+
+
+11
+79
+
+22
+222315
+@
+42:
+424334 *
+1A A(26:3B
+	
+9
+35
+
+
+11
+44
+@
+39:
+394034 *
+1? ?(	26:3B
+	
+9
+35
+
+
+11
+41
+
+20
+202115
+@
+54:
+545534 *
+1P P(26:3B
+	
+9
+35
+
+
+11
+56
+
+26
+262715rð
+
+61316*
+12 2(
+
+61317*
+12 2(
+
+61816*
+13 3(
+
+61817*
+13 3(
+
+62016*
+14 4(
+
+62017*
+14 4(
+
+62216*
+15 5(
+
+62217*
+15 5(	
+
+62416*
+16 6(
+
+62417*
+16 6(
+
+62616*
+17 7(
+
+62617*
+17 7(
+
+62816*
+18 8(
+
+62817*
+18 8(
+
+63016*
+19 9(
+
+63017*
+19 9(
+
+
+6617*
+1: :(
+
+323716*
+1< <(
+
+323717*
+1< <(
+
+453716*
+1D D(
+
+453717*
+1D D(
+
+483716*
+1H H(
+
+483717*
+1H H(
+
+513716*
+1L L(
+
+513717*
+1L L(
+
+603716*
+1U U(
+
+603717*
+1U U(
+
+633716*
+1X X(
+
+633717*
+1X X(
+
+663716*
+1[ [(
+
+663717*
+1[ [(
+
+697216*
+1^ ^(
+
+697217*
+1^ ^(
+
+747216*
+1a a(
+
+747217*
+1a a(
+
+778082*
+1d
+ d(
+
+778017*
+1d
+ d(
+
+778017*
+1d d(#

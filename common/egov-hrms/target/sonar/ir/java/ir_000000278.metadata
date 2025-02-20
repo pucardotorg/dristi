@@ -1,0 +1,11 @@
+org.egov.hrms.service.EmployeeService#update(Lorg/egov/hrms/web/contract/EmployeeRequest;)Lorg/egov/hrms/web/contract/EmployeeResponse;
+false
+6126e17f8542ac8e2c1e8880b436ec27
+java.util.ArrayList#<init>()V
+java.util.ArrayList#instance-init#
+org.egov.hrms.service.EmployeeService#generateResponse(Lorg/egov/hrms/web/contract/EmployeeRequest;)Lorg/egov/hrms/web/contract/EmployeeResponse;
+==
+!unknownMethod! !unknownMethod!
+add java.util.List#add(Ljava/lang/Object;)Z
+push org.egov.hrms.producer.HRMSProducer#push(Ljava/lang/String;Ljava/lang/String;Ljava/lang/Object;)V
+search org.egov.hrms.service.EmployeeService#search(Lorg/egov/hrms/web/contract/EmployeeSearchCriteria;Lorg/egov/common/contract/request/RequestInfo;)Lorg/egov/hrms/web/contract/EmployeeResponse;

@@ -1,0 +1,197 @@
+
+1.0solutions_taskJavaFrontend"1739451663707*java2.Bœ
+J
+Esrc/main/java/org/pucar/dristi/web/models/TaskCaseSearchCriteria.java2
+
+package4
+ 
+org.pucar.dristi.web.models5
+7
+2org.pucar.dristi.web.models.TaskCaseSearchCriteria7
+
+
+class8
+
+access9
+
+public10
+
+simple name11
+
+TaskCaseSearchCriteria12
+9
+3org.springframework.validation.annotation.Validated14
+
+unknown15
+
+annotated by16
+
+
+uses17
+"
+jakarta.annotation.Generated19
+
+lombok.Getter21
+
+lombok.Setter23
+
+lombok.Builder25
+G
+Aorg.pucar.dristi.web.models.TaskCaseSearchCriteria.completeStatus27
+
+field28
+
+private29
+
+completeStatus30
+3
+-com.fasterxml.jackson.annotation.JsonProperty32
+B
+<org.pucar.dristi.web.models.TaskCaseSearchCriteria.orderType34
+
+	orderType35
+J
+Dorg.pucar.dristi.web.models.TaskCaseSearchCriteria.applicationStatus37
+
+applicationStatus38
+C
+=org.pucar.dristi.web.models.TaskCaseSearchCriteria.searchText40
+
+
+searchText41J
+
+1
+12Z
+
+3	
+354j»
+
+18
+181915
+
+31
+313215
+
+13
+131415
+
+22
+222315
+9
+64
+678 *
+1 ($:3B
+	
+9
+10
+
+
+11
+12
+@
+36:
+363728 *
+1 (26:3B
+	
+9
+29
+
+
+11
+38
+
+20
+202115
+
+24
+242515
+@
+39:
+394028 *
+1 (26:3B
+	
+9
+29
+
+
+11
+41
+@
+26:
+262728 *
+1 (26:3B
+	
+9
+29
+
+
+11
+30
+@
+33:
+333428 *
+1 (26:3B
+	
+9
+29
+
+
+11
+35rõ
+
+61316*
+1 (
+
+61317*
+1 (
+
+61816*
+1 (
+
+61817*
+1 (
+
+62016*
+1 (
+
+62017*
+1 (
+
+62216*
+1 (
+
+62217*
+1 (
+
+62416*
+1 (
+
+62417*
+1 (	
+
+6617*
+1 ($
+
+263116*
+1 (
+
+263117*
+1 (
+
+333116*
+1 (
+
+333117*
+1 (
+
+363116*
+1 (
+
+363117*
+1 (
+
+393116*
+1 (
+
+393117*
+1 (

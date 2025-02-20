@@ -1,0 +1,7 @@
+org.pucar.dristi.validators.OrderRegistrationValidator#createMasterDetails()Ljava/util/List;
+false
+2933567b32443c1ba4170b5998e421ae
+java.util.ArrayList#<init>()V
+java.util.ArrayList#instance-init#
+==
+add java.util.List#add(Ljava/lang/Object;)Z

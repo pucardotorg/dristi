@@ -1,0 +1,8 @@
+org.egov.hrms.web.validator.EmployeeValidator#validateConsistencyEducationalDetails(Lorg/egov/hrms/model/Employee;Lorg/egov/hrms/model/Employee;Ljava/util/Map;)V
+false
+2d0c5483e9773873b644f06060d6f8e2
+java.util.stream.Collectors#toList()Ljava/util/stream/Collector;
+org.springframework.util.CollectionUtils#isEmpty(Ljava/util/Collection;)Z
+==
+!unknownMethod! !unknownMethod!
+put java.util.Map#put(Ljava/lang/Object;Ljava/lang/Object;)Ljava/lang/Object;

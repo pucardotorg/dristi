@@ -1,0 +1,528 @@
+
+1.0solutions_hrmsJavaFrontend"1738843533198*java2.B¹
+I
+Dsrc/main/java/org/egov/hrms/web/contract/EmployeeSearchCriteria.java2
+
+package4
+
+org.egov.hrms.web.contract5
+6
+1org.egov.hrms.web.contract.EmployeeSearchCriteria7
+
+
+class8
+
+access9
+
+public10
+
+simple name11
+
+EmployeeSearchCriteria12
+
+lombok.AllArgsConstructor14
+
+unknown15
+
+annotated by16
+
+
+uses17
+
+lombok.Getter19
+
+lombok.NoArgsConstructor21
+
+lombok.Setter23
+
+lombok.ToString25
+
+lombok.Builder27
+=
+7org.egov.hrms.web.contract.EmployeeSearchCriteria.codes29
+
+field30
+
+codes31
+=
+7org.egov.hrms.web.contract.EmployeeSearchCriteria.names33
+
+names34
+J
+Dorg.egov.hrms.web.contract.EmployeeSearchCriteria.courtEstablishment36
+
+courtEstablishment37
+D
+>org.egov.hrms.web.contract.EmployeeSearchCriteria.designations39
+
+designations40
+B
+<org.egov.hrms.web.contract.EmployeeSearchCriteria.courtrooms42
+
+
+courtrooms43
+@
+:org.egov.hrms.web.contract.EmployeeSearchCriteria.asOnDate45
+
+asOnDate46
+=
+7org.egov.hrms.web.contract.EmployeeSearchCriteria.roles48
+
+roles49
+;
+5org.egov.hrms.web.contract.EmployeeSearchCriteria.ids51
+	
+ids52
+H
+Borg.egov.hrms.web.contract.EmployeeSearchCriteria.employeestatuses54
+
+employeestatuses55
+E
+?org.egov.hrms.web.contract.EmployeeSearchCriteria.employeetypes57
+
+employeetypes58
+=
+7org.egov.hrms.web.contract.EmployeeSearchCriteria.uuids60
+
+uuids61
+A
+;org.egov.hrms.web.contract.EmployeeSearchCriteria.positions63
+
+	positions64
+@
+:org.egov.hrms.web.contract.EmployeeSearchCriteria.isActive66
+
+isActive67
+@
+:org.egov.hrms.web.contract.EmployeeSearchCriteria.tenantId69
+
+tenantId70
+=
+7org.egov.hrms.web.contract.EmployeeSearchCriteria.phone72
+
+phone73
+>
+8org.egov.hrms.web.contract.EmployeeSearchCriteria.offset75
+
+offset76
+=
+7org.egov.hrms.web.contract.EmployeeSearchCriteria.limit78
+
+limit79
+}
+worg.egov.hrms.web.contract.EmployeeSearchCriteria#isCriteriaEmpty(Lorg/egov/hrms/web/contract/EmployeeSearchCriteria;)Z81
+
+method82
+
+isCriteriaEmpty83
+
+	has param84
+
+is type85
+.
+(org.springframework.util.CollectionUtils87
+
+
+references88
+O
+Iorg.springframework.util.CollectionUtils#isEmpty(Ljava/util/Collection;)Z90
+
+calls91
+*
+$org.apache.commons.lang3.StringUtils93
+M
+Gorg.apache.commons.lang3.StringUtils#isEmpty(Ljava/lang/CharSequence;)Z95J
+
+1
+12Z
+
+3	
+354j§
+
+22
+222315
+
+18
+181915
+@
+65:
+656630 *
+12 2(26:3B
+	
+9
+10
+
+
+11
+67
+@
+59:
+596030 *
+1. .(26:3B
+	
+9
+10
+
+
+11
+61
+@
+41:
+414230 *
+1" "(26:3B
+	
+9
+10
+
+
+11
+43
+@
+53:
+535430 *
+1* *(26:3B
+	
+9
+10
+
+
+11
+55
+
+92
+929315
+@
+38:
+383930 *
+1   (26:3B
+	
+9
+10
+
+
+11
+40
+@
+68:
+686930 *
+14 4(26:3B
+	
+9
+10
+
+
+11
+70
+@
+77:
+777830 *
+1; ;(26:3B
+	
+9
+10
+
+
+11
+79
+@
+62:
+626330 *
+10 0(26:3B
+	
+9
+10
+
+
+11
+64
+@
+44:
+444530 *
+1$ $(26:3B
+	
+9
+10
+
+
+11
+46
+@
+56:
+565730 *
+1, ,(26:3B
+	
+9
+10
+
+
+11
+58
+
+24
+242515
+9
+64
+678 *
+1 ($:3B
+	
+9
+10
+
+
+11
+12
+@
+35:
+353630 *
+1 (26:3B
+	
+9
+10
+
+
+11
+37
+@
+32:
+323330 *
+1 (26:3B
+	
+9
+10
+
+
+11
+34
+
+94
+949515
+@
+74:
+747530 *
+19 9(26:3B
+	
+9
+10
+
+
+11
+76
+@
+47:
+474830 *
+1& &(26:3B
+	
+9
+10
+
+
+11
+49
+
+26
+262715
+
+86
+868715
+@
+28:
+282930 *
+1 (26:3B
+	
+9
+10
+
+
+11
+31
+
+13
+131415
+@
+71:
+717230 *
+17 7(26:3B
+	
+9
+10
+
+
+11
+73
+
+89
+899015
+
+20
+202115
+@
+50:
+505130 *
+1( ((26:3B
+	
+9
+10
+
+
+11
+52
+@
+80:
+808182 *
+1= =(26:3B
+	
+9
+10
+
+
+11
+83rš
+
+
+61316*
+1 (
+
+61317*
+1 (
+
+61816*
+1 (
+
+61817*
+1 (
+
+62016*
+1 (
+
+62017*
+1 (
+
+62216*
+1 (
+
+62217*
+1 (
+
+62416*
+1 (
+
+62417*
+1 (
+
+
+62616*
+1 (
+
+62617*
+1 (	
+
+6617*
+1 ($
+
+80684*
+1=! =(7
+
+80685*
+1=8 =(@
+
+80617*
+1=! =(7
+
+808688*
+1> >(
+
+808991*
+1> >(
+
+808617*
+1> >(
+
+808688*
+1>6 >(E
+
+808991*
+1>F >(M
+
+808617*
+1>6 >(E
+
+808688*
+1? ?(
+
+808991*
+1? ?(
+
+808617*
+1? ?(
+
+808688*
+1?E ?(T
+
+808991*
+1?U ?(\
+
+808617*
+1?E ?(T
+
+808688*
+1@ @(
+
+808991*
+1@ @(
+
+808617*
+1@ @(
+
+808688*
+1@6 @(E
+
+808991*
+1@F @(M
+
+808617*
+1@6 @(E
+
+808688*
+1A A(
+
+808991*
+1A A(
+
+808617*
+1A A(
+
+808688*
+1A@ A(O
+
+808991*
+1AP A(W
+
+808617*
+1A@ A(O
+
+808688*
+1B B(
+
+808991*
+1B B(
+
+808617*
+1B B(
+
+809288*
+1B< B(G
+
+809491*
+1BH B(O
+
+809217*
+1B< B(G
+
+808688*
+1C C(
+
+808991*
+1C C(
+
+808617*
+1C C(

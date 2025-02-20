@@ -1,0 +1,6 @@
+org.pucar.dristi.repository.querybuilder.HearingQueryBuilder#addCriteriaDate(Ljava/lang/Long;Ljava/lang/StringBuilder;Ljava/lang/String;Ljava/util/List;Ljava/util/List;)V
+false
+f5560d1f78884bb300a71f971b01f2b4
+java.lang.StringBuilder#append(Ljava/lang/String;)Ljava/lang/StringBuilder;
+==
+add java.util.List#add(Ljava/lang/Object;)Z

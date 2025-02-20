@@ -1,0 +1,10 @@
+org.pucar.dristi.web.controllers.OrderApiController#orderV1UpdatePost(Lorg/pucar/dristi/web/models/OrderRequest;)Lorg/springframework/http/ResponseEntity;
+false
+a40da6d5ca17358c84fd64526735a5d6
+org.springframework.http.HttpStatus#getReasonPhrase()Ljava/lang/String;
+org.springframework.http.ResponseEntity#<init>(Ljava/lang/Object;Lorg/springframework/http/HttpStatusCode;)V
+org.springframework.http.ResponseEntity#instance-init#
+==
+!unknownMethod! !unknownMethod!
+createResponseInfoFromRequestInfo org.pucar.dristi.util.ResponseInfoFactory#createResponseInfoFromRequestInfo(Lorg/egov/common/contract/request/RequestInfo;Ljava/lang/Boolean;Ljava/lang/String;)Lorg/egov/common/contract/response/ResponseInfo;
+updateOrder org.pucar.dristi.service.OrderRegistrationService#updateOrder(Lorg/pucar/dristi/web/models/OrderRequest;)Lorg/pucar/dristi/web/models/Order;

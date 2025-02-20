@@ -1,0 +1,303 @@
+
+1.0solutions_hrmsJavaFrontend"1738843534792*java2.B©	
+?
+:src/main/java/org/egov/hrms/model/DeactivationDetails.java2
+
+package4
+
+org.egov.hrms.model5
+,
+'org.egov.hrms.model.DeactivationDetails7
+
+
+class8
+
+access9
+
+public10
+
+simple name11
+
+DeactivationDetails12
+9
+3org.springframework.validation.annotation.Validated14
+
+unknown15
+
+annotated by16
+
+
+uses17
+
+lombok.EqualsAndHashCode19
+
+lombok.AllArgsConstructor21
+
+lombok.Getter23
+
+lombok.NoArgsConstructor25
+
+lombok.Setter27
+
+lombok.ToString29
+
+lombok.Builder31
+0
+*org.egov.hrms.model.DeactivationDetails.id33
+
+field34
+
+private35
+
+id36
+2
+,org.hibernate.validator.constraints.SafeHtml38
+C
+=org.egov.hrms.model.DeactivationDetails.reasonForDeactivation40
+
+reasonForDeactivation41
+5
+/org.egov.hrms.model.DeactivationDetails.orderNo43
+
+orderNo44
+5
+/org.egov.hrms.model.DeactivationDetails.remarks46
+
+remarks47
+;
+5org.egov.hrms.model.DeactivationDetails.effectiveFrom49
+
+effectiveFrom50
+6
+0org.egov.hrms.model.DeactivationDetails.tenantId52
+
+tenantId53
+:
+4org.egov.hrms.model.DeactivationDetails.auditDetails55
+
+auditDetails56
+&
+ org.egov.hrms.model.AuditDetails58
+
+is type59J
+
+1
+12Z
+
+3	
+354j—
+@
+45:
+454634 *
+1 (26:3B
+	
+9
+35
+
+
+11
+47
+
+13
+131415
+
+26
+262715
+@
+32:
+323334 *
+1 (26:3B
+	
+9
+35
+
+
+11
+36
+
+22
+222315
+@
+51:
+515234 *
+1# #(26:3B
+	
+9
+35
+
+
+11
+53
+
+18
+181915
+@
+42:
+424334 *
+1 (26:3B
+	
+9
+35
+
+
+11
+44
+
+37
+373815
+@
+39:
+394034 *
+1 (26:3B
+	
+9
+35
+
+
+11
+41
+@
+54:
+545534 *
+1& &(	26:3B
+	
+9
+35
+
+
+11
+56
+@
+48:
+484934 *
+1   (26:3B
+	
+9
+35
+
+
+11
+50
+
+30
+303115
+
+28
+282915
+9
+64
+678 *
+1 (!:3B
+	
+9
+10
+
+
+11
+12
+
+20
+202115
+
+57
+575815
+
+24
+242515rò
+
+61316*
+1	 	(
+
+61317*
+1	 	(
+
+61816*
+1
+ 
+(
+
+61817*
+1
+ 
+(
+
+62016*
+1 (
+
+62017*
+1 (
+
+62216*
+1 (
+
+62217*
+1 (
+
+62416*
+1 (
+
+62417*
+1 (
+
+62616*
+1 (
+
+62617*
+1 (
+
+62816*
+1 (
+
+62817*
+1 (
+
+
+63016*
+1 (
+
+63017*
+1 (	
+
+6617*
+1 (!
+
+323716*
+1 (
+
+323717*
+1 (
+
+393716*
+1 (
+
+393717*
+1 (
+
+423716*
+1 (
+
+423717*
+1 (
+
+453716*
+1 (
+
+453717*
+1 (
+
+513716*
+1# #(
+
+513717*
+1# #(
+
+545759*
+1&
+ &(
+
+545717*
+1&
+ &(
+
+545717*
+1& &(#

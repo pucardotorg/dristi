@@ -1,0 +1,315 @@
+
+8org.pucar.dristi.web.models.CourtCase#%field_initializer
+__unknown_file ("1*™J
+1 (∆
+√
+v
+l/home/bhcp0191/pucar/dristi-solutions/backend/order/src/main/java/org/pucar/dristi/web/models/CourtCase.java  "(/'
+%org.pucar.dristi.web.models.CourtCase"
+id"__id*
+ (
+""Ã
+…
+v
+l/home/bhcp0191/pucar/dristi-solutions/backend/order/src/main/java/org/pucar/dristi/web/models/CourtCase.java$ '( 5'
+%org.pucar.dristi.web.models.CourtCase"
+
+tenantId"__id*
+ (
+""◊
+‘
+v
+l/home/bhcp0191/pucar/dristi-solutions/backend/order/src/main/java/org/pucar/dristi/web/models/CourtCase.java) +(+@'
+%org.pucar.dristi.web.models.CourtCase"
+resolutionMechanism"__id*
+ (
+""Õ
+ 
+v
+l/home/bhcp0191/pucar/dristi-solutions/backend/order/src/main/java/org/pucar/dristi/web/models/CourtCase.java- /(!6'
+%org.pucar.dristi.web.models.CourtCase"
+	caseTitle"__id*
+ (
+"" 
+«
+v
+l/home/bhcp0191/pucar/dristi-solutions/backend/order/src/main/java/org/pucar/dristi/web/models/CourtCase.java1 2(!5'
+%org.pucar.dristi.web.models.CourtCase"
+
+isActive"__id*
+ (2”
+–
+v
+l/home/bhcp0191/pucar/dristi-solutions/backend/order/src/main/java/org/pucar/dristi/web/models/CourtCase.java4 6('<'
+%org.pucar.dristi.web.models.CourtCase"
+caseDescription"__id*
+ (
+""–
+Õ
+v
+l/home/bhcp0191/pucar/dristi-solutions/backend/order/src/main/java/org/pucar/dristi/web/models/CourtCase.java8 :($9'
+%org.pucar.dristi.web.models.CourtCase"
+filingNumber"__id*
+ (
+""”
+–
+v
+l/home/bhcp0191/pucar/dristi-solutions/backend/order/src/main/java/org/pucar/dristi/web/models/CourtCase.java< >('<'
+%org.pucar.dristi.web.models.CourtCase"
+courtCaseNumber"__id*
+ (
+""Œ
+À
+v
+l/home/bhcp0191/pucar/dristi-solutions/backend/order/src/main/java/org/pucar/dristi/web/models/CourtCase.java@ C("7'
+%org.pucar.dristi.web.models.CourtCase"
+
+caseNumber"__id*
+ (
+""Ã
+…
+v
+l/home/bhcp0191/pucar/dristi-solutions/backend/order/src/main/java/org/pucar/dristi/web/models/CourtCase.javaE F( 5'
+%org.pucar.dristi.web.models.CourtCase"
+
+caseType"__id*
+ (
+""Õ
+ 
+v
+l/home/bhcp0191/pucar/dristi-solutions/backend/order/src/main/java/org/pucar/dristi/web/models/CourtCase.javaH J(!6'
+%org.pucar.dristi.web.models.CourtCase"
+	cnrNumber"__id*
+ (
+""Õ
+ 
+v
+l/home/bhcp0191/pucar/dristi-solutions/backend/order/src/main/java/org/pucar/dristi/web/models/CourtCase.javaL M(!6'
+%org.pucar.dristi.web.models.CourtCase"
+	cmpNumber"__id*
+ (
+""Œ
+À
+v
+l/home/bhcp0191/pucar/dristi-solutions/backend/order/src/main/java/org/pucar/dristi/web/models/CourtCase.javaO P("7'
+%org.pucar.dristi.web.models.CourtCase"
+
+accessCode"__id*
+ (
+""À
+»
+v
+l/home/bhcp0191/pucar/dristi-solutions/backend/order/src/main/java/org/pucar/dristi/web/models/CourtCase.javaR S(4'
+%org.pucar.dristi.web.models.CourtCase"	
+outcome"__id*
+ (
+""À
+»
+v
+l/home/bhcp0191/pucar/dristi-solutions/backend/order/src/main/java/org/pucar/dristi/web/models/CourtCase.javaU W(4'
+%org.pucar.dristi.web.models.CourtCase"	
+courtId"__id*
+ (
+""À
+»
+v
+l/home/bhcp0191/pucar/dristi-solutions/backend/order/src/main/java/org/pucar/dristi/web/models/CourtCase.javaY [(4'
+%org.pucar.dristi.web.models.CourtCase"	
+benchId"__id*
+ (
+""´®
+v
+l/home/bhcp0191/pucar/dristi-solutions/backend/order/src/main/java/org/pucar/dristi/web/models/CourtCase.java_, _(7
+%0java.util.ArrayList"java.util.ArrayList…
+∆
+v
+l/home/bhcp0191/pucar/dristi-solutions/backend/order/src/main/java/org/pucar/dristi/web/models/CourtCase.java_( _(9
+%1"java.util.ArrayList#<init>()V*'
+ (
+
+%0java.util.ArrayList‰
+·
+v
+l/home/bhcp0191/pucar/dristi-solutions/backend/order/src/main/java/org/pucar/dristi/web/models/CourtCase.java] _(:8'
+%org.pucar.dristi.web.models.CourtCase"
+linkedCases"__id*'
+ (
+
+%0java.util.ArrayListŒ
+À
+v
+l/home/bhcp0191/pucar/dristi-solutions/backend/order/src/main/java/org/pucar/dristi/web/models/CourtCase.javaa d( 7'
+%org.pucar.dristi.web.models.CourtCase"
+
+filingDate"__id*
+ (
+""‘
+—
+v
+l/home/bhcp0191/pucar/dristi-solutions/backend/order/src/main/java/org/pucar/dristi/web/models/CourtCase.javaf g(&='
+%org.pucar.dristi.web.models.CourtCase"
+registrationDate"__id*
+ (
+""—
+Œ
+v
+l/home/bhcp0191/pucar/dristi-solutions/backend/order/src/main/java/org/pucar/dristi/web/models/CourtCase.javai j(#:'
+%org.pucar.dristi.web.models.CourtCase"
+judgementDate"__id*
+ (
+""œ
+Ã
+v
+l/home/bhcp0191/pucar/dristi-solutions/backend/order/src/main/java/org/pucar/dristi/web/models/CourtCase.javal m(#8'
+%org.pucar.dristi.web.models.CourtCase"
+caseDetails"__id*
+ (
+""–
+Õ
+v
+l/home/bhcp0191/pucar/dristi-solutions/backend/order/src/main/java/org/pucar/dristi/web/models/CourtCase.javao r($9'
+%org.pucar.dristi.web.models.CourtCase"
+caseCategory"__id*
+ (
+""À
+»
+v
+l/home/bhcp0191/pucar/dristi-solutions/backend/order/src/main/java/org/pucar/dristi/web/models/CourtCase.javat u(4'
+%org.pucar.dristi.web.models.CourtCase"	
+judgeId"__id*
+ (
+""…
+∆
+v
+l/home/bhcp0191/pucar/dristi-solutions/backend/order/src/main/java/org/pucar/dristi/web/models/CourtCase.javaw x(2'
+%org.pucar.dristi.web.models.CourtCase"
+stage"__id*
+ (
+""Ã
+…
+v
+l/home/bhcp0191/pucar/dristi-solutions/backend/order/src/main/java/org/pucar/dristi/web/models/CourtCase.javaz {( 5'
+%org.pucar.dristi.web.models.CourtCase"
+
+substage"__id*
+ (
+""‘
+—
+v
+l/home/bhcp0191/pucar/dristi-solutions/backend/order/src/main/java/org/pucar/dristi/web/models/CourtCase.java} ((='
+%org.pucar.dristi.web.models.CourtCase"
+natureOfPleading"__id*
+ (
+""≠™
+x
+l/home/bhcp0191/pucar/dristi-solutions/backend/order/src/main/java/org/pucar/dristi/web/models/CourtCase.javaÑ8 Ñ(C
+%2java.util.ArrayList"java.util.ArrayListÀ
+»
+x
+l/home/bhcp0191/pucar/dristi-solutions/backend/order/src/main/java/org/pucar/dristi/web/models/CourtCase.javaÑ4 Ñ(E
+%3"java.util.ArrayList#<init>()V*'
+ (
+
+%2java.util.ArrayListÓ
+Î
+x
+l/home/bhcp0191/pucar/dristi-solutions/backend/order/src/main/java/org/pucar/dristi/web/models/CourtCase.javaÅ Ñ(F@'
+%org.pucar.dristi.web.models.CourtCase"
+statutesAndSections"__id*'
+ (
+
+%2java.util.ArrayList≠™
+x
+l/home/bhcp0191/pucar/dristi-solutions/backend/order/src/main/java/org/pucar/dristi/web/models/CourtCase.javaä% ä(0
+%4java.util.ArrayList"java.util.ArrayListÀ
+»
+x
+l/home/bhcp0191/pucar/dristi-solutions/backend/order/src/main/java/org/pucar/dristi/web/models/CourtCase.javaä! ä(2
+%5"java.util.ArrayList#<init>()V*'
+ (
+
+%4java.util.ArrayList‰
+·
+x
+l/home/bhcp0191/pucar/dristi-solutions/backend/order/src/main/java/org/pucar/dristi/web/models/CourtCase.javaÜ ä(36'
+%org.pucar.dristi.web.models.CourtCase"
+	litigants"__id*'
+ (
+
+%4java.util.ArrayList≠™
+x
+l/home/bhcp0191/pucar/dristi-solutions/backend/order/src/main/java/org/pucar/dristi/web/models/CourtCase.javaé5 é(@
+%6java.util.ArrayList"java.util.ArrayListÀ
+»
+x
+l/home/bhcp0191/pucar/dristi-solutions/backend/order/src/main/java/org/pucar/dristi/web/models/CourtCase.javaé1 é(B
+%7"java.util.ArrayList#<init>()V*'
+ (
+
+%6java.util.ArrayListÍ
+Á
+x
+l/home/bhcp0191/pucar/dristi-solutions/backend/order/src/main/java/org/pucar/dristi/web/models/CourtCase.javaå é(C<'
+%org.pucar.dristi.web.models.CourtCase"
+representatives"__id*'
+ (
+
+%6java.util.ArrayListÃ
+…
+x
+l/home/bhcp0191/pucar/dristi-solutions/backend/order/src/main/java/org/pucar/dristi/web/models/CourtCase.javaê ë(3'
+%org.pucar.dristi.web.models.CourtCase"
+status"__id*
+ (
+""≠™
+x
+l/home/bhcp0191/pucar/dristi-solutions/backend/order/src/main/java/org/pucar/dristi/web/models/CourtCase.javaï( ï(3
+%8java.util.ArrayList"java.util.ArrayListÀ
+»
+x
+l/home/bhcp0191/pucar/dristi-solutions/backend/order/src/main/java/org/pucar/dristi/web/models/CourtCase.javaï$ ï(5
+%9"java.util.ArrayList#<init>()V*'
+ (
+
+%8java.util.ArrayList‰
+·
+x
+l/home/bhcp0191/pucar/dristi-solutions/backend/order/src/main/java/org/pucar/dristi/web/models/CourtCase.javaì ï(66'
+%org.pucar.dristi.web.models.CourtCase"
+	documents"__id*'
+ (
+
+%8java.util.ArrayListÕ
+ 
+x
+l/home/bhcp0191/pucar/dristi-solutions/backend/order/src/main/java/org/pucar/dristi/web/models/CourtCase.javaó ò(4'
+%org.pucar.dristi.web.models.CourtCase"	
+remarks"__id*
+ (
+""Œ
+À
+x
+l/home/bhcp0191/pucar/dristi-solutions/backend/order/src/main/java/org/pucar/dristi/web/models/CourtCase.javaö ú("5'
+%org.pucar.dristi.web.models.CourtCase"
+
+workflow"__id*
+ (
+""◊
+‘
+x
+l/home/bhcp0191/pucar/dristi-solutions/backend/order/src/main/java/org/pucar/dristi/web/models/CourtCase.javaû ü()>'
+%org.pucar.dristi.web.models.CourtCase"
+additionalDetails"__id*
+ (
+""“
+œ
+x
+l/home/bhcp0191/pucar/dristi-solutions/backend/order/src/main/java/org/pucar/dristi/web/models/CourtCase.java° £(*9'
+%org.pucar.dristi.web.models.CourtCase"
+auditdetails"__id*
+ (
+"""å
+u
+l/home/bhcp0191/pucar/dristi-solutions/backend/order/src/main/java/org/pucar/dristi/web/models/CourtCase.java •(
+implicit returnB)'
+%org.pucar.dristi.web.models.CourtCase

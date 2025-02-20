@@ -1,0 +1,297 @@
+
+1.0solutions_hrmsJavaFrontend"1738843535547*java2.BÕ
+8
+3src/main/java/org/egov/hrms/model/Jurisdiction.java2
+
+package4
+
+org.egov.hrms.model5
+%
+ org.egov.hrms.model.Jurisdiction7
+
+
+class8
+
+access9
+
+public10
+
+simple name11
+
+Jurisdiction12
+9
+3org.springframework.validation.annotation.Validated14
+
+unknown15
+
+annotated by16
+
+
+uses17
+
+lombok.EqualsAndHashCode19
+
+lombok.Builder21
+
+lombok.AllArgsConstructor23
+
+lombok.Getter25
+
+lombok.NoArgsConstructor27
+
+lombok.Setter29
+
+lombok.ToString31
+)
+#org.egov.hrms.model.Jurisdiction.id33
+
+field34
+
+private35
+
+id36
+2
+,org.hibernate.validator.constraints.SafeHtml38
+0
+*org.egov.hrms.model.Jurisdiction.hierarchy40
+
+	hierarchy41
+/
+)org.egov.hrms.model.Jurisdiction.boundary43
+
+boundary44
+3
+-org.egov.hrms.model.Jurisdiction.boundaryType46
+
+boundaryType47
+/
+)org.egov.hrms.model.Jurisdiction.tenantId49
+
+tenantId50
+3
+-org.egov.hrms.model.Jurisdiction.auditDetails52
+
+auditDetails53
+&
+ org.egov.hrms.model.AuditDetails55
+
+is type56
+/
+)org.egov.hrms.model.Jurisdiction.isActive58
+
+isActive59J
+
+1
+12Z
+
+3	
+354j—
+@
+45:
+454634 *
+1J J(26:3B
+	
+9
+35
+
+
+11
+47
+
+13
+131415
+
+28
+282915
+
+24
+242515
+@
+32:
+323334 *
+1= =(26:3B
+	
+9
+35
+
+
+11
+36
+@
+51:
+515234 *
+1R R(26:3B
+	
+9
+35
+
+
+11
+53
+
+18
+181915
+
+37
+373815
+9
+64
+678 *
+1; ;(:3B
+	
+9
+10
+
+
+11
+12
+@
+48:
+484934 *
+1O O(26:3B
+	
+9
+35
+
+
+11
+50
+
+20
+202115
+@
+57:
+575834 *
+1T T(26:3B
+	
+9
+35
+
+
+11
+59
+
+30
+303115
+@
+39:
+394034 *
+1@ @(26:3B
+	
+9
+35
+
+
+11
+41
+
+22
+222315
+
+54
+545515
+@
+42:
+424334 *
+1E E(26:3B
+	
+9
+35
+
+
+11
+44
+
+26
+262715rò
+
+61316*
+13 3(
+
+61317*
+13 3(
+
+61816*
+14 4(
+
+61817*
+14 4(
+
+62016*
+15 5(
+
+62017*
+15 5(	
+
+62216*
+16 6(
+
+62217*
+16 6(
+
+62416*
+17 7(
+
+62417*
+17 7(
+
+62616*
+18 8(
+
+62617*
+18 8(
+
+62816*
+19 9(
+
+62817*
+19 9(
+
+63016*
+1: :(
+
+63017*
+1: :(
+
+
+6617*
+1; ;(
+
+323716*
+1= =(
+
+323717*
+1= =(
+
+393716*
+1@ @(
+
+393717*
+1@ @(
+
+423716*
+1E E(
+
+423717*
+1E E(
+
+453716*
+1J J(
+
+453717*
+1J J(
+
+483716*
+1O O(
+
+483717*
+1O O(
+
+515456*
+1R R(
+
+515417*
+1R R(
+
+515417*
+1R R(&

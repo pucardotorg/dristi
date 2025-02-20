@@ -1,0 +1,12 @@
+org.pucar.dristi.service.WitnessDepositionPdfService#buildWitnessWithNoIndividual(Lcom/fasterxml/jackson/databind/JsonNode;Lorg/pucar/dristi/web/models/Hearing;Ljava/lang/String;Ljava/lang/String;Lcom/fasterxml/jackson/databind/JsonNode;)Lorg/pucar/dristi/web/models/WitnessDeposition;
+false
+b3856e46e110bfb637133f10bc8be215
+org.pucar.dristi.service.WitnessDepositionPdfService#formatDateFromMillis(J)Ljava/lang/String;
+==
+!unknownMethod! !unknownMethod!
+get com.fasterxml.jackson.databind.JsonNode#get(I)Lcom/fasterxml/jackson/databind/JsonNode;
+has com.fasterxml.jackson.databind.JsonNode#has(I)Z
+isArray com.fasterxml.jackson.databind.JsonNode#isArray()Z
+isEmpty com.fasterxml.jackson.databind.JsonNode#isEmpty()Z
+path com.fasterxml.jackson.databind.JsonNode#path(Ljava/lang/String;)Lcom/fasterxml/jackson/databind/JsonNode;
+safeGetText org.pucar.dristi.service.WitnessDepositionPdfService#safeGetText(Lcom/fasterxml/jackson/databind/JsonNode;Ljava/lang/String;Ljava/lang/String;)Ljava/lang/String;

@@ -1,0 +1,171 @@
+
+4org.pucar.dristi.web.models.Order#%field_initializer
+__unknown_file ("1*©%
+1 (¾
+»
+r
+h/home/bhcp0191/pucar/dristi-solutions/backend/order/src/main/java/org/pucar/dristi/web/models/Order.java! #(+#
+!org.pucar.dristi.web.models.Order"
+id"__id*
+ (
+""Ä
+Á
+r
+h/home/bhcp0191/pucar/dristi-solutions/backend/order/src/main/java/org/pucar/dristi/web/models/Order.java% '(#1#
+!org.pucar.dristi.web.models.Order"
+
+tenantId"__id*
+ (
+""È
+Å
+r
+h/home/bhcp0191/pucar/dristi-solutions/backend/order/src/main/java/org/pucar/dristi/web/models/Order.java) *('5#
+!org.pucar.dristi.web.models.Order"
+filingNumber"__id*
+ (
+""Å
+Â
+r
+h/home/bhcp0191/pucar/dristi-solutions/backend/order/src/main/java/org/pucar/dristi/web/models/Order.java, -($2#
+!org.pucar.dristi.web.models.Order"
+	cnrNumber"__id*
+ (
+""§¤
+r
+h/home/bhcp0191/pucar/dristi-solutions/backend/order/src/main/java/org/pucar/dristi/web/models/Order.java01 0(<
+%0java.util.ArrayList"java.util.ArrayListÅ
+Â
+r
+h/home/bhcp0191/pucar/dristi-solutions/backend/order/src/main/java/org/pucar/dristi/web/models/Order.java0- 0(>
+%1"java.util.ArrayList#<init>()V*'
+ (
+
+%0java.util.ArrayListâ
+ß
+r
+h/home/bhcp0191/pucar/dristi-solutions/backend/order/src/main/java/org/pucar/dristi/web/models/Order.java/ 0(?:#
+!org.pucar.dristi.web.models.Order"
+applicationNumber"__id*'
+ (
+
+%0java.util.ArrayListÉ
+Æ
+r
+h/home/bhcp0191/pucar/dristi-solutions/backend/order/src/main/java/org/pucar/dristi/web/models/Order.java2 4((6#
+!org.pucar.dristi.web.models.Order"
+hearingNumber"__id*
+ (
+""Ç
+Ä
+r
+h/home/bhcp0191/pucar/dristi-solutions/backend/order/src/main/java/org/pucar/dristi/web/models/Order.java6 8(&4#
+!org.pucar.dristi.web.models.Order"
+orderNumber"__id*
+ (
+""Í
+Ê
+r
+h/home/bhcp0191/pucar/dristi-solutions/backend/order/src/main/java/org/pucar/dristi/web/models/Order.java: <(,:#
+!org.pucar.dristi.web.models.Order"
+linkedOrderNumber"__id*
+ (
+""Ç
+Ä
+r
+h/home/bhcp0191/pucar/dristi-solutions/backend/order/src/main/java/org/pucar/dristi/web/models/Order.java> @($4#
+!org.pucar.dristi.web.models.Order"
+createdDate"__id*
+ (
+""Ä
+Á
+r
+h/home/bhcp0191/pucar/dristi-solutions/backend/order/src/main/java/org/pucar/dristi/web/models/Order.javaB C(%1#
+!org.pucar.dristi.web.models.Order"
+
+issuedBy"__id*
+ (
+""Å
+Â
+r
+h/home/bhcp0191/pucar/dristi-solutions/backend/order/src/main/java/org/pucar/dristi/web/models/Order.javaE H($2#
+!org.pucar.dristi.web.models.Order"
+	orderType"__id*
+ (
+""É
+Æ
+r
+h/home/bhcp0191/pucar/dristi-solutions/backend/order/src/main/java/org/pucar/dristi/web/models/Order.javaJ K((6#
+!org.pucar.dristi.web.models.Order"
+orderCategory"__id*
+ (
+""Â
+¿
+r
+h/home/bhcp0191/pucar/dristi-solutions/backend/order/src/main/java/org/pucar/dristi/web/models/Order.javaM O(!/#
+!org.pucar.dristi.web.models.Order"
+status"__id*
+ (
+""Ä
+Á
+r
+h/home/bhcp0191/pucar/dristi-solutions/backend/order/src/main/java/org/pucar/dristi/web/models/Order.javaQ R(#1#
+!org.pucar.dristi.web.models.Order"
+
+comments"__id*
+ (
+""Ä
+Á
+r
+h/home/bhcp0191/pucar/dristi-solutions/backend/order/src/main/java/org/pucar/dristi/web/models/Order.javaT V($1#
+!org.pucar.dristi.web.models.Order"
+
+isActive"__id*
+ (
+""Ê
+Ç
+r
+h/home/bhcp0191/pucar/dristi-solutions/backend/order/src/main/java/org/pucar/dristi/web/models/Order.javaX Z(17#
+!org.pucar.dristi.web.models.Order"
+statuteSection"__id*
+ (
+""Å
+Â
+r
+h/home/bhcp0191/pucar/dristi-solutions/backend/order/src/main/java/org/pucar/dristi/web/models/Order.java\ ^(,2#
+!org.pucar.dristi.web.models.Order"
+	documents"__id*
+ (
+""È
+Å
+r
+h/home/bhcp0191/pucar/dristi-solutions/backend/order/src/main/java/org/pucar/dristi/web/models/Order.java` a('5#
+!org.pucar.dristi.web.models.Order"
+orderDetails"__id*
+ (
+""Í
+Ê
+r
+h/home/bhcp0191/pucar/dristi-solutions/backend/order/src/main/java/org/pucar/dristi/web/models/Order.javac d(,:#
+!org.pucar.dristi.web.models.Order"
+additionalDetails"__id*
+ (
+""È
+Å
+r
+h/home/bhcp0191/pucar/dristi-solutions/backend/order/src/main/java/org/pucar/dristi/web/models/Order.javaf h(-5#
+!org.pucar.dristi.web.models.Order"
+auditDetails"__id*
+ (
+""Ä
+Á
+r
+h/home/bhcp0191/pucar/dristi-solutions/backend/order/src/main/java/org/pucar/dristi/web/models/Order.javaj l(%1#
+!org.pucar.dristi.web.models.Order"
+
+workflow"__id*
+ (
+"""‡
+p
+h/home/bhcp0191/pucar/dristi-solutions/backend/order/src/main/java/org/pucar/dristi/web/models/Order.java n(
+implicit returnB%#
+!org.pucar.dristi.web.models.Order

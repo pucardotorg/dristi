@@ -1,0 +1,20 @@
+org.egov.hrms.web.validator.EmployeeValidator#validateServiceHistory(Lorg/egov/hrms/model/Employee;Ljava/util/Map;Ljava/util/Map;)V
+false
+13bff3492acb2af928491d075a9ea72e
+java.util.Date#<init>()V
+java.util.Date#instance-init#
+java.util.stream.Collectors#toList()Ljava/util/stream/Collector;
+org.apache.commons.lang3.StringUtils#isEmpty(Ljava/lang/CharSequence;)Z
+org.springframework.util.CollectionUtils#isEmpty(Ljava/util/Collection;)Z
+==
+!unknownMethod! !unknownMethod!
+contains java.util.List#contains(Ljava/lang/Object;)Z
+get java.util.List#get(I)Ljava/lang/Object;
+get java.util.Map#get(Ljava/lang/Object;)Ljava/lang/Object;
+getIsCurrentPosition org.egov.hrms.model.ServiceHistory#getIsCurrentPosition()Ljava/lang/Boolean;
+getServiceFrom org.egov.hrms.model.ServiceHistory#getServiceFrom()Ljava/lang/Long;
+getServiceStatus org.egov.hrms.model.ServiceHistory#getServiceStatus()Ljava/lang/String;
+getServiceTo org.egov.hrms.model.ServiceHistory#getServiceTo()Ljava/lang/Long;
+getTime java.util.Date#getTime()J
+put java.util.Map#put(Ljava/lang/Object;Ljava/lang/Object;)Ljava/lang/Object;
+size java.util.List#size()I

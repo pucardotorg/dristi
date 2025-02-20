@@ -1,0 +1,5 @@
+org.pucar.dristi.web.models.Hearing#addApplicationNumbersItem(Ljava/lang/String;)Lorg/pucar/dristi/web/models/Hearing;
+false
+803341b0dc185c9be44a75c1048df0dd
+==
+add java.util.List#add(Ljava/lang/Object;)Z

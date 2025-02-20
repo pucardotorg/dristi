@@ -1,0 +1,8 @@
+org.pucar.dristi.repository.querybuilder.TaskQueryBuilder#addTaskCriteriaExist(Ljava/lang/String;Ljava/lang/StringBuilder;ZLjava/lang/String;Ljava/util/List;)Z
+false
+f3af0884fe2cdc82c73c08438c375ca6
+java.lang.String#isEmpty()Z
+java.lang.StringBuilder#append(Ljava/lang/String;)Ljava/lang/StringBuilder;
+org.pucar.dristi.repository.querybuilder.TaskQueryBuilder#addClauseIfRequired(Ljava/lang/StringBuilder;Z)V
+==
+add java.util.List#add(Ljava/lang/Object;)Z

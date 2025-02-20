@@ -1,0 +1,115 @@
+
+?org.pucar.dristi.web.models.IndividualSearch#%field_initializer
+__unknown_file ("1*¤
+1 (Ó
+Ð
+|
+r/home/bhcp0191/pucar/dristi-solutions/backend/task/src/main/java/org/pucar/dristi/web/models/IndividualSearch.java& '(#6.
+,org.pucar.dristi.web.models.IndividualSearch"
+id"__id*
+ (
+""Ý
+Ú
+|
+r/home/bhcp0191/pucar/dristi-solutions/backend/task/src/main/java/org/pucar/dristi/web/models/IndividualSearch.java) *('@.
+,org.pucar.dristi.web.models.IndividualSearch"
+individualId"__id*
+ (
+""â
+ß
+|
+r/home/bhcp0191/pucar/dristi-solutions/backend/task/src/main/java/org/pucar/dristi/web/models/IndividualSearch.java, -(2E.
+,org.pucar.dristi.web.models.IndividualSearch"
+clientReferenceId"__id*
+ (
+""Õ
+Ò
+|
+r/home/bhcp0191/pucar/dristi-solutions/backend/task/src/main/java/org/pucar/dristi/web/models/IndividualSearch.java/ 1(8.
+,org.pucar.dristi.web.models.IndividualSearch"
+name"__id*
+ (
+""Ü
+Ù
+|
+r/home/bhcp0191/pucar/dristi-solutions/backend/task/src/main/java/org/pucar/dristi/web/models/IndividualSearch.java3 5($?.
+,org.pucar.dristi.web.models.IndividualSearch"
+dateOfBirth"__id*
+ (
+""×
+Ô
+|
+r/home/bhcp0191/pucar/dristi-solutions/backend/task/src/main/java/org/pucar/dristi/web/models/IndividualSearch.java7 9(!:.
+,org.pucar.dristi.web.models.IndividualSearch"
+gender"__id*
+ (
+""Ý
+Ú
+|
+r/home/bhcp0191/pucar/dristi-solutions/backend/task/src/main/java/org/pucar/dristi/web/models/IndividualSearch.java; <('@.
+,org.pucar.dristi.web.models.IndividualSearch"
+mobileNumber"__id*
+ (
+""ß
+Ü
+|
+r/home/bhcp0191/pucar/dristi-solutions/backend/task/src/main/java/org/pucar/dristi/web/models/IndividualSearch.java> ?()B.
+,org.pucar.dristi.web.models.IndividualSearch"
+socialCategory"__id*
+ (
+""Ù
+Ö
+|
+r/home/bhcp0191/pucar/dristi-solutions/backend/task/src/main/java/org/pucar/dristi/web/models/IndividualSearch.javaA B(#<.
+,org.pucar.dristi.web.models.IndividualSearch"
+
+wardCode"__id*
+ (
+""ß
+Ü
+|
+r/home/bhcp0191/pucar/dristi-solutions/backend/task/src/main/java/org/pucar/dristi/web/models/IndividualSearch.javaD E()B.
+,org.pucar.dristi.web.models.IndividualSearch"
+individualName"__id*
+ (
+""Ü
+Ù
+|
+r/home/bhcp0191/pucar/dristi-solutions/backend/task/src/main/java/org/pucar/dristi/web/models/IndividualSearch.javaG H(*?.
+,org.pucar.dristi.web.models.IndividualSearch"
+createdFrom"__id*
+ (
+""Ú
+×
+|
+r/home/bhcp0191/pucar/dristi-solutions/backend/task/src/main/java/org/pucar/dristi/web/models/IndividualSearch.javaJ K((=.
+,org.pucar.dristi.web.models.IndividualSearch"
+	createdTo"__id*
+ (
+""Û
+Ø
+|
+r/home/bhcp0191/pucar/dristi-solutions/backend/task/src/main/java/org/pucar/dristi/web/models/IndividualSearch.javaM O()>.
+,org.pucar.dristi.web.models.IndividualSearch"
+
+identifier"__id*
+ (
+""Ý
+Ú
+|
+r/home/bhcp0191/pucar/dristi-solutions/backend/task/src/main/java/org/pucar/dristi/web/models/IndividualSearch.javaQ R('@.
+,org.pucar.dristi.web.models.IndividualSearch"
+boundaryCode"__id*
+ (
+""Ú
+×
+|
+r/home/bhcp0191/pucar/dristi-solutions/backend/task/src/main/java/org/pucar/dristi/web/models/IndividualSearch.javaT U(*=.
+,org.pucar.dristi.web.models.IndividualSearch"
+	roleCodes"__id*
+ (
+"""‘
+z
+r/home/bhcp0191/pucar/dristi-solutions/backend/task/src/main/java/org/pucar/dristi/web/models/IndividualSearch.java x(
+implicit returnB0.
+,org.pucar.dristi.web.models.IndividualSearch

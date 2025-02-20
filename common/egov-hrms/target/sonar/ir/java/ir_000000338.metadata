@@ -1,0 +1,14 @@
+org.egov.hrms.web.validator.EmployeeValidator#validateJurisdicton(Lorg/egov/hrms/model/Employee;Ljava/util/Map;Ljava/util/Map;Ljava/util/Map;)V
+false
+51055ab2c3350060325ea60266225cdd
+com.jayway.jsonpath.JsonPath#read(Ljava/lang/Object;Ljava/lang/String;[Lcom/jayway/jsonpath/Predicate;)Ljava/lang/Object;
+java.lang.String#format(Ljava/lang/String;[Ljava/lang/Object;)Ljava/lang/String;
+java.util.stream.Collectors#toList()Ljava/util/stream/Collector;
+org.springframework.util.CollectionUtils#isEmpty(Ljava/util/Collection;)Z
+==
+!unknownMethod! !unknownMethod!
+contains java.util.List#contains(Ljava/lang/Object;)Z
+getBoundary org.egov.hrms.model.Jurisdiction#getBoundary()Ljava/lang/String;
+getBoundaryType org.egov.hrms.model.Jurisdiction#getBoundaryType()Ljava/lang/String;
+getHierarchy org.egov.hrms.model.Jurisdiction#getHierarchy()Ljava/lang/String;
+put java.util.Map#put(Ljava/lang/Object;Ljava/lang/Object;)Ljava/lang/Object;

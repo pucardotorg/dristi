@@ -1,0 +1,13 @@
+org.pucar.dristi.service.EvidenceService#createAuditDetails(Lorg/egov/common/contract/request/RequestInfo;)Lorg/egov/common/contract/models/AuditDetails;
+false
+d8674d350b242384d93234366fcd0790
+java.lang.System#currentTimeMillis()J
+org.egov.common.contract.models.AuditDetails#builder()Lorg/egov/common/contract/models/AuditDetails$AuditDetailsBuilder;
+==
+build org.egov.common.contract.models.AuditDetails$AuditDetailsBuilder#build()Lorg/egov/common/contract/models/AuditDetails;
+createdBy org.egov.common.contract.models.AuditDetails$AuditDetailsBuilder#createdBy(Ljava/lang/String;)Lorg/egov/common/contract/models/AuditDetails$AuditDetailsBuilder;
+createdTime org.egov.common.contract.models.AuditDetails$AuditDetailsBuilder#createdTime(Ljava/lang/Long;)Lorg/egov/common/contract/models/AuditDetails$AuditDetailsBuilder;
+getUserInfo org.egov.common.contract.request.RequestInfo#getUserInfo()Lorg/egov/common/contract/request/User;
+getUuid org.egov.common.contract.request.User#getUuid()Ljava/lang/String;
+lastModifiedBy org.egov.common.contract.models.AuditDetails$AuditDetailsBuilder#lastModifiedBy(Ljava/lang/String;)Lorg/egov/common/contract/models/AuditDetails$AuditDetailsBuilder;
+lastModifiedTime org.egov.common.contract.models.AuditDetails$AuditDetailsBuilder#lastModifiedTime(Ljava/lang/Long;)Lorg/egov/common/contract/models/AuditDetails$AuditDetailsBuilder;

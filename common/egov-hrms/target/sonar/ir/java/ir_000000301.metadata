@@ -1,0 +1,12 @@
+org.egov.hrms.service.MDMSService#getMDMSData(Lorg/egov/common/contract/request/RequestInfo;Ljava/lang/String;)Ljava/util/Map;
+false
+511d66c81d9ae66032dc4dd8ca114414
+java.util.HashMap#<init>()V
+java.util.HashMap#instance-init#
+org.springframework.util.CollectionUtils#isEmpty(Ljava/util/Collection;)Z
+==
+fetchMDMSData org.egov.hrms.service.MDMSService#fetchMDMSData(Lorg/egov/common/contract/request/RequestInfo;Ljava/lang/String;)Lorg/egov/mdms/model/MdmsResponse;
+get java.util.Map#get(Ljava/lang/Object;)Ljava/lang/Object;
+getMdmsRes org.egov.mdms.model.MdmsResponse#getMdmsRes()Ljava/util/Map;
+keySet java.util.Map#keySet()Ljava/util/Set;
+put java.util.Map#put(Ljava/lang/Object;Ljava/lang/Object;)Ljava/lang/Object;

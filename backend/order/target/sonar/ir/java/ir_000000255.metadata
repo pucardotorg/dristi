@@ -1,0 +1,7 @@
+org.pucar.dristi.web.models.Individual#addSkillsItem(Lorg/egov/common/models/individual/Skill;)Lorg/pucar/dristi/web/models/Individual;
+false
+3d2d311bd60aff23b0620b893f1ff60c
+java.util.ArrayList#<init>()V
+java.util.ArrayList#instance-init#
+==
+add java.util.List#add(Ljava/lang/Object;)Z

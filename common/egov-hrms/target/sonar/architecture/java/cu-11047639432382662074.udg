@@ -1,0 +1,720 @@
+
+1.0solutions_hrmsJavaFrontend"1738843533453*java2.BÈ(
+9
+4src/main/java/org/egov/hrms/utils/HRMSConstants.java2
+
+package4
+
+org.egov.hrms.utils5
+&
+!org.egov.hrms.utils.HRMSConstants7
+
+
+class8
+
+access9
+
+public10
+
+simple name11
+
+HRMSConstants12
+.
+(org.springframework.stereotype.Component14
+
+unknown15
+
+annotated by16
+
+
+uses17
+E
+?org.egov.hrms.utils.HRMSConstants.HRMS_MDMS_COMMON_MASTERS_CODE19
+
+field20
+#
+HRMS_MDMS_COMMON_MASTERS_CODE21
+A
+;org.egov.hrms.utils.HRMSConstants.HRMS_MDMS_HR_MASTERS_CODE23
+
+HRMS_MDMS_HR_MASTERS_CODE24
+B
+<org.egov.hrms.utils.HRMSConstants.HRMS_AC_ROLES_MASTERS_CODE26
+ 
+HRMS_AC_ROLES_MASTERS_CODE27
+L
+Forg.egov.hrms.utils.HRMSConstants.HRMS_MDMS_EGOV_LOCATION_MASTERS_CODE29
+*
+$HRMS_MDMS_EGOV_LOCATION_MASTERS_CODE30
+;
+5org.egov.hrms.utils.HRMSConstants.HRMS_MDMS_DEPT_CODE32
+
+HRMS_MDMS_DEPT_CODE33
+E
+?org.egov.hrms.utils.HRMSConstants.HRMS_MDMS_COURT_ESTABLISHMENT35
+#
+HRMS_MDMS_COURT_ESTABLISHMENT36
+;
+5org.egov.hrms.utils.HRMSConstants.HRMS_MDMS_DESG_CODE38
+
+HRMS_MDMS_DESG_CODE39
+<
+6org.egov.hrms.utils.HRMSConstants.HRMS_MDMS_COURT_CODE41
+
+HRMS_MDMS_COURT_CODE42
+?
+9org.egov.hrms.utils.HRMSConstants.HRMS_MDMS_DISTRICT_CODE44
+
+HRMS_MDMS_DISTRICT_CODE45
+A
+;org.egov.hrms.utils.HRMSConstants.HRMS_MDMS_EMP_STATUS_CODE47
+
+HRMS_MDMS_EMP_STATUS_CODE48
+?
+9org.egov.hrms.utils.HRMSConstants.HRMS_MDMS_EMP_TYPE_CODE50
+
+HRMS_MDMS_EMP_TYPE_CODE51
+E
+?org.egov.hrms.utils.HRMSConstants.HRMS_MDMS_SERVICE_STATUS_CODE53
+#
+HRMS_MDMS_SERVICE_STATUS_CODE54
+<
+6org.egov.hrms.utils.HRMSConstants.HRMS_MDMS_ROLES_CODE56
+
+HRMS_MDMS_ROLES_CODE57
+D
+>org.egov.hrms.utils.HRMSConstants.HRMS_MDMS_QUALIFICATION_CODE59
+"
+HRMS_MDMS_QUALIFICATION_CODE60
+>
+8org.egov.hrms.utils.HRMSConstants.HRMS_MDMS_STREAMS_CODE62
+
+HRMS_MDMS_STREAMS_CODE63
+;
+5org.egov.hrms.utils.HRMSConstants.HRMS_MDMS_YEAR_CODE65
+
+HRMS_MDMS_YEAR_CODE66
+@
+:org.egov.hrms.utils.HRMSConstants.HRMS_MDMS_DEPT_TEST_CODE68
+
+HRMS_MDMS_DEPT_TEST_CODE69
+C
+=org.egov.hrms.utils.HRMSConstants.HRMS_MDMS_DEACT_REASON_CODE71
+!
+HRMS_MDMS_DEACT_REASON_CODE72
+F
+@org.egov.hrms.utils.HRMSConstants.HRMS_MDMS_TENANT_BOUNDARY_CODE74
+$
+HRMS_MDMS_TENANT_BOUNDARY_CODE75
+H
+Borg.egov.hrms.utils.HRMSConstants.HRMS_LOCALIZATION_CODES_JSONPATH77
+&
+ HRMS_LOCALIZATION_CODES_JSONPATH78
+G
+Aorg.egov.hrms.utils.HRMSConstants.HRMS_LOCALIZATION_MSGS_JSONPATH80
+%
+HRMS_LOCALIZATION_MSGS_JSONPATH81
+C
+=org.egov.hrms.utils.HRMSConstants.HRMS_EMP_CREATE_LOCLZN_CODE83
+!
+HRMS_EMP_CREATE_LOCLZN_CODE84
+G
+Aorg.egov.hrms.utils.HRMSConstants.HRMS_EMP_REACTIVATE_LOCLZN_CODE86
+%
+HRMS_EMP_REACTIVATE_LOCLZN_CODE87
+E
+?org.egov.hrms.utils.HRMSConstants.HRMS_LOCALIZATION_MODULE_CODE89
+#
+HRMS_LOCALIZATION_MODULE_CODE90
+I
+Corg.egov.hrms.utils.HRMSConstants.HRMS_LOCALIZATION_ENG_LOCALE_CODE92
+'
+!HRMS_LOCALIZATION_ENG_LOCALE_CODE93
+N
+Horg.egov.hrms.utils.HRMSConstants.HRMS_TENANTBOUNDARY_HIERARCHY_JSONPATH95
+,
+&HRMS_TENANTBOUNDARY_HIERARCHY_JSONPATH96
+R
+Lorg.egov.hrms.utils.HRMSConstants.HRMS_TENANTBOUNDARY_BOUNDARY_TYPE_JSONPATH98
+0
+*HRMS_TENANTBOUNDARY_BOUNDARY_TYPE_JSONPATH99
+T
+Morg.egov.hrms.utils.HRMSConstants.HRMS_TENANTBOUNDARY_BOUNDARY_VALUE_JSONPATH101
+2
++HRMS_TENANTBOUNDARY_BOUNDARY_VALUE_JSONPATH102
+B
+;org.egov.hrms.utils.HRMSConstants.HRMS_MDMS_AC_ROLES_FILTER104
+ 
+HRMS_MDMS_AC_ROLES_FILTER105
+>
+7org.egov.hrms.utils.HRMSConstants.HRMS_MDMS_CODE_FLITER107
+
+HRMS_MDMS_CODE_FLITER108
+F
+?org.egov.hrms.utils.HRMSConstants.HRMS_USER_SEARCH_CRITERA_UUID110
+$
+HRMS_USER_SEARCH_CRITERA_UUID111
+K
+Dorg.egov.hrms.utils.HRMSConstants.HRMS_USER_SEARCH_CRITERA_ROLECODES113
+)
+"HRMS_USER_SEARCH_CRITERA_ROLECODES114
+J
+Corg.egov.hrms.utils.HRMSConstants.HRMS_USER_SEARCH_CRITERA_TENANTID116
+(
+!HRMS_USER_SEARCH_CRITERA_TENANTID117
+J
+Corg.egov.hrms.utils.HRMSConstants.HRMS_USER_SEARCH_CRITERA_MOBILENO119
+(
+!HRMS_USER_SEARCH_CRITERA_MOBILENO120
+F
+?org.egov.hrms.utils.HRMSConstants.HRMS_USER_SEARCH_CRITERA_NAME122
+$
+HRMS_USER_SEARCH_CRITERA_NAME123
+J
+Corg.egov.hrms.utils.HRMSConstants.HRMS_USER_SEARCH_CRITERA_USERNAME125
+(
+!HRMS_USER_SEARCH_CRITERA_USERNAME126
+K
+Dorg.egov.hrms.utils.HRMSConstants.HRMS_USER_SERACH_CRITERIA_USERTYPE128
+)
+"HRMS_USER_SERACH_CRITERIA_USERTYPE129
+P
+Iorg.egov.hrms.utils.HRMSConstants.HRMS_USER_SERACH_CRITERIA_USERTYPE_CODE131
+.
+'HRMS_USER_SERACH_CRITERIA_USERTYPE_CODE132
+F
+?org.egov.hrms.utils.HRMSConstants.INTERNALMICROSERVICEROLE_NAME134
+$
+INTERNALMICROSERVICEROLE_NAME135
+F
+?org.egov.hrms.utils.HRMSConstants.INTERNALMICROSERVICEROLE_CODE137
+$
+INTERNALMICROSERVICEROLE_CODE138
+F
+?org.egov.hrms.utils.HRMSConstants.INTERNALMICROSERVICEUSER_NAME140
+$
+INTERNALMICROSERVICEUSER_NAME141
+J
+Corg.egov.hrms.utils.HRMSConstants.INTERNALMICROSERVICEUSER_USERNAME143
+(
+!INTERNALMICROSERVICEUSER_USERNAME144
+J
+Corg.egov.hrms.utils.HRMSConstants.INTERNALMICROSERVICEUSER_MOBILENO146
+(
+!INTERNALMICROSERVICEUSER_MOBILENO147
+F
+?org.egov.hrms.utils.HRMSConstants.INTERNALMICROSERVICEUSER_TYPE149
+$
+INTERNALMICROSERVICEUSER_TYPE150
+<
+5org.egov.hrms.utils.HRMSConstants.HRMS_EMPLOYEE_JUDGE152
+
+HRMS_EMPLOYEE_JUDGE153J
+
+1
+12Z
+
+3	
+354j±
+@
+37:
+373820 *
+1 (26:3B
+	
+9
+10
+
+
+11
+39
+D
+142=
+14214320 *
+1; ;(26:3B
+	
+9
+10
+
+11
+144
+@
+76:
+767720 *
+1 (26:3B
+	
+9
+10
+
+
+11
+78
+@
+82:
+828320 *
+1! !(26:3B
+	
+9
+10
+
+
+11
+84
+@
+97:
+979820 *
+1& &(26:3B
+	
+9
+10
+
+
+11
+99
+@
+52:
+525320 *
+1 (26:3B
+	
+9
+10
+
+
+11
+54
+@
+85:
+858620 *
+1" "(26:3B
+	
+9
+10
+
+
+11
+87
+D
+127=
+12712820 *
+12 2(26:3B
+	
+9
+10
+
+11
+129
+@
+34:
+343520 *
+1 (26:3B
+	
+9
+10
+
+
+11
+36
+D
+148=
+14814920 *
+1? ?(26:3B
+	
+9
+10
+
+11
+150
+@
+40:
+404120 *
+1 (26:3B
+	
+9
+10
+
+
+11
+42
+@
+73:
+737420 *
+1 (26:3B
+	
+9
+10
+
+
+11
+75
+D
+109=
+10911020 *
+1, ,(26:3B
+	
+9
+10
+
+11
+111
+@
+43:
+434420 *
+1 (26:3B
+	
+9
+10
+
+
+11
+45
+@
+25:
+252620 *
+1
+ 
+(26:3B
+	
+9
+10
+
+
+11
+27
+D
+145=
+14514620 *
+1= =(26:3B
+	
+9
+10
+
+11
+147
+@
+22:
+222320 *
+1	 	(26:3B
+	
+9
+10
+
+
+11
+24
+@
+61:
+616220 *
+1 (26:3B
+	
+9
+10
+
+
+11
+63
+@
+91:
+919220 *
+1$ $(26:3B
+	
+9
+10
+
+
+11
+93
+@
+58:
+585920 *
+1 (26:3B
+	
+9
+10
+
+
+11
+60
+@
+94:
+949520 *
+1% %(26:3B
+	
+9
+10
+
+
+11
+96
+D
+118=
+11811920 *
+1/ /(26:3B
+	
+9
+10
+
+11
+120
+@
+55:
+555620 *
+1 (26:3B
+	
+9
+10
+
+
+11
+57
+D
+121=
+12112220 *
+10 0(26:3B
+	
+9
+10
+
+11
+123
+@
+18:
+181920 *
+1 (26:3B
+	
+9
+10
+
+
+11
+21
+@
+49:
+495020 *
+1 (26:3B
+	
+9
+10
+
+
+11
+51
+D
+136=
+13613720 *
+17 7(26:3B
+	
+9
+10
+
+11
+138
+@
+64:
+646520 *
+1 (26:3B
+	
+9
+10
+
+
+11
+66
+D
+112=
+11211320 *
+1- -(26:3B
+	
+9
+10
+
+11
+114
+D
+115=
+11511620 *
+1. .(26:3B
+	
+9
+10
+
+11
+117
+@
+88:
+888920 *
+1# #(26:3B
+	
+9
+10
+
+
+11
+90
+D
+124=
+12412520 *
+11 1(26:3B
+	
+9
+10
+
+11
+126
+@
+46:
+464720 *
+1 (26:3B
+	
+9
+10
+
+
+11
+48
+D
+100=
+10010120 *
+1' '(26:3B
+	
+9
+10
+
+11
+102
+D
+106=
+10610720 *
+1* *(26:3B
+	
+9
+10
+
+11
+108
+
+13
+131415
+D
+130=
+13013120 *
+13 3(26:3B
+	
+9
+10
+
+11
+132
+@
+67:
+676820 *
+1 (26:3B
+	
+9
+10
+
+
+11
+69
+@
+31:
+313220 *
+1 (26:3B
+	
+9
+10
+
+
+11
+33
+D
+133=
+13313420 *
+15 5(26:3B
+	
+9
+10
+
+11
+135
+D
+103=
+10310420 *
+1) )(26:3B
+	
+9
+10
+
+11
+105
+D
+139=
+13914020 *
+19 9(26:3B
+	
+9
+10
+
+11
+141
+9
+64
+678 *
+1 (:3B
+	
+9
+10
+
+
+11
+12
+@
+79:
+798020 *
+1 (26:3B
+	
+9
+10
+
+
+11
+81
+@
+70:
+707120 *
+1 (26:3B
+	
+9
+10
+
+
+11
+72
+@
+28:
+282920 *
+1 (26:3B
+	
+9
+10
+
+
+11
+30
+D
+151=
+15115220 *
+1@ @(26:3B
+	
+9
+10
+
+11
+153rM
+
+61316*
+1 (
+
+61317*
+1 (
+
+6617*
+1 (

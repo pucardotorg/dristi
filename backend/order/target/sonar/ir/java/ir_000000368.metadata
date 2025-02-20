@@ -1,0 +1,18 @@
+org.pucar.dristi.util.IdgenUtil#getIdList(Lorg/egov/common/contract/request/RequestInfo;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/Integer;Ljava/lang/Boolean;)Ljava/util/List;
+false
+d93a1efef6611dad608c8167a78bb1ba
+java.lang.StringBuilder#<init>(Ljava/lang/String;)V
+java.lang.StringBuilder#append(Ljava/lang/Object;)Ljava/lang/StringBuilder;
+java.lang.StringBuilder#instance-init#
+java.util.ArrayList#<init>()V
+java.util.ArrayList#instance-init#
+org.egov.tracer.model.CustomException#<init>(Ljava/lang/String;Ljava/lang/String;)V
+org.egov.tracer.model.CustomException#instance-init#
+org.springframework.util.CollectionUtils#isEmpty(Ljava/util/Collection;)Z
+==
+!unknownMethod! !unknownMethod!
+add java.util.List#add(Ljava/lang/Object;)Z
+convertValue com.fasterxml.jackson.databind.ObjectMapper#convertValue(Ljava/lang/Object;Ljava/lang/Class;)Ljava/lang/Object;
+fetchResult org.pucar.dristi.repository.ServiceRequestRepository#fetchResult(Ljava/lang/StringBuilder;Ljava/lang/Object;)Ljava/lang/Object;
+map java.util.stream.Stream#map(Ljava/util/function/Function;)Ljava/util/stream/Stream;
+stream java.util.Collection#stream()Ljava/util/stream/Stream;

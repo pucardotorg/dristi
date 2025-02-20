@@ -1,0 +1,8 @@
+org.pucar.dristi.repository.HearingRepository#getTotalCountHearing(Ljava/lang/String;Ljava/util/List;)Ljava/lang/Integer;
+false
+3627c48f327b77514961e7f8d3063e44
+==
+!unknownMethod! !unknownMethod!
+getTotalCountQuery org.pucar.dristi.repository.querybuilder.HearingQueryBuilder#getTotalCountQuery(Ljava/lang/String;)Ljava/lang/String;
+queryForObject org.springframework.jdbc.core.JdbcTemplate#queryForObject(Ljava/lang/String;Ljava/lang/Class;[Ljava/lang/Object;)Ljava/lang/Object;
+toArray java.util.List#toArray()[Ljava/lang/Object;

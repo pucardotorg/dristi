@@ -1,0 +1,8 @@
+org.pucar.dristi.service.HearingService#createCaseSearchRequest(Lorg/egov/common/contract/request/RequestInfo;Lorg/pucar/dristi/web/models/Hearing;)Lorg/pucar/dristi/web/models/CaseSearchRequest;
+false
+e3f919ce78646edf204a20cdf4c899e0
+org.pucar.dristi.web.models.CaseSearchRequest#<init>()V
+org.pucar.dristi.web.models.CaseSearchRequest#instance-init#
+==
+!unknownMethod! !unknownMethod!
+addCriteriaItem org.pucar.dristi.web.models.CaseSearchRequest#addCriteriaItem(Lorg/pucar/dristi/web/models/CaseCriteria;)Lorg/pucar/dristi/web/models/CaseSearchRequest;

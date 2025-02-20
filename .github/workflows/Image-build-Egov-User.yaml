@@ -51,12 +51,7 @@ jobs:
         with:
           sarif_file: reports/dependency-check-report.sarif
         if: always()
-      - name: Build and analyze for Apportion_Service
-        env:
-          GITHUB_TOKEN: ${{ secrets.GHUB_TOKEN }}
-          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
-        run: mvn -B -f common/egov-user/pom.xml package org.sonarsource.scanner.maven:sonar-maven-plugin:sonar -Dsonar.projectKey=solutions_user -Dsonar.organization=solutions -Dsonar.host.url=https://sonarcloud.io/
-      # Login to Azure Container Registry
+
       - name: Login to Azure Container Registry
         run: docker login -u pucarsolutionsdev -p ${{ secrets.ACR_PASSWORD }} pucarsolutionsdev.azurecr.io
       - name: Set Version from Tag or Branch
@@ -79,7 +74,7 @@ jobs:
 
       - name: Build and Push Docker image for Egov-User
         run: |
-          docker build --build-arg WORK_DIR="common/egov-user" -t pucarsolutionsdev.azurecr.io/egov-user:${{ env.VERSION }}-${{ env.commit_hash }} -f build/maven-java8/Dockerfile .
+          docker build --build-arg WORK_DIR="common/egov-user" -t pucarsolutionsdev.azurecr.io/egov-user:${{ env.VERSION }}-${{ env.commit_hash }} -f build/maven-java8-egov-user/Dockerfile .
           docker push pucarsolutionsdev.azurecr.io/egov-user:${{ env.VERSION }}-${{ env.commit_hash }}
 
       - name: Build and Push Docker image for Egov-User DB

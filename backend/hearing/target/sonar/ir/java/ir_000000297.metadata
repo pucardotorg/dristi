@@ -1,0 +1,8 @@
+org.pucar.dristi.service.WitnessDepositionPdfService#extractCaseNumber(Ljava/lang/String;)Ljava/lang/String;
+false
+fcde3ebe3b3bf928bd857ecfc5b6e583
+java.lang.String#replaceFirst(Ljava/lang/String;Ljava/lang/String;)Ljava/lang/String;
+java.util.regex.Matcher#find()Z
+java.util.regex.Matcher#group(I)Ljava/lang/String;
+java.util.regex.Pattern#compile(Ljava/lang/String;)Ljava/util/regex/Pattern;
+java.util.regex.Pattern#matcher(Ljava/lang/CharSequence;)Ljava/util/regex/Matcher;

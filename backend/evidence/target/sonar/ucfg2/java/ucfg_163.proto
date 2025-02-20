@@ -1,0 +1,15 @@
+
+porg.pucar.dristi.web.models.EvidenceSearchRequest#getRequestInfo()Lorg/egov/common/contract/request/RequestInfo;…
+{/home/bhcp0191/pucar/dristi-solutions/backend/evidence/src/main/java/org/pucar/dristi/web/models/EvidenceSearchRequest.java (%"1*ý
+1   («
+¨
+   (2
+%0,org.egov.common.contract.request.RequestInfo"__id*b
+
+__unknown_file (F*D3
+1org.pucar.dristi.web.models.EvidenceSearchRequest"
+requestInfo"@
+   (4
+2
+%0,org.egov.common.contract.request.RequestInfoB53
+1org.pucar.dristi.web.models.EvidenceSearchRequestH

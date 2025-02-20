@@ -1,0 +1,15 @@
+org.pucar.dristi.validators.TaskRegistrationValidator#validateTaskRegistration(Lorg/pucar/dristi/web/models/TaskRequest;)V
+false
+73efc5c1ff65e58de6b8eedd52b0d47f
+java.lang.String#equalsIgnoreCase(Ljava/lang/String;)Z
+org.egov.tracer.model.CustomException#<init>(Ljava/lang/String;Ljava/lang/String;)V
+org.egov.tracer.model.CustomException#instance-init#
+org.springframework.util.ObjectUtils#isEmpty(Ljava/lang/Object;)Z
+==
+!unknownMethod! !unknownMethod!
+fetchOrderDetails org.pucar.dristi.util.OrderUtil#fetchOrderDetails(Lorg/egov/common/contract/request/RequestInfo;Ljava/util/UUID;)Ljava/lang/Boolean;
+getCode org.egov.common.contract.request.Role#getCode()Ljava/lang/String;
+getRoles org.egov.common.contract.request.User#getRoles()Ljava/util/List;
+getUserInfo org.egov.common.contract.request.RequestInfo#getUserInfo()Lorg/egov/common/contract/request/User;
+isEmpty com.fasterxml.jackson.databind.JsonNode#isEmpty()Z
+searchCaseDetails org.pucar.dristi.util.CaseUtil#searchCaseDetails(Lorg/egov/common/contract/request/RequestInfo;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;)Lcom/fasterxml/jackson/databind/JsonNode;

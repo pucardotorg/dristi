@@ -1,0 +1,23 @@
+org.pucar.dristi.util.MdmsUtil#getMdmsRequest(Lorg/egov/common/contract/request/RequestInfo;Ljava/lang/String;Ljava/lang/String;Ljava/util/List;)Lorg/egov/mdms/model/MdmsCriteriaReq;
+false
+fa980411bbe21475922d97dd061ed710
+java.lang.String#split(Ljava/lang/String;)[Ljava/lang/String;
+java.util.ArrayList#<init>()V
+java.util.ArrayList#instance-init#
+org.egov.mdms.model.MasterDetail#<init>()V
+org.egov.mdms.model.MasterDetail#instance-init#
+org.egov.mdms.model.MdmsCriteria#<init>()V
+org.egov.mdms.model.MdmsCriteria#instance-init#
+org.egov.mdms.model.MdmsCriteriaReq#<init>()V
+org.egov.mdms.model.MdmsCriteriaReq#instance-init#
+org.egov.mdms.model.ModuleDetail#<init>()V
+org.egov.mdms.model.ModuleDetail#instance-init#
+==
+add java.util.List#add(Ljava/lang/Object;)Z
+setMasterDetails org.egov.mdms.model.ModuleDetail#setMasterDetails(Ljava/util/List;)V
+setMdmsCriteria org.egov.mdms.model.MdmsCriteriaReq#setMdmsCriteria(Lorg/egov/mdms/model/MdmsCriteria;)V
+setModuleDetails org.egov.mdms.model.MdmsCriteria#setModuleDetails(Ljava/util/List;)V
+setModuleName org.egov.mdms.model.ModuleDetail#setModuleName(Ljava/lang/String;)V
+setName org.egov.mdms.model.MasterDetail#setName(Ljava/lang/String;)V
+setRequestInfo org.egov.mdms.model.MdmsCriteriaReq#setRequestInfo(Lorg/egov/common/contract/request/RequestInfo;)V
+setTenantId org.egov.mdms.model.MdmsCriteria#setTenantId(Ljava/lang/String;)V

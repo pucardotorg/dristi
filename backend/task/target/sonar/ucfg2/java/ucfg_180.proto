@@ -1,0 +1,29 @@
+
+vorg.pucar.dristi.repository.querybuilder.TaskCaseQueryBuilder#getTotalCountQuery(Ljava/lang/String;)Ljava/lang/String;Ž
+ƒ/home/bhcp0191/pucar/dristi-solutions/backend/task/src/main/java/org/pucar/dristi/repository/querybuilder/TaskCaseQueryBuilder.javas s($"1*•
+1t t( 
+}
+t t( 
+%0java.lang.String"__id*S
+
+__unknown_file (75
+3 SELECT COUNT(*) from ({baseQuery}) AS total_count ÞÛ
+t t(B
+%1java.lang.String"\java.lang.String#replace(Ljava/lang/CharSequence;Ljava/lang/CharSequence;)Ljava/lang/String;*4
+
+__unknown_file (
+
+%0java.lang.String*+
+
+__unknown_file (
+{baseQuery}*;
+
+__unknown_file (
+
+	baseQueryjava.lang.String29replace(Ljava/lang/CharSequence;Ljava/lang/CharSequence;)"$
+t t(C
+
+%1java.lang.String:)
+s% s(5
+	baseQueryjava.lang.StringBA?
+=org.pucar.dristi.repository.querybuilder.TaskCaseQueryBuilderH

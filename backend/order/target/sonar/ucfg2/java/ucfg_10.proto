@@ -1,0 +1,44 @@
+
+9org.pucar.dristi.web.models.Pagination#%field_initializer
+__unknown_file ("1*©	
+1 (Ë
+È
+w
+m/home/bhcp0191/pucar/dristi-solutions/backend/order/src/main/java/org/pucar/dristi/web/models/Pagination.java (3(
+&org.pucar.dristi.web.models.Pagination"
+limit"__id*
+ (
+""Ì
+É
+w
+m/home/bhcp0191/pucar/dristi-solutions/backend/order/src/main/java/org/pucar/dristi/web/models/Pagination.java (4(
+&org.pucar.dristi.web.models.Pagination"
+offSet"__id*
+ (
+""Ð
+Í
+w
+m/home/bhcp0191/pucar/dristi-solutions/backend/order/src/main/java/org/pucar/dristi/web/models/Pagination.java ("8(
+&org.pucar.dristi.web.models.Pagination"
+
+totalCount"__id*
+ (
+""Ì
+É
+w
+m/home/bhcp0191/pucar/dristi-solutions/backend/order/src/main/java/org/pucar/dristi/web/models/Pagination.java! "(4(
+&org.pucar.dristi.web.models.Pagination"
+sortBy"__id*
+ (
+""Ë
+È
+w
+m/home/bhcp0191/pucar/dristi-solutions/backend/order/src/main/java/org/pucar/dristi/web/models/Pagination.java$ %(&3(
+&org.pucar.dristi.web.models.Pagination"
+order"__id*
+ (
+"""Œ
+u
+m/home/bhcp0191/pucar/dristi-solutions/backend/order/src/main/java/org/pucar/dristi/web/models/Pagination.java '(
+implicit returnB*(
+&org.pucar.dristi.web.models.Pagination

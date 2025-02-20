@@ -1,0 +1,10 @@
+org.egov.hrms.service.EmployeeService#enrichUser(Lorg/egov/hrms/model/Employee;)V
+false
+30d6c6c98e2cdcdb42ef37183fd9ab48
+java.util.ArrayList#<init>()V
+java.util.ArrayList#instance-init#
+org.egov.hrms.model.enums.UserType#toString()Ljava/lang/String;
+==
+!unknownMethod! !unknownMethod!
+add java.util.List#add(Ljava/lang/Object;)Z
+generatePassword org.egov.hrms.utils.HRMSUtils#generatePassword(Ljava/util/List;)Ljava/lang/String;

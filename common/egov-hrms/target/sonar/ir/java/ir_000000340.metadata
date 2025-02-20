@@ -1,0 +1,18 @@
+org.egov.hrms.web.validator.EmployeeValidator#validateDeactivationDetails(Lorg/egov/hrms/model/Employee;Lorg/egov/hrms/model/Employee;Ljava/util/Map;Ljava/util/Map;)V
+false
+9d6676ab24f9a6aa176daf46f2022338
+java.time.Instant#atZone(Ljava/time/ZoneId;)Ljava/time/ZonedDateTime;
+java.time.ZoneId#systemDefault()Ljava/time/ZoneId;
+java.time.ZonedDateTime#truncatedTo(Ljava/time/temporal/TemporalUnit;)Ljava/time/ZonedDateTime;
+java.util.Date#<init>()V
+java.util.Date#from(Ljava/time/Instant;)Ljava/util/Date;
+java.util.Date#instance-init#
+org.springframework.util.CollectionUtils#isEmpty(Ljava/util/Collection;)Z
+==
+!unknownMethod! !unknownMethod!
+contains java.util.List#contains(Ljava/lang/Object;)Z
+get java.util.Map#get(Ljava/lang/Object;)Ljava/lang/Object;
+getTime java.util.Date#getTime()J
+put java.util.Map#put(Ljava/lang/Object;Ljava/lang/Object;)Ljava/lang/Object;
+toInstant java.time.chrono.ChronoZonedDateTime#toInstant()Ljava/time/Instant;
+toInstant java.util.Date#toInstant()Ljava/time/Instant;

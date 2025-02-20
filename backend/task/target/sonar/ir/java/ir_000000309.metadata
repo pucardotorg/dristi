@@ -1,0 +1,12 @@
+org.pucar.dristi.validators.TaskRegistrationValidator#validateApplicationExistence(Lorg/pucar/dristi/web/models/Task;Lorg/egov/common/contract/request/RequestInfo;)Ljava/lang/Boolean;
+false
+f8b6f839cd8d5800775cf93d06afc0cd
+org.egov.tracer.model.CustomException#<init>(Ljava/lang/String;Ljava/lang/String;)V
+org.egov.tracer.model.CustomException#instance-init#
+org.pucar.dristi.web.models.TaskExists#<init>()V
+org.pucar.dristi.web.models.TaskExists#instance-init#
+org.springframework.util.ObjectUtils#isEmpty(Ljava/lang/Object;)Z
+==
+!unknownMethod! !unknownMethod!
+checkTaskExists org.pucar.dristi.repository.TaskRepository#checkTaskExists(Lorg/pucar/dristi/web/models/TaskExists;)Lorg/pucar/dristi/web/models/TaskExists;
+getUserInfo org.egov.common.contract.request.RequestInfo#getUserInfo()Lorg/egov/common/contract/request/User;

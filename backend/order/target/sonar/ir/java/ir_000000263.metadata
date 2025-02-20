@@ -1,0 +1,7 @@
+org.pucar.dristi.repository.querybuilder.OrderQueryBuilder#addOrderByQuery(Ljava/lang/String;Lorg/pucar/dristi/web/models/Pagination;)Ljava/lang/String;
+false
+9b29f391a80c30d18d21936c473268fe
+java.lang.String#replace(Ljava/lang/CharSequence;Ljava/lang/CharSequence;)Ljava/lang/String;
+org.pucar.dristi.repository.querybuilder.OrderQueryBuilder#isPaginationInvalid(Lorg/pucar/dristi/web/models/Pagination;)Z
+==
+!unknownMethod! !unknownMethod!

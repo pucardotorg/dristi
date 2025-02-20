@@ -1,0 +1,7 @@
+org.pucar.dristi.web.models.TaskCaseResponse#addListItem(Lorg/pucar/dristi/web/models/TaskCase;)Lorg/pucar/dristi/web/models/TaskCaseResponse;
+false
+7a1eec6a9953a5c50463c959f8b1b478
+java.util.ArrayList#<init>()V
+java.util.ArrayList#instance-init#
+==
+add java.util.List#add(Ljava/lang/Object;)Z

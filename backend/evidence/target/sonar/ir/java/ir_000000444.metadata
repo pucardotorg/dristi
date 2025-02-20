@@ -1,0 +1,11 @@
+org.pucar.dristi.service.IndividualService#buildIndividualSearchUri(Lorg/egov/common/contract/request/RequestInfo;Ljava/util/List;)Ljava/lang/StringBuilder;
+false
+46e15943ee89587c7ce6552ddf203d9c
+java.lang.StringBuilder#<init>(Ljava/lang/String;)V
+java.lang.StringBuilder#append(Ljava/lang/Object;)Ljava/lang/StringBuilder;
+java.lang.StringBuilder#instance-init#
+==
+!unknownMethod! !unknownMethod!
+getTenantId org.egov.common.contract.request.User#getTenantId()Ljava/lang/String;
+getUserInfo org.egov.common.contract.request.RequestInfo#getUserInfo()Lorg/egov/common/contract/request/User;
+size java.util.List#size()I

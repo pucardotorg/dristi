@@ -1,0 +1,29 @@
+
+;__sonar_lambda_1$org.pucar.dristi.repository.TaskRepositoryz
+p/home/bhcp0191/pucar/dristi-solutions/backend/task/src/main/java/org/pucar/dristi/repository/TaskRepository.javav! v(\"startingBlock*¿
+startingBlockv! v(\ž
+›
+
+__unknown_file (
+documentMapjava.util.Map"__id*[
+
+__unknown_file (?*=,
+*org.pucar.dristi.repository.TaskRepository"
+documentMap*
+1* 
+1v* v(/}
+{
+v= v([
+%84"__mapGet*:
+
+__unknown_file (
+
+documentMapjava.util.Map*"
+
+__unknown_file (
+"""
+v* v(\
+"":5
+v! v(&)
+order org.pucar.dristi.web.models.TaskB
+java.util.function.Consumer

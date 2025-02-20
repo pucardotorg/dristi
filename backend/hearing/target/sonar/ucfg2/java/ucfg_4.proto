@@ -1,0 +1,44 @@
+
+9org.pucar.dristi.web.models.Pagination#%field_initializer
+__unknown_file ("1*µ	
+1 (Í
+Ê
+y
+o/home/bhcp0191/pucar/dristi-solutions/backend/hearing/src/main/java/org/pucar/dristi/web/models/Pagination.java (3(
+&org.pucar.dristi.web.models.Pagination"
+limit"__id*
+ (
+""Î
+Ë
+y
+o/home/bhcp0191/pucar/dristi-solutions/backend/hearing/src/main/java/org/pucar/dristi/web/models/Pagination.java (4(
+&org.pucar.dristi.web.models.Pagination"
+offSet"__id*
+ (
+""Ò
+Ï
+y
+o/home/bhcp0191/pucar/dristi-solutions/backend/hearing/src/main/java/org/pucar/dristi/web/models/Pagination.java  "(%8(
+&org.pucar.dristi.web.models.Pagination"
+
+totalCount"__id*
+ (
+""Î
+Ë
+y
+o/home/bhcp0191/pucar/dristi-solutions/backend/hearing/src/main/java/org/pucar/dristi/web/models/Pagination.java$ &(!4(
+&org.pucar.dristi.web.models.Pagination"
+sortBy"__id*
+ (
+""Í
+Ê
+y
+o/home/bhcp0191/pucar/dristi-solutions/backend/hearing/src/main/java/org/pucar/dristi/web/models/Pagination.java( *(3(
+&org.pucar.dristi.web.models.Pagination"
+order"__id*
+ (
+"""Ž
+w
+o/home/bhcp0191/pucar/dristi-solutions/backend/hearing/src/main/java/org/pucar/dristi/web/models/Pagination.java ,(
+implicit returnB*(
+&org.pucar.dristi.web.models.Pagination

@@ -1,0 +1,10 @@
+org.pucar.dristi.web.controllers.TaskApiController#taskV1SearchPost(Lorg/pucar/dristi/web/models/TaskSearchRequest;)Lorg/springframework/http/ResponseEntity;
+false
+03c67c1e0e4d1b6bddcdf6977e4ccc54
+org.springframework.http.ResponseEntity#<init>(Ljava/lang/Object;Lorg/springframework/http/HttpStatusCode;)V
+org.springframework.http.ResponseEntity#instance-init#
+==
+!unknownMethod! !unknownMethod!
+createResponseInfoFromRequestInfo org.pucar.dristi.util.ResponseInfoFactory#createResponseInfoFromRequestInfo(Lorg/egov/common/contract/request/RequestInfo;Ljava/lang/Boolean;)Lorg/egov/common/contract/response/ResponseInfo;
+searchTask org.pucar.dristi.service.TaskService#searchTask(Lorg/pucar/dristi/web/models/TaskSearchRequest;)Ljava/util/List;
+size java.util.List#size()I

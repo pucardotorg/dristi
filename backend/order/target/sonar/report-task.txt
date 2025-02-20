@@ -1,0 +1,7 @@
+organization=solutions
+projectKey=solutions_order
+serverUrl=https://sonarcloud.io
+serverVersion=8.0.0.59623
+dashboardUrl=https://sonarcloud.io/dashboard?id=solutions_order
+ceTaskId=AZT_cwZgYVo6vZJulAvd
+ceTaskUrl=https://sonarcloud.io/api/ce/task?id=AZT_cwZgYVo6vZJulAvd

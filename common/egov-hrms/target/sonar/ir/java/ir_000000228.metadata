@@ -1,0 +1,7 @@
+org.egov.hrms.web.contract.EmployeeSearchCriteria#isCriteriaEmpty(Lorg/egov/hrms/web/contract/EmployeeSearchCriteria;)Z
+false
+142f9264188de26ed8224cf41648449a
+org.apache.commons.lang3.StringUtils#isEmpty(Ljava/lang/CharSequence;)Z
+org.springframework.util.CollectionUtils#isEmpty(Ljava/util/Collection;)Z
+==
+!unknownMethod! !unknownMethod!

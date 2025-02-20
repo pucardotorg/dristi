@@ -1,0 +1,18 @@
+
+åorg.pucar.dristi.web.models.EvidenceRequest#addArtifact(Lorg/pucar/dristi/web/models/Artifact;)Lorg/pucar/dristi/web/models/EvidenceRequest;
+u/home/bhcp0191/pucar/dristi-solutions/backend/evidence/src/main/java/org/pucar/dristi/web/models/EvidenceRequest.java$ $(#"1*Ì
+1% %(†
+ù
+% %(;-
++org.pucar.dristi.web.models.EvidenceRequest"
+
+artifact"__id*N
+
+__unknown_file (2
+0
+artifact$org.pucar.dristi.web.models.Artifact";
+& &(/-
++org.pucar.dristi.web.models.EvidenceRequest:<
+$$ $(50
+artifact$org.pucar.dristi.web.models.ArtifactB/-
++org.pucar.dristi.web.models.EvidenceRequestH

@@ -1,0 +1,11 @@
+org.egov.hrms.service.EmployeeService#enrichCreateRequest(Lorg/egov/hrms/model/Employee;Lorg/egov/common/contract/request/RequestInfo;)V
+false
+3ba235280a8f03b8b39d03936e41d19d
+java.util.Date#<init>()V
+java.util.Date#instance-init#
+org.springframework.util.CollectionUtils#isEmpty(Ljava/util/Collection;)Z
+==
+!unknownMethod! !unknownMethod!
+getTime java.util.Date#getTime()J
+getUserInfo org.egov.common.contract.request.RequestInfo#getUserInfo()Lorg/egov/common/contract/request/User;
+getUuid org.egov.common.contract.request.User#getUuid()Ljava/lang/String;

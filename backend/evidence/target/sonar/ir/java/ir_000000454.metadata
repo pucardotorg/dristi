@@ -1,0 +1,7 @@
+org.pucar.dristi.web.models.EvidenceAddCommentRequest#instance-init#
+false
+ac74e28c3ecd8b9568df694036d49e78
+org.egov.common.contract.request.RequestInfo#<init>()V
+org.egov.common.contract.request.RequestInfo#instance-init#
+org.pucar.dristi.web.models.EvidenceAddComment#<init>()V
+org.pucar.dristi.web.models.EvidenceAddComment#instance-init#

@@ -1,0 +1,9 @@
+org.pucar.dristi.web.controllers.HearingApiController#witnessDepositionV1UploadPdf(Lorg/pucar/dristi/web/models/HearingRequest;)Lorg/springframework/http/ResponseEntity;
+false
+53d0e5589aa20c73bcf7a9780187f938
+org.springframework.http.ResponseEntity#<init>(Ljava/lang/Object;Lorg/springframework/http/HttpStatusCode;)V
+org.springframework.http.ResponseEntity#instance-init#
+==
+!unknownMethod! !unknownMethod!
+createResponseInfoFromRequestInfo org.pucar.dristi.util.ResponseInfoFactory#createResponseInfoFromRequestInfo(Lorg/egov/common/contract/request/RequestInfo;Ljava/lang/Boolean;)Lorg/egov/common/contract/response/ResponseInfo;
+uploadWitnessDeposition org.pucar.dristi.service.HearingService#uploadWitnessDeposition(Lorg/pucar/dristi/web/models/HearingRequest;)Lorg/pucar/dristi/web/models/Hearing;

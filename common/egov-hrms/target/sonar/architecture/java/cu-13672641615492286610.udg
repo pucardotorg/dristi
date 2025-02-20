@@ -1,0 +1,316 @@
+
+1.0solutions_hrmsJavaFrontend"1738843533994*java2.BÆ	
+<
+7src/main/java/org/egov/hrms/model/EmployeeDocument.java2
+
+package4
+
+org.egov.hrms.model5
+)
+$org.egov.hrms.model.EmployeeDocument7
+
+
+class8
+
+access9
+
+public10
+
+simple name11
+
+EmployeeDocument12
+9
+3org.springframework.validation.annotation.Validated14
+
+unknown15
+
+annotated by16
+
+
+uses17
+
+lombok.EqualsAndHashCode19
+
+lombok.AllArgsConstructor21
+
+lombok.Getter23
+
+lombok.NoArgsConstructor25
+
+lombok.Setter27
+
+lombok.ToString29
+
+lombok.Builder31
+-
+'org.egov.hrms.model.EmployeeDocument.id33
+
+field34
+
+private35
+
+id36
+2
+,org.hibernate.validator.constraints.SafeHtml38
+7
+1org.egov.hrms.model.EmployeeDocument.documentName40
+
+documentName41
+5
+/org.egov.hrms.model.EmployeeDocument.documentId43
+
+
+documentId44
+8
+2org.egov.hrms.model.EmployeeDocument.referenceType46
+
+referenceType47
+=
+7org.egov.hrms.model.enums.EmployeeDocumentReferenceType49
+
+is type50
+6
+0org.egov.hrms.model.EmployeeDocument.referenceId52
+
+referenceId53
+3
+-org.egov.hrms.model.EmployeeDocument.tenantId55
+
+tenantId56
+7
+1org.egov.hrms.model.EmployeeDocument.auditDetails58
+
+auditDetails59
+&
+ org.egov.hrms.model.AuditDetails61J
+
+1
+12Z
+
+3	
+354jå
+9
+64
+678 *
+1? ?(:3B
+	
+9
+10
+
+
+11
+12
+
+13
+131415
+
+26
+262715
+
+22
+222315
+
+48
+484915
+@
+39:
+394034 *
+1D D(26:3B
+	
+9
+35
+
+
+11
+41
+@
+54:
+545534 *
+1O O(26:3B
+	
+9
+35
+
+
+11
+56
+@
+57:
+575834 *
+1R R(	26:3B
+	
+9
+35
+
+
+11
+59
+
+18
+181915
+
+37
+373815
+@
+32:
+323334 *
+1A A(26:3B
+	
+9
+35
+
+
+11
+36
+
+30
+303115
+@
+42:
+424334 *
+1G G(26:3B
+	
+9
+35
+
+
+11
+44
+@
+51:
+515234 *
+1L L(26:3B
+	
+9
+35
+
+
+11
+53
+
+28
+282915
+
+20
+202115
+@
+45:
+454634 *
+1J J(	26:3B
+	
+9
+35
+
+
+11
+47
+
+60
+606115
+
+24
+242515ré
+
+61316*
+17 7(
+
+61317*
+17 7(
+
+61816*
+18 8(
+
+61817*
+18 8(
+
+62016*
+19 9(
+
+62017*
+19 9(
+
+62216*
+1: :(
+
+62217*
+1: :(
+
+62416*
+1; ;(
+
+62417*
+1; ;(
+
+62616*
+1< <(
+
+62617*
+1< <(
+
+62816*
+1= =(
+
+62817*
+1= =(
+
+
+63016*
+1> >(
+
+63017*
+1> >(	
+
+6617*
+1? ?(
+
+323716*
+1A A(
+
+323717*
+1A A(
+
+393716*
+1D D(
+
+393717*
+1D D(
+
+423716*
+1G G(
+
+423717*
+1G G(
+
+454850*
+1J
+ J('
+
+454817*
+1J
+ J('
+
+454817*
+1J( J(5
+
+513716*
+1L L(
+
+513717*
+1L L(
+
+543716*
+1O O(
+
+543717*
+1O O(
+
+576050*
+1R
+ R(
+
+576017*
+1R
+ R(
+
+576017*
+1R R(#

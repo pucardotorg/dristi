@@ -1,0 +1,5 @@
+org.pucar.dristi.web.models.TaskCase#addDocumentsItem(Lorg/egov/common/contract/models/Document;)Lorg/pucar/dristi/web/models/TaskCase;
+false
+d6c4ecfea22a2b1fa4aead8e3a3ddc87
+==
+add java.util.List#add(Ljava/lang/Object;)Z

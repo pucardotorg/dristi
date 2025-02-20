@@ -1,0 +1,197 @@
+
+1.0solutions_evidenceJavaFrontend"1739451578607*java2.Bì
+F
+Asrc/main/java/org/pucar/dristi/web/models/EvidenceAddComment.java2
+
+package4
+ 
+org.pucar.dristi.web.models5
+3
+.org.pucar.dristi.web.models.EvidenceAddComment7
+
+
+class8
+
+access9
+
+public10
+
+simple name11
+
+EvidenceAddComment12
+
+lombok.Data14
+
+unknown15
+
+annotated by16
+
+
+uses17
+
+lombok.AllArgsConstructor19
+
+lombok.NoArgsConstructor21
+
+lombok.Builder23
+C
+=org.pucar.dristi.web.models.EvidenceAddComment.artifactNumber25
+
+field26
+
+private27
+
+artifactNumber28
+3
+-com.fasterxml.jackson.annotation.JsonProperty30
+<
+6org.pucar.dristi.web.models.EvidenceAddComment.comment32
+
+	protected33
+
+comment34
+
+jakarta.validation.Valid36
+)
+#org.pucar.dristi.web.models.Comment38
+=
+7org.pucar.dristi.web.models.EvidenceAddComment.tenantId40
+
+tenantId41
+,
+&jakarta.validation.constraints.NotNull43J
+
+1
+12Z
+
+3	
+354j¡
+@
+39:
+394026 *
+1 (26:3B
+	
+9
+27
+
+
+11
+41
+
+29
+293015
+@
+31:
+313226 *
+1 (26:3B
+	
+9
+33
+
+
+11
+34
+
+22
+222315
+9
+64
+678 *
+1 ( :3B
+	
+9
+10
+
+
+11
+12
+
+13
+131415
+
+37
+373815
+@
+24:
+242526 *
+1 (26:3B
+	
+9
+27
+
+
+11
+28
+
+35
+353615
+
+42
+424315
+
+18
+181915
+
+20
+202115r’
+
+61316*
+1 (
+
+61317*
+1 (
+
+61816*
+1 (
+
+61817*
+1 (
+
+62016*
+1 (
+
+62017*
+1 (
+
+62216*
+1 (
+
+62217*
+1 (	
+
+6617*
+1 ( 
+
+242916*
+1 (
+
+242917*
+1 (
+
+312916*
+1 (
+
+312917*
+1 (
+
+313516*
+1 (
+
+313517*
+1 (
+
+313717*
+1
+ (
+
+392916*
+1 (
+
+392917*
+1 (
+
+394216*
+1 (
+
+394217*
+1 (

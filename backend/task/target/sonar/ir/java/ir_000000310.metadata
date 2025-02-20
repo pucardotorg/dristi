@@ -1,0 +1,15 @@
+org.pucar.dristi.validators.TaskRegistrationValidator#validateApplicationUploadDocumentExistence(Lorg/pucar/dristi/web/models/Task;Lorg/egov/common/contract/request/RequestInfo;)Lorg/pucar/dristi/web/models/Task;
+false
+41e033fd08db20cbe6de07b25090134b
+java.lang.String#valueOf([C)Ljava/lang/String;
+java.util.Optional#map(Ljava/util/function/Function;)Ljava/util/Optional;
+java.util.Optional#orElseThrow(Ljava/util/function/Supplier;)Ljava/lang/Object;
+org.egov.tracer.model.CustomException#<init>(Ljava/lang/String;Ljava/lang/String;)V
+org.egov.tracer.model.CustomException#instance-init#
+org.springframework.util.ObjectUtils#isEmpty(Ljava/lang/Object;)Z
+==
+!unknownMethod! !unknownMethod!
+findFirst java.util.stream.Stream#findFirst()Ljava/util/Optional;
+getTasks org.pucar.dristi.repository.TaskRepository#getTasks(Lorg/pucar/dristi/web/models/TaskCriteria;Lorg/pucar/dristi/web/models/Pagination;)Ljava/util/List;
+getUserInfo org.egov.common.contract.request.RequestInfo#getUserInfo()Lorg/egov/common/contract/request/User;
+stream java.util.Collection#stream()Ljava/util/stream/Stream;

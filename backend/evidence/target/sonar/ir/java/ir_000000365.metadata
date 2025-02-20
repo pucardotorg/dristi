@@ -1,0 +1,16 @@
+org.pucar.dristi.validators.EvidenceValidator#createEvidenceSearchCriteria(Lorg/pucar/dristi/web/models/EvidenceRequest;)Lorg/pucar/dristi/web/models/EvidenceSearchCriteria;
+false
+26bd6affcb8fcbfcd63394360b00bf9f
+java.lang.String#valueOf([C)Ljava/lang/String;
+org.pucar.dristi.web.models.EvidenceSearchCriteria#<init>()V
+org.pucar.dristi.web.models.EvidenceSearchCriteria#instance-init#
+==
+!unknownMethod! !unknownMethod!
+setApplicationNumber org.pucar.dristi.web.models.EvidenceSearchCriteria#setApplicationNumber(Ljava/lang/String;)V
+setCaseId org.pucar.dristi.web.models.EvidenceSearchCriteria#setCaseId(Ljava/lang/String;)V
+setFilingNumber org.pucar.dristi.web.models.EvidenceSearchCriteria#setFilingNumber(Ljava/lang/String;)V
+setHearing org.pucar.dristi.web.models.EvidenceSearchCriteria#setHearing(Ljava/lang/String;)V
+setId org.pucar.dristi.web.models.EvidenceSearchCriteria#setId(Ljava/lang/String;)V
+setOrder org.pucar.dristi.web.models.EvidenceSearchCriteria#setOrder(Ljava/lang/String;)V
+setSourceId org.pucar.dristi.web.models.EvidenceSearchCriteria#setSourceId(Ljava/lang/String;)V
+setSourceName org.pucar.dristi.web.models.EvidenceSearchCriteria#setSourceName(Ljava/lang/String;)V

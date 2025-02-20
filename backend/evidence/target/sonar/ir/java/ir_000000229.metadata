@@ -1,0 +1,8 @@
+org.pucar.dristi.repository.querybuilder.EvidenceQueryBuilder#addArtifactPartialCriteria(Ljava/lang/String;Ljava/lang/StringBuilder;Ljava/util/List;ZLjava/util/List;)V
+false
+e648470aefc88f9a45c913fefd0fb31c
+java.lang.String#isEmpty()Z
+java.lang.StringBuilder#append(Ljava/lang/String;)Ljava/lang/StringBuilder;
+org.pucar.dristi.repository.querybuilder.EvidenceQueryBuilder#addClauseIfRequired(Ljava/lang/StringBuilder;Z)V
+==
+add java.util.List#add(Ljava/lang/Object;)Z

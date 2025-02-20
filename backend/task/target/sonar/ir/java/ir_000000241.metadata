@@ -1,0 +1,3 @@
+org.pucar.dristi.web.controllers.TaskApiController#setMockInjects(Lorg/pucar/dristi/service/TaskService;Lorg/pucar/dristi/util/ResponseInfoFactory;)V
+false
+619670ddae1d5dd7976ab658e0d38b0e

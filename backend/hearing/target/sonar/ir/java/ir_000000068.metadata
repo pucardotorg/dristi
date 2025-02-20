@@ -1,0 +1,7 @@
+java.util.Arrays#copyOf([JI)[J
+true
+c45959f1a50e867a86b07a61eeaec4e1
+java.lang.NegativeArraySizeException#<init>()V
+java.lang.NegativeArraySizeException#instance-init#
+java.lang.NullPointerException#<init>()V
+java.lang.NullPointerException#instance-init#

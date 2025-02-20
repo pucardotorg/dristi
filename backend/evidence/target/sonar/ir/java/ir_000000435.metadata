@@ -1,0 +1,11 @@
+org.pucar.dristi.service.EvidenceService#enrichEvidenceSearch(Lorg/egov/common/contract/request/RequestInfo;Lorg/pucar/dristi/web/models/EvidenceSearchCriteria;)V
+false
+a8fa0e7e0f58cbff13e4b21fc8d032e2
+java.lang.String#toUpperCase()Ljava/lang/String;
+==
+!unknownMethod! !unknownMethod!
+getType org.egov.common.contract.request.User#getType()Ljava/lang/String;
+getUserInfo org.egov.common.contract.request.RequestInfo#getUserInfo()Lorg/egov/common/contract/request/User;
+getUuid org.egov.common.contract.request.User#getUuid()Ljava/lang/String;
+setIsCitizen org.pucar.dristi.web.models.EvidenceSearchCriteria#setIsCitizen(Z)V
+setIsCourtEmployee org.pucar.dristi.web.models.EvidenceSearchCriteria#setIsCourtEmployee(Z)V
