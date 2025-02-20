@@ -1,271 +1,0 @@
-
-1.0solutions_orderJavaFrontend"1739452510852*java2.B√
-E
-@src/main/java/org/pucar/dristi/web/models/OrderListResponse.java2
-
-package4
- 
-org.pucar.dristi.web.models5
-2
--org.pucar.dristi.web.models.OrderListResponse7
-
-
-class8
-
-access9
-
-public10
-
-simple name11
-
-OrderListResponse12
-9
-3org.springframework.validation.annotation.Validated14
-
-unknown15
-
-annotated by16
-
-
-uses17
-"
-jakarta.annotation.Generated19
-
-lombok.Data21
-
-lombok.AllArgsConstructor23
-
-lombok.NoArgsConstructor25
-
-lombok.Builder27
-@
-:org.pucar.dristi.web.models.OrderListResponse.responseInfo29
-
-field30
-
-private31
-
-responseInfo32
-4
-.org.egov.common.contract.response.ResponseInfo34
-
-is type35
-3
--com.fasterxml.jackson.annotation.JsonProperty37
-
-jakarta.validation.Valid39
->
-8org.pucar.dristi.web.models.OrderListResponse.totalCount41
-
-
-totalCount42
-8
-2org.pucar.dristi.web.models.OrderListResponse.list44
-
-
-list45
-'
-!org.pucar.dristi.web.models.Order47
->
-8org.pucar.dristi.web.models.OrderListResponse.pagination49
-
-
-pagination50
-,
-&org.pucar.dristi.web.models.Pagination52J
-
-1
-12Z
-
-3	
-354jü
-@
-28:
-282930 *
-1 (26:3B
-	
-9
-31
-
-
-11
-32
-
-36
-363715
-
-13
-131415
-9
-64
-678 *
-1 (:3B
-	
-9
-10
-
-
-11
-12
-@
-48:
-484930 *
-1& &(26:3B
-	
-9
-31
-
-
-11
-50
-@
-40:
-404130 *
-1 (26:3B
-	
-9
-31
-
-
-11
-42
-
-38
-383915
-
-33
-333415
-
-18
-181915
-
-26
-262715
-
-51
-515215
-@
-43:
-434430 *
-1" "(26:3B
-	
-9
-31
-
-
-11
-45
-
-20
-202115
-
-22
-222315
-
-46
-464715
-
-24
-242515rà
-
-61316*
-1 (
-
-61317*
-1 (
-
-61816*
-1 (
-
-61817*
-1 (
-
-62016*
-1 (
-
-62017*
-1 (
-
-62216*
-1 (
-
-62217*
-1 (
-
-62416*
-1 (
-
-62417*
-1 (
-
-62616*
-1 (
-
-62617*
-1 (	
-
-6617*
-1 (
-
-283335*
-1 (
-
-283616*
-1 (
-
-283617*
-1 (
-
-283816*
-1 (
-
-283817*
-1 (
-
-283317*
-1 (
-
-283317*
-1 (&
-
-403616*
-1 (
-
-403617*
-1 (
-
-433616*
-1" "(
-
-433617*
-1" "(
-
-433816*
-1# #(
-
-433817*
-1# #(
-
-434617*
-1$ $(
-
-485135*
-1( ((
-
-483616*
-1& &(
-
-483617*
-1& &(
-
-483816*
-1' '(
-
-483817*
-1' '(
-
-485117*
-1( ((
-
-485117*
-1( (("

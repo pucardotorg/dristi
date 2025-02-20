@@ -1,7 +1,0 @@
-organization=solutions
-projectKey=solutions_evidence
-serverUrl=https://sonarcloud.io
-serverVersion=8.0.0.59623
-dashboardUrl=https://sonarcloud.io/dashboard?id=solutions_evidence
-ceTaskId=AZT_ZMp3A8FUbEeR-Gqw
-ceTaskUrl=https://sonarcloud.io/api/ce/task?id=AZT_ZMp3A8FUbEeR-Gqw

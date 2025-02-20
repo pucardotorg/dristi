@@ -1,6 +1,0 @@
-org.pucar.dristi.repository.querybuilder.HearingQueryBuilder#addPaginationQuery(Ljava/lang/String;Lorg/pucar/dristi/web/models/Pagination;Ljava/util/List;Ljava/util/List;)Ljava/lang/String;
-false
-cee2472716dbdfeb256451bcbd7f13ad
-==
-!unknownMethod! !unknownMethod!
-add java.util.List#add(Ljava/lang/Object;)Z

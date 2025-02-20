@@ -1,2 +1,0 @@
-ALTER TABLE dristi_orders
-ALTER COLUMN comments TYPE VARCHAR(1000);

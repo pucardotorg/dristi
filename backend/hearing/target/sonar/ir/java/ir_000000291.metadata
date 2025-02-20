@@ -1,6 +1,0 @@
-org.pucar.dristi.service.WitnessDepositionPdfService#extractAdditionalDetails(Lorg/pucar/dristi/web/models/Hearing;)Lcom/fasterxml/jackson/databind/JsonNode;
-false
-f4ccc2161db5c89b15ed5a02359d0a0c
-==
-!unknownMethod! !unknownMethod!
-convertValue com.fasterxml.jackson.databind.ObjectMapper#convertValue(Ljava/lang/Object;Ljava/lang/Class;)Ljava/lang/Object;

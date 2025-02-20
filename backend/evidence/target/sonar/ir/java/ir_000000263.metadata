@@ -1,3 +1,0 @@
-org.pucar.dristi.repository.EvidenceRepository#<init>(Lorg/pucar/dristi/repository/querybuilder/EvidenceQueryBuilder;Lorg/springframework/jdbc/core/JdbcTemplate;Lorg/pucar/dristi/repository/rowmapper/EvidenceRowMapper;)V
-false
-3ebd31890ea4c883c68494e15284e38a

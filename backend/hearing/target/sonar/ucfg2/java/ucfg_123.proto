@@ -1,92 +1,0 @@
-
-borg.pucar.dristi.web.models.Order#fromValue(Ljava/lang/String;)Lorg/pucar/dristi/web/models/Order;t
-j/home/bhcp0191/pucar/dristi-solutions/backend/hearing/src/main/java/org/pucar/dristi/web/models/Order.java (!"startingBlock*¦
-2 (^
-\
- (&
-b!org.pucar.dristi.web.models.Order"__id*"
-
-__unknown_file (
-""®
-«
- (&
-b!org.pucar.dristi.web.models.Order"
-__arrayGet*G
-
-__unknown_file (+
-)
-%0#org.pucar.dristi.web.models.Order[]*"
-
-__unknown_file (
-""*
-4
-1*C
-3 ("4
- ((
-&
-b!org.pucar.dristi.web.models.Order* 
-startingBlock! (.¥
-¢
- (
-%4"
-__annotate*L
-
-__unknown_file (0.
-,com.fasterxml.jackson.annotation.JsonCreator*6
-
-__unknown_file (
-
-textjava.lang.StringX
-V
-) (-
-textjava.lang.String"__annotation*"
-
-__unknown_file (
-
-%4*
-5*¹
-4 ({
-y
- (&
-%1java.lang.String"__id*O
-
-__unknown_file (3*1
-&
-b!org.pucar.dristi.web.models.Order"
-valueÍ
-Ê
- ('
-%2java.lang.String">java.lang.String#valueOf(Ljava/lang/Object;)Ljava/lang/String;*0
-
-__unknown_file ("
-java.lang.String*4
-
-__unknown_file (
-
-%1java.lang.StringÔÑ
- (4
-%3boolean",java.lang.String#equals(Ljava/lang/Object;)Z*4
-
-__unknown_file (
-
-%2java.lang.String*6
-
-__unknown_file (
-
-textjava.lang.String2equals(Ljava/lang/Object;)*
-2
-3*à
-5 (Ë
-È
- (%)
-%0#org.pucar.dristi.web.models.Order[]"Norg.pucar.dristi.web.models.Order#values()[Lorg/pucar/dristi/web/models/Order;*A
-
-__unknown_file (%"#
-!org.pucar.dristi.web.models.Order*
-2*!
-1 ("
- (
-"":$
-" (-
-textjava.lang.StringB%"#
-!org.pucar.dristi.web.models.OrderH

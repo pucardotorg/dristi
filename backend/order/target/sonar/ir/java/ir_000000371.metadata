@@ -1,6 +1,0 @@
-org.pucar.dristi.util.IndividualUtil#individualExists(Lorg/pucar/dristi/web/models/IndividualSearchRequest;Ljava/lang/StringBuilder;)Ljava/lang/Boolean;
-false
-949a7cddf592743bf0dc553a85d33de2
-java.lang.String#isEmpty()Z
-==
-getIndividualId org.pucar.dristi.util.IndividualUtil#getIndividualId(Lorg/pucar/dristi/web/models/IndividualSearchRequest;Ljava/lang/StringBuilder;)Ljava/lang/String;

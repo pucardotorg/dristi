@@ -1,243 +1,0 @@
-
-1.0solutions_hearingJavaFrontend"1739451880155*java2.Bç
-H
-Csrc/main/java/org/pucar/dristi/web/models/HearingSearchRequest.java2
-
-package4
- 
-org.pucar.dristi.web.models5
-5
-0org.pucar.dristi.web.models.HearingSearchRequest7
-
-
-class8
-
-access9
-
-public10
-
-simple name11
-
-HearingSearchRequest12
-9
-3org.springframework.validation.annotation.Validated14
-
-unknown15
-
-annotated by16
-
-
-uses17
-"
-jakarta.annotation.Generated19
-
-lombok.Getter21
-
-lombok.Setter23
-
-lombok.Builder25
-B
-<org.pucar.dristi.web.models.HearingSearchRequest.requestInfo27
-
-field28
-
-private29
-
-requestInfo30
-2
-,org.egov.common.contract.request.RequestInfo32
-
-is type33
-3
--com.fasterxml.jackson.annotation.JsonProperty35
-
-jakarta.validation.Valid37
-?
-9org.pucar.dristi.web.models.HearingSearchRequest.criteria39
-
-criteria40
-1
-+org.pucar.dristi.web.models.HearingCriteria42
-A
-;org.pucar.dristi.web.models.HearingSearchRequest.pagination44
-
-
-pagination45
-,
-&org.pucar.dristi.web.models.Pagination47J
-
-1
-12Z
-
-3	
-354jÉ
-
-34
-343515
-
-13
-131415
-
-22
-222315
-
-20
-202115
-@
-38:
-383928 *
-1 (26:3B
-	
-9
-29
-
-
-11
-40
-@
-43:
-434428 *
-1 (26:3B
-	
-9
-29
-
-
-11
-45
-@
-26:
-262728 *
-1 (26:3B
-	
-9
-29
-
-
-11
-30
-
-36
-363715
-
-18
-181915
-
-24
-242515
-
-46
-464715
-9
-64
-678 *
-1 (":3B
-	
-9
-10
-
-
-11
-12
-
-31
-313215
-
-41
-414215rÔ
-
-61316*
-1 (
-
-61317*
-1 (
-
-61816*
-1 (
-
-61817*
-1 (
-
-62016*
-1 (
-
-62017*
-1 (
-
-62216*
-1 (
-
-62217*
-1 (
-
-62416*
-1 (
-
-62417*
-1 (	
-
-6617*
-1 ("
-
-263133*
-1 (
-
-263416*
-1 (
-
-263417*
-1 (
-
-263616*
-1 (
-
-263617*
-1 (
-
-263117*
-1 (
-
-263117*
-1 ($
-
-384133*
-1 (
-
-383416*
-1 (
-
-383417*
-1 (
-
-383616*
-1 (
-
-383617*
-1 (
-
-384117*
-1 (
-
-384117*
-1 (%
-
-434633*
-1 (
-
-433416*
-1 (
-
-433417*
-1 (
-
-433616*
-1 (
-
-433617*
-1 (
-
-434617*
-1 (
-
-434617*
-1 ("

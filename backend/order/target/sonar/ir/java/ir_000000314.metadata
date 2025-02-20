@@ -1,8 +1,0 @@
-org.pucar.dristi.service.OrderRegistrationService#createCaseSearchRequest(Lorg/egov/common/contract/request/RequestInfo;Lorg/pucar/dristi/web/models/Order;)Lorg/pucar/dristi/web/models/CaseSearchRequest;
-false
-4f5b5e9afafc500c4d42fc29faf22420
-org.pucar.dristi.web.models.CaseSearchRequest#<init>()V
-org.pucar.dristi.web.models.CaseSearchRequest#instance-init#
-==
-!unknownMethod! !unknownMethod!
-addCriteriaItem org.pucar.dristi.web.models.CaseSearchRequest#addCriteriaItem(Lorg/pucar/dristi/web/models/CaseCriteria;)Lorg/pucar/dristi/web/models/CaseSearchRequest;

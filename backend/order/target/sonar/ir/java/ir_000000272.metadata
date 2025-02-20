@@ -1,3 +1,0 @@
-org.pucar.dristi.web.controllers.OrderApiController#setMockInjects(Lorg/pucar/dristi/service/OrderRegistrationService;Lorg/pucar/dristi/util/ResponseInfoFactory;)V
-false
-33422b4379b36ee75464576e448c9a0b

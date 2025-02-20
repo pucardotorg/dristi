@@ -1,7 +1,0 @@
-org.pucar.dristi.web.models.Individual#addIdentifiersItem(Lorg/egov/common/models/individual/Identifier;)Lorg/pucar/dristi/web/models/Individual;
-false
-6320dd6340fbce26521361ed67d26145
-java.util.ArrayList#<init>()V
-java.util.ArrayList#instance-init#
-==
-add java.util.List#add(Ljava/lang/Object;)Z

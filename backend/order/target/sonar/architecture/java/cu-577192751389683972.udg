@@ -1,276 +1,0 @@
-
-1.0solutions_orderJavaFrontend"1739452510707*java2.B¢	
->
-9src/main/java/org/pucar/dristi/web/models/SMSRequest.java2
-
-package4
- 
-org.pucar.dristi.web.models5
-+
-&org.pucar.dristi.web.models.SMSRequest7
-
-
-class8
-
-access9
-
-public10
-
-simple name11
-
-
-SMSRequest12
-
-lombok.extern.slf4j.Slf4j14
-
-unknown15
-
-annotated by16
-
-
-uses17
-
-lombok.Getter19
-
-lombok.AllArgsConstructor21
-
-lombok.NoArgsConstructor23
-
-lombok.ToString25
-
-lombok.Builder27
-9
-3org.pucar.dristi.web.models.SMSRequest.mobileNumber29
-
-field30
-
-private31
-
-mobileNumber32
-4
-.org.pucar.dristi.web.models.SMSRequest.message34
-
-message35
-5
-/org.pucar.dristi.web.models.SMSRequest.category37
-
-category38
-7
-1org.pucar.dristi.web.models.SMSRequest.expiryTime40
-
-
-expiryTime41
-7
-1org.pucar.dristi.web.models.SMSRequest.templateId43
-
-
-templateId44
-3
--org.pucar.dristi.web.models.SMSRequest.locale46
-
-locale47
-5
-/org.pucar.dristi.web.models.SMSRequest.tenantId49
-
-tenantId50
-2
-,org.pucar.dristi.web.models.SMSRequest.email52
-
-email53
-2
-,org.pucar.dristi.web.models.SMSRequest.users55
-
-users56
-8
-2org.pucar.dristi.web.models.SMSRequest.contentType58
-
-contentType59J
-
-1
-12Z
-
-3	
-354j«
-@
-28:
-282930 *
-1 (26:3B
-	
-9
-31
-
-
-11
-32
-
-18
-181915
-@
-39:
-394030 *
-1 (26:3B
-	
-9
-31
-
-
-11
-41
-@
-45:
-454630 *
-1 (26:3B
-	
-9
-31
-
-
-11
-47
-@
-54:
-545530 *
-1   (26:3B
-	
-9
-31
-
-
-11
-56
-
-13
-131415
-@
-36:
-363730 *
-1 (26:3B
-	
-9
-31
-
-
-11
-38
-9
-64
-678 *
-1 (:3B
-	
-9
-10
-
-
-11
-12
-
-26
-262715
-@
-42:
-424330 *
-1 (26:3B
-	
-9
-31
-
-
-11
-44
-@
-33:
-333430 *
-1 (26:3B
-	
-9
-31
-
-
-11
-35
-@
-57:
-575830 *
-1" "(26:3B
-	
-9
-31
-
-
-11
-59
-
-24
-242515
-@
-51:
-515230 *
-1 (26:3B
-	
-9
-31
-
-
-11
-53
-@
-48:
-484930 *
-1 (26:3B
-	
-9
-31
-
-
-11
-50
-
-20
-202115
-
-22
-222315r—
-
-61316*
-1
- 
-(
-
-61317*
-1
- 
-(
-
-61816*
-1 (
-
-61817*
-1 (
-
-62016*
-1 (
-
-62017*
-1 (
-
-62216*
-1 (
-
-62217*
-1 (
-
-62416*
-1 (
-
-62417*
-1 (
-
-
-62616*
-1 (
-
-62617*
-1 (	
-
-6617*
-1 (

@@ -1,5 +1,0 @@
-org.pucar.dristi.web.models.CaseSearchRequest#addCriteriaItem(Lorg/pucar/dristi/web/models/CaseCriteria;)Lorg/pucar/dristi/web/models/CaseSearchRequest;
-false
-f99137dc4925593b871338bdf830866e
-==
-add java.util.List#add(Ljava/lang/Object;)Z

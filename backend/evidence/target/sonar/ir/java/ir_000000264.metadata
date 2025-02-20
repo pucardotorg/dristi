@@ -1,8 +1,0 @@
-org.pucar.dristi.repository.EvidenceRepository#getTotalCountArtifact(Ljava/lang/String;Ljava/util/List;)Ljava/lang/Integer;
-false
-fda9db903721bcd56cc5b5a7834be63a
-==
-!unknownMethod! !unknownMethod!
-getTotalCountQuery org.pucar.dristi.repository.querybuilder.EvidenceQueryBuilder#getTotalCountQuery(Ljava/lang/String;)Ljava/lang/String;
-queryForObject org.springframework.jdbc.core.JdbcTemplate#queryForObject(Ljava/lang/String;Ljava/lang/Class;[Ljava/lang/Object;)Ljava/lang/Object;
-toArray java.util.List#toArray()[Ljava/lang/Object;

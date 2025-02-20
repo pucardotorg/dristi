@@ -1,34 +1,0 @@
-
-Aorg.pucar.dristi.web.models.CaseExistsResponse#%field_initializer
-__unknown_file ("1*Ÿ
-1 (æ
-ã
-‚
-x/home/bhcp0191/pucar/dristi-solutions/backend/evidence/src/main/java/org/pucar/dristi/web/models/CaseExistsResponse.java (-B0
-.org.pucar.dristi.web.models.CaseExistsResponse"
-responseInfo"__id*
- (
-""¸µ
-‚
-x/home/bhcp0191/pucar/dristi-solutions/backend/evidence/src/main/java/org/pucar/dristi/web/models/CaseExistsResponse.java", "(7
-%0java.util.ArrayList"java.util.ArrayListÖ
-Ó
-‚
-x/home/bhcp0191/pucar/dristi-solutions/backend/evidence/src/main/java/org/pucar/dristi/web/models/CaseExistsResponse.java"( "(9
-%1"java.util.ArrayList#<init>()V*'
- (
-
-%0java.util.ArrayList÷
-ô
-‚
-x/home/bhcp0191/pucar/dristi-solutions/backend/evidence/src/main/java/org/pucar/dristi/web/models/CaseExistsResponse.java  "(:>0
-.org.pucar.dristi.web.models.CaseExistsResponse"
-
-criteria"__id*'
- (
-
-%0java.util.ArrayList"˜
-€
-x/home/bhcp0191/pucar/dristi-solutions/backend/evidence/src/main/java/org/pucar/dristi/web/models/CaseExistsResponse.java )(
-implicit returnB20
-.org.pucar.dristi.web.models.CaseExistsResponse

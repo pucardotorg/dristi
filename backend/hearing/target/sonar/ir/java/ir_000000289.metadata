@@ -1,8 +1,0 @@
-org.pucar.dristi.service.WitnessDepositionPdfService#createCaseSearchRequest(Lorg/egov/common/contract/request/RequestInfo;Lorg/pucar/dristi/web/models/Hearing;)Lorg/pucar/dristi/web/models/CaseSearchRequest;
-false
-9b8333e42b9d7677d67946a094685036
-org.pucar.dristi.web.models.CaseSearchRequest#<init>()V
-org.pucar.dristi.web.models.CaseSearchRequest#instance-init#
-==
-!unknownMethod! !unknownMethod!
-addCriteriaItem org.pucar.dristi.web.models.CaseSearchRequest#addCriteriaItem(Lorg/pucar/dristi/web/models/CaseCriteria;)Lorg/pucar/dristi/web/models/CaseSearchRequest;

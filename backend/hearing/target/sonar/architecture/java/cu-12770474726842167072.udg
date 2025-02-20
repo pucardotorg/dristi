@@ -1,745 +1,0 @@
-
-1.0solutions_hearingJavaFrontend"1739451879722*java2.B¹
-D
-?src/main/java/org/pucar/dristi/web/models/IndividualSearch.java2
-
-package4
- 
-org.pucar.dristi.web.models5
-1
-,org.pucar.dristi.web.models.IndividualSearch7
-
-
-class8
-
-access9
-
-public10
-
-simple name11
-
-IndividualSearch12
-%
-io.swagger.annotations.ApiModel14
-
-unknown15
-
-annotated by16
-
-
-uses17
-9
-3org.springframework.validation.annotation.Validated19
-
-lombok.Data21
-
-lombok.NoArgsConstructor23
-
-lombok.AllArgsConstructor25
-
-lombok.Builder27
-;
-5com.fasterxml.jackson.annotation.JsonIgnoreProperties29
-5
-/org.pucar.dristi.web.models.IndividualSearch.id31
-
-field32
-
-private33
-
-id34
-3
--com.fasterxml.jackson.annotation.JsonProperty36
-?
-9org.pucar.dristi.web.models.IndividualSearch.individualId38
-
-individualId39
-D
->org.pucar.dristi.web.models.IndividualSearch.clientReferenceId41
-
-clientReferenceId42
-7
-1org.pucar.dristi.web.models.IndividualSearch.name44
-
-
-name45
-,
-&org.egov.common.models.individual.Name47
-
-is type48
->
-8org.pucar.dristi.web.models.IndividualSearch.dateOfBirth50
-
-dateOfBirth51
-1
-+com.fasterxml.jackson.annotation.JsonFormat53
-7
-1com.fasterxml.jackson.annotation.JsonFormat$Shape55
-
-
-references56
->
-8com.fasterxml.jackson.annotation.JsonFormat$Shape.STRING58
-9
-3org.pucar.dristi.web.models.IndividualSearch.gender60
-
-gender61
-0
-*org.egov.common.contract.user.enums.Gender63
-?
-9org.pucar.dristi.web.models.IndividualSearch.mobileNumber65
-
-mobileNumber66
-A
-;org.pucar.dristi.web.models.IndividualSearch.socialCategory68
-
-socialCategory69
-4
-.org.egov.common.data.query.annotations.Exclude71
-;
-5org.pucar.dristi.web.models.IndividualSearch.wardCode73
-
-wardCode74
-A
-;org.pucar.dristi.web.models.IndividualSearch.individualName76
-
-individualName77
->
-8org.pucar.dristi.web.models.IndividualSearch.createdFrom79
-
-createdFrom80
-<
-6org.pucar.dristi.web.models.IndividualSearch.createdTo82
-
-	createdTo83
-=
-7org.pucar.dristi.web.models.IndividualSearch.identifier85
-
-
-identifier86
-2
-,org.egov.common.models.individual.Identifier88
-?
-9org.pucar.dristi.web.models.IndividualSearch.boundaryCode90
-
-boundaryCode91
-<
-6org.pucar.dristi.web.models.IndividualSearch.roleCodes93
-
-	roleCodes94
-;
-5org.pucar.dristi.web.models.IndividualSearch.username96
-
-username97
-9
-3org.pucar.dristi.web.models.IndividualSearch.userId99
-
-userId100
-<
-5org.pucar.dristi.web.models.IndividualSearch.userUuid102
-
-userUuid103
-<
-5org.pucar.dristi.web.models.IndividualSearch.latitude105
-
-latitude106
-=
-6org.pucar.dristi.web.models.IndividualSearch.longitude108
-
-	longitude109
-@
-9org.pucar.dristi.web.models.IndividualSearch.searchRadius111
-
-searchRadius112J
-
-1
-12Z
-
-3	
-354jâ
-@
-40:
-404132 *
-1, ,(26:3B
-	
-9
-33
-
-
-11
-42
-
-35
-353615
-@
-89:
-899032 *
-1W W(26:3B
-	
-9
-33
-
-
-11
-91
-
-57
-575815
-@
-95:
-959632 *
-1_ _(26:3B
-	
-9
-33
-
-
-11
-97
-@
-49:
-495032 *
-13 3(26:3B
-	
-9
-33
-
-
-11
-51
-
-54
-545515
-
-87
-878815
-@
-78:
-787932 *
-1J J(26:3B
-	
-9
-33
-
-
-11
-80
-@
-64:
-646532 *
-1; ;(26:3B
-	
-9
-33
-
-
-11
-66
-D
-101=
-10110232 *
-1g g(26:3B
-	
-9
-33
-
-11
-103
-9
-64
-678 *
-1% %(:3B
-	
-9
-10
-
-
-11
-12
-@
-43:
-434432 *
-1/ /(26:3B
-	
-9
-33
-
-
-11
-45
-@
-30:
-303132 *
-1& &(26:3B
-	
-9
-33
-
-
-11
-34
-D
-107=
-10710832 *
-1r r(26:3B
-	
-9
-33
-
-11
-109
-@
-92:
-929332 *
-1[ [(26:3B
-	
-9
-33
-
-
-11
-94
-D
-110=
-11011132 *
-1{ {(26:3B
-	
-9
-33
-
-11
-112
-
-18
-181915
-D
-104=
-10410532 *
-1l l(26:3B
-	
-9
-33
-
-11
-106
-@
-59:
-596032 *
-17 7(26:3B
-	
-9
-33
-
-
-11
-61
-@
-75:
-757632 *
-1F F(26:3B
-	
-9
-33
-
-
-11
-77
-
-52
-525315
-@
-67:
-676832 *
-1> >(26:3B
-	
-9
-33
-
-
-11
-69
-
-62
-626315
-@
-81:
-818232 *
-1N N(26:3B
-	
-9
-33
-
-
-11
-83
-@
-72:
-727332 *
-1B B(26:3B
-	
-9
-33
-
-
-11
-74
-
-26
-262715
-
-70
-707115
-
-20
-202115
-
-13
-131415
-
-24
-242515
-A
-98;
-989932 *
-1c c(26:3B
-	
-9
-33
-
-11
-100
-
-22
-222315
-
-28
-282915
-@
-37:
-373832 *
-1) )(26:3B
-	
-9
-33
-
-
-11
-39
-
-46
-464715
-@
-84:
-848532 *
-1R R(26:3B
-	
-9
-33
-
-
-11
-86r§
-
-61316*
-1 (
-
-61317*
-1 (
-
-
-61816*
-1 (
-
-61817*
-1 (
-
-62016*
-1   (
-
-62017*
-1   (
-
-62216*
-1! !(
-
-62217*
-1! !(
-
-62416*
-1" "(
-
-62417*
-1" "(
-
-62616*
-1# #(
-
-62617*
-1# #(	
-
-62816*
-1$ $(
-
-62817*
-1$ $(
-
-6617*
-1% %(
-
-303516*
-1& &(
-
-303517*
-1& &(
-
-373516*
-1) )(
-
-373517*
-1) )(
-
-403516*
-1, ,(
-
-403517*
-1, ,(
-
-434648*
-11 1(
-
-433516*
-1/ /(
-
-433517*
-1/ /(
-
-434617*
-11 1(
-
-434617*
-11 1(
-
-493516*
-13 3(
-
-493517*
-13 3(
-
-495216*
-14 4(
-
-495217*
-14 4(
-
-495217*
-14 4(#
-
-495417*
-14$ 4()
-
-495456*
-14$ 4()
-
-495417*
-14* 4(0
-
-495756*
-14* 4(0
-
-596248*
-19 9(
-
-593516*
-17 7(
-
-593517*
-17 7(
-
-596217*
-19 9(
-
-596217*
-19 9(
-
-643516*
-1; ;(
-
-643517*
-1; ;(
-
-673516*
-1> >(
-
-673517*
-1> >(
-
-677016*
-1? ?(
-
-677017*
-1? ?(
-
-723516*
-1B B(
-
-723517*
-1B B(
-
-727016*
-1C C(
-
-727017*
-1C C(
-
-753516*
-1F F(
-
-753517*
-1F F(
-
-757016*
-1G G(
-
-757017*
-1G G(
-
-783516*
-1J J(
-
-783517*
-1J J(
-
-787016*
-1K K(
-
-787017*
-1K K(
-
-813516*
-1N N(
-
-813517*
-1N N(
-
-817016*
-1O O(
-
-817017*
-1O O(
-
-848748*
-1U U(
-
-843516*
-1R R(
-
-843517*
-1R R(
-
-847016*
-1T T(
-
-847017*
-1T T(
-
-848717*
-1U U(
-
-848717*
-1U U("
-
-893516*
-1W W(
-
-893517*
-1W W(
-
-897016*
-1X X(
-
-897017*
-1X X(
-
-923516*
-1[ [(
-
-923517*
-1[ [(
-
-927016*
-1\ \(
-
-927017*
-1\ \(
-
-957016*
-1_ _(
-
-957017*
-1_ _(
-
-953516*
-1` `(
-
-953517*
-1` `(
-
-987016*
-1c c(
-
-987017*
-1c c(
-
-983516*
-1d d(
-
-983517*
-1d d(
-
-1017016*
-1g g(
-
-1017017*
-1g g(
-
-1013516*
-1h h(
-
-1013517*
-1h h(
-
-1047016*
-1l l(
-
-1047017*
-1l l(
-
-1043516*
-1m m(
-
-1043517*
-1m m(
-
-1077016*
-1r r(
-
-1077017*
-1r r(
-
-1073516*
-1s s(
-
-1073517*
-1s s(
-
-1107016*
-1{ {(
-
-1107017*
-1{ {(
-
-1103516*
-1| |(
-
-1103517*
-1| |(

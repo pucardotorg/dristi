@@ -1,381 +1,0 @@
-
-1.0solutions_orderJavaFrontend"1739452511529*java2.Bó
-B
-=src/main/java/org/pucar/dristi/web/models/StatuteSection.java2
-
-package4
- 
-org.pucar.dristi.web.models5
-/
-*org.pucar.dristi.web.models.StatuteSection7
-
-
-class8
-
-access9
-
-public10
-
-simple name11
-
-StatuteSection12
-0
-*io.swagger.v3.oas.annotations.media.Schema14
-
-unknown15
-
-annotated by16
-
-
-uses17
-9
-3org.springframework.validation.annotation.Validated19
-"
-jakarta.annotation.Generated21
-
-lombok.Data23
-
-lombok.AllArgsConstructor25
-
-lombok.NoArgsConstructor27
-
-lombok.Builder29
-3
--org.pucar.dristi.web.models.StatuteSection.id31
-
-field32
-
-private33
-
-id34
-3
--com.fasterxml.jackson.annotation.JsonProperty36
-
-jakarta.validation.Valid38
-9
-3org.pucar.dristi.web.models.StatuteSection.tenantId40
-
-tenantId41
-,
-&jakarta.validation.constraints.NotNull43
-)
-#jakarta.validation.constraints.Size45
-8
-2org.pucar.dristi.web.models.StatuteSection.statute47
-
-statute48
-9
-3org.pucar.dristi.web.models.StatuteSection.sections50
-
-sections51
-<
-6org.pucar.dristi.web.models.StatuteSection.subsections53
-
-subsections54
-B
-<org.pucar.dristi.web.models.StatuteSection.additionalDetails56
-
-additionalDetails57
-=
-7org.pucar.dristi.web.models.StatuteSection.auditdetails59
-
-auditdetails60
-2
-,org.egov.common.contract.models.AuditDetails62
-
-is type63
-<
-6org.pucar.dristi.web.models.StatuteSection.strSections65
-
-strSections66
-?
-9org.pucar.dristi.web.models.StatuteSection.strSubsections68
-
-strSubsections69J
-
-1
-12Z
-
-3	
-354jý
-
-13
-131415
-@
-49:
-495032 *
-1+ +(26:3B
-	
-9
-33
-
-
-11
-51
-@
-58:
-585932 *
-14 4(26:3B
-	
-9
-33
-
-
-11
-60
-9
-64
-678 *
-1 (:3B
-	
-9
-10
-
-
-11
-12
-
-35
-353615
-@
-55:
-555632 *
-11 1(26:3B
-	
-9
-33
-
-
-11
-57
-
-18
-181915
-@
-52:
-525332 *
-1. .(26:3B
-	
-9
-33
-
-
-11
-54
-
-44
-444515
-
-37
-373815
-
-42
-424315
-@
-64:
-646532 *
-18 8(26:3B
-	
-9
-33
-
-
-11
-66
-
-20
-202115
-
-28
-282915
-@
-30:
-303132 *
-1 (26:3B
-	
-9
-33
-
-
-11
-34
-
-61
-616215
-@
-67:
-676832 *
-1; ;(26:3B
-	
-9
-33
-
-
-11
-69
-
-22
-222315
-@
-46:
-464732 *
-1( ((26:3B
-	
-9
-33
-
-
-11
-48
-@
-39:
-394032 *
-1# #(26:3B
-	
-9
-33
-
-
-11
-41
-
-24
-242515
-
-26
-262715r”	
-
-61316*
-1 (
-
-61317*
-1 (
-
-61816*
-1 (
-
-61817*
-1 (
-
-62016*
-1 (
-
-62017*
-1 (
-
-62216*
-1 (
-
-62217*
-1 (
-
-62416*
-1 (
-
-62417*
-1 (
-
-62616*
-1 (
-
-62617*
-1 (
-
-62816*
-1 (
-
-62817*
-1 (	
-
-6617*
-1 (
-
-303516*
-1 (
-
-303517*
-1 (
-
-303716*
-1   (
-
-303717*
-1   (
-
-393516*
-1# #(
-
-393517*
-1# #(
-
-394216*
-1$ $(
-
-394217*
-1$ $(
-
-
-394416*
-1% %(
-
-394417*
-1% %(
-
-463516*
-1( ((
-
-463517*
-1( ((
-
-493516*
-1+ +(
-
-493517*
-1+ +(
-
-523516*
-1. .(
-
-523517*
-1. .(
-
-553516*
-11 1(
-
-553517*
-11 1(
-
-586163*
-16
- 6(
-
-583516*
-14 4(
-
-583517*
-14 4(
-
-583716*
-15 5(
-
-583717*
-15 5(
-
-586117*
-16
- 6(
-
-586117*
-16 6(#
-
-643516*
-18 8(
-
-643517*
-18 8(
-
-673516*
-1; ;(
-
-673517*
-1; ;(

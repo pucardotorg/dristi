@@ -1,321 +1,0 @@
-
-1.0solutions_hearingJavaFrontend"1739451880430*java2.Bè
-
-G
-Bsrc/main/java/org/pucar/dristi/web/models/HearingListResponse.java2
-
-package4
- 
-org.pucar.dristi.web.models5
-4
-/org.pucar.dristi.web.models.HearingListResponse7
-
-
-class8
-
-access9
-
-public10
-
-simple name11
-
-HearingListResponse12
-0
-*io.swagger.v3.oas.annotations.media.Schema14
-
-unknown15
-
-annotated by16
-
-
-uses17
-9
-3org.springframework.validation.annotation.Validated19
-"
-jakarta.annotation.Generated21
-
-lombok.Data23
-
-lombok.AllArgsConstructor25
-
-lombok.NoArgsConstructor27
-
-lombok.Builder29
-B
-<org.pucar.dristi.web.models.HearingListResponse.responseInfo31
-
-field32
-
-private33
-
-responseInfo34
-4
-.org.egov.common.contract.response.ResponseInfo36
-
-is type37
-3
--com.fasterxml.jackson.annotation.JsonProperty39
-
-jakarta.validation.Valid41
-@
-:org.pucar.dristi.web.models.HearingListResponse.totalCount43
-
-
-totalCount44
-A
-;org.pucar.dristi.web.models.HearingListResponse.hearingList46
-
-hearingList47
-)
-#org.pucar.dristi.web.models.Hearing49
-°
-öorg.pucar.dristi.web.models.HearingListResponse#addHearingListItem(Lorg/pucar/dristi/web/models/Hearing;)Lorg/pucar/dristi/web/models/HearingListResponse;51
-
-method52
-
-addHearingListItem53
-
-returns54
-
-	has param55
-
-
-references56J
-
-1
-12Z
-
-3	
-354jü
-
-13
-131415
-
-38
-383915
-
-18
-181915
-
-40
-404115
-@
-45:
-454632 *
-1$	 $(
-26:3B
-	
-9
-33
-
-
-11
-47
-
-48
-484915
-
-35
-353615
-
-20
-202115
-@
-50:
-505152 *
-1)	 )(26:3B
-	
-9
-10
-
-
-11
-53
-
-28
-282915
-@
-30:
-303132 *
-1	 (
-26:3B
-	
-9
-33
-
-
-11
-34
-9
-64
-678 *
-1 (!:3B
-	
-9
-10
-
-
-11
-12
-
-22
-222315
-@
-42:
-424332 *
-1 	  (
-26:3B
-	
-9
-33
-
-
-11
-44
-
-24
-242515
-
-26
-262715r•	
-
-61316*
-1 (
-
-61317*
-1 (
-
-61816*
-1 (
-
-61817*
-1 (
-
-62016*
-1 (
-
-62017*
-1 (
-
-62216*
-1 (
-
-62217*
-1 (
-
-62416*
-1 (
-
-62417*
-1 (
-
-62616*
-1 (
-
-62617*
-1 (
-
-62816*
-1 (
-
-62817*
-1 (	
-
-6617*
-1 (!
-
-303537*
-1 (%
-
-303816*
-1	 (
-
-
-303817*
-1
- (
-
-304016*
-1 (
-
-304017*
-1 (
-
-303517*
-1 (%
-
-303517*
-1& (2
-
-423816*
-1 	  (
-
-
-423817*
-1 
-  (
-
-453816*
-1$	 $(
-
-
-453817*
-1$
- $(
-
-454016*
-1% %(
-
-454017*
-1% %(
-
-454817*
-1& &(%
-
-50654*
-1) )(#
-
-504855*
-1)7 )(>
-
-50617*
-1) )(#
-
-504837*
-1)? )(N
-
-504817*
-1)7 )(>
-
-50617*
-1* *(
-
-50656*
-1* *(
-
-504556*
-1* *(!
-
-50617*
-1+ +(
-
-50656*
-1+ +(
-
-504556*
-1+ +(
-
-50617*
-1-	 -(
-
-50656*
-1-	 -(
-
-504556*
-1- -(
-
-50617*
-1. .(
-
-50656*
-1. .(

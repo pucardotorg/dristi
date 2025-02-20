@@ -1,7 +1,0 @@
-org.pucar.dristi.web.models.Artifact#addCommentsItem(Lorg/pucar/dristi/web/models/Comment;)Lorg/pucar/dristi/web/models/Artifact;
-false
-444d44f891e1b62b9ec86dc55b21063f
-java.util.ArrayList#<init>()V
-java.util.ArrayList#instance-init#
-==
-add java.util.List#add(Ljava/lang/Object;)Z

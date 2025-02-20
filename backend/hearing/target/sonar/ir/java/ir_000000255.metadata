@@ -1,7 +1,0 @@
-org.pucar.dristi.web.models.Hearing#addAttendeesItem(Lorg/pucar/dristi/web/models/Attendee;)Lorg/pucar/dristi/web/models/Hearing;
-false
-ced747b0bf3756646bfd7a1d3a771499
-java.util.ArrayList#<init>()V
-java.util.ArrayList#instance-init#
-==
-add java.util.List#add(Ljava/lang/Object;)Z

@@ -1,239 +1,0 @@
-
-1.0solutions_evidenceJavaFrontend"1739451579166*java2.Bç
-A
-<src/main/java/org/pucar/dristi/web/models/HearingExists.java2
-
-package4
- 
-org.pucar.dristi.web.models5
-.
-)org.pucar.dristi.web.models.HearingExists7
-
-
-class8
-
-access9
-
-public10
-
-simple name11
-
-HearingExists12
-9
-3org.springframework.validation.annotation.Validated14
-
-unknown15
-
-annotated by16
-
-
-uses17
-"
-jakarta.annotation.Generated19
-
-lombok.Data21
-
-lombok.AllArgsConstructor23
-
-lombok.NoArgsConstructor25
-
-lombok.Builder27
-9
-3org.pucar.dristi.web.models.HearingExists.hearingId29
-
-field30
-
-private31
-
-	hearingId32
-3
--com.fasterxml.jackson.annotation.JsonProperty34
-
-jakarta.validation.Valid36
-<
-6org.pucar.dristi.web.models.HearingExists.filingNumber38
-
-filingNumber39
-9
-3org.pucar.dristi.web.models.HearingExists.cnrNumber41
-
-	cnrNumber42
-A
-;org.pucar.dristi.web.models.HearingExists.applicationNumber44
-
-applicationNumber45
-6
-0org.pucar.dristi.web.models.HearingExists.exists47
-
-exists48J
-
-1
-12Z
-
-3	
-354j¥
-
-33
-333415
-
-13
-131415
-9
-64
-678 *
-1 (:3B
-	
-9
-10
-
-
-11
-12
-@
-28:
-282930 *
-1 (26:3B
-	
-9
-31
-
-
-11
-32
-
-35
-353615
-@
-46:
-464730 *
-1' '(26:3B
-	
-9
-31
-
-
-11
-48
-@
-40:
-404130 *
-1 (26:3B
-	
-9
-31
-
-
-11
-42
-
-18
-181915
-@
-37:
-373830 *
-1 (26:3B
-	
-9
-31
-
-
-11
-39
-
-26
-262715
-
-20
-202115
-@
-43:
-434430 *
-1# #(26:3B
-	
-9
-31
-
-
-11
-45
-
-22
-222315
-
-24
-242515r•
-
-61316*
-1 (
-
-61317*
-1 (
-
-61816*
-1 (
-
-61817*
-1 (
-
-62016*
-1 (
-
-62017*
-1 (
-
-62216*
-1 (
-
-62217*
-1 (
-
-62416*
-1 (
-
-62417*
-1 (
-
-62616*
-1 (
-
-62617*
-1 (	
-
-6617*
-1 (
-
-283316*
-1 (
-
-283317*
-1 (
-
-283516*
-1 (
-
-283517*
-1 (
-
-373316*
-1 (
-
-373317*
-1 (
-
-403316*
-1 (
-
-403317*
-1 (
-
-433316*
-1# #(
-
-433317*
-1# #(
-
-463316*
-1' '(
-
-463317*
-1' '(

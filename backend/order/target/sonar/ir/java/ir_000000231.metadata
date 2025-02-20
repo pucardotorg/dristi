@@ -1,5 +1,0 @@
-org.pucar.dristi.kafka.Producer#push(Ljava/lang/String;Ljava/lang/Object;)V
-false
-90a94579684d9595bec179a6ee3cc790
-==
-send org.egov.tracer.kafka.CustomKafkaTemplate#send(Ljava/lang/String;Ljava/lang/Object;)Lorg/springframework/kafka/support/SendResult;

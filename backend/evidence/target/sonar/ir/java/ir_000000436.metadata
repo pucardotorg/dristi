@@ -1,8 +1,0 @@
-org.pucar.dristi.service.EvidenceService#enrichBasedOnStatus(Lorg/pucar/dristi/web/models/EvidenceRequest;)V
-false
-5ff0ff5b697b4dae920e67c5579c2ba7
-java.lang.String#equalsIgnoreCase(Ljava/lang/String;)Z
-==
-!unknownMethod! !unknownMethod!
-enrichEvidenceNumber org.pucar.dristi.enrichment.EvidenceEnrichment#enrichEvidenceNumber(Lorg/pucar/dristi/web/models/EvidenceRequest;)V
-enrichIsActive org.pucar.dristi.enrichment.EvidenceEnrichment#enrichIsActive(Lorg/pucar/dristi/web/models/EvidenceRequest;)V

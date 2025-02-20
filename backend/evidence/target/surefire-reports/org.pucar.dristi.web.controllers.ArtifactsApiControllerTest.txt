@@ -1,4 +1,0 @@
--------------------------------------------------------------------------------
-Test set: org.pucar.dristi.web.controllers.ArtifactsApiControllerTest
--------------------------------------------------------------------------------
-Tests run: 10, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.116 s -- in org.pucar.dristi.web.controllers.ArtifactsApiControllerTest

@@ -1,7 +1,0 @@
-org.pucar.dristi.config.MainConfiguration#jacksonConverter(Lcom/fasterxml/jackson/databind/ObjectMapper;)Lorg/springframework/http/converter/json/MappingJackson2HttpMessageConverter;
-false
-d6c0fcd3471bc67ee2ee3f92bedb9496
-org.springframework.http.converter.json.MappingJackson2HttpMessageConverter#<init>()V
-org.springframework.http.converter.json.MappingJackson2HttpMessageConverter#instance-init#
-==
-setObjectMapper org.springframework.http.converter.json.AbstractJackson2HttpMessageConverter#setObjectMapper(Lcom/fasterxml/jackson/databind/ObjectMapper;)V

@@ -1,9 +1,0 @@
-org.pucar.dristi.web.controllers.HearingApiController#hearingV1UpdateHearingTranscriptAdditionAuditDetailsPost(Lorg/pucar/dristi/web/models/HearingRequest;)Lorg/springframework/http/ResponseEntity;
-false
-970c2243f1e53430c66171b4aeac225f
-org.springframework.http.ResponseEntity#<init>(Ljava/lang/Object;Lorg/springframework/http/HttpStatusCode;)V
-org.springframework.http.ResponseEntity#instance-init#
-==
-!unknownMethod! !unknownMethod!
-createResponseInfoFromRequestInfo org.pucar.dristi.util.ResponseInfoFactory#createResponseInfoFromRequestInfo(Lorg/egov/common/contract/request/RequestInfo;Ljava/lang/Boolean;)Lorg/egov/common/contract/response/ResponseInfo;
-updateTranscriptAdditionalAttendees org.pucar.dristi.service.HearingService#updateTranscriptAdditionalAttendees(Lorg/pucar/dristi/web/models/HearingRequest;)Lorg/pucar/dristi/web/models/Hearing;

@@ -1,440 +1,0 @@
-
-1.0solutions_evidenceJavaFrontend"1739451578760*java2.BÃ
-I
-Dsrc/main/java/org/pucar/dristi/web/models/EvidenceSearchRequest.java2
-
-package4
- 
-org.pucar.dristi.web.models5
-6
-1org.pucar.dristi.web.models.EvidenceSearchRequest7
-
-
-class8
-
-access9
-
-public10
-
-simple name11
-
-EvidenceSearchRequest12
-9
-3org.springframework.validation.annotation.Validated14
-
-unknown15
-
-annotated by16
-
-
-uses17
-"
-jakarta.annotation.Generated19
-
-lombok.Data21
-
-lombok.AllArgsConstructor23
-
-lombok.NoArgsConstructor25
-
-lombok.Builder27
-C
-=org.pucar.dristi.web.models.EvidenceSearchRequest.requestInfo29
-
-field30
-
-private31
-
-requestInfo32
-2
-,org.egov.common.contract.request.RequestInfo34
-
-is type35
-3
--com.fasterxml.jackson.annotation.JsonProperty37
-@
-:org.pucar.dristi.web.models.EvidenceSearchRequest.tenantId39
-
-tenantId40
-@
-:org.pucar.dristi.web.models.EvidenceSearchRequest.criteria42
-
-criteria43
-8
-2org.pucar.dristi.web.models.EvidenceSearchCriteria45
-B
-<org.pucar.dristi.web.models.EvidenceSearchRequest.pagination47
-
-
-pagination48
-,
-&org.pucar.dristi.web.models.Pagination50
-
-jakarta.validation.Valid52
-v
-porg.pucar.dristi.web.models.EvidenceSearchRequest#getRequestInfo()Lorg/egov/common/contract/request/RequestInfo;54
-
-method55
-
-getRequestInfo56
-
-returns57
-
-
-references58
-w
-qorg.pucar.dristi.web.models.EvidenceSearchRequest#setRequestInfo(Lorg/egov/common/contract/request/RequestInfo;)V60
-
-setRequestInfo61
-
-	has param62
-W
-Qorg.pucar.dristi.web.models.EvidenceSearchRequest#getTenantId()Ljava/lang/String;64
-
-getTenantId65
-X
-Rorg.pucar.dristi.web.models.EvidenceSearchRequest#setTenantId(Ljava/lang/String;)V67
-
-setTenantId68
-y
-sorg.pucar.dristi.web.models.EvidenceSearchRequest#getCriteria()Lorg/pucar/dristi/web/models/EvidenceSearchCriteria;70
-
-getCriteria71
-z
-torg.pucar.dristi.web.models.EvidenceSearchRequest#setCriteria(Lorg/pucar/dristi/web/models/EvidenceSearchCriteria;)V73
-
-setCriteria74J
-
-1
-12Z
-
-3	
-354j«
-
-36
-363715
-
-13
-131415
-@
-28:
-282930 *
-1 (26:3B
-	
-9
-31
-
-
-11
-32
-9
-64
-678 *
-1 (#:3B
-	
-9
-10
-
-
-11
-12
-@
-41:
-414230 *
-1 (26:3B
-	
-9
-31
-
-
-11
-43
-@
-66:
-666755 *
-1+ +(26:3B
-	
-9
-10
-
-
-11
-68
-
-44
-444515
-
-51
-515215
-
-18
-181915
-@
-63:
-636455 *
-1' '(26:3B
-	
-9
-10
-
-
-11
-65
-
-26
-262715
-
-49
-495015
-@
-53:
-535455 *
-1 (26:3B
-	
-9
-10
-
-
-11
-56
-
-20
-202115
-@
-46:
-464730 *
-1 (26:3B
-	
-9
-31
-
-
-11
-48
-@
-38:
-383930 *
-1 (26:3B
-	
-9
-31
-
-
-11
-40
-@
-72:
-727355 *
-13 3(26:3B
-	
-9
-10
-
-
-11
-74
-
-22
-222315
-
-33
-333415
-@
-69:
-697055 *
-1/ /(26:3B
-	
-9
-10
-
-
-11
-71
-
-24
-242515
-@
-59:
-596055 *
-1# #(26:3B
-	
-9
-10
-
-
-11
-61rŠ
-
-61316*
-1 (
-
-61317*
-1 (
-
-61816*
-1 (
-
-61817*
-1 (
-
-62016*
-1 (
-
-62017*
-1 (
-
-62216*
-1 (
-
-62217*
-1 (
-
-62416*
-1 (
-
-62417*
-1 (
-
-62616*
-1 (
-
-62617*
-1 (	
-
-6617*
-1 (#
-
-283335*
-1 (
-
-283616*
-1 (
-
-283617*
-1 (
-
-283317*
-1 (
-
-283317*
-1 ($
-
-383616*
-1 (
-
-383617*
-1 (
-
-414435*
-1 (#
-
-413616*
-1 (
-
-413617*
-1 (
-
-414417*
-1 (#
-
-414417*
-1$ (,
-
-464935*
-1 (
-
-463616*
-1 (
-
-463617*
-1 (
-
-465116*
-1 (
-
-465117*
-1 (
-
-464917*
-1 (
-
-464917*
-1 ("
-
-533357*
-1 (
-
-533317*
-1 (
-
-533317*
-1   (
-
-532858*
-1   (
-
-593362*
-1#  #(+
-
-593335*
-1#, #(7
-
-593317*
-1#  #(+
-
-59617*
-1$	 $(
-
-59658*
-1$	 $(
-
-593317*
-1$ $(
-
-592858*
-1$ $(
-
-633858*
-1( ((
-
-66617*
-1,	 ,(
-
-66658*
-1,	 ,(
-
-663858*
-1, ,(
-
-694457*
-1/ /("
-
-694417*
-1/ /("
-
-694417*
-10 0(
-
-694158*
-10 0(
-
-724462*
-13 3(3
-
-724435*
-134 3(<
-
-724417*
-13 3(3
-
-72617*
-14	 4(
-
-72658*
-14	 4(
-
-724417*
-14 4(
-
-724158*
-14 4(

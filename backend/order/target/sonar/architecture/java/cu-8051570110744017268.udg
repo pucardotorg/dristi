@@ -1,302 +1,0 @@
-
-1.0solutions_orderJavaFrontend"1739452511889*java2.B∑
-O
-Jsrc/main/java/org/pucar/dristi/repository/rowmapper/DocumentRowMapper.java2
-
-package4
-*
-%org.pucar.dristi.repository.rowmapper5
-<
-7org.pucar.dristi.repository.rowmapper.DocumentRowMapper7
-
-
-class8
-
-access9
-
-public10
-
-simple name11
-
-DocumentRowMapper12
-6
-0org.springframework.jdbc.core.ResultSetExtractor14
-
-unknown15
-
-
-implements16
-.
-(org.springframework.stereotype.Component18
-
-annotated by19
-
-
-uses20
-
-lombok.extern.slf4j.Slf4j22
-.
-(org.egov.common.contract.models.Document24
-n
-horg.pucar.dristi.repository.rowmapper.DocumentRowMapper#extractData(Ljava/sql/ResultSet;)Ljava/util/Map;26
-
-method27
-
-extractData28
-1
-+com.fasterxml.jackson.databind.ObjectMapper30
-
-is type31
-
-calls32
-
-returns33
->
-8org.egov.common.contract.models.Document$DocumentBuilder35
-
-
-references36
-p
-jorg.egov.common.contract.models.Document$DocumentBuilder#build()Lorg/egov/common/contract/models/Document;38
-ô
-íorg.egov.common.contract.models.Document$DocumentBuilder#documentUid(Ljava/lang/String;)Lorg/egov/common/contract/models/Document$DocumentBuilder;40
-ó
-êorg.egov.common.contract.models.Document$DocumentBuilder#fileStore(Ljava/lang/String;)Lorg/egov/common/contract/models/Document$DocumentBuilder;42
-ö
-ìorg.egov.common.contract.models.Document$DocumentBuilder#documentType(Ljava/lang/String;)Lorg/egov/common/contract/models/Document$DocumentBuilder;44
-ê
-âorg.egov.common.contract.models.Document$DocumentBuilder#id(Ljava/lang/String;)Lorg/egov/common/contract/models/Document$DocumentBuilder;46
-r
-lorg.egov.common.contract.models.Document#builder()Lorg/egov/common/contract/models/Document$DocumentBuilder;48
-"
-org.postgresql.util.PGobject50
-X
-Rorg.egov.common.contract.models.Document#setAdditionalDetails(Ljava/lang/Object;)V52
--
-'com.fasterxml.jackson.databind.JsonNode54
-w
-qcom.fasterxml.jackson.databind.ObjectMapper#readTree(Ljava/lang/String;)Lcom/fasterxml/jackson/databind/JsonNode;56
-?
-9org.postgresql.util.PGobject#getValue()Ljava/lang/String;58
-+
-%org.egov.tracer.model.CustomException60J
-
-1
-12Z
-
-3	
-354jÂ
-@
-25:
-252627 *
-1 (26:3B
-	
-9
-10
-
-
-11
-28
-
-55
-555615
-
-29
-293015
-
-47
-474815
-
-41
-414215
-
-45
-454615
-
-23
-232415
-9
-64
-678 *
-1 (:3B
-	
-9
-10
-
-
-11
-12
-
-49
-495015
-
-39
-394015
-
-17
-171815
-
-21
-212215
-
-57
-575815
-
-51
-515215
-
-43
-434415
-
-53
-535415
-
-34
-343515
-
-59
-596015
-
-13
-131415
-
-37
-373815r—	
-
-61316*
-1+ (=
-
-61719*
-1 (
-
-61720*
-1 (
-
-62119*
-1 (
-
-62120*
-1 (
-
-6620*
-1 (
-
-61320*
-1+ (=
-
-62320*
-1M (U
-
-252320*
-1 ("
-
-252320*
-1 ( 
-
-252931*
-1 (&
-
-252920*
-1 (
-
-252932*
-1- (9
-
-252331*
-1 ("
-
-252320*
-1 (
-
-252333*
-1% (-
-
-253436*
-1% (-
-
-253732*
-1 (
-
-253433*
-1% (-
-
-253436*
-1% (-
-
-253932*
-1 (%
-
-253433*
-1% (-
-
-253436*
-1% (-
-
-254132*
-1 (#
-
-253433*
-1% (-
-
-253436*
-1% (-
-
-254332*
-1 (&
-
-253433*
-1% (-
-
-253436*
-1% (-
-
-254532*
-1 (
-
-253433*
-1% (-
-
-252336*
-1% (-
-
-254732*
-1. (5
-
-252320*
-1% (-
-
-254931*
-1   ("
-
-254920*
-1   (
-
-254920*
-1 &  (.
-
-252336*
-1" "(
-
-255132*
-1" "(2
-
-255333*
-1"3 "(?
-
-252936*
-1"3 "(?
-
-255532*
-1"@ "(H
-
-254936*
-1"I "(Q
-
-255732*
-1"R "(Z
-
-252320*
-1( (("
-
-255932*
-10 0(&

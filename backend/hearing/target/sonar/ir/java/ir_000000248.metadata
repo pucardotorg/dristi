@@ -1,9 +1,0 @@
-org.pucar.dristi.web.controllers.HearingApiController#witnessDepositionV1DownloadPdf(Lorg/pucar/dristi/web/models/HearingSearchRequest;)Lorg/springframework/http/ResponseEntity;
-false
-d61b857d90531ae9f5c9a0b7e82c7fda
-org.springframework.http.ResponseEntity#ok()Lorg/springframework/http/ResponseEntity$BodyBuilder;
-==
-body org.springframework.http.ResponseEntity$BodyBuilder#body(Ljava/lang/Object;)Lorg/springframework/http/ResponseEntity;
-contentType org.springframework.http.ResponseEntity$BodyBuilder#contentType(Lorg/springframework/http/MediaType;)Lorg/springframework/http/ResponseEntity$BodyBuilder;
-getWitnessDepositionPdf org.pucar.dristi.service.WitnessDepositionPdfService#getWitnessDepositionPdf(Lorg/pucar/dristi/web/models/HearingSearchRequest;)Lorg/springframework/core/io/ByteArrayResource;
-header org.springframework.http.ResponseEntity$HeadersBuilder#header(Ljava/lang/String;[Ljava/lang/String;)Lorg/springframework/http/ResponseEntity$HeadersBuilder;

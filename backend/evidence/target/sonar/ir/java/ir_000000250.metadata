@@ -1,9 +1,0 @@
-org.pucar.dristi.repository.rowmapper.EvidenceRowMapper#isListType(Lcom/fasterxml/jackson/core/type/TypeReference;)Z
-false
-043165581cbca44349c32c55a503ac80
-com.fasterxml.jackson.databind.JavaType#getRawClass()Ljava/lang/Class;
-com.fasterxml.jackson.databind.type.TypeFactory#defaultInstance()Lcom/fasterxml/jackson/databind/type/TypeFactory;
-java.lang.Class#isAssignableFrom(Ljava/lang/Class;)Z
-==
-constructType com.fasterxml.jackson.databind.type.TypeFactory#constructType(Ljava/lang/reflect/Type;)Lcom/fasterxml/jackson/databind/JavaType;
-getType com.fasterxml.jackson.core.type.TypeReference#getType()Ljava/lang/reflect/Type;

@@ -1,5 +1,0 @@
-org.pucar.dristi.web.models.Order#fromValue(Ljava/lang/String;)Lorg/pucar/dristi/web/models/Order;
-false
-f1baeaf3e35cdccf7ab3b3253cfb1c0e
-java.lang.String#equals(Ljava/lang/Object;)Z
-java.lang.String#valueOf(Ljava/lang/Object;)Ljava/lang/String;
