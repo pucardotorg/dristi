@@ -15,3 +15,4 @@ Federated & decentralized allowing data to remain where it’s been collected.
 
 Privacy & Security by Design: Managing security and privacy of data is crucial to building and maintaining trust between ecosystem participants and thus will be a critical design principle. All data access is through API calls to only authenticated and authorized stakeholders to ensure only those with necessary permissions can see/consume data. Standard and certifications for data privacy and security are ensured and all personal information is stored in an encrypted format. 
 
+[25 March 2025]: Note that no active work is happening in this repo for the time being. Will update again when things start to move again. 
